@@ -1,6 +1,13 @@
 # ==========================================================
 # == Global Bash Functions
 
+cwa() {
+    cd ${HOME}/fcs/lib/Fap/WebApp/Action/
+}
+cl() {
+    cd ${HOME}/fcs/lib/Fap/
+}
+
 # Echos and executes a command
 _echodo () {
   echo "$*"
@@ -75,7 +82,7 @@ less() { _xtitle_do less "$@"; }
 
 # Grep commands
 h() { if [ -z "$*" ]; then history; else history | egrep "$@"; fi; }
-pg() { ps axj | grep $*; }
+pg() { ps auxf | grep $*; }
 
 # Convert unix epoc to current timezone
 unixtime() { date --date="1970-01-01 $* sec GMT"; }
