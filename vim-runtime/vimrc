@@ -24,8 +24,10 @@ set nocompatible
 " == Pathogen Initialization
 " Load all plugins in ~/.vim-runtime/bundle
 
-call pathogen#infect()
-call pathogen#helptags()
+if v:version > 700
+    call pathogen#infect()
+    call pathogen#helptags()
+endif
 
 " ==========================================================
 " == General Config
@@ -85,7 +87,9 @@ set statusline+=%=      " Left/right separator
 set statusline+=%l/%L   " Cursor line/total lines
 set statusline+=\ %P    " Percent through file
 set statusline+=\ c\ %c     " Cursor column
-set statusline+=\ %{exists('g:loaded_fugitive')?fugitive#statusline():''} " Git status
+if v:version > 700
+    set statusline+=\ %{exists('g:loaded_fugitive')?fugitive#statusline():''} " Git status
+endif
 
 " ==========================================================
 " == Usage settings
@@ -113,10 +117,12 @@ set whichwrap+=<,> " Allow left/right arrow keys move to the next line
 " ==========================================================
 " == Fold options
 
-set foldmethod=indent " Fold based on indent
-set foldnestmax=3 " Deepest fold
-set foldlevel=1 " The default depth to fold
-set nofoldenable " Dont fold by default
+if v:version > 700
+    set foldmethod=indent " Fold based on indent
+    set foldnestmax=3 " Deepest fold
+    set foldlevel=1 " The default depth to fold
+    set nofoldenable " Dont fold by default
+endif
 
 " ==========================================================
 " == Disable Swap Files
@@ -153,7 +159,9 @@ set softtabstop=4 " Spaces a tab counts for when backspacing or inserting tabs
 set tabstop=4 " The number of spaces a tab counts as
 set textwidth=80
 set wrapmargin=10 " Number of characters from the right where wrapping starts
-set spelllang=en
+if v:version > 700
+    set spelllang=en
+endif
 " set iskeyword-=\_ " Remove _ from keyword so it's not considered a word
 
 filetype plugin indent on " Enable filetype plugin
