@@ -3,7 +3,7 @@
 	url = git://github.com/tpope/vim-surround
 [submodule "vim-runtime/bundle/fugitive"]
 	path = vim-runtime/bundle/fugitive
-	url = git://github.com/tpope/vim-fugitive
+	url = https://github.com/tpope/vim-fugitive
 [submodule "vim-runtime/bundle/tcomment"]
 	path = vim-runtime/bundle/tcomment
 	url = git://github.com/tomtom/tcomment_vim
