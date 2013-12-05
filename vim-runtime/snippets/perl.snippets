@@ -206,3 +206,7 @@ snippet #=
 snippet #-
 	# ----------------------------------------------------------
 	# -- ${1:heading}
+snippet log
+	use lib '/home/lpetherbridge/lib';
+	use Logger;
+	Logger::Log(${1});
