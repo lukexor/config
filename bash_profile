@@ -64,8 +64,19 @@ esac
 # ----------------------------------------------------------
 # -- Global Paths
 
+if [ -d "${HOME}/fcs/lib" ]; then
+    export PERL5LIB="${HOME}/fcs/lib${PERL5LIB:+:$PERL5LIB}"
+fi
+
+if [ -d "${HOME}/lib" ]; then
+    export PERL5LIB="${HOME}/lib${PERL5LIB:+:$PERL5LIB}"
+fi
+
 if [ -d "/usr/local/bin" ]; then
     pathprepend "/usr/local/bin"
+fi
+if [ -d "${HOME}/fcs/bin" ]; then
+    pathprepend "${HOME}/fcs/bin"
 fi
 if [ -d "${HOME}/bin" ]; then
     for dir in $(find "${HOME}/bin" -type d -name bin); do
