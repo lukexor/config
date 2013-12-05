@@ -108,7 +108,7 @@ sourcefile "${HOME}/perl5/perlbrew/etc/bashrc"
 export PLUGIN_DIR="${HOME}/.plugins/"
 export BASH_THEME="${HOME}/.themes/zhayedan.sh"
 
-plugins=(host aliases functions git github perl python django battery prompt-info svn ssh-agent)
+plugins=(host aliases functions git git-completion github perl python django battery prompt-info svn ssh-agent)
 export SSH_AGENT_FWD="yes"
 
 # Load all of the plugins
