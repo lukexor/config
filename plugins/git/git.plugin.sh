@@ -36,6 +36,7 @@ alias gpso='git push origin master'
 alias gpt='git push --tags'
 alias gr='git rebase'
 alias grhh='git reset HEAD --hard'
+alias grm='git rm'
 alias gsd='git svn dcommit'
 alias gsha=git_prompt_short_sha
 alias gshal=git_prompt_long_sha
@@ -47,6 +48,10 @@ alias gun='git reset HEAD --'
 
 # Functions
 function gdv() { git diff -w "$@" | view -; }
+
+function grr() {
+    git filter-branch --tree-filter "rm -f $*" HEAD
+}
 
 # Git and svn mix
 alias git-svn-dcommit-push='git svn dcommit && git push github master:svntrunk'
