@@ -1,0 +1,11 @@
+vim-runtime/.netrwhist
+vim-runtime/undodir/*
+*~
+*.sw?
+*.pyc
+*secure*
+tags*
+*.tmp
+*.log
+*.mp
+bin/minecraft*

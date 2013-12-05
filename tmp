@@ -1,0 +1,6 @@
+vim-runtime/.netrwhist
+vim-runtime/undodir/*
+*~
+*.sw?
+*.pyc
+*secure*

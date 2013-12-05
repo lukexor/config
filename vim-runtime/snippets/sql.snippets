@@ -1,0 +1,37 @@
+snippet add
+	CALL add_column("${1:table_name}", "${2:column_name}", "${3:column_definition}");
+snippet drop
+	CALL drop_column("${1:table_name}", "${2:column_name}");
+snippet change
+	CALL change_column("${1:table_name}", "${2:old_column_name}", "${3:new_column_name}", "${4:column_definition}");
+snippet modify
+	CALL modify_column("${1:table_name}", "${2:column_name}", "${3:new_column_definition}");
+snippet aind
+	CALL add_index("${1:table_name}", "${2:column(s)}");
+snippet auniq
+	CALL add_unique("${1:table_name}", "${2:key_name}", "${3:column(s)}");
+snippet afk
+	CALL add_fk("${1:table_name}", "${2:column_name}", "${3:reference_table}", "${4:reference_column}", "${5:on_delete}");
+snippet dfk
+	CALL drop_fk("${1:table_name}", "${2:column_name}");
+snippet dkey
+	CALL drop_key("${1:table_name}", "${2:key_name}");
+snippet insert
+	CALL insert_data("${1:table_name}", "${2:values}", "${3:unique_column}", "${4:unique_value}");
+snippet update
+	UPDATE ${1:table_name} SET ${2:column_name} = ${3:col_value} WHERE ${4:primary_key} = ${5:pk_value};
+snippet -= # Header comment
+	-- ==========================================================
+	-- == ${1:heading}
+snippet -- # sub-header comment
+	-- ----------------------------------------------------------
+	-- -- ${1:heading}
+snippet create
+	DROP TABLE IF EXISTS ${1:table_name};
+	CREATE TABLE $1 (
+		$1_id int(10) unsigned NOT NULL auto_increment,
+		${2:col_name}
+		PRIMARY KEY ($1_id)
+	) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+snippet fkconst
+	CONSTRAINT ${1:fk_name}_ibfk_${2:num} FOREIGN KEY (${3:column}) REFERENCES ${4:fk_table} (${5:fk_column}) ON DELETE ${6:RESTRICT} ON UPDATE CASCADE

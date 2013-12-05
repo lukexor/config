@@ -1,0 +1,134 @@
+# ==============================================================================
+# /etc/screenrc
+# ==============================================================================
+
+# ESCAPE - the COMMAND CHARACTER
+# ===============================================================
+escape ``
+#escape ^Gg
+#escape ^Ss
+#escape ^aa  # default
+#escape ^pp  # suggested binding for emacs users
+
+# Fix residual text from less/vi
+altscreen on
+
+# Use mouse to browse regions
+# mousetrack on
+
+
+# VARIABLES
+# ===============================================================
+startup_message off			# default: on
+vbell off
+
+# Enable/disable multiuser mode. Standard screen operation is singleuser.
+# In multiuser Mode the commands acladd, aclchg, aclgrp and acldel can be used
+# to enable (and disable) other user accessing this screen session.
+# Requires suid-root.
+#  multiuser off
+
+# Change default scrollback value for new windows
+defscrollback 5000			# default: 100
+
+bufferfile $HOME/.screen_exchange
+
+# shell:  Default process started in screen's windows.
+# Makes it possible to use a different shell inside screen
+# than is set as the default login shell.
+# If begins with a '-' character, the shell will be started as a login shell.
+# shell                 zsh
+# shell                 bash
+# shell                 ksh
+shell $SHELL
+
+# XTERM TWEAKS
+# ===============================================================
+
+termcapinfo xterm|xterms|xs ti@:te=\E[2J
+
+## allow bold colors - necessary for some reason
+attrcolor b ".I"
+## tell screen how to set colors. AB = background, AF=foreground
+termcapinfo xterm* 'Co#256:AB=\E[48;5;%dm:AF=\E[38;5;%dm:hs:ts=\E]2;:fs=\007:ds=\E]2;'$HOSTNAME'\007:ti=\E[?1049h:te=\E[?1049l:XT'
+termcapinfo screen* 'Co#256:AB=\E[48;5;%dm:AF=\E[38;5;%dm:hs:ts=\E]2;:fs=\E\\:ds=\E]2;'$HOSTNAME'screen\E\\:ti=\E[?1049h:te=\E[?1049l:XT'
+
+## erase background with current bg color
+defbce "on"
+# Use terminal scrollback
+termcapinfo xterm* ti@:te@
+termcapinfo screen* ti@:te@
+
+term screen
+
+## KEYBINDINGS
+## ==============================================================
+## And here are the default bind commands if you need them:
+##
+## bind A title
+## bind C clear
+## bind D pow_detach
+## bind F fit
+## bind H log
+## bind I login on
+## bind K kill
+## bind L login
+## bind M monitor
+## bind N number
+## bind O login off
+## bind Q only
+## bind S split
+## bind W width
+## bind X remove
+## bind Z reset
+## Useed for region hopping
+bind j focus down
+bind k focus up
+bind h focus left
+bind l focus right
+
+# split shortcut
+bind P source $HOME/.gatesplit
+
+## Removes screen 0
+bind c screen 1
+bind ^c screen 1
+bind 0 select 10
+bind q other
+
+## Let's remove some dangerous key bindings ...
+bind ^k
+## bind .  dumptermcap # default
+bind .
+## bind ^\ quit        # default
+bind ^\
+## bind ^h ???         # default
+bind ^h
+
+## ... and make them better.
+bind \\ quit
+bind 'K' kill
+bind 'I' login on
+bind 'O' login off
+bind '}' history
+bind ' ' windowlist -b
+
+# Switch escape so I can paste backticks
+bindkey -k F1 escape ^aa # bound to F11
+bindkey -k F2 escape ``  # bound to F12
+
+hardstatus off
+hardstatus alwayslastline "%Lw"
+hardstatus string "%{= g}%{w}%H (%l)%= %{= w}%?%-Lw%?%{r}%n%f:%{w}%t%?:%u%?%{w}%?%+Lw%? %?%= %{w}%Y-%m-%d"
+
+caption always "%{= g}%{w}%h %= %c"
+windowlist string "[%h]"
+
+# deflogin off
+
+## STARTUP SCREENS
+## ===============================================================
+
+screen 3
+screen 2
+screen 1

@@ -1,0 +1,462 @@
+" ==========================================================
+" == vimrc
+"
+" AUTHOR
+"      Lucas Petherbridge
+"
+" PLUGINS
+"
+" SHORTCUTS
+"       za - toggle fold under cursor
+"       zA - toggle all folds under cursor
+"       zM - close all folds - set foldlevel to 0, foldenable
+"       zR - open all folds - set foldlevel to highest
+"       zX - reset folds to foldlevel
+
+" ==========================================================
+" == Startup
+" Use vim settings rather than vi
+" Must be first because it changes other options
+
+set nocompatible
+
+" ==========================================================
+" == Pathogen Initialization
+" Load all plugins in ~/.vim-runtime/bundle
+
+call pathogen#infect()
+call pathogen#helptags()
+
+" ==========================================================
+" == General Config
+
+let g:snips_author = 'Lucas Petherbridge' " Set author for snippets
+if hostname() == "web-dev2" " Set author email based on host
+    let g:snips_authoremail = 'lpetherbridge@fonality.com'
+else
+    let g:snips_authoremail = 'lukexor@gmail.com'
+endif
+let g:snippets_dir = "~/.vim-runtime/snippets" " Set snippets directory
+
+" Tell vim to remember certain things when we exit
+"   '10  :  marks will be remembered for up to 10 previously edited files
+"   f1   :  enable capital marks
+"   "100 :  will save up to 100 lines for each register
+"   :20  :  up to 20 lines of command-line history will be remembered
+"   %    :  saves and restores the buffer list
+"   n... :  where to save the viminfo files
+set viminfo='100,f1,"100,:20,%,n~/.viminfo
+
+set autoread " Set to auto read when a file is changed from the outside
+set history=1000 " Set how many lines vim has to remember
+
+" ==========================================================
+" == Display Settings
+
+set background=dark " Dark BG is good
+set encoding=utf8 " UTF8 encoding is best
+set ffs=unix,dos,mac " Default file types
+set number " Line numbers
+set t_Co=256 " 256 colors
+colorscheme mustang " Custom colorscheme
+syntax enable " Enable syntax highlighting
+let perl_include_pod = 1 " Syntax highlight pod documentation correctly
+let perl_extended_vars = 1 " Syntax color complex things like @{${'foo'}}
+
+" ==========================================================
+" == Status Settings
+
+set laststatus=2 " Always show the statusline
+
+" Format the statusline
+set statusline=%{HasPaste()} " Whether pastemode is on or not
+set statusline=%F       " Tail of the filename
+set statusline+=\ [%{strlen(&fenc)?&fenc:'none'}, " File encoding
+set statusline+=%{&ff}] " File format
+set statusline+=%h      " Help file flag
+set statusline+=%m      " Modified flag
+set statusline+=%r      " Read only flag
+set statusline+=%w      " Preview window flag
+set statusline+=%y      " Filetype
+set statusline+=[%{&fo}] " Formatoptions enabled
+set statusline+=\ [%{CurDir()}] " Current directory
+set statusline+=%=      " Left/right separator
+set statusline+=%l/%L   " Cursor line/total lines
+set statusline+=\ %P    " Percent through file
+set statusline+=\ c\ %c     " Cursor column
+set statusline+=\ %{exists('g:loaded_fugitive')?fugitive#statusline():''} " Git status
+
+" ==========================================================
+" == Usage settings
+
+set backspace=eol,start,indent " Set backspace config, allowing backspace in insert mode
+set cmdheight=2 " The commandbar height
+set hidden " Hide buffer instead of abandoning
+set hlsearch " Highlight search things
+set ignorecase " Ignore case when searching
+set incsearch " Make search act like search in modern browsers
+set mat=2 " How many tenths of a second to blink
+set noerrorbells " No sound on errors
+set nolazyredraw " Don't redraw while executing macros
+set novisualbell " No visual errors either
+set ruler " Always show current position
+set showcmd " Display incomplete commands
+set showmatch " Show matching brackets when text indicator is over them
+set showmode " Show current mode
+set smartcase " Ignores the above when searching for UPPERcase
+set so=7 " Set 7 lines to the cusrors - when moving vertical..
+set ttyfast " Smoother changes
+set t_vb= " Unsets the visual bell termcap code
+set whichwrap+=<,> " Allow left/right arrow keys move to the next line
+
+" ==========================================================
+" == Fold options
+
+set foldmethod=indent " Fold based on indent
+set foldnestmax=3 " Deepest fold
+set foldlevel=1 " The default depth to fold
+set nofoldenable " Dont fold by default
+
+" ==========================================================
+" == Disable Swap Files
+
+" Turn backup off, since most stuff is in SVN & Git anyway...
+set nobackup
+set noswapfile
+set nowb
+
+" ==========================================================
+" == Persistent Uundo
+
+" Keep undo history across sessions by storing in a file
+if version >= 703
+    silent !mkdir ~/.vim-runtime/undodir > /dev/null 2>&1
+    set undodir=~/.vim-runtime/undodir
+    set undofile
+endif
+
+" ==========================================================
+" == Formatting
+"
+set autoindent " Copy indent from current line when starting a new line
+set breakat=\  " Wrap long lines at space
+set expandtab " Always expand tabs into spaces
+set formatoptions=rql " Allow line-width formatting with <leader>gq
+set linebreak " Wrap long lines at a character in breakat
+set list listchars=tab:\ \ ,trail:\| " Display tabs and trailing spaces visually
+set nowrap " Wrap by default
+set shiftwidth=4 " Number of spaces used for each spent of indent
+set smartindent " Smart indenting for C-like programs
+set smarttab " Tabs according to shiftwidth
+set softtabstop=4 " Spaces a tab counts for when backspacing or inserting tabs
+set tabstop=4 " The number of spaces a tab counts as
+set textwidth=80
+set wrapmargin=10 " Number of characters from the right where wrapping starts
+set spelllang=en
+
+filetype plugin indent on " Enable filetype plugin
+
+" ==========================================================
+" == Completion
+
+set wildmenu " Turn on WiLd menu for name completion
+set wildmode=list:longest " Bash like name-completion
+set wildignore=*.o,*.obj,*~ "stuff to ignore when tab completing
+set wildignore+=*vim-runtime/undodir*
+set wildignore+=*.gem
+set wildignore+=log/**
+set wildignore+=tmp/**
+set wildignore+=*.png,*.jpg,*.gif
+
+" ==========================================================
+" == Scrolling
+
+set scrolloff=8 " Scroll when 8 lines away from margin
+set sidescrolloff=15 " Scroll when 15 lines away from margin
+set sidescroll=1 " Minimum number of columns to scroll horizontally
+
+" ==========================================================
+" == Plugin Settings
+
+let MRU_Max_Entries = 400 " Most Recently Used files
+let g:showmarks_enable=0 " Enable showmarks by default
+let g:user_zen_leader_key = '<c-z>' " zencoding
+
+" ==========================================================
+" == Mappings
+
+let mapleader = "," " With a map leader it's possible to do extra key combinations
+let g:mapleader = ","
+
+" ----------------------------------------------------------
+" -- Mouse Mapping
+
+" set mouse=i " Mouse clicking in insert mode only
+" Scroll up/down 12 lines at a time
+map <ScrollWheelUp> 12k
+map <ScrollWheelDown> 12j
+
+" ----------------------------------------------------------
+" -- Navigation
+
+" Navigate by screen lines instead of file lines
+nnoremap j gj
+nnoremap k gk
+vnoremap j gj
+vnoremap k gk
+imap <Up> <C-O>gk
+imap <Down> <C-O>gj
+map <Up> gk
+map <Down> gj
+
+" Map 0 to move cursor to beginning of line
+map 0 ^
+
+" Move a line of text using CTRL+[jk]
+nnoremap <c-j> :m+<CR>==
+nnoremap <c-k> :m-2<CR>==
+inoremap <c-j> <Esc>:m+<CR>==gi
+inoremap <c-k> <Esc>:m-2<CR>==gi
+vnoremap <c-j> :m'>+<CR>gv=gv
+vnoremap <c-k> :m-2<CR>gv=gv
+
+" ----------------------------------------------------------
+" -- Search
+
+" In visual mode when you press * to search for the current selection
+vnoremap <silent> * :call VisualSearch('f')<CR>
+
+" When you press gv you vimgrep after the selected text
+vnoremap <silent> gv :call VisualSearch('gv')<CR>
+
+" ----------------------------------------------------------
+" -- Settings Toggle
+
+" Toggle auto and smart indenting for paste purposes
+map <F2> <Esc>:set invsmartindent invautoindent<CR>
+map! <F2> <Esc>:set invsmartindent invautoindent<CR>i
+
+" Toggle line numbers
+map <F3> <Esc>:set invnu<CR>
+map! <F3> <Esc>:set invnu<CR>i
+
+" Toggle text mode
+map <F7> <Esc>:call ToggleTextMode()<CR>
+map! <F7> <Esc>:call ToggleTextMode()<CR>i
+
+" Taglist
+map <F8> <Esc>:TlistToggle<CR>
+map! <F8> <Esc>:TlistToggle<CR>i
+
+" Toggle length highlighting
+map <F9> <Esc>:call ToggleOverLengthHi()<CR>
+map! <F9>  <Esc>:call ToggleOverLengthHi()<CR>i
+
+" Toggle insert paste
+map <F10> <Esc>:set invpaste paste?<CR>
+set pastetoggle=<F10>
+
+" Toggle NERDTree panel
+map <F4> <Esc>:NERDTreeToggle<CR>
+
+" ----------------------------------------------------------
+" -- Formatting
+
+" Make tab indent code
+vmap <tab> >gv
+vmap <s-tab> <gv
+nmap <tab> >>
+nmap <s-tab> <<
+
+" Split window pane for better line-wrapping view
+map <leader>l :rightb vnew \| wincmd p<cr>
+
+" Remove the Windows ^M - when the encodings gets messed up
+map <leader>m mmHmt:%s/<C-V><cr>//ge<cr>'tzt'm
+
+" Pressing ,ss will toggle and untoggle spell checking
+map <leader>ss :setlocal spell!<cr>
+
+" Next misspelled word
+map <leader>sn ]s
+" Previous misspelled word
+map <leader>sp [s
+" Add highlighted word
+map <leader>sa zg
+" Remove highlighted word
+map <leader>sr zw
+" List spelling corrections
+map <leader>s? z=
+
+" ----------------------------------------------------------
+" -- Auto-complete
+
+" Map auto complete of (, ", ', [
+" inoremap ( ()<esc>i
+" inoremap [ []<esc>i
+" inoremap { {}<esc>i
+" inoremap $1 {<esc>o}<esc>O
+" inoremap ' ''<esc>i
+" inoremap " ""<esc>i
+" inoremap < <><esc>i
+
+" Smart mappings on the command line
+cno $c e <C-\>eCurrentFileDir("e")<cr>
+
+" ----------------------------------------------------------
+" -- Plugins
+
+" NERDTree
+map <leader>B <Esc>:Bookmark<CR>
+
+" Most Recently Used
+map <leader>f :MRU<CR>
+
+" FuzzyFinder
+map <leader>F :FufFile<CR>
+
+" ----------------------------------------------------------
+" -- Tabs
+
+" Tab configuration
+map <leader>tn :tabnew<cr>
+map <leader>te :tabedit
+map <leader>tc :tabclose<cr>
+map <leader>tm :tabmove
+map <leader><up> :tabr<cr>
+map <leader><down> :tabl<cr>
+map <leader><left> :tabp<cr>
+map <leader><right> :tabn<cr>
+
+" ----------------------------------------------------------
+" -- Quick Shortcuts
+
+" Fast saving
+map <leader>w :w!<cr>
+
+" Fast editing of the .vimrc
+map <leader>e :e! ~/.vim-runtime/vimrc<cr>
+
+" Quit all windows without saving
+map <leader>q :qall!<cr>
+
+" Remove trailing whitespace
+map <leader>s :%s/\s\+$//<cr>:noh<cr>
+
+" Disable search highlighting
+map <leader><cr> :noh<cr>
+
+" Fold on space
+map <space> za
+
+map <leader>c :lcd %:p:h<cr>
+
+" ==========================================================
+" == Functions
+
+" Highlights lines longer than 80 chars
+function! ToggleOverLengthHi()
+    if exists("b:overlengthhi") && b:overlengthhi
+        highlight clear OverLength
+        let b:overlengthhi = 0
+        echo "overlength hilight off"
+    else
+        highlight OverLength ctermbg=darkgrey guibg=#592929
+        match OverLength /\%81v.\+/
+        let b:overlengthhi = 1
+        echo "overlength hilight on"
+    endif
+endfunction
+
+
+" Visual search function
+function! VisualSearch(direction) range
+    let l:saved_reg = @"
+    execute "normal! vgvy"
+
+    let l:pattern = escape(@", '\\/.*$^~[]')
+    let l:pattern = substitute(l:pattern, "\n$", "", "")
+
+    if a:direction == 'b'
+        execute "normal ?" . l:pattern . "^M"
+    elseif a:direction == 'f'
+        execute "normal /" . l:pattern . "^M"
+    endif
+
+    let @/ = l:pattern
+    let @" = l:saved_reg
+endfunction
+
+" Gets current directory and replaces $HOME with, also trims to 40 chars
+function! CurDir()
+    let curdir = substitute(getcwd(), $HOME, "~", "g")
+    if strlen(curdir) > 40
+        return "..." . curdir[-40:]
+    else
+        return curdir
+    endif
+endfunction
+
+" Get current working directory
+function! Cwd()
+  let cwd = getcwd()
+  return "e " . cwd
+endfunction
+
+" Get current file directory
+function! CurrentFileDir(cmd)
+  return a:cmd . " " . expand("%:p:h") . "/"
+endfunction
+
+" Returns [PASTE] if pastemode is enabled
+function! HasPaste()
+    if &paste
+        return '[PASTE] '
+    else
+        return ''
+    endif
+endfunction
+
+" Toggle text editor like formatting
+" t - auto-wrap text using textwidth
+" a - Every time text is inserted/deleted the paragraph will be reformatted
+" w - trailing white space indiates paragraph continues to next line
+" n - recognize numbered lists
+" 2 - Use indent of second line of paragraph when formatting
+function! ToggleTextMode()
+    if exists("b:textmode") && b:textmode
+        set formatoptions-=tawn2
+        let b:textmode = 0
+        echo "text mode off"
+    else
+        let b:textmode = 1
+        set formatoptions+=tawn2
+        echo "text mode on"
+    endif
+endfunction
+
+" ==========================================================
+" == Auto Commands
+
+autocmd! bufwritepost vimrc source ~/.vim-runtime/vimrc " When vimrc is edited, reload it
+
+" Make sure the syntax is always right, even when in the middle of
+" a huge javascript inside an html file.
+autocmd BufEnter * :syntax sync fromstart
+autocmd BufEnter * if &filetype == "" | setlocal ft=txt | endif " Sets default filetype to txt
+
+" Highlight rows longer than 80 characters by default
+" autocmd BufEnter * highlight OverLength ctermbg=darkgrey guibg=#592929
+" autocmd BufEnter * match OverLength /\%81v.\+/
+autocmd BufEnter * let b:overlengthhi = 0
+
+" Set title automatically
+"auto BufEnter * let &titlestring = hostname() . " :: " . expand("%:P")
+"autocmd BufEnter * if bufname("") !~ "^\[A-Za-z0-9\]*://" | lcd %:p:h | endif
+
+" Check perl syntax with :make
+autocmd FileType perl set makeprg=perl\ -c\ %\ $*
+autocmd FileType perl set errorformat=%f:%l%m
+
+" Trim whitespace from end of lines on python files
+autocmd BufWritePre *.py normal m`:%s/\s\+$//e``

@@ -1,0 +1,189 @@
+snippet #!
+	#!/usr/bin/python
+	
+	"""
+	`Filename()`
+	
+	SYNOPSIS
+		python `Filename()` [options]
+	
+	DESCRIPTION
+		TODO: This describes the functionality of this script/module.
+	
+	METHODS
+		TODO:
+	
+	AUTHOR
+		`g:snips_author` <`g:snips_authoremail`>
+	"""
+	
+	def main():
+		"""
+		@param: sys.argv()
+		@return: TODO
+		@throws: TODO
+		"""
+		
+		${1:pass}
+
+	if __name__ == '__main__':
+	    main()
+snippet license
+	LICENSE
+		Copyright (c) `system("date +%Y")` `g:snips_author`
+		All rights reserved.
+
+		Redistribution and use in source and binary forms, with or without
+		modification, are permitted provided that the following conditions are
+		met:
+
+		1. Redistributions of source code must retain the above copyright
+		notice, this list of conditions and the following disclaimer.  2.
+		Redistributions in binary form must reproduce the above copyright
+		notice, this list of conditions and the following disclaimer in the
+		documentation and/or other materials provided with the distribution.
+
+		THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
+		IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+		TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+		PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER
+		OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+		EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+		PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+		PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+		LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+		NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+		SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+		The views and conclusions contained in the software and documentation
+		are those of the authors and should not be interpreted as representing
+		official policies, either expressed or implied, of the FreeBSD Project.
+snippet imp
+	import ${1:module}
+# Module Docstring
+snippet mdoc
+	"""
+	AUTHOR
+		`g:snips_author` <`g:snips_authoremail`>
+	"""
+
+	if __name__ == '__main__':
+	    main()
+
+	def main():
+		"""
+		@param: sys.argv()
+		@return: TODO
+		@throws: TODO
+		"""
+
+		${1:pass}:
+
+snippet wh
+	while ${1:condition}:
+	    ${2:# code...}
+snippet for
+	for ${1:needle} in ${2:haystack}:
+	    ${3:# code...}
+# New Class
+snippet cl
+	class ${1:ClassName}(${2:object}):
+	    """
+		${3:description}
+
+	    Attributes: ${4:attributes}
+	    """
+
+	    def __init__(self, ${5:arg}):
+	        ${6:super($1, self).__init__()}
+	        self.$5 = $5
+	        ${7}
+# New Function
+snippet def
+	def ${1:fname}(${2:`indent('.') ? 'self' : ''`}):
+	    """
+		${3:description}
+
+	    @param: TODO
+	    @return: TODO
+		@throws: TODO
+	    """
+
+	    ${4:pass}
+# New Method
+snippet defs
+	def ${1:mname}(self, ${2:arg}):
+	    """
+		${3:description}
+
+	    @param: TODO
+	    @return: TODO
+		@throws: TODO
+	    """
+
+	    ${4:pass}
+# New Property
+snippet property
+	def ${1:foo}():
+	    doc = "${2:The $1 property.}"
+	    def fget(self):
+	        ${3:return self._$1}
+	    def fset(self, value):
+	        ${4:self._$1 = value}
+# Lambda
+snippet ld
+	${1:var} = lambda ${2:vars} : ${3:action}
+snippet .
+	self.
+snippet try Try/Except
+	try:
+	    ${1:pass}
+	except ${2:Exception}, ${3:e}:
+	    ${4:raise $3}
+snippet try Try/Except/Else
+	try:
+	    ${1:pass}
+	except ${2:Exception}, ${3:e}:
+	    ${4:raise $3}
+	else:
+	    ${5:pass}
+snippet try Try/Except/Finally
+	try:
+	    ${1:pass}
+	except ${2:Exception}, ${3:e}:
+	    ${4:raise $3}
+	finally:
+	    ${5:pass}
+snippet try Try/Except/Else/Finally
+	try:
+	    ${1:pass}
+	except ${2:Exception}, ${3:e}:
+	    ${4:raise $3}
+	else:
+	    ${5:pass}
+	finally:
+	    ${6:pass}
+# if __name__ == '__main__':
+snippet ifmain
+	if __name__ == '__main__':
+	    ${1:main()}
+# __magic__
+snippet _
+	__${1:init}__${2}
+# Method comment
+snippet ""
+	"""
+	${1:description}
+
+	@param: ${2:param}
+	@return: ${3:return}
+	@throws: ${4:throws}
+	"""
+# Header comment
+snippet #=
+	# ==========================================================
+	# == ${1:heading}
+# Sub-header comment
+snippet #-
+	# ----------------------------------------------------------
+	# -- ${1:heading}

@@ -1,0 +1,6 @@
+tags*
+*.tmp
+*.log
+*.mp
+*.swp
+bin/minecraft*

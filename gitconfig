@@ -1,0 +1,18 @@
+[user]
+	name = Luke Petherbridge
+	email = lukexor@gmail.com
+[github]
+	user = lukexor
+	token = ad713daa071e284256dfde40ad14b65e
+[merge]
+	tool = vimdiff
+[diff]
+	tool = vimdiff
+[difftool]
+	prompt = false
+[alias]
+	d = difftool
+[core]
+	excludesfile = ~/.gitignore
+[push]
+	default = simple

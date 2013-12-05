@@ -1,0 +1,15 @@
+# --opening-brace-on-new-line
+-l=80   # Max line width
+-i=4    # Indent level
+-ci=4   # Continuation indent
+# -st     # Output to STDOUT
+-se     # Errors to STDERR
+-vt=2   # vertical tightness
+-cti=0  # indentation for closing brackets
+-pt=1   # parenthesis tightness
+-bt=1   # brace tightness
+-sbt=1  # square bracket tightness
+-bbt=1  # block brace tightness
+-nsfs   # No space before semicolons
+-nolq   # Don't outdent long quoted strings
+-wbb="% + - * / x != == >= <= =~ < > | & **= += *= &= <<= &&= -= /= |= + >>= ||= .= %= ^= x=" # Break before all operators

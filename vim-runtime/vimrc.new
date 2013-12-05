@@ -1,0 +1,121 @@
+"===============================================================================
+"
+" $HOME/.vim_runtime/vimrc file for Vim 7.0 (or later)
+" By Lucas Petherbridge <LukeXOR@gmail.com>
+"
+" Version Controlled with Git
+"
+" Sections:
+"   -> General
+"   -> VIM user interface
+"   -> Colors and Fonts
+"   -> Files and backups
+"   -> Text, tab and indents
+"   -> Visual mode
+"   -> Command mode
+"   -> Moving around, buffers
+"   -> Statusline
+"   -> Parenthesis/Bracket expanding
+"   -> General abbrevs
+"   -> Editing mappings
+"
+" Plugins:
+"
+"===============================================================================
+
+"-------------------------------------------------------------------------------
+" General
+"-------------------------------------------------------------------------------
+" Set hoy many lines vim has to remember
+set history=700
+
+" Enable filetype plugin
+filetype plugin on
+filetype indent on
+
+" Set to auto read when a file is changed from the outside
+set autoread
+
+" With a map leader it's possible to do extra key combinations
+" like <leader>w saves the current file
+let mapleader = ","
+let g:mapleader = ","
+
+" Fast saving
+nmap <leader>w :w!<cr>
+
+" Fast editing of the .vimrc
+map <leader>e :e! ~/.vim_runtime/vimrc<cr>
+
+" When vimrc is edited, reload it
+autocmd! bufwritepost vimrc source ~/.vim_runtime/vimrc
+
+"-------------------------------------------------------------------------------
+" VIM user interface
+"-------------------------------------------------------------------------------
+" Keep 7 lines above and below the cursor
+set scrolloff=7
+
+set wildmenu                                    " Turn on wild menu for name completion
+set wildemode=longest:full                      " Bash like name completion
+
+set ruler                                       " Always show current cursor position
+
+set cmdheight=2                                 " The command bar height
+
+set hidden                                      " Change buffer without saving
+
+set backspace=eol,start,indent                  " Backspace config
+set whichwrap+=<,>                              " Left/Right will move to previous/next line
+
+set ignorecase                                  " Ignore case when searching
+set smartcase                                   " Ignores the above when searching uppercase
+
+set hlsearch                                    " Highlight search things
+
+set incsearch                                   " Make search act in increments like browsers
+set nolazyredraw                                " Dont redraw while executing macros
+
+set showmatch                                   " Show matching brackets when under cursor
+set mat=2                                       " Blink when matching brackets
+
+" No sound on errors
+set noerrorbells
+set novisualbell
+set visualbell t_vb=                            " Disable visual bell
+
+set tm=500                                      " Timeout in ms for keymapping
+
+set ttyfast                                     " Smoother changes
+set showcmd                                     " Display incomplete commands
+set formatoptions=cq                            " Auto-wrap comments, inserting current comment leader. Allow formatting qith gq
+
+set foldmethod=indent                           " Create folds based on indentation
+set foldnestmax=10                              " Deepest fold is 10 levels
+set nofoldenable                                " Dont fold by default
+set foldlevel=1                                 " All folds higher than 1 will close
+
+" Title settings
+auto BufEnter * let &titlestring = hostname() . " :: " . expand("%:P")
+autocmd BufEnter * if bufname("") !~ "^\[A-Za-z0-9\]*://" | lcd %:p:h | endif
+
+set title
+let &titlestring= hostname() . " :: " . expand("%:P")
+
+" Highlight rows longer than 80 characters
+function ToggleOverLengthHi()
+    if exists("b:overlengthhi") && b:overlengthhi
+        highlight clear OverLength
+        let b:overlengthhi = 0
+        echo "overlength hilight off"
+    else
+        " adjust colors/styles as desired
+        highlight OverLength ctermbg=darkgrey guibg=#595959
+        "guisp=blue
+        " change '81' to be 1+(number of columns)
+        match OverLength /\%81v.\+/
+        let b:overlengthhi = 1
+        echo "overlength hilight on"
+    endif
+endfunction
+
