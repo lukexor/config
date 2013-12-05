@@ -88,10 +88,10 @@ case "${HOSTNAME}" in
             pathprepend ${HOME}/bin/fon
         fi
         if [ -d "/var/adm/bin-5.0" ]; then
-            pathprepend /var/adm/bin-5.0
+            pathappend /var/adm/bin-5.0
         fi
         if [ -d "/usr/local/bin-5.0" ]; then
-            pathprepend /usr/local/bin-5.0
+            pathappend /usr/local/bin-5.0
         fi
         ;;
 esac
