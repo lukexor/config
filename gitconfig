@@ -14,5 +14,11 @@
 	d = difftool
 [core]
 	excludesfile = ~/.gitignore
+	editor = vim
+	autocrlf = input
 [push]
 	default = simple
+[color]
+    ui = true
+[branch]
+	autosetuprebase = always
