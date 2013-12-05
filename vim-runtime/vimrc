@@ -37,6 +37,7 @@ else
     let g:snips_authoremail = 'lukexor@gmail.com'
 endif
 let g:snippets_dir = "~/.vim-runtime/snippets" " Set snippets directory
+let ft = &filetype
 
 " Tell vim to remember certain things when we exit
 "   '10  :  marks will be remembered for up to 10 previously edited files
@@ -153,6 +154,7 @@ set tabstop=4 " The number of spaces a tab counts as
 set textwidth=80
 set wrapmargin=10 " Number of characters from the right where wrapping starts
 set spelllang=en
+" set iskeyword-=\_ " Remove _ from keyword so it's not considered a word
 
 filetype plugin indent on " Enable filetype plugin
 
@@ -271,6 +273,9 @@ nmap <s-tab> <<
 " Split window pane for better line-wrapping view
 map <leader>l :rightb vnew \| wincmd p<cr>
 
+" Splits window for better line wrapping
+map <leader>l :rightb vnew \| wincmd p<cr>
+
 " Remove the Windows ^M - when the encodings gets messed up
 map <leader>m mmHmt:%s/<C-V><cr>//ge<cr>'tzt'm
 
@@ -334,6 +339,11 @@ map <leader><right> :tabn<cr>
 " Fast saving
 map <leader>w :w!<cr>
 
+" execute current file
+autocmd FileType ruby map <leader>r :call RunWith("ruby")<cr>
+autocmd FileType python map <leader>r :call RunWith("python")<cr>
+autocmd FileType perl map <leader>r :call RunWith("perl")<cr>
+
 " Fast editing of the .vimrc
 map <leader>e :e! ~/.vim-runtime/vimrc<cr>
 
@@ -342,6 +352,9 @@ map <leader>q :qall!<cr>
 
 " Remove trailing whitespace
 map <leader>s :%s/\s\+$//<cr>:noh<cr>
+
+" Replace tabs with spaces
+map <leader>t :%s/\t/    /g<cr>:noh<cr>
 
 " Disable search highlighting
 map <leader><cr> :noh<cr>
@@ -368,6 +381,11 @@ function! ToggleOverLengthHi()
     endif
 endfunction
 
+" Save and run the command, measuring time it takes to run
+function RunWith(command)
+    execute "w"
+    execute "!clear;time " . a:command . " " .expand("%:p")
+endfunction
 
 " Visual search function
 function! VisualSearch(direction) range
