@@ -42,9 +42,7 @@ export HISTFILE="${HOME}/.bhist"
 export HISTFILESIZE="10000" # Number of commands saved in HISTFILE
 export HISTSIZE="1000" # Number of commands saved in command history
 export HISTTIMEFORMAT="[%F %a %T] " # YYYY-MM-DD DAY HH:MM:SS
-export AWS_RDS_HOME="${HOME}/bin/rdscli"
 export JAVA_HOME="/usr"
-export AWS_CREDENTIAL_FILE="${AWS_RDS_HOME}/fcs-aws-credential"
 
 # Grep
 export GREP_OPTIONS="--color=auto"
@@ -72,6 +70,9 @@ if [ -d "${HOME}/lib" ]; then
     export PERL5LIB="${HOME}/lib${PERL5LIB:+:$PERL5LIB}"
 fi
 
+if [ -d "${HOME}/.rvm/bin" ]; then
+    pathprepend "${HOME}/.rvm/bin"
+fi
 if [ -d "/usr/local/bin" ]; then
     pathprepend "/usr/local/bin"
 fi
@@ -127,3 +128,5 @@ unset pathprepend
 
 [ -d "${HOME}/.profile" ] && . "${HOME}/.profile"
 case "$-" in *i*) [ -r "${HOME}/.bashrc" ] && . "${HOME}/.bashrc"; esac
+
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
