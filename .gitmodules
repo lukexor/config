@@ -19,3 +19,12 @@
 [submodule "bin/dotfiles"]
 	path = bin/dotfiles
 	url = git://github.com/jbernard/dotfiles.git
+[submodule "vim-runtime/bundle/vim-ruby"]
+	path = vim-runtime/bundle/vim-ruby
+	url = https://github.com/vim-ruby/vim-ruby
+[submodule "vim-runtime/bundle/vim-rails"]
+	path = vim-runtime/bundle/vim-rails
+	url = https://github.com/tpope/vim-rails
+[submodule "vim-runtime/bundle/vim-cucumber"]
+	path = vim-runtime/bundle/vim-cucumber
+	url = https://github.com/tpope/vim-cucumber
