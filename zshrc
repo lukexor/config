@@ -306,3 +306,5 @@ unset -f sourcefile
 unset -f path_check
 unset -f pathadd
 unset -f is_plugin
+
+PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
