@@ -129,6 +129,8 @@ windowlist string "[%h]"
 ## STARTUP SCREENS
 ## ===============================================================
 
+setenv SSH_AUTH_SOCK /tmp/ssh-agent-$USER-screen
+
 screen 3
 screen 2
 screen 1
