@@ -25,8 +25,8 @@ set nocompatible
 " Load all plugins in ~/.vim-runtime/bundle
 
 if v:version > 700
-    call pathogen#infect()
     call pathogen#helptags()
+    call pathogen#infect()
 endif
 
 " ==========================================================
@@ -42,7 +42,7 @@ let g:snippets_dir = "~/.vim-runtime/snippets" " Set snippets directory
 let ft = &filetype
 
 " Tell vim to remember certain things when we exit
-"   '10  :  marks will be remembered for up to 10 previously edited files
+"   '100  : marks will be remembered for up to 100 previously edited files
 "   f1   :  enable capital marks
 "   "100 :  will save up to 100 lines for each register
 "   :20  :  up to 20 lines of command-line history will be remembered
@@ -51,18 +51,20 @@ let ft = &filetype
 set viminfo='100,f1,"100,:20,%,n~/.viminfo
 
 set autoread " Set to auto read when a file is changed from the outside
+set hidden " Hide buffers instead of closing them
 set history=1000 " Set how many lines vim has to remember
+set undolevels=1000 " How many undos
 
 " ==========================================================
 " == Display Settings
 
-set background=dark " Dark BG is good
+" set background=dark " Dark BG is good
 set encoding=utf8 " UTF8 encoding is best
 set ffs=unix,dos,mac " Default file types
 set number " Line numbers
-set t_Co=256 " 256 colors
-colorscheme mustang " Custom colorscheme
-syntax enable " Enable syntax highlighting
+set t_Co=256 " Force 256 colors
+colorscheme zhayedan " Custom colorscheme
+syntax enable
 let perl_include_pod = 1 " Syntax highlight pod documentation correctly
 let perl_extended_vars = 1 " Syntax color complex things like @{${'foo'}}
 
@@ -71,6 +73,7 @@ let perl_extended_vars = 1 " Syntax color complex things like @{${'foo'}}
 
 set laststatus=2 " Always show the statusline
 
+set title
 " Format the statusline
 set statusline=%{HasPaste()} " Whether pastemode is on or not
 set statusline=%F       " Tail of the filename
@@ -101,9 +104,9 @@ set hlsearch " Highlight search things
 set ignorecase " Ignore case when searching
 set incsearch " Make search act like search in modern browsers
 set mat=2 " How many tenths of a second to blink
-set noerrorbells " No sound on errors
 set nolazyredraw " Don't redraw while executing macros
 set novisualbell " No visual errors either
+set noerrorbells " No sound on errors
 set ruler " Always show current position
 set showcmd " Display incomplete commands
 set showmatch " Show matching brackets when text indicator is over them
@@ -117,7 +120,7 @@ set whichwrap+=<,> " Allow left/right arrow keys move to the next line
 " ==========================================================
 " == Fold options
 
-if v:version > 700
+if exists('&foldenable')
     set foldmethod=indent " Fold based on indent
     set foldnestmax=3 " Deepest fold
     set foldlevel=1 " The default depth to fold
@@ -136,7 +139,7 @@ set nowb
 " == Persistent Uundo
 
 " Keep undo history across sessions by storing in a file
-if version >= 703
+if exists('&undofile')
     silent !mkdir ~/.vim-runtime/undodir > /dev/null 2>&1
     set undodir=~/.vim-runtime/undodir
     set undofile
@@ -145,13 +148,18 @@ endif
 " ==========================================================
 " == Formatting
 "
-set autoindent " Copy indent from current line when starting a new line
+set autoindent
+set copyindent " Copy indent from current line when starting a new line
 set breakat=\  " Wrap long lines at space
 set expandtab " Always expand tabs into spaces
 set formatoptions=rql " Allow line-width formatting with <leader>gq
 set linebreak " Wrap long lines at a character in breakat
-set list listchars=tab:\ \ ,trail:\| " Display tabs and trailing spaces visually
-set nowrap " Wrap by default
+set list listchars=tab:❘-,trail:·,extends:»,precedes:«,nbsp:× " display indentation guides
+autocmd filetype html,xml set listchars-=tab:>. " Don't display tabs for html and xml
+" autocmd! bufreadpost * set noexpandtab | retab! 4 " convert spaces to tabs when reading file
+" autocmd! bufwritepre * set expandtab | retab! 4 " convert tabs to spaces before writing file
+" autocmd! bufwritepost * set noexpandtab | retab! 4 " convert spaces to tabs after writing file (to show guides again)
+set nowrap " nowrap by default
 set shiftwidth=4 " Number of spaces used for each spent of indent
 set smartindent " Smart indenting for C-like programs
 set smarttab " Tabs according to shiftwidth
@@ -159,7 +167,7 @@ set softtabstop=4 " Spaces a tab counts for when backspacing or inserting tabs
 set tabstop=4 " The number of spaces a tab counts as
 set textwidth=80
 set wrapmargin=10 " Number of characters from the right where wrapping starts
-if v:version > 700
+if has('spell')
     set spelllang=en
 endif
 " set iskeyword-=\_ " Remove _ from keyword so it's not considered a word
@@ -177,6 +185,7 @@ set wildignore+=*.gem
 set wildignore+=log/**
 set wildignore+=tmp/**
 set wildignore+=*.png,*.jpg,*.gif
+set wildignore+=*.swp,*.bak,*.pyc,*.class
 
 " ==========================================================
 " == Scrolling
@@ -189,7 +198,9 @@ set sidescroll=1 " Minimum number of columns to scroll horizontally
 " == Plugin Settings
 
 let MRU_Max_Entries = 400 " Most Recently Used files
+let NERDTreeMouseMode = 2 " Single click for directories, double click for files
 let g:showmarks_enable=0 " Enable showmarks by default
+let delimitMate_expand_cr = 1
 let g:user_zen_leader_key = '<c-z>' " zencoding
 
 " ==========================================================
@@ -199,14 +210,6 @@ let mapleader = "," " With a map leader it's possible to do extra key combinatio
 let g:mapleader = ","
 
 " ----------------------------------------------------------
-" -- Mouse Mapping
-
-" set mouse=i " Mouse clicking in insert mode only
-" Scroll up/down 12 lines at a time
-map <ScrollWheelUp> 12k
-map <ScrollWheelDown> 12j
-
-" ----------------------------------------------------------
 " -- Navigation
 
 " Navigate by screen lines instead of file lines
@@ -214,10 +217,18 @@ nnoremap j gj
 nnoremap k gk
 vnoremap j gj
 vnoremap k gk
-imap <Up> <C-O>gk
-imap <Down> <C-O>gj
-map <Up> gk
-map <Down> gj
+
+" Force myself to use hjkl
+map <up> <nop>
+map <down> <nop>
+map <left> <nop>
+map <right> <nop>
+
+" Easy window navigation
+map <C-h> <C-w>h
+map <C-j> <C-w>j
+map <C-k> <C-w>k
+map <C-l> <C-w>l
 
 " Map 0 to move cursor to beginning of line
 map 0 ^
@@ -250,6 +261,10 @@ map! <F2> <Esc>:set invsmartindent invautoindent<CR>i
 map <F3> <Esc>:set invnu<CR>
 map! <F3> <Esc>:set invnu<CR>i
 
+" Toggle mouse
+map <F4> <Esc>:call ToggleMouse()<CR>
+map! <F4> <Esc>:call ToggleMouse()<CR>i
+
 " Toggle text mode
 map <F7> <Esc>:call ToggleTextMode()<CR>
 map! <F7> <Esc>:call ToggleTextMode()<CR>i
@@ -267,7 +282,7 @@ map <F10> <Esc>:set invpaste paste?<CR>
 set pastetoggle=<F10>
 
 " Toggle NERDTree panel
-map <F4> <Esc>:NERDTreeToggle<CR>
+map <leader>d :NERDTreeToggle<CR>
 
 " ----------------------------------------------------------
 " -- Formatting
@@ -328,6 +343,13 @@ map <leader>f :MRU<CR>
 " FuzzyFinder
 map <leader>F :FufFile<CR>
 
+" Use <leader>t to open ctrlp
+let g:ctrlp_map = '<leader>t'
+" Ignore these directories
+set wildignore+=*/build/**
+" disable caching
+let g:ctrlp_use_caching=0
+
 " ----------------------------------------------------------
 " -- Tabs
 
@@ -353,7 +375,8 @@ autocmd FileType python map <leader>r :call RunWith("python")<cr>
 autocmd FileType perl map <leader>r :call RunWith("perl")<cr>
 
 " Fast editing of the .vimrc
-map <leader>e :e! ~/.vim-runtime/vimrc<cr>
+map <leader>ev :so ~/.vim-runtime/vimrc<cr>
+map <leader>sv :so ~/.vim-runtime/vimrc<cr>
 
 " Quit all windows without saving
 map <leader>q :qall!<cr>
@@ -362,18 +385,39 @@ map <leader>q :qall!<cr>
 map <leader>s :%s/\s\+$//<cr>:noh<cr>
 
 " Replace tabs with spaces
-map <leader>t :%s/\t/    /g<cr>:noh<cr>
+map <leader>rt :%s/\t/  /g<cr>:noh<cr>
 
 " Disable search highlighting
-map <leader><cr> :noh<cr>
+map <leader><cr> :nohlsearch<cr>
 
 " Fold on space
 map <space> za
 
+" Change to current working directory of file being edit
 map <leader>c :lcd %:p:h<cr>
+
+" Write a file with sudo
+cmap w!! w !sudo tee % >/dev/null
 
 " ==========================================================
 " == Functions
+
+" Toggle mouse use
+
+function! ToggleMouse()
+    if !exists("s:old_mouse")
+        let s:old_mouse = "a"
+    endif
+
+    if &mouse == ""
+        let &mouse = s:old_mouse
+        echo "Mouse is for Vim (" . &mouse . ")"
+    else
+        let s:old_mouse = &mouse
+        let &mouse=""
+        echo "Mouse is for terminal"
+    endif
+endfunction
 
 " Highlights lines longer than 80 chars
 function! ToggleOverLengthHi()
@@ -387,10 +431,11 @@ function! ToggleOverLengthHi()
         let b:overlengthhi = 1
         echo "overlength hilight on"
     endif
+
 endfunction
 
 " Save and run the command, measuring time it takes to run
-function RunWith(command)
+function! RunWith(command)
     execute "w"
     execute "!clear;time " . a:command . " " .expand("%:p")
 endfunction
@@ -485,4 +530,4 @@ autocmd FileType perl set makeprg=perl\ -c\ %\ $*
 autocmd FileType perl set errorformat=%f:%l%m
 
 " Trim whitespace from end of lines on python files
-autocmd BufWritePre *.py normal m`:%s/\s\+$//e``
+" autocmd BufWritePre *.py normal m`:%s/\s\+$//e``
