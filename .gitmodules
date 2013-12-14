@@ -40,3 +40,12 @@
 [submodule "vim-runtime/bundle/yankring"]
 	path = vim-runtime/bundle/yankring
 	url = https://github.com/vim-scripts/YankRing.vim
+[submodule "vim-runtime/bundle/syntastic"]
+	path = vim-runtime/bundle/syntastic
+	url = https://github.com/scrooloose/syntastic
+[submodule "vim-runtime/bundle/nerdtree"]
+	path = vim-runtime/bundle/nerdtree
+	url = https://github.com/scrooloose/nerdtree
+[submodule "vim-runtime/bundle/tagbar"]
+	path = vim-runtime/bundle/tagbar
+	url = https://github.com/majutsushi/tagbar
