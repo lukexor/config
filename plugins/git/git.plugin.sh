@@ -17,20 +17,16 @@ alias gcount='git shortlog -sn'
 alias gcp='git cherry-pick'
 alias gd='git diff --color-words'
 alias gdt='git difftool'
-alias gf='git fetch'
-alias gfo='git fetch origin'
-alias gfr='git fetch && git rebase'
+alias gf='git fetch origin'
 alias gi='git_info.sh'
 alias gif='git_info.sh full'
-alias gl='git log'
+alias gl='git log --oneline --decorate --max-count=5'
 alias glf='git log --pretty=format:"%h - %an, %ar : %s"'
-alias glg='git log --stat --max-count=5'
-alias glgg='git log --graph --pretty=format:"%h - %an, %ar : %s"'
+alias glg='git log --graph --pretty=format:"%h -%Cblue%d%Creset %Cgreen%an%Creset, %ar : %s"'
+alias glg5='glg --max-count=5'
 alias glp='git log -p'
 alias gls='git log -1 HEAD'
 alias gm='git merge'
-alias gpl='git pull'
-alias gplo='git pull origin'
 alias gps='git push'
 alias gpso='git push origin master'
 alias gpt='git push --tags'
@@ -61,7 +57,7 @@ alias git-svn-dcommit-push='git svn dcommit && git push github master:svntrunk'
 #
 function current_branch() {
   ref=$(git symbolic-ref HEAD 2> /dev/null) || return
-  echo "git:${ref#refs/heads/}"
+  echo "${ref#refs/heads/}"
 }
 
 # these aliases take advantage of the previous function
@@ -69,6 +65,8 @@ alias ggpl='git pull origin $(current_branch)'
 alias ggps='git push origin $(current_branch)'
 alias ggpnp='git pull origin $(current_branch) && git push origin $(current_branch)'
 alias ggbd='git push $(current_branch) :'
+alias gstm='glg $(current_branch) ^master'
+alias gstb='glg master ^$(current_branch)'
 
 # Get git info
 function git_prompt_info() {
