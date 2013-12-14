@@ -261,6 +261,9 @@ vnoremap <s-k> :m-2<CR>gv=gv
 " Show yank ring window
 nnoremap <leader>r :YRShow<CR>
 
+" Change NERDTree to current file directory
+nnoremap <leader>nc :nerdtreefind<cr>
+
 " ----------------------------------------------------------
 " -- Search
 
@@ -337,15 +340,6 @@ map <leader>s? z=
 
 " ----------------------------------------------------------
 " -- Auto-complete
-
-" Map auto complete of (, ", ', [
-" inoremap ( ()<esc>i
-" inoremap [ []<esc>i
-" inoremap { {}<esc>i
-" inoremap $1 {<esc>o}<esc>O
-" inoremap ' ''<esc>i
-" inoremap " ""<esc>i
-" inoremap < <><esc>i
 
 " Smart mappings on the command line
 cno $c e <C-\>eCurrentFileDir("e")<cr>
@@ -531,10 +525,10 @@ endfunction
 autocmd! bufwritepost vimrc source ~/.vim-runtime/vimrc " When vimrc is edited, reload it
 
 " Open NERDTree automatically
-autocmd vimenter * NERDTree | wincmd p | TagbarOpen
+autocmd vimenter * NERDTree | NERDTreeFind |  wincmd p | TagbarOpen
 
 " Closes if NERDTree is the only open window
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
+autocmd BufEnter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
 
 " Make sure the syntax is always right, even when in the middle of
 " a huge javascript inside an html file.
