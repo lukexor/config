@@ -42,51 +42,44 @@ hi Special      guifg=#c0a0d0   guibg=NONE      ctermfg=182    ctermbg=NONE     
 hi Delimiter    guifg=#c0a0d0   guibg=NONE      ctermfg=039    ctermbg=NONE      gui=none      cterm=none
 hi BSpecial     guifg=#c0a0d0   guibg=NONE      ctermfg=182    ctermbg=NONE      gui=bold      cterm=bold
 
-if version >= 700
-  hi Pmenu			ctermfg=Black	ctermbg=Cyan				guifg=Black	guibg=Cyan
-  hi PmenuSel			ctermfg=Black	ctermbg=Grey				guifg=Black	guibg=Grey
-  hi PmenuSbar			ctermfg=Black	ctermbg=Grey				guifg=Black	guibg=Grey
-  hi PmenuThumb	cterm=reverse						gui=reverse
-endif
-
 " == Text Markup ==
 hi Underlined   guifg=fg        guibg=NONE      ctermfg=fg     ctermbg=NONE      gui=underline cterm=underline
 hi Error        guifg=#e07070   guibg=#503030   ctermfg=167    ctermbg=236       gui=none      cterm=none
 hi Todo         guifg=#e0e090   guibg=#505000   ctermfg=186    ctermbg=NONE      gui=none      cterm=none
-hi MatchParen   guibg=#000000        guibg=#c0e070   ctermbg=000     ctermbg=192       gui=none      cterm=bold
+hi MatchParen   guibg=#000000        guibg=#c0e070   ctermfg=015     ctermbg=000       gui=none      cterm=bold
 hi NonText      guifg=#405060   guibg=NONE      ctermfg=024    ctermbg=NONE      gui=none      cterm=none
 hi SpecialKey   guifg=#406050   guibg=NONE      ctermfg=023    ctermbg=NONE      gui=none      cterm=none
 hi Title        guifg=#50b0d0   guibg=NONE      ctermfg=074    ctermbg=NONE      gui=bold      cterm=bold
 
 " == Text Selection ==
-hi Cursor       guibg=#000000        guibg=fg        ctermbg=000     ctermbg=fg        gui=none      cterm=none
-hi CursorIM     guibg=#000000        guibg=fg        ctermbg=000     ctermbg=fg        gui=none      cterm=none
+hi Cursor       guibg=#000000        guibg=fg        ctermfg=000     ctermbg=fg        gui=none      cterm=none
+hi CursorIM     guibg=#000000        guibg=fg        ctermfg=000     ctermbg=fg        gui=none      cterm=none
 hi CursorColumn guifg=NONE      guibg=#484848   ctermfg=NONE   ctermbg=237       gui=none      cterm=none
 hi CursorLine   guifg=NONE      guibg=#484848   ctermfg=NONE   ctermbg=237       gui=none      cterm=none
 hi Visual       guifg=NONE      guibg=#205070   ctermfg=NONE   ctermbg=024       gui=none      cterm=none
 hi VisualNOS    guifg=fg        guibg=NONE      ctermfg=fg     ctermbg=NONE      gui=underline cterm=underline
-hi IncSearch    guibg=#000000        guibg=#50d0d0   ctermbg=000     ctermbg=029       gui=none      cterm=none
-hi Search       guibg=#000000        guibg=#e0a020   ctermbg=000     ctermbg=025       gui=none      cterm=none
+hi IncSearch    guibg=#000000        guibg=#50d0d0   ctermfg=000     ctermbg=029       gui=none      cterm=none
+hi Search       guibg=#000000        guibg=#e0a020   ctermfg=000     ctermbg=025       gui=none      cterm=none
 
 " == UI ==
-hi Pmenu        guifg=#000000   guibg=#b0b0b0   ctermbg=000     ctermbg=252       gui=none      cterm=none
-hi PmenuSel     guifg=#e0e0e0   guibg=#205070   ctermfg=fg     ctermbg=024       gui=none      cterm=none
-hi PMenuSbar    guibg=#000000        guibg=#b0b0b0   ctermbg=000     ctermbg=254       gui=none      cterm=none
-hi PMenuThumb   guifg=NONE      guibg=#808080   ctermfg=fg     ctermbg=244       gui=none      cterm=none
+hi Pmenu        guifg=#000000   guibg=#b0b0b0   ctermfg=000     ctermbg=252       gui=none      cterm=none
+hi PmenuSel     guifg=#e0e0e0   guibg=#205070   ctermfg=000     ctermbg=024       gui=none      cterm=none
+hi PMenuSbar    guibg=#000000        guibg=#b0b0b0   ctermfg=000     ctermbg=254       gui=none      cterm=none
+hi PMenuThumb   guifg=NONE      guibg=#808080   ctermfg=000 ctermbg=244       gui=none      cterm=none
 hi StatusLine   guibg=#000000        guibg=#b0b0b0   ctermfg=253    ctermbg=238       gui=bold      cterm=bold
 hi StatusLineNC guifg=#404040   guibg=#b0b0b0   ctermfg=240    ctermbg=252       gui=none      cterm=none
-hi TabLine      guibg=#000000        guibg=#b0b0b0   ctermbg=000     ctermbg=252       gui=none      cterm=none
+hi TabLine      guibg=#000000        guibg=#b0b0b0   ctermfg=000     ctermbg=252       gui=none      cterm=none
 hi TabLineFill  guifg=#404040   guibg=#b0b0b0   ctermfg=240    ctermbg=252       gui=none      cterm=none
 hi TabLineSel   guifg=#e0e0e0   guibg=#205070   ctermfg=fg     ctermbg=024       gui=bold      cterm=bold
 hi VertSplit    guifg=#606060   guibg=#b0b0b0   ctermfg=245    ctermbg=252       gui=none      cterm=none
-hi Folded       guibg=#000000        guibg=#808080   ctermbg=000     ctermbg=246       gui=none      cterm=none
-hi FoldColumn   guibg=#000000        guibg=#808080   ctermbg=000     ctermbg=246       gui=none      cterm=none
+hi Folded       guibg=#000000        guibg=#808080   ctermfg=000     ctermbg=246       gui=none      cterm=none
+hi FoldColumn   guibg=#000000        guibg=#808080   ctermfg=000     ctermbg=246       gui=none      cterm=none
 
 " == Spelling =="{{{
-"hi SpellBad     guisp=#ee0000                   ctermfg=fg     ctermbg=160       gui=undercurl cterm=undercurl
-"hi SpellCap     guisp=#eeee00                   ctermbg=NONE   ctermbg=226       gui=undercurl cterm=undercurl
-"hi SpellRare    guisp=#ffa500                   ctermbg=NONE   ctermbg=214       gui=undercurl cterm=undercurl
-"hi SpellLocal   guisp=#ffa500                   ctermbg=NONE   ctermbg=214       gui=undercurl cterm=undercurl"}}}
+hi SpellBad     guisp=#ee0000                   ctermfg=000     ctermbg=160       gui=undercurl cterm=undercurl
+hi SpellCap     guisp=#eeee00                   ctermbg=NONE   ctermbg=226       gui=undercurl cterm=undercurl
+hi SpellRare    guisp=#ffa500                   ctermbg=NONE   ctermbg=214       gui=undercurl cterm=undercurl
+hi SpellLocal   guisp=#ffa500                   ctermbg=NONE   ctermbg=214       gui=undercurl cterm=undercurl"}}}
 
 " == Diff ==
 hi DiffAdd      guifg=fg        guibg=#405040   ctermfg=fg     ctermbg=022       gui=none      cterm=none
