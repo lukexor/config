@@ -51,6 +51,7 @@ let ft = &filetype
 "   n... :  where to save the viminfo files
 set viminfo='100,f1,"100,:20,%,n~/.viminfo
 
+set grepprg=grep\ -nH\ $* " Set grep to always print filename headers
 set autoread " Set to auto read when a file is changed from the outside
 set hidden " Hide buffers instead of closing them
 set history=1000 " Set how many lines vim has to remember
@@ -59,15 +60,27 @@ set undolevels=1000 " How many undos
 " ==========================================================
 " == Display Settings
 
-" set background=dark " Dark BG is good
+set background=dark " Dark BG is good
 set encoding=utf8 " UTF8 encoding is best
 set ffs=unix,dos,mac " Default file types
 set number " Line numbers
+set cpoptions+=n
 set t_Co=256 " Force 256 colors
 colorscheme zhayedan " Custom colorscheme
 syntax enable
 let perl_include_pod = 1 " Syntax highlight pod documentation correctly
 let perl_extended_vars = 1 " Syntax color complex things like @{${'foo'}}
+set cursorline
+
+" Default Colors for CursorLine
+highlight  CursorLine ctermbg=017 ctermfg=None
+
+" Change Color when entering Insert Mode
+autocmd InsertEnter * highlight  CursorLine ctermbg=235 ctermfg=None
+
+" Revert Color to default when leaving Insert Mode
+autocmd InsertLeave * highlight  CursorLine ctermbg=017 ctermfg=None
+
 
 " ==========================================================
 " == Status Settings
@@ -123,9 +136,9 @@ set whichwrap+=<,> " Allow left/right arrow keys move to the next line
 
 if exists('&foldenable')
     set foldmethod=indent " Fold based on indent
-    set foldnestmax=3 " Deepest fold
+    set foldnestmax=2 " Deepest fold
     set foldlevel=1 " The default depth to fold
-    set nofoldenable " Dont fold by default
+    set foldenable " Dont fold by default
 endif
 
 " ==========================================================
@@ -200,6 +213,8 @@ set sidescroll=1 " Minimum number of columns to scroll horizontally
 
 let MRU_Max_Entries = 400 " Most Recently Used files
 let NERDTreeMouseMode = 2 " Single click for directories, double click for files
+let g:NERDTreeDirArrows=0
+let g:NERDTreeWinSize = 30
 let g:showmarks_enable=0 " Enable showmarks by default
 let delimitMate_expand_cr = 1
 let g:user_zen_leader_key = '<leader>z' " zencoding
@@ -221,35 +236,31 @@ nnoremap k gk
 vnoremap j gj
 vnoremap k gk
 
+nnoremap <C-j> 12j
+nnoremap <C-k> 12k
+vnoremap <C-j> 12j
+nnoremap <C-k> 12k
+
 " Force myself to use hjkl
 map <up> <nop>
 map <down> <nop>
 map <left> <nop>
 map <right> <nop>
 
-" Easy window navigation
-map <C-h> <C-w>h
-map <C-j> <C-w>j
-map <C-k> <C-w>k
-map <C-l> <C-w>l
-
 " Map 0 to move cursor to beginning of line
 map 0 ^
 
 " Move a line of text using CTRL+[jk]
-nnoremap <c-j> :m+<CR>==
-nnoremap <c-k> :m-2<CR>==
-inoremap <c-j> <Esc>:m+<CR>==gi
-inoremap <c-k> <Esc>:m-2<CR>==gi
-vnoremap <c-j> :m'>+<CR>gv=gv
-vnoremap <c-k> :m-2<CR>gv=gv
+nnoremap <s-j> :m+<CR>==
+nnoremap <s-k> :m-2<CR>==
+inoremap <s-j> <Esc>:m+<CR>==gi
+inoremap <s-k> <Esc>:m-2<CR>==gi
+vnoremap <s-j> :m'>+<CR>gv=gv
+vnoremap <s-k> :m-2<CR>gv=gv
 
 " Show yank ring window
 nnoremap <leader>r :YRShow<CR>
 
-" Toggle mouse
-map <F4> <Esc>:call ToggleMouse()<CR>
-map! <F4> <Esc>:call ToggleMouse()<CR>i
 " ----------------------------------------------------------
 " -- Search
 
@@ -270,13 +281,19 @@ map! <F2> <Esc>:set invsmartindent invautoindent<CR>i
 map <F3> <Esc>:set invnu<CR>
 map! <F3> <Esc>:set invnu<CR>i
 
+" Toggle mouse
+map <F4> <Esc>:call ToggleMouse()<CR>
+map! <F4> <Esc>:call ToggleMouse()<CR>i
+
+map <F5> <Esc>:NERDTreeToggle()<CR>
+map! <F5> <Esc>:NERDTreeToggle()<CR>i
+
+map <F8> <Esc>:TagbarToggle<CR>
+map! <F8> <Esc>:TagbarToggle<CR>i
+
 " Toggle text mode
 map <F7> <Esc>:call ToggleTextMode()<CR>
 map! <F7> <Esc>:call ToggleTextMode()<CR>i
-
-" Taglist
-map <F8> <Esc>:TlistToggle<CR>
-map! <F8> <Esc>:TlistToggle<CR>i
 
 " Toggle length highlighting
 map <F9> <Esc>:call ToggleOverLengthHi()<CR>
@@ -512,6 +529,12 @@ endfunction
 " == Auto Commands
 
 autocmd! bufwritepost vimrc source ~/.vim-runtime/vimrc " When vimrc is edited, reload it
+
+" Open NERDTree automatically
+autocmd vimenter * NERDTree | wincmd p | TagbarOpen
+
+" Closes if NERDTree is the only open window
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
 
 " Make sure the syntax is always right, even when in the middle of
 " a huge javascript inside an html file.
