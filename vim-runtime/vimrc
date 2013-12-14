@@ -242,10 +242,10 @@ vnoremap <C-j> 12j
 nnoremap <C-k> 12k
 
 " Force myself to use hjkl
-map <up> <nop>
-map <down> <nop>
-map <left> <nop>
-map <right> <nop>
+" map <up> <nop>
+" map <down> <nop>
+" map <left> <nop>
+" map <right> <nop>
 
 " Map 0 to move cursor to beginning of line
 map 0 ^
@@ -525,7 +525,7 @@ endfunction
 autocmd! bufwritepost vimrc source ~/.vim-runtime/vimrc " When vimrc is edited, reload it
 
 " Open NERDTree automatically
-autocmd vimenter * NERDTree | NERDTreeFind |  wincmd p | TagbarOpen
+autocmd vimenter * NERDTreeFind | wincmd p | TagbarOpen
 
 " Closes if NERDTree is the only open window
 autocmd BufEnter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
