@@ -34,3 +34,9 @@
 [submodule "vim-runtime/bundle/ctrlp"]
 	path = vim-runtime/bundle/ctrlp
 	url = https://github.com/kien/ctrlp.vim
+[submodule "vim-runtime/bundle/command-t"]
+	path = vim-runtime/bundle/command-t
+	url = git://git.wincent.com/command-t.git
+[submodule "vim-runtime/bundle/yankring"]
+	path = vim-runtime/bundle/yankring
+	url = https://github.com/vim-scripts/YankRing.vim
