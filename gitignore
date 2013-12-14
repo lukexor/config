@@ -4,3 +4,6 @@ tags*
 *.mp
 *.swp
 bin/minecraft*
+.includepath
+.project
+.settings/
