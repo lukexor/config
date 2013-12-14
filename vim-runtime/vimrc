@@ -25,6 +25,7 @@ set nocompatible
 " Load all plugins in ~/.vim-runtime/bundle
 
 if v:version > 700
+    let g:pathogen_disabled = ['command-t']
     call pathogen#helptags()
     call pathogen#infect()
 endif
@@ -201,7 +202,9 @@ let MRU_Max_Entries = 400 " Most Recently Used files
 let NERDTreeMouseMode = 2 " Single click for directories, double click for files
 let g:showmarks_enable=0 " Enable showmarks by default
 let delimitMate_expand_cr = 1
-let g:user_zen_leader_key = '<c-z>' " zencoding
+let g:user_zen_leader_key = '<leader>z' " zencoding
+let g:SuperTabNoCompleteAfter = ['^', ',', '\s']
+let g:SuperTabNoCompleteBefore = ['\w']
 
 " ==========================================================
 " == Mappings
@@ -241,6 +244,12 @@ inoremap <c-k> <Esc>:m-2<CR>==gi
 vnoremap <c-j> :m'>+<CR>gv=gv
 vnoremap <c-k> :m-2<CR>gv=gv
 
+" Show yank ring window
+nnoremap <leader>r :YRShow<CR>
+
+" Toggle mouse
+map <F4> <Esc>:call ToggleMouse()<CR>
+map! <F4> <Esc>:call ToggleMouse()<CR>i
 " ----------------------------------------------------------
 " -- Search
 
@@ -261,10 +270,6 @@ map! <F2> <Esc>:set invsmartindent invautoindent<CR>i
 map <F3> <Esc>:set invnu<CR>
 map! <F3> <Esc>:set invnu<CR>i
 
-" Toggle mouse
-map <F4> <Esc>:call ToggleMouse()<CR>
-map! <F4> <Esc>:call ToggleMouse()<CR>i
-
 " Toggle text mode
 map <F7> <Esc>:call ToggleTextMode()<CR>
 map! <F7> <Esc>:call ToggleTextMode()<CR>i
@@ -280,9 +285,6 @@ map! <F9>  <Esc>:call ToggleOverLengthHi()<CR>i
 " Toggle insert paste
 map <F10> <Esc>:set invpaste paste?<CR>
 set pastetoggle=<F10>
-
-" Toggle NERDTree panel
-map <leader>d :NERDTreeToggle<CR>
 
 " ----------------------------------------------------------
 " -- Formatting
@@ -343,8 +345,8 @@ map <leader>f :MRU<CR>
 " FuzzyFinder
 map <leader>F :FufFile<CR>
 
-" Use <leader>t to open ctrlp
-let g:ctrlp_map = '<leader>t'
+" Use <leader>d to open ctrlp
+let g:ctrlp_map = '<leader>d'
 " Ignore these directories
 set wildignore+=*/build/**
 " disable caching
