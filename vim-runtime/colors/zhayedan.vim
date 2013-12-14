@@ -90,7 +90,7 @@ hi DiffText     guifg=#e0b050   guibg=#605040   ctermfg=220    ctermbg=058      
 hi Directory    guifg=#b0d0a0   guibg=NONE      ctermfg=151    ctermbg=NONE      gui=none      cterm=none
 hi ErrorMsg     guifg=#ee0000   guibg=NONE      ctermfg=196    ctermbg=NONE      gui=none      cterm=none
 hi SignColumn   guifg=#a0b0b0   guibg=#282828   ctermfg=145    ctermbg=233       gui=none      cterm=none
-hi LineNr       guifg=bg        guibg=#808080   ctermbg=bg     ctermbg=246       gui=none      cterm=none
+hi LineNr       guifg=bg        guibg=#808080   ctermfg=246    ctermbg=0         gui=none      cterm=none
 hi MoreMsg      guifg=#60c0d0   guibg=NONE      ctermfg=117    ctermbg=NONE      gui=none      cterm=none
 hi ModeMsg      guifg=fg        guibg=NONE      ctermfg=fg     ctermbg=NONE      gui=none      cterm=none
 hi Question     guifg=fg        guibg=NONE      ctermfg=fg     ctermbg=NONE      gui=none      cterm=none

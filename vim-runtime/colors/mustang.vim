@@ -1,6 +1,6 @@
-" Maintainer:	Henrique C. Alves (hcarvalhoalves@gmail.com)
+" Maintainer:   Henrique C. Alves (hcarvalhoalves@gmail.com)
 " Version:      1.0
-" Last Change:	September 25 2008
+" Last Change:  September 25 2008
 
 set background=dark
 
@@ -32,9 +32,9 @@ hi StatusLine   guifg=#d3d3d5 guibg=#444444 gui=italic ctermfg=253 ctermbg=238 c
 hi StatusLineNC guifg=#939395 guibg=#444444 gui=none ctermfg=246 ctermbg=238
 hi VertSplit    guifg=#444444 guibg=#444444 gui=none ctermfg=238 ctermbg=238
 hi Folded       guibg=#870000 guifg=#ffffff gui=none ctermbg=88 ctermfg=255
-hi Title        guifg=#f6f3e8 guibg=NONE	gui=bold ctermfg=254 cterm=bold
+hi Title        guifg=#f6f3e8 guibg=NONE    gui=bold ctermfg=254 cterm=bold
 hi Visual       guifg=#faf4c6 guibg=#3c414c gui=none ctermfg=254 ctermbg=4
-hi SpecialKey   guifg=#808080 guibg=#343434 gui=none ctermfg=244 ctermbg=236
+hi SpecialKey   guifg=#808080 guibg=#343434 gui=none ctermfg=244 ctermbg=0
 
 " Syntax highlighting
 hi Comment      guifg=#808080 gui=none ctermfg=244
