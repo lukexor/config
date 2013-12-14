@@ -61,9 +61,9 @@ function prompt_on() {
     else
         if [[ "${USER}" == "${LOGNAME}" ]]
         then
-            PR_CLR="\[${FGred}\]"
+            PR_CLR="\[${RCLR}${FGred}\]"
         else
-            PR_CLR="\[${FGgreen}\]"
+            PR_CLR="\[${RCLR}${FGgreen}\]"
         fi
     fi
     export PR_CLR
