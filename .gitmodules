@@ -12,7 +12,7 @@
 	url = git://github.com/mattn/emmet-vim
 [submodule "vim-runtime/bundle/nerdtree"]
 	path = vim-runtime/bundle/nerdtree
-	url = git://github.com/scrooloose/nerdtree
+	url = https://github.com/scrooloose/nerdtree
 [submodule "vim-runtime/bundle/snipmate"]
 	path = vim-runtime/bundle/snipmate
 	url = git://github.com/msanders/snipmate.vim
@@ -28,3 +28,12 @@
 [submodule "vim-runtime/bundle/vim-cucumber"]
 	path = vim-runtime/bundle/vim-cucumber
 	url = https://github.com/tpope/vim-cucumber
+[submodule "vim-runtime/bundle/delimitMate"]
+	path = vim-runtime/bundle/delimitMate
+	url = https://github.com/Raimondi/delimitMate.git
+[submodule "vim-runtime/bundle/supertab"]
+	path = vim-runtime/bundle/supertab
+	url = https://github.com/ervandew/supertab.git
+[submodule "vim-runtime/bundle/ctrlp"]
+	path = vim-runtime/bundle/ctrlp
+	url = https://github.com/kien/ctrlp.vim
