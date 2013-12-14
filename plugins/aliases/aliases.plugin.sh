@@ -64,13 +64,14 @@ alias vbh="vi ${HOME}/.plugins/host/${HOSTNAME}.plugin.sh"
 alias vs="vi ${HOME}/.screenrc"
 
 # Networking
+alias fixroute='sudo route -nv add -net 10.0.0.0/8 -interface jnc0';
 alias ftp='ftp -i' # Turns off interactive prompts
 alias slp="ssh lp"
 alias sshl='ssh-add -L' # List ssh-agent identities
 alias st='ssh -A lpetherbridge@tech.fonality.com'
 alias st2='ssh -A lpetherbridge@tech2.fonality.com'
 alias sw2='ssh -A lpetherbridge@web-dev2.fonality.com'
-alias sfcs='ssh -A lpetherbridge@foncloud/dev'
+alias sfcs='ssh -A lpetherbridge@devbox5.lotsofclouds.fonality.com'
 
 # Sourcing
 alias b='source ${HOME}/.bashrc'

@@ -166,12 +166,9 @@ aweb()
 akey()
 {
     # If Aladdin etoken connected
-    if [ $(lsusb 2> /dev/null | grep Aladdin -c) -gt 0 ]
+    if [ $(system_profiler SPUSBDataType 2> /dev/null| grep OMNIKEY -c) -gt 0 ]
     then
-        /usr/bin/ssh-add -s "/usr/lib/libeTPkcs11.so"
-    elif [ $(system_profiler SPUSBDataType 2> /dev/null| grep Aladdin -c) -gt 0 ]
-    then
-        /usr/bin/ssh-add -s "/usr/local/lib/libeTPkcs11.dylib"
+        /usr/bin/ssh-add -s "/usr/local/lib/libaetpkss.dylib"
     fi
 }
 
