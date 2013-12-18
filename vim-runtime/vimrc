@@ -138,7 +138,7 @@ if exists('&foldenable')
     set foldmethod=indent " Fold based on indent
     set foldnestmax=2 " Deepest fold
     set foldlevel=1 " The default depth to fold
-    set foldenable " Dont fold by default
+    set nofoldenable " Dont fold by default
 endif
 
 " ==========================================================
@@ -163,7 +163,7 @@ endif
 " == Formatting
 "
 set autoindent
-set copyindent " Copy indent from current line when starting a new line
+" set copyindent " Copy indent from current line when starting a new line
 set breakat=\  " Wrap long lines at space
 set expandtab " Always expand tabs into spaces
 set formatoptions=rql " Allow line-width formatting with <leader>gq
@@ -175,7 +175,7 @@ autocmd filetype html,xml set listchars-=tab:>. " Don't display tabs for html an
 " autocmd! bufwritepost * set noexpandtab | retab! 4 " convert spaces to tabs after writing file (to show guides again)
 set nowrap " nowrap by default
 set shiftwidth=4 " Number of spaces used for each spent of indent
-set smartindent " Smart indenting for C-like programs
+" set smartindent " Smart indenting for C-like programs
 set smarttab " Tabs according to shiftwidth
 set softtabstop=4 " Spaces a tab counts for when backspacing or inserting tabs
 set tabstop=4 " The number of spaces a tab counts as
@@ -220,6 +220,10 @@ let delimitMate_expand_cr = 1
 let g:user_zen_leader_key = '<leader>z' " zencoding
 let g:SuperTabNoCompleteAfter = ['^', ',', '\s']
 let g:SuperTabNoCompleteBefore = ['\w']
+let g:SuperTabMappingForward = '<leader><tab>'
+let g:SuperTabMappingBackward = '<s-c-tab>'
+let g:SuperTabMappingTabLiteral = '<tab>'
+let g:loaded_syntastic_plugin = 1
 
 " ==========================================================
 " == Mappings
@@ -251,12 +255,12 @@ nnoremap <C-k> 12k
 map 0 ^
 
 " Move a line of text using CTRL+[jk]
-nnoremap <s-j> :m+<CR>==
-nnoremap <s-k> :m-2<CR>==
-inoremap <s-j> <Esc>:m+<CR>==gi
-inoremap <s-k> <Esc>:m-2<CR>==gi
-vnoremap <s-j> :m'>+<CR>gv=gv
-vnoremap <s-k> :m-2<CR>gv=gv
+" nnoremap <s-j> :m+<CR>==
+" nnoremap <s-k> :m-2<CR>==
+" inoremap <s-j> <Esc>:m+<CR>==gi
+" inoremap <s-k> <Esc>:m-2<CR>==gi
+" vnoremap <s-j> :m'>+<CR>gv=gv
+" vnoremap <s-k> :m-2<CR>gv=gv
 
 " Show yank ring window
 nnoremap <leader>r :YRShow<CR>
@@ -288,11 +292,11 @@ map! <F3> <Esc>:set invnu<CR>i
 map <F4> <Esc>:call ToggleMouse()<CR>
 map! <F4> <Esc>:call ToggleMouse()<CR>i
 
-map <F5> <Esc>:NERDTreeToggle()<CR>
-map! <F5> <Esc>:NERDTreeToggle()<CR>i
+map <F5> <Esc>:NERDTreeToggle<CR>
+map! <F5> <Esc>:NERDTreeToggle<CR>i
 
-map <F8> <Esc>:TagbarToggle<CR>
-map! <F8> <Esc>:TagbarToggle<CR>i
+map <F6> <Esc>:TagbarToggle<CR>
+map! <F6> <Esc>:TagbarToggle<CR>i
 
 " Toggle text mode
 map <F7> <Esc>:call ToggleTextMode()<CR>
@@ -388,7 +392,7 @@ autocmd FileType python map <leader>r :call RunWith("python")<cr>
 autocmd FileType perl map <leader>r :call RunWith("perl")<cr>
 
 " Fast editing of the .vimrc
-map <leader>ev :so ~/.vim-runtime/vimrc<cr>
+map <leader>ev :e ~/.vim-runtime/vimrc<cr>
 map <leader>sv :so ~/.vim-runtime/vimrc<cr>
 
 " Quit all windows without saving
@@ -525,7 +529,7 @@ endfunction
 autocmd! bufwritepost vimrc source ~/.vim-runtime/vimrc " When vimrc is edited, reload it
 
 " Open NERDTree automatically
-autocmd vimenter * NERDTreeFind | wincmd p | TagbarOpen
+" autocmd vimenter * NERDTreeFind | wincmd p | TagbarOpen
 
 " Closes if NERDTree is the only open window
 autocmd BufEnter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
