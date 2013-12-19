@@ -31,6 +31,17 @@ hist_stats() {
     history | cut -d] -f2 | sort | uniq -c | sort -rn | head
 }
 
+
+dl() {
+    DEVDIR="${HOME}/.devlog/"
+    YEAR=$(date "+%Y")
+    FILE=$(date "+%Y_%m.txt")
+    if [ ! -d "${DEVDIR}/${YEAR}" ]; then
+        mkdir "${DEVDIR}/${YEAR}"
+    fi
+    ENTRY=$(date "+[%Y-%m-%d %H:%M:%S] ")" $*"
+    echo ${ENTRY} >> "${DEVDIR}/${YEAR}/${FILE}"
+}
 jl() {
     command journal "$*"
 }
