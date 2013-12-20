@@ -88,6 +88,7 @@ alias g='grep -in'
 alias da='date "+%Y-%m-%d %H:%M:%S"'
 alias which='type -a'
 alias type='type -f'
+alias tl='tail -f ~/tmp/log.txt'
 alias path='echo -e ${PATH//:/"\n"}'
 alias topmem='ps -eo pmem,pcpu,pid,user,args | sort -k 1 -r | head -20';
 alias x='extract'
