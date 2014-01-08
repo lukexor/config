@@ -76,7 +76,7 @@ hi Folded       guibg=#000000        guibg=#808080   ctermfg=000     ctermbg=246
 hi FoldColumn   guibg=#000000        guibg=#808080   ctermfg=000     ctermbg=246       gui=none      cterm=none
 
 " == Spelling =="{{{
-hi SpellBad     guisp=#ee0000                   ctermfg=000     ctermbg=160       gui=undercurl cterm=undercurl
+hi SpellBad     guisp=#ee0000                   ctermfg=160     ctermbg=NONE       gui=undercurl cterm=undercurl
 hi SpellCap     guisp=#eeee00                   ctermbg=NONE   ctermbg=226       gui=undercurl cterm=undercurl
 hi SpellRare    guisp=#ffa500                   ctermbg=NONE   ctermbg=214       gui=undercurl cterm=undercurl
 hi SpellLocal   guisp=#ffa500                   ctermbg=NONE   ctermbg=214       gui=undercurl cterm=undercurl"}}}
