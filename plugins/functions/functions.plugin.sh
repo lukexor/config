@@ -162,7 +162,9 @@ myps() { ps -f $@ -u $USER -o pid,%cpu,%mem,bsdtime,command ; }
 
 ra()
 {
-    pkill -f ssh-agent
+    while [ $(ps aux | grep ssh-agent | grep -v grep | wc -l) -gt 0 ]; do
+        pkill -f ssh-agent
+    done
     unset SSH_AUTH_SOCK
     unset SSH_AGENT_PID
 
