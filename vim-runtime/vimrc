@@ -62,6 +62,7 @@ set undolevels=1000 " How many undos
 
 set background=dark " Dark BG is good
 set encoding=utf8 " UTF8 encoding is best
+set ff=unix
 set ffs=unix,dos,mac " Default file types
 set number " Line numbers
 set cpoptions+=n
@@ -318,6 +319,9 @@ vmap <tab> >gv
 vmap <s-tab> <gv
 nmap <tab> >>
 nmap <s-tab> <<
+
+" Run perltidy in visual mode
+vmap <leader>p :!perltidy -q<CR>
 
 " Split window pane for better line-wrapping view
 map <leader>l :rightb vnew \| wincmd p<cr>

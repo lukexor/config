@@ -4,23 +4,7 @@ snippet #!
 
 	=head1 NAME
 
-	`Filename()`
-
-	=head1 SYNOPSIS
-
-	perl `Filename()` [options]
-
-	=head1 DESCRIPTION
-
-	TODO: ${1:description}
-
-	=head1 METHODS
-
-	=over 12
-
-	=item C<main()>
-
-	=back
+	`Filename()` - ${1:short_description}
 
 	=head1 AUTHOR
 
@@ -35,15 +19,25 @@ snippet #!
 	use Data::Dumper;
 
 	sub main {
-		my $subname = "main";
-
 		${2}
-
+	
 		return 1;
 	}
 
 	main();
-snippet license
+snippet pod_head
+	=head1 SYNOPSIS
+
+		perl `Filename()` [options]
+
+	=head1 DESCRIPTION
+
+	long description
+
+	=head1 BUGS/CAVEATS
+
+	bugs or caveats
+
 	=head1 LICENSE
 
 	Copyright (c) `system("date +%Y")` `g:snips_author`
@@ -75,11 +69,19 @@ snippet license
 	are those of the authors and should not be interpreted as representing
 	official policies, either expressed or implied, of the FreeBSD Project.
 
-	=cut
+	=head2 Methods
+
+	=over 12
+
+	=item C<main()>
+
+	Main logic execution
+
+	=back
 
 # Hash Pointer
 snippet .
-	 =>
+	 => 
 # Function
 snippet sub
 	=head2 ${1:function}
@@ -88,23 +90,23 @@ snippet sub
 
 		${2:description}
 
-		Args: ${3}
-		Returns: ${4}
+		Usage: ${3}
+		Args: ${4}
+		Returns: ${5}
 
 	=back
 
 	=cut
 
 	sub $1 {
-		my $subname = "$1";
-		${5}
+		${6}
 
 		return 1;
 	}
 # Conditional
 snippet if
 	if (${1}) {
-	${2}
+		${2}
 	}
 # Conditional if..else
 snippet ife
@@ -158,10 +160,10 @@ snippet for
 		${3}
 	}
 # Foreach Loop One-line
-snippet fore
+snippet xfor
 	${1:expression} foreach @${2:array};${3}
 # Package
-snippet cl
+snippet pack
 	package ${1:ClassName};
 
 	use base qw(${2:ParentClass});
@@ -177,15 +179,6 @@ snippet cl
 snippet slurp
 	my $${1:var};
 	{ local $/ = undef; my ${2:file_handle}; open $2, '<', ${3:file}; $$1 = <$2>; close $2 }${4}
-# Method comment
-snippet ##
-	###
-	# ${1:description}
-	#
-	# @param: ${2:param}
-	# @return: ${3:return}
-	# @throws: ${4:throws}
-	###
 # Pod comment
 snippet pod
 	=head2 ${1:function}
@@ -194,8 +187,9 @@ snippet pod
 
 		${2:description}
 
-		Args: ${3}
-		Returns: ${4}
+		Usage: ${3}
+		Args: ${4}
+		Returns: ${5}
 
 	=back
 
