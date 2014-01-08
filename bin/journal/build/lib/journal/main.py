@@ -96,7 +96,8 @@ def parse_config(args):
     return journal_location
 
 def check_journal_dest(location):
-    journal_dir = path.expanduser(location)
+    journal_path = path.dirname(location)
+    journal_dir = path.expanduser(journal_path)
     if not path.exists(journal_dir):
         try:
             makedirs(journal_dir)
@@ -109,8 +110,8 @@ def record_entries(journal_location, entries):
     args
     entry - list of entries to record
     """
-    check_journal_dest(journal_location)
     current_date = datetime.datetime.today()
+    check_journal_dest(build_journal_path(journal_location, current_date))
     date_header = "[" + current_date.strftime("%Y-%m-%d %a %I:%M:%S") + "]  "
     with open(build_journal_path(journal_location, current_date), "a") as date_file:
         # Start a blank list for all our trimmed lines

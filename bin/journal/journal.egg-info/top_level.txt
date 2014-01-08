@@ -1,2 +1,1 @@
-journal
 tests
