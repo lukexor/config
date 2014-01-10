@@ -40,6 +40,7 @@ else
     let g:snips_authoremail = 'lukexor@gmail.com'
 endif
 let g:snippets_dir = "~/.vim-runtime/snippets" " Set snippets directory
+let g:yankring_history_dir = "~/.vim-runtime"
 let ft = &filetype
 
 " Tell vim to remember certain things when we exit
