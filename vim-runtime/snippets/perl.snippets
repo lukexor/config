@@ -81,7 +81,7 @@ snippet pod_head
 
 # Hash Pointer
 snippet .
-	 => 
+	 => ${1}
 # Function
 snippet sub
 	=head2 ${1:function}
@@ -151,9 +151,6 @@ snippet cfor
 	for (my $${2:var} = 0; $$2 < ${1:count}; $$2${3:++}) {
 		${4}
 	}
-# For loop one-line
-snippet xfor
-	${1:expression} for @${2:array};${3}
 # Foreach Loop
 snippet for
 	foreach my $${1:x} (@${2:array}) {
@@ -206,4 +203,6 @@ snippet #-
 snippet log
 	use lib '/home/lpetherbridge/lib';
 	use Logger;
+	Logger::Log(${1});
+snippet logl
 	Logger::Log(${1});
