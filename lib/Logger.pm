@@ -1,31 +1,43 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl
 
 package Logger;
 
 use strict;
+use warnings;
 use Data::Dumper;
+use Carp;
+$Data::Dumper::Indent   = 3;
+$Data::Dumper::Deepcopy = 1;
 
-sub log
-{
+sub log {
     my $LOG_DIR = "$ENV{HOME}/tmp";
-    chomp(my $date = Z=America/Los_Angeles date '+%D %r';
-    if (!-d $LOG_DIR) { mkdir $LOG_DIR; }
-    open(local *FH, ">>$LOG_DIR/log.txt");
+    chomp(my $date = `TZ = America / Los_Angeles date '+%D %r'`);
 
-    print FH "\n\nBEGIN $date ----------------------------------- {\n\n";
-    my $i = 1;
+    mkdir $LOG_DIR if !-d $LOG_DIR;
+
+    open my $LOG, '>>', "$LOG_DIR/log.txt"
+        or croak "Unable to open '$LOG_DIR/log.txt': $!";
+
+    print $LOG "BEGIN $date ----------------------------------- {\n";
+    my $i     = 1;
     my $count = scalar(@_);
-    for (@_) {
-        print FH "\n{ $i of $count\n\n\t", Dumper($_), "\n}\n";
-        $i += 1;
-    }
-    print FH "\n} END  $date ------------------------------------\n\n";
 
-    close(FH);
+    if ($count > 1) {
+        for (@_) {
+            print $LOG "\n{ $i of $count\n\n\t", Dumper($_), "\n}\n";
+            $i += 1;
+        }
+    }
+    else {
+        print $LOG "\n\t", Dumper(@_), "\n";
+    }
+    print $LOG "\n} END  $date ------------------------------------\n\n";
+
+    close $LOG
+        or croak "Unable to close '$LOG_DIR/log.txt': $!";
 }
 
-sub Log
-{
+sub Log {
     Logger::log(@_);
 }
 
