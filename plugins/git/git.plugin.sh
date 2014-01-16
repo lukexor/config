@@ -7,6 +7,7 @@ alias gba='git branch -a'
 alias gbd='git branch -d'
 alias gbv='git branch -v'
 alias gc='git commit -v'
+alias gcn='git commit -v --no-verify'
 alias gca='git commit -v -a'
 alias gcam='git commit --amend'
 alias gcb='git checkout -b'
@@ -45,6 +46,10 @@ alias gun='git reset HEAD --'
 # Functions
 function gdv() { git diff -w "$@" | view -; }
 
+function gfm() {
+    git fetch origin
+    git merge origin/$(current_branch)
+}
 function grr() {
     git filter-branch --tree-filter "rm -f $*" HEAD
 }
@@ -61,10 +66,10 @@ function current_branch() {
 }
 
 # these aliases take advantage of the previous function
-alias ggpl='git pull origin $(current_branch)'
-alias ggps='git push origin $(current_branch)'
-alias ggpnp='git pull origin $(current_branch) && git push origin $(current_branch)'
-alias ggbd='git push $(current_branch) :'
+alias gopl='git pull origin $(current_branch)'
+alias gops='git push origin $(current_branch)'
+alias goplps='git pull origin $(current_branch) && git push origin $(current_branch)'
+alias gbps='git push $(current_branch) :'
 alias gstm='glg $(current_branch) ^master'
 alias gstb='glg master ^$(current_branch)'
 
