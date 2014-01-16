@@ -170,7 +170,7 @@ set breakat=\  " Wrap long lines at space
 set expandtab " Always expand tabs into spaces
 set formatoptions=rql " Allow line-width formatting with <leader>gq
 set linebreak " Wrap long lines at a character in breakat
-set list listchars=tab:\|\ ,trail:·,extends:»,precedes:«,nbsp:x " display indentation guides
+set list listchars=tab:\|\ ,trail:-,extends:>,precedes:<,nbsp:x " display indentation guides
 " autocmd filetype html,xml set listchars-=tab:>. " Don't display tabs for html and xml
 " autocmd! bufreadpost * set noexpandtab | retab! 4 " convert spaces to tabs when reading file
 " autocmd! bufwritepre * set expandtab | retab! 4 " convert tabs to spaces before writing file
