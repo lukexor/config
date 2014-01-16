@@ -1,12 +1,12 @@
 -opath=~/tmp # Output file
--l=100 # Max line width - 0 = large number
+-l=120 # Max line width - 0 = large number
 -vmll # Variable line-length - ignore leading whitespace
 -i=4 # Indent level
 -ci=4 # Continuation indent
 -st # Output to STDOUT
 -se # Errors to STDERR
 -w # Report warnings as errors
--vt=1 # Do not break unless this would produce >1 step in indentation
+-vt=0 # Always break after opening token
 -vtc=0 # Always break before closing token
 -bbvt=0 # Always break after opening block brace
 -cti=0 # indentation for closing brackets
