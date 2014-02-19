@@ -37,7 +37,7 @@ dl() {
     YEAR=$(date "+%Y")
     FILE=$(date "+%Y_%m.txt")
     if [ ! -d "${DEVDIR}/${YEAR}" ]; then
-        mkdir "${DEVDIR}/${YEAR}"
+        mkdir -p "${DEVDIR}/${YEAR}"
     fi
     ENTRY=$(date "+[%Y-%m-%d %H:%M:%S] ")" $*"
     echo ${ENTRY} >> "${DEVDIR}/${YEAR}/${FILE}"
