@@ -40,11 +40,15 @@ alias gshal=git_prompt_long_sha
 alias gsr='git svn rebase'
 alias gss='git status -s'
 alias gst='git status'
+alias gsl='git --no-pager stash list'
 alias gt=git_time_since_commit
 alias gun='git reset HEAD --'
 
 # Functions
 function gdv() { git diff -w "$@" | view -; }
+
+# Checkout a ticket branch
+function gbt() { git checkout tickets/$1; }
 
 function gfm() {
     git fetch origin
@@ -70,8 +74,10 @@ alias gopl='git pull origin $(current_branch)'
 alias gops='git push origin $(current_branch)'
 alias goplps='git pull origin $(current_branch) && git push origin $(current_branch)'
 alias gbps='git push $(current_branch) :'
-alias gstm='glg $(current_branch) ^master'
-alias gstb='glg master ^$(current_branch)'
+alias gstm='glg $(current_branch) ^origin/master'
+alias gstbm='glg origin/master ^$(current_branch)'
+alias gstbd='glg $(current_branch) ^origin/develop'
+alias gstdb='glg origin/develop ^$(current_branch)'
 
 # Get git info
 function git_prompt_info() {
