@@ -1,17 +1,31 @@
 snippet add
 	CALL add_column("${1:table_name}", "${2:column_name}", "${3:column_definition}");
+snippet adds
+	ALTER TABLE ${1:table_name} ADD COLUMN ${2:column_name} ${3:column_definition};
 snippet drop
 	CALL drop_column("${1:table_name}", "${2:column_name}");
+snippet drops
+	ALTER TABLE ${1:table_name} DROP COLUMN ${2:column_name};
 snippet change
 	CALL change_column("${1:table_name}", "${2:old_column_name}", "${3:new_column_name}", "${4:column_definition}");
+snippet changes
+	ALTER TABLE ${1:table_name} CHANGE ${2:old_column_name} ${3:new_column_name} ${4:column_definition};
 snippet modify
 	CALL modify_column("${1:table_name}", "${2:column_name}", "${3:new_column_definition}");
+snippet modifys
+	ALTER TABLE ${1:table_name} MODIFY ${2:column_name} ${3:column_definition};
 snippet aind
-	CALL add_index("${1:table_name}", "${2:column(s)}");
+	CALL add_index("${1:table_name}", "${2:index_name}", "${3:column(s)}");
+snippet ainds
+	ALTER TABLE ${1:table_name} ADD INDEX ${2:index_name} (${3:column(s)});
 snippet auniq
 	CALL add_unique("${1:table_name}", "${2:key_name}", "${3:column(s)}");
+snippet auniqs
+	ALTER TABLE ${1:table_name} ADD UNIQUE ${2:key_name} (${3:column(s)});
 snippet afk
 	CALL add_fk("${1:table_name}", "${2:column_name}", "${3:reference_table}", "${4:reference_column}", "${5:on_delete}");
+snippet afks
+	ALTER TABLE ${1:table_name} ADD FOREIGN KEY (${2:column_name}) REFERENCES ${3:reference_table} (${4:reference_column}) ${5:on_delete};
 snippet dfk
 	CALL drop_fk("${1:table_name}", "${2:column_name}");
 snippet dkey

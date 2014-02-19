@@ -62,12 +62,13 @@ esac
 # ----------------------------------------------------------
 # -- Global Paths
 
-if [ -d "${HOME}/fcs/lib" ]; then
-    pathappend "${HOME}/fcs/lib" PERL5LIB
-fi
-
 if [ -d "${HOME}/lib" ]; then
     pathappend "${HOME}/lib" PERL5LIB
+fi
+
+if [ -d "${HOME}/fcs/lib" ]; then
+    pathappend "${HOME}/fcs/lib" PERL5LIB
+    export FON_DIR="${HOME}/fcs"
 fi
 
 if [ -d "${HOME}/.rvm/bin" ]; then
