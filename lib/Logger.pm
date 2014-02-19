@@ -10,8 +10,12 @@ $Data::Dumper::Indent   = 3;
 $Data::Dumper::Deepcopy = 1;
 
 sub log {
-    my $LOG_DIR = "$ENV{HOME}/tmp";
-    chomp(my $date = `TZ = America / Los_Angeles date '+%D %r'`);
+    my $HOME_DIR = "$ENV{'HOME'}";
+    if (!$HOME_DIR) {
+        $HOME_DIR = -d '/home/lpetherbridge' ? '/home/lpetherbridge' : '/';
+    }
+    my $LOG_DIR = "$HOME_DIR/tmp";
+    chomp(my $date = `TZ='America / Los_Angeles' date '+%D %r'`);
 
     mkdir $LOG_DIR if !-d $LOG_DIR;
 
@@ -39,6 +43,13 @@ sub log {
 
 sub Log {
     Logger::log(@_);
+
+    if ($@) {
+        return 0;
+    }
+    else {
+        return 1;
+    }
 }
 
 1;
