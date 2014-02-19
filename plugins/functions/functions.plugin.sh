@@ -162,13 +162,18 @@ myps() { ps -f $@ -u $USER -o pid,%cpu,%mem,bsdtime,command ; }
 
 ra()
 {
-    while [ $(ps aux | grep ssh-agent | grep -v grep | wc -l) -gt 0 ]; do
-        pkill -f ssh-agent
-    done
-    unset SSH_AUTH_SOCK
-    unset SSH_AGENT_PID
+    case "${TERM}" in
+        screen* )  ;;
+        * )
+            while [ $(ps aux | grep ssh-agent | grep -v grep | wc -l) -gt 0 ]; do
+                pkill -f ssh-agent
+            done
+            unset SSH_AUTH_SOCK
+            unset SSH_AGENT_PID
 
-    sourcefile "$PLUGIN_DIR/ssh-agent/ssh-agent.plugin.sh"
+            sourcefile "$PLUGIN_DIR/ssh-agent/ssh-agent.plugin.sh"
+            ;;
+    esac
 }
 
 aweb()
