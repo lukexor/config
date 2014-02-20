@@ -54,6 +54,10 @@ function gfm() {
     git fetch origin
     git merge origin/$(current_branch)
 }
+function gfr() {
+    git fetch origin
+    git rebase origin/$(current_branch)
+}
 function grr() {
     git filter-branch --tree-filter "rm -f $*" HEAD
 }
