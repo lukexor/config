@@ -12,13 +12,11 @@
 	prompt = false
 [alias]
 	d = difftool
+	unstage = reset HEAD --
+	last = log -1 HEAD
 [core]
 	excludesfile = ~/.gitignore
 	editor = vim
-	autocrlf = input
-[push]
-	default = simple
+    pager = less -+X -+F
 [color]
     ui = true
-[branch]
-	autosetuprebase = always
