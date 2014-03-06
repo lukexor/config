@@ -69,6 +69,7 @@ fi
 if [ -d "${HOME}/fcs/lib" ]; then
     pathappend "${HOME}/fcs/lib" PERL5LIB
     export FON_DIR="${HOME}/fcs"
+    export FCS_DEVEL=1
 fi
 
 if [ -d "${HOME}/.rvm/bin" ]; then

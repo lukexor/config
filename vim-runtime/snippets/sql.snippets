@@ -28,8 +28,12 @@ snippet afks
 	ALTER TABLE ${1:table_name} ADD FOREIGN KEY (${2:column_name}) REFERENCES ${3:reference_table} (${4:reference_column}) ${5:on_delete};
 snippet dfk
 	CALL drop_fk("${1:table_name}", "${2:column_name}");
+snippet dfks
+	ALTER TABLE ${1:table_name} DROP FOREIGN KEY ${2:fk_name};
 snippet dkey
 	CALL drop_key("${1:table_name}", "${2:key_name}");
+snippet dkeys
+	ALTER TABLE ${1:table_name} DROP KEY ${2:key_name};
 snippet insert
 	CALL insert_data("${1:table_name}", "${2:values}", "${3:unique_column}", "${4:unique_value}");
 snippet update

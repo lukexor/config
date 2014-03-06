@@ -10,10 +10,7 @@ $Data::Dumper::Indent   = 3;
 $Data::Dumper::Deepcopy = 1;
 
 sub log {
-    my $HOME_DIR = "$ENV{'HOME'}";
-    if (!$HOME_DIR) {
-        $HOME_DIR = -d '/home/lpetherbridge' ? '/home/lpetherbridge' : '/';
-    }
+    my $HOME_DIR = -d '/home/lpetherbridge' ? '/home/lpetherbridge' : '/tmp';
     my $LOG_DIR = "$HOME_DIR/tmp";
     chomp(my $date = `TZ='America / Los_Angeles' date '+%D %r'`);
 
