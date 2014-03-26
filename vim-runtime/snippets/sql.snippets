@@ -18,8 +18,18 @@ snippet dropkey
 	ALTER TABLE ${1:table_name} DROP KEY ${2:key_name};
 snippet insert
 	INSERT INTO ${1:table_name} (${2:columns}) VALUES (${3:values});
+snippet db_update
+	INSERT INTO fcs.db_update (filename) VALUES ('`Filename()`.sql') ON DUPLICATE KEY UPDATE applied_on = NOW();
 snippet update
 	UPDATE ${1:table_name} SET ${2:column_name} = ${3:col_value} WHERE ${4:primary_key} = ${5:pk_value};
+snippet begin
+	BEGIN;
+		USE ${1:db_name};
+
+		${2:updates}
+
+		INSERT INTO fcs.db_update (filename) VALUES ('`Filename()`.sql') ON DUPLICATE KEY UPDATE applied_on = NOW();
+	COMMIT;
 snippet -= # Header comment
 	-- ==========================================================
 	-- == ${1:heading}

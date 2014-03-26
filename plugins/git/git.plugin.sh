@@ -58,9 +58,9 @@ function gfr() {
     git fetch origin
     git rebase origin/$(current_branch)
 }
-function grr() {
-    git filter-branch --tree-filter "rm -f $*" HEAD
-}
+# function grr() {
+    #git filter-branch --tree-filter "rm -f $*" HEAD
+# }
 
 # Git and svn mix
 alias git-svn-dcommit-push='git svn dcommit && git push github master:svntrunk'
