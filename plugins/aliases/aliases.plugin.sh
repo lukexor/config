@@ -7,6 +7,8 @@ alias ..='cd ..'
 alias ...='cd ../..'
 alias cdot="cd ${HOME}/.dotfiles"
 
+alias vbr='sudo /Library/StartupItems/VirtualBox/VirtualBox restart'
+
 # Yum
 alias ys='yum search' # search package
 alias yp='yum info' # show package info
