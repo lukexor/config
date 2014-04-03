@@ -25,7 +25,7 @@ function active_screens_prompt()
   fi
 
   if [ $scr -gt 0 ] ; then
-    echo -e " \[${FGcyan}\](\[${color}\]s$(active_screens)\[${FGcyan}\])"
+    echo -e " \e${FGcyan}(\e${color}s$(active_screens)\e${FGcyan})"
   fi
 }
 
@@ -40,7 +40,7 @@ function bg_jobs_prompt()
   fi
 
   if [ $j -gt 0 ] ; then
-    echo -e " \[${FGcyan}\](\[${color}\]b$(bg_jobs)\[${FGcyan}\])"
+    echo -e " \e${FGcyan}(\e${color}b$(bg_jobs)\e${FGcyan})"
   fi
 }
 
@@ -55,6 +55,6 @@ function st_jobs_prompt()
   fi
 
   if [ $j -gt 0 ] ; then
-    echo -e " \[${FGcyan}\](\[${color}\]st$(st_jobs)\[${FGcyan}\])"
+    echo -e " \e${FGcyan}(\e${color}st$(st_jobs)\e${FGcyan})"
   fi
 }
