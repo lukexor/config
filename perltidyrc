@@ -1,6 +1,6 @@
 -opath=~/tmp # Output file
 -l=120 # Max line width - 0 = large number
--vmll # Variable line-length - ignore leading whitespace
+#-vmll # Variable line-length - ignore leading whitespace
 -i=4 # Indent level
 -ci=4 # Continuation indent
 -st # Output to STDOUT
