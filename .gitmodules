@@ -42,7 +42,7 @@
 	url = https://github.com/scrooloose/syntastic
 [submodule "vim-runtime/bundle/nerdtree"]
 	path = vim-runtime/bundle/nerdtree
-	url = https://github.com/scrooloose/nerdtree
+	url = git@github.com:lukexor/nerdtree
 [submodule "vim-runtime/bundle/tagbar"]
 	path = vim-runtime/bundle/tagbar
 	url = https://github.com/majutsushi/tagbar
