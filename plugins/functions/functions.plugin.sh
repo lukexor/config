@@ -162,18 +162,23 @@ myps() { ps -f $@ -u $USER -o pid,%cpu,%mem,bsdtime,command ; }
 
 ra()
 {
-    case "${TERM}" in
-        screen* )  ;;
-        * )
-            while [ $(ps aux | grep ssh-agent | grep -v grep | wc -l) -gt 0 ]; do
-                pkill -f ssh-agent
-            done
-            unset SSH_AUTH_SOCK
-            unset SSH_AGENT_PID
+    if ask_yes_no "Restart ssh-agent?"; then
+        case "${TERM}" in
+            screen* )
+                echo "We're in a screen. I refuse to restart ssh-agent."
+                ;;
+            * )
+                echo "Killing existing ssh-agent instances..."
+                while [ $(ps aux | grep ssh-agent | grep -v grep | wc -l) -gt 0 ]; do
+                    pkill -f ssh-agent
+                done
+                unset SSH_AUTH_SOCK
+                unset SSH_AGENT_PID
 
-            sourcefile "$PLUGIN_DIR/ssh-agent/ssh-agent.plugin.sh"
-            ;;
-    esac
+                sourcefile "$PLUGIN_DIR/ssh-agent/ssh-agent.plugin.sh"
+                ;;
+        esac
+    fi
 }
 
 aweb()
@@ -209,8 +214,8 @@ ii() {
 ask_yes_no() {
     echo -en "${FGred}$@ [y/n] ${RCLR}" ; read ans
     case "$ans" in
-        y*|Y*) return 1 ;;
-        *) return 0 ;;
+        y*|Y*) return 0 ;;
+        *) return 1 ;;
     esac
 }
 

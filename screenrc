@@ -2,14 +2,6 @@
 # /etc/screenrc
 # ==============================================================================
 
-# ESCAPE - the COMMAND CHARACTER
-# ===============================================================
-escape ``
-#escape ^Gg
-#escape ^Ss
-#escape ^aa  # default
-#escape ^pp  # suggested binding for emacs users
-
 # Fix residual text from less/vi
 altscreen on
 
@@ -45,7 +37,7 @@ shell $SHELL
 # XTERM TWEAKS
 # ===============================================================
 
-termcapinfo xterm|xterms|xs ti@:te=\E[2J
+termcapinfo xterm|xterms|xs|screen* ti@:te=\E[2J
 
 ## allow bold colors - necessary for some reason
 attrcolor b ".I"
@@ -56,8 +48,8 @@ termcapinfo screen* 'Co#256:AB=\E[48;5;%dm:AF=\E[38;5;%dm:hs:ts=\E]2;:fs=\E\\:ds
 ## erase background with current bg color
 defbce "on"
 # Use terminal scrollback
-termcapinfo xterm* ti@:te@
-termcapinfo screen* ti@:te@
+termcapinfo xterm*|screen* ti@:te@
+# termcapinfo xterm*|screen* 'hs:ts=\E]2;:fs=07:ds=\E]2;screen07'
 
 term screen
 

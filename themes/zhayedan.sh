@@ -119,7 +119,7 @@ function prompt_on() {
     # fi
 
     # Left command prompt
-    PS1="${PR_CLR}${HOSTNAME}${FGgreen}"'$(prompt_pwd)$(battery_pct_prompt)'
+    PS1="\n${PR_CLR}${HOSTNAME}${FGgreen}"'$(prompt_pwd)$(battery_pct_prompt)'
 
     for plugin in "${plugins[@]}"; do
         [[ "$plugin" == "git" ]] && PS1=${PS1}'$(git_prompt_info)' && BASH_THEME_GIT_PROMPT_DIRTY="${FGred} *${RCLR}$(git_prompt_status)";

@@ -2,6 +2,10 @@
 alias g='git'
 alias ga='git add'
 alias gap='git add -p'
+alias gassume='git update-index --assume-unchanged'
+alias gunassume='git update-index --no-assume-unchanged'
+alias gassumed='git ls-files -v | grep ^h | cut -c 3-'
+alias gunassumeall='gassumed | xargs git update-index --no-assume-unchanged'
 alias gb='git branch'
 alias gba='git branch -a'
 alias gbd='git branch -d'
@@ -19,15 +23,22 @@ alias gcp='git cherry-pick'
 alias gd='git diff --color-words'
 alias gdt='git difftool'
 alias gf='git fetch origin'
+alias gfg='git ls-files | grep -i'
+alias gg='git grep -Ii'
 alias gi='git_info.sh'
 alias gif='git_info.sh full'
-alias gl='git log --oneline --decorate --max-count=5'
-alias glf='git log --pretty=format:"%h - %an, %ar : %s"'
-alias glg='git log --graph --pretty=format:"%h -%Cblue%d%Creset %Cgreen%an%Creset, %ar : %s"'
+alias gla='alias|grep git|cut -c 7-'
+alias glf='git log -p'
+alias glg='git log --graph --pretty=format:"%C(yellow)%h %ad%Cred%d %Creset%Cblue[%cn]%Creset  %s (%ar)" --date=short'
 alias glg5='glg --max-count=5'
 alias glp='git log -p'
-alias gls='git log -1 HEAD'
-alias gm='git merge'
+alias gls='git --no-pager log --pretty=format:"%C(yellow)%h %ad%Cred%d %Creset%Cblue[%cn]%Creset  %s (%ar)" --date=short -100'
+alias glt='git describe --tags --abbrev=0'
+alias gll='git --no-pager log --pretty=format:"%C(yellow)%h %ad%Cred%d %Creset%Cblue[%cn]%Creset  %s (%ar)" --numstat --date=short -100'
+alias glnc='git log --pretty=format:"%h%d [%cn]  %s (%ar)"'
+alias gm='git merge --no-ff'
+alias gfm='git pull'
+alias gfr='git pull --rebase'
 alias gps='git push'
 alias gpso='git push origin master'
 alias gpt='git push --tags'
@@ -47,17 +58,22 @@ alias gun='git reset HEAD --'
 # Functions
 function gdv() { git diff -w "$@" | view -; }
 
+function gtg() {
+    git fetch --tag
+    git tag | grep $1 | sort -t$1 -k2n
+}
+
 # Checkout a ticket branch
 function gbt() { git checkout tickets/$1; }
 
-function gfm() {
-    git fetch origin
-    git merge origin/$(current_branch)
-}
-function gfr() {
-    git fetch origin
-    git rebase origin/$(current_branch)
-}
+# function gfm() {
+#     git fetch origin
+#     git merge origin/$(current_branch)
+# }
+# function gfr() {
+#     git fetch origin
+#     git rebase origin/$(current_branch)
+# }
 # function grr() {
     #git filter-branch --tree-filter "rm -f $*" HEAD
 # }

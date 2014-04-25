@@ -115,7 +115,6 @@ endif
 
 set backspace=eol,start,indent " Set backspace config, allowing backspace in insert mode
 set cmdheight=2 " The commandbar height
-set hidden " Hide buffer instead of abandoning
 set hlsearch " Highlight search things
 set ignorecase " Ignore case when searching
 set incsearch " Make search act like search in modern browsers
@@ -165,13 +164,12 @@ endif
 " == Formatting
 "
 set autoindent
-" set copyindent " Copy indent from current line when starting a new line
 set breakat=\  " Wrap long lines at space
 set expandtab " Always expand tabs into spaces
 set formatoptions=rql " Allow line-width formatting with <leader>gq
 set linebreak " Wrap long lines at a character in breakat
 set list listchars=tab:\|\ ,trail:-,extends:>,precedes:<,nbsp:x " display indentation guides
-" autocmd filetype html,xml set listchars-=tab:>. " Don't display tabs for html and xml
+autocmd filetype html,xml set listchars-=tab:>. " Don't display tabs for html and xml
 " autocmd! bufreadpost * set noexpandtab | retab! 4 " convert spaces to tabs when reading file
 " autocmd! bufwritepre * set expandtab | retab! 4 " convert tabs to spaces before writing file
 " autocmd! bufwritepost * set noexpandtab | retab! 4 " convert spaces to tabs after writing file (to show guides again)
@@ -226,12 +224,15 @@ let g:SuperTabMappingForward = '<leader><tab>'
 let g:SuperTabMappingBackward = '<s-c-tab>'
 let g:SuperTabMappingTabLiteral = '<tab>'
 " let g:loaded_syntastic_plugin = 1
+" let g:syntastic_mode_map = { 'mode': 'passive' }
 
 " ==========================================================
 " == Mappings
 
 let mapleader = "," " With a map leader it's possible to do extra key combinations
 let g:mapleader = ","
+nnoremap ; :
+nnoremap ` <NOP>
 
 " ----------------------------------------------------------
 " -- Navigation
@@ -241,6 +242,9 @@ nnoremap j gj
 nnoremap k gk
 vnoremap j gj
 vnoremap k gk
+
+set mouse=a
+set ttymouse=xterm2
 
 nnoremap <C-j> 12j
 nnoremap <C-k> 12k
@@ -534,7 +538,8 @@ endfunction
 autocmd! bufwritepost vimrc source ~/.vim-runtime/vimrc " When vimrc is edited, reload it
 
 " Open NERDTree automatically
-" autocmd vimenter * NERDTreeFind | wincmd p | TagbarOpen
+autocmd vimenter * NERDTreeFind | wincmd p | TagbarOpen
+autocmd BufNewFile * NERDTreeFind | wincmd p
 
 " Closes if NERDTree is the only open window
 autocmd BufEnter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif

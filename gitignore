@@ -1,8 +1,47 @@
-tags*
-*.tmp
-*.log
+# Compiled source #
+###################
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
 *.mp
+
+# Temporary files #
+###################
+*.tmp
 *.swp
+*.swo
+*~
+
+# Packages #
+############
+*.7
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# Logs and databases #
+######################
+*.log
+*.sql
+*.sqlite
+
+# OS generated files #
+######################
+.DS_Store*
+ehthumbs.db
+Icon?
+Thumbs.db
+
+# Misc #
+########
+tags*
 bin/minecraft*
 .includepath
 .project

@@ -6,6 +6,7 @@ alias ~='cd ~'
 alias ..='cd ..'
 alias ...='cd ../..'
 alias cdot="cd ${HOME}/.dotfiles"
+alias tags="ctags -R --extra=f --links=no && perl -pi -e 's/^\s*\n$//' tags"
 
 alias vbr='sudo /Library/StartupItems/VirtualBox/VirtualBox restart'
 
@@ -73,9 +74,10 @@ alias sshl='ssh-add -L' # List ssh-agent identities
 alias st='ssh -A lpetherbridge@tech.fonality.com'
 alias st2='ssh -A lpetherbridge@tech2.fonality.com'
 alias sw2='ssh -A lpetherbridge@web-dev2.fonality.com'
+alias sfcsprod='ssh -A lpetherbridge@fcs-app1.fonality.com'
 alias sfcs='ssh -A lpetherbridge@devbox5.lotsofclouds.fonality.com'
 alias sfcsqa='ssh -A lpetherbridge@qa-app.lotsofclouds.fonality.com'
-alias sfcsstg='ssh -A lpetherbridge@stg-app.lotsofclouds.fonality.com'
+alias sfcsstg='ssh -A lpetherbridge@fcs-stg-bastion.lax01.fonality.com'
 
 # Sourcing
 alias b='source ${HOME}/.bashrc'
