@@ -1,22 +1,41 @@
 [user]
-	name = Luke Petherbridge
-	email = lukexor@gmail.com
+    name = Luke Petherbridge
+    email = lukexor@gmail.com
 [github]
-	user = lukexor
-	token = ad713daa071e284256dfde40ad14b65e
+    user = lukexor
+    token = ad713daa071e284256dfde40ad14b65e
 [merge]
-	tool = vimdiff
+    tool = vimdiff
 [diff]
-	tool = vimdiff
+    tool = vimdiff
 [difftool]
-	prompt = false
+    prompt = false
 [alias]
-	d = difftool
-	unstage = reset HEAD --
-	last = log -1 HEAD
+    d = difftool
+    unstage = reset HEAD --
+    last = log -1 HEAD
 [core]
-	excludesfile = ~/.gitignore
-	editor = vim
+    excludesfile = ~/.gitignore
+    editor = vim
     pager = less -+X -+F
 [color]
     ui = true
+[color "branch"]
+    current = yellow
+    local = green
+    remote = cyan
+[color "diff"]
+    meta = yellow
+    frag = magenta
+    old = red
+    new = green
+    whitespace = red reverse
+[color "status"]
+    added = green
+    changed = yellow
+    untracked = red
+[gitflow "prefix"]
+    feature = tickets/
+    release = releases/
+    hotfix = hotfixes/
+    versiontag = v
