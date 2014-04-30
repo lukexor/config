@@ -56,25 +56,30 @@ alias gt=git_time_since_commit
 alias gun='git reset HEAD --'
 
 # Functions
-function gdv() { git diff -w "$@" | view -; }
+gdv() { git diff -w "$@" | view -; }
 
-function gtg() {
+gdone() {
+    branch=$(current_branch)
+    git branch -m $branch done-$branch
+}
+
+gtg() {
     git fetch --tag
     git tag | grep $1 | sort -t$1 -k2n
 }
 
 # Checkout a ticket branch
-function gbt() { git checkout tickets/$1; }
+gbt() { git checkout tickets/$1; }
 
-# function gfm() {
+# gfm() {
 #     git fetch origin
 #     git merge origin/$(current_branch)
 # }
-# function gfr() {
+# gfr() {
 #     git fetch origin
 #     git rebase origin/$(current_branch)
 # }
-# function grr() {
+# grr() {
     #git filter-branch --tree-filter "rm -f $*" HEAD
 # }
 
@@ -84,7 +89,7 @@ alias git-svn-dcommit-push='git svn dcommit && git push github master:svntrunk'
 # Will return the current branch name
 # Usage example: git pull origin $(current_branch)
 #
-function current_branch() {
+current_branch() {
   ref=$(git symbolic-ref HEAD 2> /dev/null) || return
   echo "${ref#refs/heads/}"
 }
@@ -100,14 +105,14 @@ alias gstbd='glg $(current_branch) ^origin/develop'
 alias gstdb='glg origin/develop ^$(current_branch)'
 
 # Get git info
-function git_prompt_info() {
+git_prompt_info() {
     ref=$(git symbolic-ref HEAD 2> /dev/null) || return
     echo "$BASH_THEME_GIT_PROMPT_PREFIX$(current_branch)$(parse_git_dirty)$(git_prompt_short_sha)$BASH_THEME_GIT_PROMPT_SUFFIX"
 }
 
 # Determine the time since last commit. If branch is clean,
 # use a neutral color, otherwise colors will vary according to time.
-function git_time_since_commit() {
+git_time_since_commit() {
     if git rev-parse --git-dir > /dev/null 2>&1; then
         # Only proceed if there is actually a commit.
         if [[ $(git log 2>&1 > /dev/null | grep -c "^fatal: bad default revision") == 0 ]]; then
@@ -139,7 +144,7 @@ function git_time_since_commit() {
 }
 
 # Checks if working tree is dirty
-function parse_git_dirty() {
+parse_git_dirty() {
   local SUBMODULE_SYNTAX=''
   if [[ $POST_1_7_2_GIT -gt 0 ]]; then
         SUBMODULE_SYNTAX="--ignore-submodules=dirty"
@@ -152,7 +157,7 @@ function parse_git_dirty() {
 }
 
 # Checks if there are commits ahead from remote
-function git_prompt_ahead() {
+git_prompt_ahead() {
   if $(echo "$(git log origin/$(current_branch)..HEAD 2> /dev/null)" | grep '^commit' &> /dev/null); then
     echo "$BASH_THEME_GIT_PROMPT_AHEAD"
   fi
@@ -169,7 +174,7 @@ git_prompt_long_sha() {
 }
 
 # Get the status of the working tree
-function git_prompt_status() {
+git_prompt_status() {
   INDEX=$(git status --porcelain 2> /dev/null)
   STATUS=""
   if $(echo "$INDEX" | grep '^?? ' &> /dev/null); then
@@ -204,7 +209,7 @@ function git_prompt_status() {
 #compare the provided version of git to the version installed and on path
 #prints 1 if input version <= installed version
 #prints -1 otherwise
-function git_compare_version() {
+git_compare_version() {
   local INPUT_GIT_VERSION=$1;
   local INSTALLED_GIT_VERSION
   INPUT_GIT_VERSION=(${INPUT_GIT_VERSION//./ });
