@@ -105,10 +105,6 @@ bind 'O' login off
 bind '}' history
 bind ' ' windowlist -b
 
-# Switch escape so I can paste backticks
-bindkey -k F1 escape ^aa # bound to F11
-bindkey -k F2 escape ``  # bound to F12
-
 hardstatus off
 hardstatus alwayslastline "%Lw"
 hardstatus string "%{= g}%{w}%H (%l)%= %{= w}%?%-Lw%?%{r}%n%f:%{w}%t%?:%u%?%{w}%?%+Lw%? %?%= %{w}%Y-%m-%d"

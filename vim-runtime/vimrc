@@ -51,6 +51,9 @@ let ft = &filetype
 "   %    :  saves and restores the buffer list
 "   n... :  where to save the viminfo files
 set viminfo='100,f1,"100,:20,%,n~/.viminfo
+if has("autocmd")
+  au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+endif
 
 set grepprg=grep\ -nH\ $* " Set grep to always print filename headers
 set autoread " Set to auto read when a file is changed from the outside
@@ -272,7 +275,7 @@ map 0 ^
 nnoremap <leader>r :YRShow<CR>
 
 " Change NERDTree to current file directory
-nnoremap <leader>nc :nerdtreefind<cr>
+nnoremap <leader>nc :NERDTreeFind<cr>
 
 " ----------------------------------------------------------
 " -- Search
