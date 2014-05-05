@@ -51,6 +51,7 @@ let ft = &filetype
 "   %    :  saves and restores the buffer list
 "   n... :  where to save the viminfo files
 set viminfo='100,f1,"100,:20,%,n~/.viminfo
+:autocmd!
 if has("autocmd")
   au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 endif
@@ -216,9 +217,12 @@ set sidescroll=1 " Minimum number of columns to scroll horizontally
 
 let MRU_Max_Entries = 400 " Most Recently Used files
 let NERDTreeMouseMode = 2 " Single click for directories, double click for files
-let g:NERDTreeDirArrows=0
-let g:NERDTreeWinSize = 30
-let g:showmarks_enable=0 " Enable showmarks by default
+let NERDChristmasTree = 1
+let NERDTreeAutoCenter = 1
+let NERDTreeDirArrows = 1
+let NERDTreeWinSize = 40
+let g:tagbar_width = 40
+let g:showmarks_enable = 1 " Enable showmarks by default
 let delimitMate_expand_cr = 1
 let g:user_zen_leader_key = '<leader>z' " zencoding
 let g:SuperTabNoCompleteAfter = ['^', ',', '\s']
@@ -275,7 +279,7 @@ map 0 ^
 nnoremap <leader>r :YRShow<CR>
 
 " Change NERDTree to current file directory
-nnoremap <leader>nc :NERDTreeFind<cr>
+nnoremap <leader>nc :NERDTreeFind<CR>:wincmd p<CR>
 
 " ----------------------------------------------------------
 " -- Search
@@ -541,8 +545,17 @@ endfunction
 autocmd! bufwritepost vimrc source ~/.vim-runtime/vimrc " When vimrc is edited, reload it
 
 " Open NERDTree automatically
-autocmd vimenter * NERDTreeFind | wincmd p | TagbarOpen
-autocmd BufNewFile * NERDTreeFind | wincmd p
+" autocmd vimenter * NERDTreeFind | wincmd p | TagbarOpen
+" autocmd BufNewFile * NERDTreeFind | wincmd p
+function! OpenTrees()
+    if &filetype != "nerdtree" && &filetype != "tagbar"
+        NERDTreeFind
+        wincmd p
+        TagbarOpen
+    endif
+endfunction
+
+autocmd vimenter * call OpenTrees()
 
 " Closes if NERDTree is the only open window
 autocmd BufEnter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif

@@ -49,3 +49,6 @@
 [submodule "vim-runtime/bundle/vim-javascript"]
 	path = vim-runtime/bundle/vim-javascript
 	url = https://github.com/pangloss/vim-javascript
+[submodule "vim-runtime/bundle/showmarks"]
+	path = vim-runtime/bundle/showmarks
+	url = https://github.com/vim-scripts/ShowMarks.git
