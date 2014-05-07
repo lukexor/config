@@ -306,11 +306,11 @@ map! <F3> <Esc>:set invnu<CR>i
 map <F4> <Esc>:call ToggleMouse()<CR>
 map! <F4> <Esc>:call ToggleMouse()<CR>i
 
-map <F5> <Esc>:NERDTreeToggle<CR>
-map! <F5> <Esc>:NERDTreeToggle<CR>i
+map <F5> <Esc>:NERDTreeFind<CR>:TagbarOpen<CR>
+map! <F5> <Esc>:NERDTreeFind<CR>:TagbarOpen<CR>i
 
-map <F6> <Esc>:TagbarToggle<CR>:NERDTreeToggle<CR>
-map! <F6> <Esc>:TagbarToggle<CR>:NERDTreeToggle<CR>i
+map <F6> <Esc>:NERDTreeClose<CR>:TagbarClose<CR>
+map! <F6> <Esc>:NERDTreeClose<CR>:TagbarClose<CR>i
 
 " Toggle text mode
 map <F7> <Esc>:call ToggleTextMode()<CR>
@@ -551,8 +551,6 @@ endfunction
 autocmd! bufwritepost vimrc source ~/.vim-runtime/vimrc " When vimrc is edited, reload it
 
 " Open NERDTree automatically
-" autocmd vimenter * NERDTreeFind | wincmd p | TagbarOpen
-" autocmd BufNewFile * NERDTreeFind | wincmd p
 function! FindFile()
     if &filetype != "nerdtree" && &filetype != "tagbar"
         NERDTreeFind
@@ -560,8 +558,8 @@ function! FindFile()
     endif
 endfunction
 
-autocmd BufEnter * call FindFile()
-autocmd vimenter * NERDTreeFind | wincmd p
+" autocmd BufEnter * call FindFile()
+" autocmd vimenter * NERDTreeFind | wincmd p
 
 " Closes if NERDTree is the only open window
 autocmd BufEnter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
