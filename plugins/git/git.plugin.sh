@@ -12,7 +12,6 @@ alias gbd='git branch -d'
 alias gbv='git branch -v'
 alias gc='git commit -v'
 alias gcn='git commit -v --no-verify'
-alias gca='git commit -v -a; tags'
 alias gcam='git commit --amend'
 alias gcb='git checkout -b'
 alias gcex='echo "gc #time 1w 2d 5h 30m #comment Task completed #send-for-code-review +review CR-FCS @mcadiz @jweitz"'
@@ -57,6 +56,11 @@ alias gun='git reset HEAD --'
 
 # Functions
 gdv() { git diff -w "$@" | view -; }
+
+gca() {
+    git commit -v -a "$@"
+    tags
+}
 
 gdone() {
     branch=$(current_branch)
@@ -104,7 +108,7 @@ alias gstbm='glg origin/master ^$(current_branch)'
 alias gstbd='glg $(current_branch) ^origin/develop'
 alias gstdb='glg origin/develop ^$(current_branch)'
 
-function gco() {
+gco() {
     git checkout $*
     tags
 }
