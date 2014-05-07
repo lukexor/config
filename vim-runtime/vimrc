@@ -231,7 +231,7 @@ let g:SuperTabNoCompleteBefore = ['\w']
 let g:SuperTabMappingForward = '<leader><tab>'
 let g:SuperTabMappingBackward = '<s-c-tab>'
 let g:SuperTabMappingTabLiteral = '<tab>'
-" let g:loaded_syntastic_plugin = 1
+let g:loaded_syntastic_plugin = 1
 " let g:syntastic_mode_map = { 'mode': 'passive' }
 
 " ==========================================================
@@ -372,6 +372,7 @@ cno $c e <C-\>eCurrentFileDir("e")<cr>
 map <leader>B <Esc>:Bookmark<CR>
 
 " CtrlP
+nnoremap <leader>, :CtrlP<CR>
 nnoremap <leader>. :CtrlPTag<CR>
 nnoremap <leader>m :CtrlPMRU<CR>
 
