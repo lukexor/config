@@ -23,6 +23,7 @@ fi
 
 # Misc
 export EDITOR="vim"
+export TAGF=./.git/tags;
 export CLICOLOR=1
 # export LSCOLORS="Gxfxcxdxbxegedabagacad"
 export LSCOLORS="gxBxhxDxfxhxhxhxhxcxcx"
