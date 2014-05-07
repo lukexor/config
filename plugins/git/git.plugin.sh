@@ -12,12 +12,11 @@ alias gbd='git branch -d'
 alias gbv='git branch -v'
 alias gc='git commit -v'
 alias gcn='git commit -v --no-verify'
-alias gca='git commit -v -a'
+alias gca='git commit -v -a; tags'
 alias gcam='git commit --amend'
 alias gcb='git checkout -b'
 alias gcex='echo "gc #time 1w 2d 5h 30m #comment Task completed #send-for-code-review +review CR-FCS @mcadiz @jweitz"'
 alias gcm='git checkout master'
-alias gco='git checkout'
 alias gcount='git shortlog -sn'
 alias gcp='git cherry-pick'
 alias gd='git diff --color-words'
@@ -96,7 +95,7 @@ current_branch() {
 
 # these aliases take advantage of the previous function
 alias gopl='git pull origin $(current_branch)'
-alias gops='git push origin $(current_branch)'
+alias gops='git push origin $(current_branch); tags'
 alias goplps='git pull origin $(current_branch) && git push origin $(current_branch)'
 alias gbps='git push $(current_branch) :'
 alias gstm='glg $(current_branch) ^origin/master'
@@ -104,6 +103,10 @@ alias gstbm='glg origin/master ^$(current_branch)'
 alias gstbd='glg $(current_branch) ^origin/develop'
 alias gstdb='glg origin/develop ^$(current_branch)'
 
+function gco() {
+    git checkout $*
+    tags
+}
 # Get git info
 git_prompt_info() {
     ref=$(git symbolic-ref HEAD 2> /dev/null) || return

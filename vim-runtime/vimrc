@@ -42,6 +42,7 @@ endif
 let g:snippets_dir = "~/.vim-runtime/snippets" " Set snippets directory
 let g:yankring_history_dir = "~/.vim-runtime"
 let ft = &filetype
+set tags=./tags,./.git/tags
 
 " Tell vim to remember certain things when we exit
 "   '100  : marks will be remembered for up to 100 previously edited files
@@ -342,7 +343,7 @@ map <leader>l :rightb vnew \| wincmd p<cr>
 map <leader>l :rightb vnew \| wincmd p<cr>
 
 " Remove the Windows ^M - when the encodings gets messed up
-map <leader>m mmHmt:%s/<C-V><cr>//ge<cr>'tzt'm
+map <leader>wm mmHmt:%s/<C-V><cr>//ge<cr>'tzt'm
 
 " Pressing ,ss will toggle and untoggle spell checking
 map <leader>ss :setlocal spell!<cr>
@@ -369,6 +370,10 @@ cno $c e <C-\>eCurrentFileDir("e")<cr>
 
 " NERDTree
 map <leader>B <Esc>:Bookmark<CR>
+
+" CtrlP
+nnoremap <leader>. :CtrlPTag<CR>
+nnoremap <leader>m :CtrlPMRU<CR>
 
 " Most Recently Used
 map <leader>f :MRU<CR>
@@ -547,15 +552,15 @@ autocmd! bufwritepost vimrc source ~/.vim-runtime/vimrc " When vimrc is edited, 
 " Open NERDTree automatically
 " autocmd vimenter * NERDTreeFind | wincmd p | TagbarOpen
 " autocmd BufNewFile * NERDTreeFind | wincmd p
-function! OpenTrees()
+function! FindFile()
     if &filetype != "nerdtree" && &filetype != "tagbar"
         NERDTreeFind
         wincmd p
-        TagbarOpen
     endif
 endfunction
 
-autocmd vimenter * call OpenTrees()
+autocmd BufEnter * call FindFile()
+autocmd vimenter * NERDTreeFind | wincmd p
 
 " Closes if NERDTree is the only open window
 autocmd BufEnter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
@@ -563,7 +568,7 @@ autocmd BufEnter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTree
 " Make sure the syntax is always right, even when in the middle of
 " a huge javascript inside an html file.
 autocmd BufEnter * :syntax sync fromstart
-autocmd BufEnter * if &filetype == "" | setlocal ft=txt | endif " Sets default filetype to txt
+" autocmd BufEnter * if &filetype == "" | set ft=txt | endif " Sets default filetype to txt
 
 " Highlight rows longer than 80 characters by default
 " autocmd BufEnter * highlight OverLength ctermbg=darkgrey guibg=#592929
