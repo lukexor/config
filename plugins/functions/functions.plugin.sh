@@ -8,6 +8,12 @@ cl() {
     cd ${HOME}/fcs/lib/Fap/
 }
 
+tags() {
+    GITD=$(git rev-parse --show-toplevel)
+    TAGF=${GITD}/.git/tags
+    ctags -f ${TAGF} ${GITD} && perl -pi -e 's/^\s*\n$//' ${TAGF}
+}
+
 # Echos and executes a command
 _echodo () {
   echo "$*"

@@ -6,7 +6,6 @@ alias ~='cd ~'
 alias ..='cd ..'
 alias ...='cd ../..'
 alias cdot="cd ${HOME}/.dotfiles"
-alias tags="ctags -f ${TAGF} . && perl -pi -e 's/^\s*\n$//' ${TAGF}"
 
 alias vbr='sudo /Library/StartupItems/VirtualBox/VirtualBox restart'
 

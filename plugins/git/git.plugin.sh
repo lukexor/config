@@ -59,7 +59,7 @@ gdv() { git diff -w "$@" | view -; }
 
 gca() {
     git commit -v -a "$@"
-    tags
+    tags > /dev/null 2>&1 &
 }
 
 gdone() {
@@ -110,7 +110,7 @@ alias gstdb='glg origin/develop ^$(current_branch)'
 
 gco() {
     git checkout $*
-    tags
+    tags > /dev/null 2>&1 &
 }
 # Get git info
 git_prompt_info() {
