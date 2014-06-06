@@ -140,21 +140,24 @@ snippet eval
 	}
 # While Loop
 snippet wh
-	while (${1}) {
-		${2}
+	${1:LABEL}:
+	while (${2}) {
+		${3}
 	}
 # While Loop One-line
 snippet xwh
 	${1:expression} while ${2:condition};${3}
 # C-style For Loop
 snippet cfor
-	for (my $${2:var} = 0; $$2 < ${1:count}; $$2${3:++}) {
-		${4}
+	${1:LABEL}:
+	for (my $${3:var} = 0; $$3 < ${2:count}; $$3${4:++}) {
+		${5}
 	}
 # Foreach Loop
 snippet for
-	foreach my $${1:x} (@${2:array}) {
-		${3}
+	${1:LABEL}:
+	foreach my $${2:x} (@${3:array}) {
+		${4}
 	}
 # Foreach Loop One-line
 snippet xfor

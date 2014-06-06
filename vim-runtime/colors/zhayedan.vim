@@ -26,6 +26,7 @@ hi Comment      guifg=#707070   guibg=NONE      ctermfg=245    ctermbg=NONE     
 hi Constant     guifg=#2d8078   guibg=NONE      ctermfg=030    ctermbg=NONE      gui=none      cterm=none
 hi BConstant    guifg=#2d8078   guibg=NONE      ctermfg=030    ctermbg=NONE      gui=bold      cterm=bold
 
+hi Function     guifg=#FFC66D   guibg=NONE      ctermfg=221    ctermbg=NONE      gui=NONE      cterm=NONE
 hi Identifier   guifg=#2974b7   guibg=NONE      ctermfg=025    ctermbg=NONE      gui=none      cterm=none
 hi BIdentifier  guifg=#2974b7   guibg=NONE      ctermfg=025    ctermbg=NONE      gui=bold      cterm=bold
 

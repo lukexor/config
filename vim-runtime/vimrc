@@ -72,8 +72,15 @@ set ff=unix
 set ffs=unix,dos,mac " Default file types
 set number " Line numbers
 set cpoptions+=n
+
 set t_Co=256 " Force 256 colors
-colorscheme zhayedan " Custom colorscheme
+if (!has('gui_running') && filereadable(expand("$HOME/.vim-runtime/plugin/guicolorscheme.vim")))
+    runtime! plugin/guicolorscheme.vim
+    GuiColorScheme xcode-midnight
+else
+    colorscheme zhayedan " Custom colorscheme
+endif
+
 syntax enable
 let perl_include_pod = 1 " Syntax highlight pod documentation correctly
 let perl_extended_vars = 1 " Syntax color complex things like @{${'foo'}}

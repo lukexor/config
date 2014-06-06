@@ -57,11 +57,6 @@ alias gun='git reset HEAD --'
 # Functions
 gdv() { git diff -w "$@" | view -; }
 
-gca() {
-    git commit -v -a "$@"
-    tags > /dev/null 2>&1 &
-}
-
 gdone() {
     branch=$(current_branch)
     git branch -m $branch done-$branch
@@ -100,7 +95,6 @@ current_branch() {
 
 # these aliases take advantage of the previous function
 alias gopl='git pull origin $(current_branch)'
-alias gops='git push origin $(current_branch); tags'
 alias goplps='git pull origin $(current_branch) && git push origin $(current_branch)'
 alias gbps='git push $(current_branch) :'
 alias gstm='glg $(current_branch) ^origin/master'
@@ -108,10 +102,19 @@ alias gstbm='glg origin/master ^$(current_branch)'
 alias gstbd='glg $(current_branch) ^origin/develop'
 alias gstdb='glg origin/develop ^$(current_branch)'
 
-gco() {
-    git checkout $*
+gca() {
+    git commit -v -a $@
     tags > /dev/null 2>&1 &
 }
+gco() {
+    git checkout $@
+    tags > /dev/null 2>&1 &
+}
+gops() {
+    git push origin $(current_branch) $@
+    tags > /dev/null 2>&1 &
+}
+
 # Get git info
 git_prompt_info() {
     ref=$(git symbolic-ref HEAD 2> /dev/null) || return
