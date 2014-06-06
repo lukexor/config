@@ -12,6 +12,7 @@ alias gbd='git branch -d'
 alias gbv='git branch -v'
 alias gc='git commit -v'
 alias gcn='git commit -v --no-verify'
+alias gca='git commit -v -a'
 alias gcam='git commit --amend'
 alias gcb='git checkout -b'
 alias gcex='echo "gc #time 1w 2d 5h 30m #comment Task completed #send-for-code-review +review CR-FCS @mcadiz @jweitz"'
@@ -102,10 +103,6 @@ alias gstbm='glg origin/master ^$(current_branch)'
 alias gstbd='glg $(current_branch) ^origin/develop'
 alias gstdb='glg origin/develop ^$(current_branch)'
 
-gca() {
-    git commit -v -a $@
-    tags > /dev/null 2>&1 &
-}
 gco() {
     git checkout $@
     tags > /dev/null 2>&1 &
