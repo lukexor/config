@@ -42,7 +42,7 @@ export HISTFILE="${HOME}/.bhist"
 export HISTFILESIZE="10000" # Number of commands saved in HISTFILE
 export HISTSIZE="1000" # Number of commands saved in command history
 export HISTTIMEFORMAT="[%F %a %T] " # YYYY-MM-DD DAY HH:MM:SS
-export JAVA_HOME="/usr"
+# export JAVA_HOME="/usr"
 
 # Grep
 export GREP_OPTIONS="--color=auto"
