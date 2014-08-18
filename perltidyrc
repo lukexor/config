@@ -2,6 +2,8 @@
 -l=120 # Max line width - 0 = large number
 #-vmll # Variable line-length - ignore leading whitespace
 -i=4 # Indent level
+-dt=4 # tabsize
+-t # tabs
 -ci=4 # Continuation indent
 -st # Output to STDOUT
 -se # Errors to STDERR
