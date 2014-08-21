@@ -192,8 +192,10 @@ aweb()
     # If default RSA key present
     [ -f "${HOME}/.ssh/webhost_key" ] && /usr/bin/ssh-add "${HOME}/.ssh/webhost_key"
 }
+
 akey()
 {
+	ra
     # If Aladdin etoken connected
     if [ $(system_profiler SPUSBDataType 2> /dev/null| grep OMNIKEY -c) -gt 0 ]
     then

@@ -129,6 +129,9 @@ done
 # Load theme
 sourcefile $BASH_THEME
 
+# Load virtualenvwrapper
+sourcefile /usr/local/bin/virtualenvwrapper.sh
+
 # ----------------------------------------------------------
 # -- Startup
 
