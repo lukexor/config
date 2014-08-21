@@ -78,7 +78,7 @@ set t_Co=256 " Force 256 colors
 "     runtime! plugin/guicolorscheme.vim
 "     GuiColorScheme xcode-midnight
 " else
-    colorscheme zhayedan " Custom colorscheme
+    colorscheme railscast " Custom colorscheme
 " endif
 
 syntax enable
@@ -341,7 +341,7 @@ nmap <tab> >>
 nmap <s-tab> <<
 
 " Run perltidy in visual mode
-vmap <leader>p :!perltidy -q<CR>
+vmap <leader>p :!perltidy --quiet --standard-output --nostandard-error-output<CR>
 
 " Split window pane for better line-wrapping view
 map <leader>l :rightb vnew \| wincmd p<cr>

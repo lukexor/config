@@ -1,22 +1,9 @@
--opath=~/tmp # Output file
--l=120 # Max line width - 0 = large number
-#-vmll # Variable line-length - ignore leading whitespace
--i=4 # Indent level
--dt=4 # tabsize
--t # tabs
--ci=4 # Continuation indent
--st # Output to STDOUT
--se # Errors to STDERR
--w # Report warnings as errors
--vt=0 # Always break after opening token
--vtc=0 # Always break before closing token
--bbvt=0 # Always break after opening block brace
--cti=0 # indentation for closing brackets
--pt=2 # parenthesis tightness
--bt=1 # brace tightness
--sbt=1 # square bracket tightness
--bbt=0 # block brace tightness
--nsfs # No space before semicolons
--nolq # Don't outdent long quoted strings
--nola # Don't outdent labels
--wbb="% + - * / x != == >= <= =~ < > | & **= += *= &= <<= &&= -= /= |= + >>= ||= .= %= ^= x=" # Break before all operators
+--blank-lines-before-subs=2 # Default: 1
+--comma-arrow-breakpoints=0 # Break after every comma following => key/value pairs
+--maximum-line-length=120 # Default: 80
+--nospace-for-semicolon # e.g. for (i = 0; i < $value; i++) { ... }
+--nooutdent-long-lines
+--opening-brace-on-new-line
+--output-line-ending=unix
+--standard-error-output
+--tabs
