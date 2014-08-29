@@ -1,0 +1,4 @@
+*.min.js
+*.sql
+bootstrap.js
+.git

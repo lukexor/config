@@ -152,3 +152,11 @@ if [ -d "${HOME}/.journal" ]; then
     unset date
     unset entries
 fi
+
+echo -e "Vim Shortcuts"
+echo -e "-------------"
+echo "<F1>  NERDTree/TagBar         --  <F2>  Toggle paste          --  <F3>  Toggle wrap/list     --  <F4>  Toggle line #s        -- <F5>  SyntasticCheck"
+echo ",,    Search files            --  ,.    Search tags           --  ,m    Search recent        --  ,r    Show yanks            "
+echo ",tn   New tab                 --  ,ep   Edit snippets         --  ,s    Strip trailing       --  ,rt   Retab spaces w/ tabs  "
+echo ",mt   Toggle ShowMarks        --  ,ma   Clear all marks       --  <tab> Word completion      --"
+echo "cs\"'  Replace \" with '        --  ysiw] Surround with ]       --  ds]   Delete surounding ]  -- "

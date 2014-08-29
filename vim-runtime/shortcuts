@@ -1,0 +1,8 @@
+|-------------------------------------------------------------------------------------------------------------------------|
+|  <F2>  NERDTree/TagBar        |  <F3>  Toggle paste         |  <F4>  Toggle wrap/list     |  <F5>  Toggle line #s       |
+|  <F6>  SyntasticCheck         |  <F7>  Toggle Mouse         |  <F8>  Toggle Textmode      |                             |
+|                               |                             |                             |                             |
+|  ,,    Search files           |  ,.    Search tags          |  ,m    Search recent        |  ,r    Show recent yanks    |
+|  ,tn   New tab                |  ,ep   Edit snippets        |  ,s    Strip trailing       |  ,rt   Retab spaces w/ tabs |
+|  ,mt   Toggle ShowMarks       |  ,ma   Clear all marks      |  <tab> Word completion      |                             |
+|  cs"'  Replace " with '       |  ysiw] Surround with ]      |  ds]   Delete surounding ]  |                             |
