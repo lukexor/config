@@ -48,7 +48,7 @@ set tags=./tags,./.git/tags
 "	%	 :	saves and restores the buffer list
 "	n... :	where to save the viminfo files
 set viminfo='100,f1,"100,:20,%,n~/.viminfo
-:autocmd!
+
 if has("autocmd")
   au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 endif
@@ -172,7 +172,6 @@ endif
 " == Formatting
 
 set autoindent
-" set breakat=\  " Wrap long lines at space
 " set expandtab " Always expand tabs into spaces
 set formatoptions=rql " Allow line-width formatting with <leader>gq
 set linebreak " Wrap long lines at a character in breakat
@@ -572,7 +571,7 @@ autocmd BufEnter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTree
 
 " Make sure the syntax is always right, even when in the middle of
 " a huge javascript inside an html file.
-autocmd BufEnter * :syntax sync fromstart
+" autocmd BufEnter * :syntax sync fromstart
 " autocmd BufEnter * if &filetype == "" | set ft=txt | endif " Sets default filetype to txt
 
 " Check perl syntax with :make

@@ -4,5 +4,5 @@
 |                               |                             |                             |                             |
 |  ,,    Search files           |  ,.    Search tags          |  ,m    Search recent        |  ,r    Show recent yanks    |
 |  ,tn   New tab                |  ,ep   Edit snippets        |  ,s    Strip trailing       |  ,rt   Retab spaces w/ tabs |
-|  ,mt   Toggle ShowMarks       |  ,ma   Clear all marks      |  <tab> Word completion      |                             |
-|  cs"'  Replace " with '       |  ysiw] Surround with ]      |  ds]   Delete surounding ]  |                             |
+|  ,mt   Toggle ShowMarks       |  ,ma   Clear all marks      |  <tab> Word completion      |  <sp>  Toggle fold          |
+|  cs"'  Replace " with '       |  ysiw] Surround with ]      |  ds]   Delete surounding ]  |  zM/ZR Close/Open all folds |

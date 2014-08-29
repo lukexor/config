@@ -10,9 +10,6 @@
 [submodule "vim-runtime/bundle/zencoding"]
 	path = vim-runtime/bundle/zencoding
 	url = git://github.com/mattn/emmet-vim
-[submodule "vim-runtime/bundle/snipmate"]
-	path = vim-runtime/bundle/snipmate
-	url = git://github.com/msanders/snipmate.vim
 [submodule "bin/dotfiles"]
 	path = bin/dotfiles
 	url = git://github.com/jbernard/dotfiles.git
