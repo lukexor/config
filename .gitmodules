@@ -49,3 +49,6 @@
 [submodule "vim-runtime/bundle/showmarks"]
 	path = vim-runtime/bundle/showmarks
 	url = https://github.com/vim-scripts/ShowMarks.git
+[submodule "vim-runtime/bundle/youcompleteme"]
+	path = vim-runtime/bundle/youcompleteme
+	url = https://github.com/Valloric/YouCompleteMe

@@ -25,7 +25,7 @@ set nocompatible
 " Load all plugins in ~/.vim-runtime/bundle
 
 if v:version > 700
-	let g:pathogen_disabled = []
+	let g:pathogen_disabled = ['supertab']
 	call pathogen#helptags()
 	call pathogen#infect()
 endif
