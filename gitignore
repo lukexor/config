@@ -45,3 +45,4 @@ bin/minecraft*
 .includepath
 .project
 .settings/
+test_scripts/
