@@ -25,7 +25,7 @@ set nocompatible
 " Load all plugins in ~/.vim-runtime/bundle
 
 if v:version > 700
-	let g:pathogen_disabled = ['supertab']
+	let g:pathogen_disabled = ['snipmate']
 	call pathogen#helptags()
 	call pathogen#infect()
 endif
@@ -37,6 +37,8 @@ let g:snips_author = 'Lucas Petherbridge' " Set author for snippets
 let g:snips_authoremail = 'lukexor@gmail.com'
 let g:snippets_dir = "~/.vim-runtime/snippets" " Set snippets directory
 let g:yankring_history_dir = "~/.vim-runtime"
+let g:ycm_collect_identifiers_from_tags_files = 1
+
 let ft = &filetype
 set tags=./tags,./.git/tags
 
@@ -187,7 +189,6 @@ set wrapmargin=10 " Number of characters from the right where wrapping starts
 if has('spell')
 	set spelllang=en
 endif
-" set iskeyword-=\_ " Remove _ from keyword so it's not considered a word
 
 filetype plugin indent on " Enable filetype plugin
 
@@ -227,19 +228,18 @@ highlight ShowMarksHLu guifg=#DA4939 ctermfg=167 gui=NONE cterm=NONE " A-Z marks
 highlight ShowMarksHLo guifg=#2B2B2B ctermfg=159 guibg=#C0C0FF " All other marks
 highlight ShowMarksHLm guifg=#DA4939 ctermfg=167 gui=NONE cterm=NONE " Multiple marks on same line
 let delimitMate_expand_cr = 1
-let g:user_zen_leader_key = '<leader>z' " zencoding
-let g:SuperTabNoCompleteAfter = ['^', ',', '\s']
-let g:SuperTabNoCompleteBefore = ['\w']
-let g:SuperTabMappingForward = '<tab>'
-let g:SuperTabMappingBackward = '<s-tab>'
-let g:SuperTabMappingTabLiteral = '<s-c-tab>'
 let g:syntastic_mode_map = { 'mode': 'passive' }
+let g:UltiSnipsSnippetDirectories=["UltiSnips"]
 
 " ==========================================================
 " == Mappings
 
 let mapleader = "," " With a map leader it's possible to do extra key combinations
 let g:mapleader = ","
+let g:ycm_key_list_select_completion = ['<C-TAB>', '<Down>']
+let g:ycm_key_list_previous_completion = ['<C-S-TAB>', '<Up>']
+let g:SuperTabDefaultCompletionType = '<C-Tab>'
+let g:user_zen_leader_key = '<leader>z' " zencoding
 nnoremap ; :
 nnoremap ` <NOP>
 

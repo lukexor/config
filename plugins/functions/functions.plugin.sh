@@ -11,7 +11,7 @@ cl() {
 tags() {
     GITD=$(git rev-parse --show-toplevel)
     TAGF=${GITD}/.git/tags
-    echo ctags -V --exclude=@${HOME}/.ctagsexclude -f ${TAGF} ${GITD} && perl -pi -e 's/^\s*\n$//' ${TAGF}
+    ctags -V --fields=+l --exclude=@${HOME}/.ctagsexclude -f ${TAGF} ${GITD} && perl -pi -e 's/^\s*\n$//' ${TAGF}
 }
 
 # Echos and executes a command

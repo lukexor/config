@@ -52,3 +52,9 @@
 [submodule "vim-runtime/bundle/youcompleteme"]
 	path = vim-runtime/bundle/youcompleteme
 	url = https://github.com/Valloric/YouCompleteMe
+[submodule "vim-runtime/bundle/ultisnips"]
+	path = vim-runtime/bundle/ultisnips
+	url = git://github.com/SirVer/ultisnips.git
+[submodule "vim-runtime/vim-snippets"]
+	path = vim-runtime/vim-snippets
+	url = https://github.com/honza/vim-snippets.git
