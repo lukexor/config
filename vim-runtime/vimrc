@@ -563,8 +563,11 @@ endfunction
 autocmd! bufwritepost vimrc source ~/.vim-runtime/vimrc " When vimrc is edited, reload it
 
 " Open NERDTree automatically
-autocmd vimenter * call ToggleSideBars() | set colorcolumn=+1
-highlight ColorColumn ctermbg=235 guibg=235
+autocmd vimenter * call ToggleSideBars()
+if v:version > 720
+	autocmd vimenter * set colorcolumn=+1
+	highlight ColorColumn ctermbg=235 guibg=235
+endif
 
 " Closes if NERDTree is the only open window
 autocmd BufEnter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
