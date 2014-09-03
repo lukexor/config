@@ -55,9 +55,9 @@
 [submodule "vim-runtime/bundle/ultisnips"]
 	path = vim-runtime/bundle/ultisnips
 	url = git://github.com/SirVer/ultisnips.git
-[submodule "vim-runtime/vim-snippets"]
-	path = vim-runtime/vim-snippets
-	url = https://github.com/honza/vim-snippets.git
 [submodule "vim-runtime/editorconfig"]
 	path = vim-runtime/editorconfig
 	url = https://github.com/editorconfig/editorconfig-vim
+[submodule "vim-runtime/vim-snippets"]
+	path = vim-runtime/vim-snippets
+	url = https://github.com/honza/vim-snippets.git
