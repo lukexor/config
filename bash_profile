@@ -18,13 +18,17 @@ pathremove () {
 }
 pathprepend () {
         pathremove $1 $2
-        local PATHVARIABLE=${2:-PATH}
-        export $PATHVARIABLE="$1${!PATHVARIABLE:+:${!PATHVARIABLE}}"
+		if [[ -d $1 ]] ; then
+			local PATHVARIABLE=${2:-PATH}
+			export $PATHVARIABLE="$1${!PATHVARIABLE:+:${!PATHVARIABLE}}"
+		fi
 }
 pathappend () {
         pathremove $1 $2
-        local PATHVARIABLE=${2:-PATH}
-        export $PATHVARIABLE="${!PATHVARIABLE:+${!PATHVARIABLE}:}$1"
+		if [[ -d $1 ]] ; then
+			local PATHVARIABLE=${2:-PATH}
+			export $PATHVARIABLE="${!PATHVARIABLE:+${!PATHVARIABLE}:}$1"
+		fi
 }
 
 # pathadd() {
@@ -43,6 +47,15 @@ export HISTFILESIZE="10000" # Number of commands saved in HISTFILE
 export HISTSIZE="1000" # Number of commands saved in command history
 export HISTTIMEFORMAT="[%F %a %T] " # YYYY-MM-DD DAY HH:MM:SS
 # export JAVA_HOME="/usr"
+if [[ -z "$JAVA_HOME" && -x /usr/libexec/java_home ]] ; then
+	export JAVA_HOME=$(/usr/libexec/java_home)
+fi
+if [[ -d /usr/local/Cellar/maven/3.2.2/libexec ]] ; then
+	export MAVEN_HOME=/usr/local/Cellar/maven/3.2.2/libexec
+fi
+if [[ -d ${HOME}/fcs ]] ; then
+	export FON_DIR=${HOME}/fcs
+fi
 
 # Grep
 export GREP_OPTIONS="--color=auto"
@@ -51,12 +64,20 @@ export GREP_COLOR="1;32"
 # Pager
 export PAGER="less"
 
+# Virtualenvwrapper
+if [ -d "${HOME}/Dropbox/dev/virtualenvs" ]; then
+	export WORKON_HOME=${HOME}/Dropbox/dev/virtualenvs
+fi
+
+# Fix YCM with vim
+export DYLD_FORCE_FLAT_NAMESPACE=1
+
 # ----------------------------------------------------------
 # -- Host-Specific Shell Variables
 
 case "${HOSTNAME}" in
   tech ) export CPVER=5; export PERLLIB=/code-5.0/ ;;
-  zhayedan ) export GITPERLLIB=${HOME}/perl5/perlbrew/perls/perl-5.16.0/lib/site_perl/5.16.0/App/gh ;;
+  zhayedan ) export GITPERLLIB=${HOME}/perl5/lib/perl5/:${HOME}/perl5/perlbrew/perls/perl-5.16.0/lib/site_perl/5.16.0/App/gh ;;
 esac
 
 # ----------------------------------------------------------
@@ -72,43 +93,38 @@ if [ -d "${HOME}/fcs/lib" ]; then
     export FCS_DEVEL=1
 fi
 
-if [ -d "${HOME}/.rvm/bin" ]; then
-    pathprepend "${HOME}/.rvm/bin"
-fi
-if [ -d "/usr/local/bin" ]; then
-    pathprepend "/usr/local/bin"
-fi
-if [ -d "${HOME}/fcs/bin" ]; then
-    pathprepend "${HOME}/fcs/bin"
-fi
+pathappend "${HOME}/perl5/lib/perl5/" PERL5LIB
+pathprepend "${HOME}/.rvm/bin"
+pathprepend "/usr/local/bin"
+pathprepend "${HOME}/fcs/bin"
+
 if [ -d "${HOME}/bin" ]; then
     for dir in $(find "${HOME}/bin" -type d -name bin); do
         pathprepend $dir
     done
 fi
-if [ -d "${HOME}/opt/bin" ]; then
-    pathprepend "${HOME}/opt/bin"
-fi
-if [ -d "${HOME}/bin" ]; then
-    pathprepend "${HOME}/bin"
-fi
+
+pathprepend "${HOME}/opt/bin"
+pathprepend "${HOME}/bin"
 
 # ----------------------------------------------------------
 # -- Host-Specific Paths
 
-case "${HOSTNAME}" in
-    tech )
-        if [ -d "${HOME}/bin/fon" ]; then
-            pathprepend ${HOME}/bin/fon
-        fi
-        if [ -d "/var/adm/bin-5.0" ]; then
-            pathappend /var/adm/bin-5.0
-        fi
-        if [ -d "/usr/local/bin-5.0" ]; then
-            pathappend /usr/local/bin-5.0
-        fi
-        ;;
-esac
+pathprepend ${HOME}/bin/fon
+pathappend /var/adm/bin-5.0
+pathappend /usr/local/bin-5.0
+
+# ----------------------------------------------------------
+# -- Java
+pathprepend "${MAVEN_HOME}/bin"
+pathprepend "${JAVA_HOME}/bin"
+
+# ----------------------------------------------------------
+# -- MacPorts Installer addition on 2014-05-14_at_09:06:16: adding an appropriate PATH variable for use with MacPorts.
+# export PATH=/opt/local/bin:/opt/local/sbin:$PATH
+pathprepend "/opt/local/sbin"
+pathprepend "/opt/local/bin"
+# Finished adapting your PATH environment variable for use with MacPorts.
 
 # ----------------------------------------------------------
 # -- Inputrc

@@ -58,3 +58,6 @@
 [submodule "vim-runtime/vim-snippets"]
 	path = vim-runtime/vim-snippets
 	url = https://github.com/honza/vim-snippets.git
+[submodule "vim-runtime/editorconfig"]
+	path = vim-runtime/editorconfig
+	url = https://github.com/editorconfig/editorconfig-vim

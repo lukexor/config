@@ -239,6 +239,8 @@ let g:mapleader = ","
 let g:ycm_key_list_select_completion = ['<C-TAB>', '<Down>']
 let g:ycm_key_list_previous_completion = ['<C-S-TAB>', '<Up>']
 let g:SuperTabDefaultCompletionType = '<C-Tab>'
+let g:SuperTabNoCompleteAfter = ['^', ',', '\s', '\t']
+let g:SuperTabNoCompleteBefore = ['\n', '$', '\s', '\t']
 let g:user_zen_leader_key = '<leader>z' " zencoding
 nnoremap ; :
 nnoremap ` <NOP>
@@ -312,8 +314,8 @@ map <F4> <Esc>:set wrap!<CR>:set list!<CR>
 map! <F4> <Esc>:set wrap!<CR>:set list!<CR>i
 
 " Toggle line numbers and list
-map <F5> <Esc>:set invnu<CR>:set list!<CR>
-map! <F5> <Esc>:set invnu<CR>:set list!<CR>i
+map <F5> <Esc>:set invnu<CR>:set list!<CR>:call ToggleSideBars()<CR>
+map! <F5> <Esc>:set invnu<CR>:set list!<CR>:call ToggleSideBars()<CR>i
 
 " Syntax check file
 map <F6> <Esc>:SyntasticCheck<CR>
@@ -564,8 +566,8 @@ autocmd! bufwritepost vimrc source ~/.vim-runtime/vimrc " When vimrc is edited, 
 
 " Open NERDTree automatically
 autocmd vimenter * call ToggleSideBars()
-if v:version > 720
-	autocmd vimenter * set colorcolumn=+1
+if v:version > 702
+	set colorcolumn=+1
 	highlight ColorColumn ctermbg=235 guibg=235
 endif
 

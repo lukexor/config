@@ -1,12 +1,19 @@
-# Global snippets
-
-# (c) holds no legal value ;)
-snippet c)
+snippet c) "Copywrite (c))"
 	Copyright `&enc[:2] == "utf" ? "©" : "(c)"` `strftime("%Y")` ${1:`g:snips_author`}. All Rights Reserved.${2}
-snippet date
+
+snippet date "Date in YYYY-MM-DD"
 	`strftime("%Y-%m-%d")`
-snippet ddate
+
+snippet ddate "Date in Month DD, YYYY"
 	`strftime("%B %d, %Y")`
-snippet jl
+
+snippet jl "Date in [YYYY-MM-DD Day HH:MM:SS]"
 	[`strftime("%Y-%m-%d %a %I:%M:%S")`]
-	
+
+snippet == "Header comment (==)"
+	# ==========================================================
+	# == ${1:heading}
+
+snippet -- "Sub-header comment (--)"
+	# ----------------------------------------------------------
+	# -- ${1:heading}
