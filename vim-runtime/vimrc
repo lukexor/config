@@ -405,11 +405,15 @@ autocmd FileType ruby map <leader>r :call RunWith("ruby")<cr>
 autocmd FileType python map <leader>r :call RunWith("python")<cr>
 autocmd FileType perl map <leader>r :call RunWith("perl")<cr>
 
-" Fast editing of the .vimrc
-map <leader>ev :tabnew ~/.vim-runtime/vimrc<cr>
+map <leader>j :make<CR>
+
+" Source vimrc
 map <leader>sv :so ~/.vim-runtime/vimrc<cr>
 
-map <leader>ep :execute 'vsp ~/.vim-runtime/snippets/' . &filetype . '.snippets'<cr>
+" Fast editing of various files
+map <leader>ev :tabnew ~/.vim-runtime/vimrc<cr>
+map <leader>ep :execute 'sp ~/.vim-runtime/snippets/' . &filetype . '.snippets'<cr>
+map <leader>et :CtrlP %:p:h/t/<CR>
 
 " Quit all windows without saving
 map <leader>q :qall!<cr>
@@ -564,6 +568,8 @@ endfunction
 
 autocmd! bufwritepost vimrc source ~/.vim-runtime/vimrc " When vimrc is edited, reload it
 
+autocmd FileType perl source ~/.vim-runtime/perltest.vim
+
 " Open NERDTree automatically
 autocmd vimenter * call ToggleSideBars()
 if v:version > 702
@@ -576,9 +582,13 @@ autocmd BufEnter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTree
 
 " Make sure the syntax is always right, even when in the middle of
 " a huge javascript inside an html file.
-" autocmd BufEnter * :syntax sync fromstart
-" autocmd BufEnter * if &filetype == "" | set ft=txt | endif " Sets default filetype to txt
+autocmd BufEnter * :syntax sync fromstart
+autocmd BufEnter * if &filetype == "" | set ft=txt | endif " Sets default filetype to txt
+autocmd BufNewFile,BufRead *.html set filetype=htmldjango
 
 " Check perl syntax with :make
 autocmd FileType perl set makeprg=perl\ -c\ %\ $*
 autocmd FileType perl set errorformat=%f:%l%m
+
+" autocmd QuickFixCmdPost [^l]* nested copen 3
+" autocmd QuickFixCmdPost    l* nested lwindow
