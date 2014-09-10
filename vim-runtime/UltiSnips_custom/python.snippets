@@ -1,46 +1,39 @@
-snippet #! "#! Perl shebang (#!)"
-	#!/usr/bin/perl
+snippet #! "Python shebang (#!)"
+#!/usr/bin/env python
+# encoding: utf-8
 
-	=head1 NAME
+"""
+`!v expand('%:t')`
 
-	`Filename()` - ${1:short_description}
+SYNOPSIS
+	python `!v expand('%:t')` [options]
 
-	=head1 AUTHOR
+DESCRIPTION
+	TODO: This describes the functionality of this script/module.
 
-	`g:snips_author` <`g:snips_authoremail`>
+METHODS
+	TODO:
 
-	=cut
+AUTHOR
+	`!v g:snips_author` <!v `g:snips_authoremail`>
+"""
 
-	use strict;
-	use warnings;
+def main():
+	"""
+	@param: sys.argv()
+	@return: TODO
+	@throws: TODO
+	"""
+	
+	${1:pass}
 
-	use Carp;
-	use Data::Dumper;
+if __name__ == '__main__':
+	main()
+endsnippet
 
-	sub main {
-		${2}
-
-		return 1;
-	}
-
-	main();
-
-snippet pod_head "POD heading documentation (pod_head)"
-	=head1 SYNOPSIS
-
-	perl `Filename()` [options]
-
-	=head1 DESCRIPTION
-
-	long description
-
-	=head1 BUGS/CAVEATS
-
-	bugs or caveats
-
-	=head1 LICENSE
-
-	Copyright (c) `system("date +%Y")` `g:snips_author`
+snippet license "License documentation (license)"
+LICENSE
+	Copyright (c) `date +%Y` `!v g:snips_author`
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -68,13 +61,54 @@ snippet pod_head "POD heading documentation (pod_head)"
 	The views and conclusions contained in the software and documentation
 	are those of the authors and should not be interpreted as representing
 	official policies, either expressed or implied, of the FreeBSD Project.
+endsnippet
 
-	=head2 Methods
+snippet imp "Import (imp)"
+import ${1:module}
+endsnippet
 
-	=over 12
+snippet mdoc "Module docstring (mdoc)"
+"""
+AUTHOR
+	`!v g:snips_author` <`!v g:snips_authoremail`>
+"""
 
-	=item C<main()>
+if __name__ == '__main__':
+	main()
 
-	Main logic execution
+def main():
+	"""
+	@param: sys.argv()
+	@return: TODO
+	@throws: TODO
+	"""
 
-	=back
+	${1:pass}:
+endsnippet
+
+snippet while "while"
+while ${1:condition}:
+	${2:# code...}
+endsnippet
+
+snippet ld "lambda (ld)"
+${1:var} = lambda ${2:vars} : ${3:action}
+endsnippet
+
+snippet . "self (.)"
+self.
+endsnippet
+
+snippet _ "dunder (_)"
+__${1:init}__${2}
+endsnippet
+
+snippet "" "Function notes (2 DOUBLE_QUOTES)"
+"""
+${1:description}
+
+@param: ${2:param}
+@return: ${3:return}
+@throws: ${4:throws}
+"""
+endsnippet

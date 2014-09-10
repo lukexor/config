@@ -84,16 +84,18 @@ esac
 # -- Global Paths
 
 if [ -d "${HOME}/lib" ]; then
-    pathappend "${HOME}/lib" PERL5LIB
+	for dir in $(find "${HOME}/lib" -type d -name perl*); do
+		pathprepend $dir PERL5LIB
+	done
 fi
 
 if [ -d "${HOME}/fcs/lib" ]; then
     pathappend "${HOME}/fcs/lib" PERL5LIB
     export FON_DIR="${HOME}/fcs"
     export FCS_DEVEL=1
+	export NO_MYSQL_AUTOCONNECT=1
 fi
 
-pathappend "${HOME}/perl5/lib/perl5/" PERL5LIB
 pathprepend "${HOME}/.rvm/bin"
 pathprepend "/usr/local/bin"
 pathprepend "${HOME}/fcs/bin"

@@ -25,7 +25,7 @@ set nocompatible
 " Load all plugins in ~/.vim-runtime/bundle
 
 if v:version > 700
-	let g:pathogen_disabled = ['snipmate']
+	let g:pathogen_disabled = ['supertab', 'youcompleteme', 'snipmate']
 	call pathogen#helptags()
 	call pathogen#infect()
 endif
@@ -179,7 +179,7 @@ set formatoptions=rql " Allow line-width formatting with <leader>gq
 set linebreak " Wrap long lines at a character in breakat
 set list listchars=tab:\|\ ,trail:-,extends:>,precedes:<,nbsp:x " display indentation guides
 highlight SpecialKey ctermfg=darkgrey guifg=darkgrey
-set nowrap " nowrap by default
+set wrap " wrap default
 set shiftwidth=4 " Number of spaces used for each spent of indent
 set smarttab " Tabs according to shiftwidth
 set softtabstop=4 " Spaces a tab counts for when backspacing or inserting tabs
@@ -229,7 +229,7 @@ highlight ShowMarksHLo guifg=#2B2B2B ctermfg=159 guibg=#C0C0FF " All other marks
 highlight ShowMarksHLm guifg=#DA4939 ctermfg=167 gui=NONE cterm=NONE " Multiple marks on same line
 let delimitMate_expand_cr = 1
 let g:syntastic_mode_map = { 'mode': 'passive' }
-let g:UltiSnipsSnippetDirectories=["UltiSnips"]
+let g:UltiSnipsSnippetDirectories=["UltiSnips", "UltiSnips_custom"]
 
 " ==========================================================
 " == Mappings
@@ -307,6 +307,7 @@ map! <F2> <Esc>:call ToggleSideBars()<CR>i
 
 " Toggle insert paste
 map <F3> <Esc>:set invpaste paste?<CR>
+map! <F3> <Esc>:set invpaste paste?<CR>i
 set pastetoggle=<F2>
 
 " Toggle wrap
@@ -585,6 +586,7 @@ autocmd BufEnter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTree
 autocmd BufEnter * :syntax sync fromstart
 autocmd BufEnter * if &filetype == "" | set ft=txt | endif " Sets default filetype to txt
 autocmd BufNewFile,BufRead *.html set filetype=htmldjango
+autocmd BufEnter *.conf set ft=yaml
 
 " Check perl syntax with :make
 autocmd FileType perl set makeprg=perl\ -c\ %\ $*
