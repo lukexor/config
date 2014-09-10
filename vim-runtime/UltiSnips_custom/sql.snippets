@@ -1,0 +1,71 @@
+snippet add
+ALTER TABLE ${1:table_name} ADD COLUMN ${2:column_name} ${3:column_definition};
+endsnippet
+
+snippet drop
+ALTER TABLE ${1:table_name} DROP COLUMN ${2:column_name};
+endsnippet
+
+snippet change
+ALTER TABLE ${1:table_name} CHANGE ${2:old_column_name} ${3:new_column_name} ${4:column_definition};
+endsnippet
+
+snippet modify
+ALTER TABLE ${1:table_name} MODIFY ${2:column_name} ${3:column_definition};
+endsnippet
+
+snippet addidx
+ALTER TABLE ${1:table_name} ADD INDEX ${2:index_name}_idx (${3:column(s)});
+endsnippet
+
+snippet adduniq
+ALTER TABLE ${1:table_name} ADD UNIQUE ${2:key_name}_uniq (${3:column(s)});
+endsnippet
+
+snippet addfk
+ALTER TABLE ${1:table_name} ADD FOREIGN KEY ${2:fk_name} (${3:column_name}) REFERENCES ${4:reference_table} (${5:reference_column}) ON DELETE ${6:RESTRICT} ON UPDATE CASCADE;
+endsnippet
+
+snippet dropfk
+ALTER TABLE ${1:table_name} DROP FOREIGN KEY ${2:fk_name};
+endsnippet
+
+snippet dropkey
+ALTER TABLE ${1:table_name} DROP KEY ${2:key_name};
+endsnippet
+
+snippet insert
+INSERT INTO ${1:table_name} (${2:columns}) VALUES (${3:values});
+endsnippet
+
+snippet db_update
+INSERT INTO fcs.db_update (filename) VALUES ('`!v expand('%:t')`.sql') ON DUPLICATE KEY UPDATE applied_on = NOW();
+endsnippet
+
+snippet update
+UPDATE ${1:table_name} SET ${2:column_name} = ${3:col_value} WHERE ${4:primary_key} = ${5:pk_value};
+endsnippet
+
+snippet begin
+BEGIN;
+	USE ${1:db_name};
+
+	${2:updates}
+
+	INSERT INTO fcs.db_update (filename) VALUES ('`!v expand('%:t')`.sql') ON DUPLICATE KEY UPDATE applied_on = NOW();
+COMMIT;
+endsnippet
+
+snippet create
+DROP TABLE IF EXISTS ${1:table_name};
+CREATE TABLE $1 (
+	$1_id int(10) unsigned NOT NULL auto_increment,
+	${2:col_name}
+	PRIMARY KEY ($1_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+endsnippet
+
+snippet fkconst
+CONSTRAINT ${1:fk_name}_ibfk_${2:num} FOREIGN KEY (${3:column}) REFERENCES ${4:fk_table} (${5:fk_column}) ON DELETE ${6:RESTRICT} ON UPDATE CASCADE
+endsnippet
+
