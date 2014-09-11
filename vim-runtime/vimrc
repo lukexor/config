@@ -413,7 +413,7 @@ map <leader>sv :so ~/.vim-runtime/vimrc<cr>
 
 " Fast editing of various files
 map <leader>ev :tabnew ~/.vim-runtime/vimrc<cr>
-map <leader>ep :execute 'sp ~/.vim-runtime/snippets/' . &filetype . '.snippets'<cr>
+map <leader>ep :execute 'sp ~/.vim-runtime/UltiSnips_custom/' . &filetype . '.snippets'<cr>
 map <leader>et :CtrlP %:p:h/t/<CR>
 
 " Quit all windows without saving
