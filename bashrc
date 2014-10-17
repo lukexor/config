@@ -160,3 +160,5 @@ echo ",,    Search files            --  ,.    Search tags           --  ,m    Se
 echo ",tn   New tab                 --  ,ep   Edit snippets         --  ,s    Strip trailing       --  ,rt   Retab spaces w/ tabs  "
 echo ",mt   Toggle ShowMarks        --  ,ma   Clear all marks       --  <tab> Word completion      --"
 echo "cs\"'  Replace \" with '        --  ysiw] Surround with ]       --  ds]   Delete surounding ]  -- "
+
+n ${HOSTNAME}

@@ -84,7 +84,7 @@ function prompt_on() {
     # Set screen title
     case "${TERM}" in
         screen* )
-            PROMPT_COMMAND=${PROMPT_COMMAND}'echo -ne "\033k${HOSTNAME}\033\\";'
+            PROMPT_COMMAND=${PROMPT_COMMAND}'echo -ne "\033k${SCREEN_TITLE:-${HOSTNAME}}\033\\";'
             ;;
         * )
             PROMPT_COMMAND=''
