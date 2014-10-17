@@ -58,6 +58,19 @@ alias gun='git reset HEAD --'
 # Functions
 gdv() { git diff -w "$@" | view -; }
 
+fu() {
+	echo "sudo /usr/local/fonality/bin/fcs_update ${1:--s}"
+	sudo /usr/local/fonality/bin/fcs_update ${1:--s}
+}
+
+# git merge branch into develop
+gmd() {
+	current_branch=$(current_branch)
+
+	echo "git checkout develop && git pull && git merge $current_branch && git push origin develop && fu '-s'"
+	git checkout develop && git pull && git merge $current_branch && git push origin develop && fu '-s'
+}
+
 gdone() {
     branch=$(current_branch)
     git branch -m $branch done-$branch

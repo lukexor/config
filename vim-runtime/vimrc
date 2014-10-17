@@ -587,6 +587,7 @@ autocmd BufEnter * :syntax sync fromstart
 autocmd BufEnter * if &filetype == "" | set ft=txt | endif " Sets default filetype to txt
 autocmd BufNewFile,BufRead *.html set filetype=htmldjango
 autocmd BufEnter *.conf set ft=yaml
+autocmd BufEnter *.t set ft=perl
 
 " Check perl syntax with :make
 autocmd FileType perl set makeprg=perl\ -c\ %\ $*
