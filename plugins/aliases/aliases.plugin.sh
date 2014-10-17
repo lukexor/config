@@ -76,8 +76,9 @@ alias sw2='ssh -A lpetherbridge@web-dev2.fonality.com'
 alias sfcsprod='ssh -A lpetherbridge@fcs-app1.fonality.com'
 alias sfcs='ssh -A lpetherbridge@devbox5.lotsofclouds.fonality.com'
 alias sfcsqa='ssh -A lpetherbridge@qa-app.lotsofclouds.fonality.com'
-alias sfcsstg='ssh -A lpetherbridge@fcs-stg-bastion.lax01.fonality.com'
+alias sfcsstg='ssh -A lpetherbridge@fcs-stg-app1.lax01.fonality.com'
 alias sfcsstg2='ssh -A lpetherbridge@fcs-stg2-app1.lax01.fonality.com'
+alias sfcsstgb='ssh -A lpetherbridge@fcs-stg-bastion.lax01.fonality.com'
 
 # Sourcing
 alias b='source ${HOME}/.bashrc'

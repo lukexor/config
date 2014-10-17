@@ -32,7 +32,7 @@ alias glg='git log --graph --pretty=format:"%C(yellow)%h (%p) %ai%Cred%d %Creset
 alias glg5='glg --max-count=5'
 alias glp='git log -p'
 alias gls='git --no-pager log --pretty=format:"%C(yellow)%h (%p) %ai%Cred%d %Creset%Cblue[%ae]%Creset %s (%ar). %b %N" -20'
-alias glt='git describe --tags --abbrev=0'
+alias gdt='git describe --tags --abbrev=0'
 alias gll='git --no-pager log --pretty=format:"%C(yellow)%h (%p) %ai%Cred%d %Creset%Cblue[%ae]%Creset %s (%ar). %b %N" --numstat -10'
 alias glnc='git log --pretty=format:"%h%d [%cn]  %s (%ar)"'
 alias gm='git merge --no-ff'
@@ -57,6 +57,8 @@ alias gun='git reset HEAD --'
 
 # Functions
 gdv() { git diff -w "$@" | view -; }
+
+glt() { git tag | sort -t "${1}" -k 2n | tail -1; }
 
 gdone() {
     branch=$(current_branch)

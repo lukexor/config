@@ -66,12 +66,14 @@ jls() {
     command journal -v $date | less
 }
 
-_xtitle() {
-  case "${TERM}" in
-    xterm* | rxvt ) echo -n -e "\033]0;$*\007" ;;
-    screen* )      echo -n -e "\033k$*\033\\" ;;
-    *)                                    ;;
-  esac
+n() {
+	echo -n -e "\033]0;$*\007"
+	export TERM_TITLE=$*
+}
+
+sn() {
+	echo -n -e "\033k$*\033\\"
+	export SCREEN_TITLE=$*
 }
 
 _xtitle_do() { # sets screen/term title and executes command
@@ -84,15 +86,15 @@ _xtitle_do() { # sets screen/term title and executes command
     case "${TERM}" in
         xterm* | rxvt ) echo -n -e "\033]0;$title\007" ;;
         screen* )      echo -n -e "\033k$title\033\\" ;;
-        * )                                       ;;
+        * ) ;;
     esac
 
     command "$@"
 
     case "${TERM}" in
-        xterm* | rxvt ) echo -n -e "\033]0;${HOSTNAME}\007" ;;
-        screen* )      echo -n -e "\033k${HOSTNAME}\033\\" ;;
-        * )                                            ;;
+        xterm* | rxvt ) echo -n -e "\033]0;${TERM_TITLE:-${HOSTNAME}}\007" ;;
+        screen* )      echo -n -e "\033k${SCREEN_TITLE:-${HOSTNAME}}\033\\" ;;
+        * ) ;;
     esac
 }
 
