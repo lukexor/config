@@ -1,0 +1,118 @@
+'global':
+  'editor':
+    'showIndentGuide': true
+    'tabLength': 4
+    'fontSize': 13
+    'invisibles': {}
+  'core':
+    'themes': [
+      'atom-dark-ui'
+      'railscast-theme'
+    ]
+    'audioBeep': false
+    'projectHome': '/Users/caeledh/dev'
+    'disabledPackages': [
+      'package-generator'
+      'styleguide'
+      'timecop'
+      'metrics'
+    ]
+  'exception-reporting':
+    'userId': '98a32ac5-0234-4da1-119e-94839f8c7174'
+  'welcome':
+    'showOnStartup': false
+  'metrics':
+    'userId': 'fe76ea673b4423b955d03e0064761586c64afc81'
+  'git-diff':
+    'showIconsInEditorGutter': true
+  'autocomplete':
+    'includeCompletionsFromAllBuffers': true
+  'autocomplete-plus':
+    'includeCompletionsFromAllBuffers': true
+  'atom-beautify':
+    '_analyticsUserId': '18a6ce98-809c-4941-9623-12b88ea55758'
+    'js_jslint_happy': true
+    'js_eval_code': true
+    'js_indent_size': 4
+    'sql_indent_size': 4
+    'python_autopep8_path': '/usr/local/bin/autopep8'
+    'markdown_pandoc_path': '/usr/local/bin/pandoc'
+    'html_indent_size': 4
+    'css_indent_size': 4
+    'html_brace_style': 'expand'
+    'js_brace_style': 'expand'
+  'find-and-replace':
+    'focusEditorAfterSearch': true
+    'openProjectFindResultsInRightPane': true
+  'perltidy':
+    'binary': '/Users/caeledh/perl5/perlbrew/perls/perl-5.16.0/bin/perltidy'
+  'fuzzy-finder':
+    'traverseIntoSymlinkDirectories': true
+  'git-plus':
+    'gitPath': '/usr/local/bin/git'
+  'remote-sync':
+    'difftoolCommand': '/usr/local/bin/vimdiff'
+'.js.rails.source source.jquery.js':
+  'editor': {}
+'.rails.rjs.ruby.source':
+  'editor': {}
+'.css.less.source':
+  'editor': {}
+'.js.regexp.source':
+  'editor': {}
+'.html.jsp.text':
+  'editor': {}
+'.ruby.source.sql':
+  'editor': {}
+'.html.ruby.text':
+  'editor': {}
+'.python.regexp.source':
+  'editor': {}
+'.erb.html.text':
+  'editor': {}
+'.rails.ruby.source':
+  'editor': {}
+'.basic.html.text':
+  'editor': {}
+'.c.source ++ *':
+  'editor': {}
+'.source.yaml':
+  'editor': {}
+'.plain.text':
+  'editor': {}
+'.source.sql':
+  'editor': {}
+'.perl.source':
+  'editor': {}
+'.makefile.source':
+  'editor': {}
+'.junit-test-report.text':
+  'editor': {}
+'.java.source':
+  'editor': {}
+'.git-rebase.text':
+  'editor': {}
+'.python.source':
+  'editor': {}
+'.ruby.source':
+  'editor': {}
+'.diff.source':
+  'editor': {}
+'.c.source':
+  'editor': {}
+'.css.source':
+  'editor': {}
+'.gfm.source':
+  'editor': {}
+'.git-commit.text':
+  'editor': {}
+'.git-config.source':
+  'editor': {}
+'.java-properties.source':
+  'editor': {}
+'.js.source':
+  'editor': {}
+'.json.source':
+  'editor': {}
+'.text.todo':
+  'editor': {}

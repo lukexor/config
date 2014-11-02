@@ -1,3 +1,5 @@
+atom/packages/
+atom/storage/
 vim-runtime/yankring_history_v2.txt
 vim-runtime/.netrwhist
 vim-runtime/undodir/*

@@ -9,13 +9,7 @@ cl() {
 }
 
 tags() {
-    GITD=$(git rev-parse --show-toplevel)
-	if [ $GITD ]; then
-		TAGF=${GITD}/.git/tags
-	else
-		TAGF=tags
-	fi
-    ctags -V --fields=+l --exclude=@${HOME}/.ctagsexclude -f ${TAGF} ${GITD} && perl -pi -e 's/^\s*\n$//' ${TAGF}
+    ctags --fields=+l --exclude=@${HOME}/.ctagsexclude
 }
 
 # Echos and executes a command

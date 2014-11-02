@@ -174,7 +174,7 @@ endif
 " == Formatting
 
 set autoindent
-" set expandtab " Always expand tabs into spaces
+set expandtab " Always expand tabs into spaces
 set formatoptions=rql " Allow line-width formatting with <leader>gq
 set linebreak " Wrap long lines at a character in breakat
 set list listchars=tab:\|\ ,trail:-,extends:>,precedes:<,nbsp:x " display indentation guides
