@@ -40,7 +40,7 @@ let g:yankring_history_dir = "~/.vim-runtime"
 let g:ycm_collect_identifiers_from_tags_files = 1
 
 let ft = &filetype
-set tags=./tags,./.git/tags
+set tags=./tags
 
 " Tell vim to remember certain things when we exit
 "	'100  : marks will be remembered for up to 100 previously edited files

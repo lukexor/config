@@ -6,6 +6,7 @@ alias ~='cd ~'
 alias ..='cd ..'
 alias ...='cd ../..'
 alias cdot="cd ${HOME}/.dotfiles"
+alias cd="cd -P"
 
 alias vbr='sudo /Library/StartupItems/VirtualBox/VirtualBox restart'
 

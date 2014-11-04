@@ -3,6 +3,7 @@
     'showIndentGuide': true
     'tabLength': 4
     'fontSize': 13
+    'nonWordCharacters': '/\\()"\',.;<>~!@#$%^&*|+=[]{}`?-'
     'invisibles': {}
   'core':
     'themes': [
@@ -16,6 +17,7 @@
       'styleguide'
       'timecop'
       'metrics'
+      'emmet'
     ]
   'exception-reporting':
     'userId': '98a32ac5-0234-4da1-119e-94839f8c7174'
@@ -52,67 +54,80 @@
     'gitPath': '/usr/local/bin/git'
   'remote-sync':
     'difftoolCommand': '/usr/local/bin/vimdiff'
+    'logToConsole': true
+  'linter':
+    'showErrorInline': true
+    'showErrorInStatusBar': false
+  'linter-perl':
+    'perlExecutablePath': '/Users/caeledh/perl5/perlbrew/perls/perl-5.16.0/bin/perl'
+    'incPathsFromProjectPath': [
+      '.'
+      'lib'
+    ]
+  'highlight-line':
+    'enableSelectionBorder': true
+    'enableUnderline': true
 '.js.rails.source source.jquery.js':
   'editor': {}
 '.rails.rjs.ruby.source':
   'editor': {}
-'.css.less.source':
-  'editor': {}
-'.js.regexp.source':
-  'editor': {}
-'.html.jsp.text':
-  'editor': {}
-'.ruby.source.sql':
-  'editor': {}
-'.html.ruby.text':
-  'editor': {}
-'.python.regexp.source':
-  'editor': {}
-'.erb.html.text':
+'.basic.html.text':
   'editor': {}
 '.rails.ruby.source':
   'editor': {}
-'.basic.html.text':
+'.erb.html.text':
+  'editor': {}
+'.python.regexp.source':
+  'editor': {}
+'.html.ruby.text':
+  'editor': {}
+'.ruby.source.sql':
+  'editor': {}
+'.html.jsp.text':
+  'editor': {}
+'.js.regexp.source':
+  'editor': {}
+'.css.less.source':
   'editor': {}
 '.c.source ++ *':
   'editor': {}
-'.source.yaml':
-  'editor': {}
-'.plain.text':
-  'editor': {}
-'.source.sql':
-  'editor': {}
-'.perl.source':
-  'editor': {}
-'.makefile.source':
-  'editor': {}
-'.junit-test-report.text':
-  'editor': {}
-'.java.source':
-  'editor': {}
-'.git-rebase.text':
-  'editor': {}
-'.python.source':
-  'editor': {}
-'.ruby.source':
-  'editor': {}
-'.diff.source':
-  'editor': {}
-'.c.source':
-  'editor': {}
-'.css.source':
-  'editor': {}
-'.gfm.source':
-  'editor': {}
-'.git-commit.text':
-  'editor': {}
-'.git-config.source':
-  'editor': {}
-'.java-properties.source':
-  'editor': {}
-'.js.source':
+'.text.todo':
   'editor': {}
 '.json.source':
   'editor': {}
-'.text.todo':
+'.js.source':
+  'editor': {}
+'.java-properties.source':
+  'editor': {}
+'.git-config.source':
+  'editor': {}
+'.git-commit.text':
+  'editor': {}
+'.gfm.source':
+  'editor': {}
+'.css.source':
+  'editor': {}
+'.c.source':
+  'editor': {}
+'.diff.source':
+  'editor': {}
+'.ruby.source':
+  'editor': {}
+'.python.source':
+  'editor': {}
+'.git-rebase.text':
+  'editor': {}
+'.java.source':
+  'editor': {}
+'.junit-test-report.text':
+  'editor': {}
+'.makefile.source':
+  'editor': {}
+'.source.sql':
+  'editor': {}
+'.plain.text':
+  'editor': {}
+'.source.yaml':
+  'editor': {}
+'.perl.source':
   'editor': {}

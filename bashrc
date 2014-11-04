@@ -130,6 +130,11 @@ done
 sourcefile $BASH_THEME
 
 # Load virtualenvwrapper
+if [[ -e /usr/local/bin/python ]]; then
+    export VIRTUALENVWRAPPER_PYTHON=/usr/local/bin/python
+else
+    export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python
+fi
 sourcefile /usr/local/bin/virtualenvwrapper.sh
 
 # ----------------------------------------------------------

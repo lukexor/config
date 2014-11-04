@@ -9,7 +9,7 @@ cl() {
 }
 
 tags() {
-    ctags --fields=+l --exclude=@${HOME}/.ctagsexclude
+    ctags --exclude=@${HOME}/.ctagsexclude
 }
 
 # Echos and executes a command

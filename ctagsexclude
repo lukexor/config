@@ -1,4 +1,10 @@
 *.min.js
 *.sql
-bootstrap.js
 .git
+angular*.js
+bootstrap*.js
+jquery*.js
+underscore*.js
+d3*.js
+vega*.js
+bower_components/*
