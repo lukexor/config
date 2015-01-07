@@ -50,3 +50,6 @@
 "
 " let pyindent_nested_paren="&sw*2"
 " let pyindent_open_paren="&sw*2"
+set shiftwidth=2 " Number of spaces used for each spent of indent
+set softtabstop=2 " Spaces a tab counts for when backspacing or inserting tabs
+set tabstop=2 " The number of spaces a tab counts as

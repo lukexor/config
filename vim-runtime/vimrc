@@ -574,7 +574,7 @@ autocmd! bufwritepost vimrc source ~/.vim-runtime/vimrc " When vimrc is edited, 
 autocmd FileType perl source ~/.vim-runtime/perltest.vim
 
 " Open NERDTree automatically
-autocmd vimenter * call ToggleSideBars()
+" autocmd vimenter * call ToggleSideBars()
 if v:version > 702
 	set colorcolumn=+1
 	highlight ColorColumn ctermbg=235 guibg=235

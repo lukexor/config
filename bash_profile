@@ -70,7 +70,7 @@ if [ -d "${HOME}/Dropbox/dev/virtualenvs" ]; then
 fi
 
 # Fix YCM with vim
-export DYLD_FORCE_FLAT_NAMESPACE=1
+# export DYLD_FORCE_FLAT_NAMESPACE=1
 
 # ----------------------------------------------------------
 # -- Host-Specific Shell Variables
@@ -146,7 +146,7 @@ unset pathprepend
 # ----------------------------------------------------------
 # -- Source
 
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
+
 [ -d "${HOME}/.profile" ] && . "${HOME}/.profile"
 case "$-" in *i*) [ -r "${HOME}/.bashrc" ] && . "${HOME}/.bashrc"; esac
-
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*

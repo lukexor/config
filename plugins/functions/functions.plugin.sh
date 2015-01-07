@@ -12,6 +12,10 @@ tags() {
     ctags --exclude=@${HOME}/.ctagsexclude
 }
 
+syncf() {
+    scp $1 lpetherbridge@devbox5.lotsofclouds.fonality.com:~/fcs/$1
+}
+
 # Echos and executes a command
 _echodo () {
   echo "$*"
@@ -35,6 +39,17 @@ hist_stats() {
     history | cut -d] -f2 | sort | uniq -c | sort -rn | head
 }
 
+wow_sync() {
+    # -a: archive - recursive, preserver symlinks, permissions, times, owner, group, device files and specials
+    # -u: Skip files that are newer in destination
+
+    # Sync from Dropbox
+    echo "Syncing from Dropbox"
+    rsync -au "/Volumes/shadow/Dropbox/bak/wow_settings/" "/Applications/World of Warcraft/"
+
+    # echo "Syncing to Dropbox"
+    # rsync -au "/Applications/World of Warcraft/" "/Volumes/shadow/Dropbox/bak/wow_settings/"
+}
 
 dl() {
     DEVDIR="${HOME}/.devlog/"
@@ -100,10 +115,17 @@ less() { _xtitle_do less "$@"; }
 # Grep commands
 h() { if [ -z "$*" ]; then history; else history | egrep "$@"; fi; }
 pg() {
+    CMD=''
     case "${OSTYPE}" in
-        darwin*) ps aux | grep $* ;;
-        *) ps auxf | grep $* ;;
+        darwin*) CMD='ps aux' ;;
+        *) CMD='ps auxf' ;;
     esac
+
+    if [ -z $1 ]; then
+        ${CMD}
+    else
+        ${CMD} | grep $*
+    fi
 }
 
 # Convert unix epoc to current timezone

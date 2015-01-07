@@ -22,7 +22,10 @@ if type "dircolors" > /dev/null 2>&1&& [ -f "${HOME}/.dircolors-custom" ]; then
 fi
 
 # Misc
-export EDITOR="vim"
+case "${OSTYPE}" in
+    darwin*) export EDITOR="atom" ;;
+    *) export EDITOR="vim" ;;
+esac
 export CLICOLOR=1
 # export LSCOLORS="Gxfxcxdxbxegedabagacad"
 export LSCOLORS="gxBxhxDxfxhxhxhxhxcxcx"
@@ -141,29 +144,27 @@ sourcefile /usr/local/bin/virtualenvwrapper.sh
 # -- Startup
 
 # Alert if no journal entries have been added in the last day
-if [ -d "${HOME}/.journal" ]; then
-    date=$(date "+%Y-%m-%d")
-    entries=$(journal -v "$date" | grep -Pc '^\[')
-    if [ $entries -lt 8 ]; then
-        remaining=$(expr 8 - $entries)
-        entry='entries'
-        if [[ $remaining == 1 ]]; then entry='entry'; fi
-        echo ""
-        echo -e "${FGyellow}Don't forget to add at least $remaining more journal $entry this month!!${RCLR}"
-        echo ""
-        unset remaining
-        unset entry
-    fi
-    unset date
-    unset entries
-fi
+# if [ -d "${HOME}/.journal" ]; then
+#     date=$(date "+%Y-%m-%d")
+#     entries=$(journal -v "$date" | grep -Pc '^\[')
+#     if [ $entries -lt 8 ]; then
+#         remaining=$(expr 8 - $entries)
+#         entry='entries'
+#         if [[ $remaining == 1 ]]; then entry='entry'; fi
+#         echo ""
+#         echo -e "${FGyellow}Don't forget to add at least $remaining more journal $entry this month!!${RCLR}"
+#         echo ""
+#         unset remaining
+#         unset entry
+#     fi
+#     unset date
+#     unset entries
+# fi
 
-echo -e "Vim Shortcuts"
-echo -e "-------------"
-echo "<F1>  NERDTree/TagBar         --  <F2>  Toggle paste          --  <F3>  Toggle wrap/list     --  <F4>  Toggle line #s        -- <F5>  SyntasticCheck"
-echo ",,    Search files            --  ,.    Search tags           --  ,m    Search recent        --  ,r    Show yanks            "
-echo ",tn   New tab                 --  ,ep   Edit snippets         --  ,s    Strip trailing       --  ,rt   Retab spaces w/ tabs  "
-echo ",mt   Toggle ShowMarks        --  ,ma   Clear all marks       --  <tab> Word completion      --"
-echo "cs\"'  Replace \" with '        --  ysiw] Surround with ]       --  ds]   Delete surounding ]  -- "
-
-n ${HOSTNAME}
+# echo -e "Vim Shortcuts"
+# echo -e "-------------"
+# echo "<F1>  NERDTree/TagBar         --  <F2>  Toggle paste          --  <F3>  Toggle wrap/list     --  <F4>  Toggle line #s        -- <F5>  SyntasticCheck"
+# echo ",,    Search files            --  ,.    Search tags           --  ,m    Search recent        --  ,r    Show yanks            "
+# echo ",tn   New tab                 --  ,ep   Edit snippets         --  ,s    Strip trailing       --  ,rt   Retab spaces w/ tabs  "
+# echo ",mt   Toggle ShowMarks        --  ,ma   Clear all marks       --  <tab> Word completion      --"
+# echo "cs\"'  Replace \" with '        --  ysiw] Surround with ]       --  ds]   Delete surounding ]  -- "

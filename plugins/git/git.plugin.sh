@@ -72,7 +72,10 @@ gmd() {
 	echo "git checkout develop && git pull && git merge $current_branch && git push origin develop && fu '-s'"
 	git checkout develop && git pull && git merge $current_branch && git push origin develop && fu '-s'
 }
-glt() { git tag | sort -t "${1}" -k 2n | tail -1; }
+glt() {
+  version=$(git tag | cut -d/ -f2 | sort -t "${1}" -k 2n | tail -1)
+  echo "releases/${version}"
+}
 
 gdone() {
     branch=$(current_branch)
