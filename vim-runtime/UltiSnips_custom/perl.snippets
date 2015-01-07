@@ -116,7 +116,7 @@ sub ${1:function}
 endsnippet
 
 snippet ife "Conditional if..else (ife)"
-if (${1:condition})
+if ( ${1:condition} )
 {
 	${2:# body...}
 }
@@ -127,11 +127,11 @@ else
 endsnippet
 
 snippet ifee "Conditional if..elsif..else (ifee)"
-if (${1:condition})
+if ( ${1:condition} )
 {
 	${2:# body...}
 }
-elsif (${3:condition})
+elsif ( ${3:condition} )
 {
 	${4:# elsif...}
 }
@@ -284,21 +284,21 @@ finally
 endsnippet
 
 snippet cfor "C-style for loop (cfor)"
-${1:LABEL:} for (my $${2:var} = 0; $$2 < ${3:expression}; $$2++)
+${1:LABEL}: for ( my $${2:var} = 0; $$2 < ${3:expression}; $$2++ )
 {
 	${4:# body...}
 }
 endsnippet
 
 snippet for "foreach loop (for)"
-${1:LABEL:} foreach ${2:my $${3:x}} (@${4:array})
+${1:LABEL}: foreach ${2:my $${3:x}} ( @${4:array} )
 {
 	${5:# body...}
 }
 endsnippet
 
 snippet if "if"
-if (${1:condition})
+if ( ${1:condition} )
 {
 	${2:# body...}
 }
@@ -309,9 +309,9 @@ my $${1:var} = do { local $/ = undef; open my $fh, '<', ${2:$file}; <$fh> };
 endsnippet
 
 snippet while "while"
-${1:LABEL:} while (${2:condition})
+${1:LABEL}: while ( ${2:condition} )
 {
-	${2:# body...}
+	${3:# body...}
 }
 endsnippet
 
