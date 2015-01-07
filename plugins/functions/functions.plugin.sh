@@ -1,6 +1,10 @@
 # ==========================================================
 # == Global Bash Functions
 
+function schk() {
+	for file in $(git status|egrep 'new file|modified'|egrep '.pm|.pl' |cut -d: -f2|cut -d' ' -f4); do perl -c $file; done
+}
+
 cwa() {
     cd ${HOME}/fcs/lib/Fap/WebApp/Action/
 }
