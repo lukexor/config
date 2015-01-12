@@ -139,9 +139,9 @@ export INPUTRC
 # ----------------------------------------------------------
 # -- Cleanup
 
-unset pathremove
-unset pathappend
-unset pathprepend
+# unset pathremove
+# unset pathappend
+# unset pathprepend
 
 # ----------------------------------------------------------
 # -- Source
@@ -150,3 +150,4 @@ unset pathprepend
 
 [ -d "${HOME}/.profile" ] && . "${HOME}/.profile"
 case "$-" in *i*) [ -r "${HOME}/.bashrc" ] && . "${HOME}/.bashrc"; esac
+# pathprepend "${HOME}/vagrant_dir/fcs-f" PERL5LIB
