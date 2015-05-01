@@ -4,10 +4,11 @@
 # GIT
 BASH_THEME_GIT_PROMPT_PREFIX=" ${FGcyan}["
 BASH_THEME_GIT_PROMPT_SUFFIX="${FGcyan}]${RCLR}"
-BASH_THEME_GIT_PROMPT_CLEAN="${FGgreen} =${RCLR}"
+BASH_THEME_GIT_PROMPT_CLEAN="${FGgreen}=${RCLR}"
 
 BASH_THEME_GIT_PROMPT_AHEAD="$FGbred}!${RCLR}"
-
+# BASH_THEME_GIT_PROMPT_DIRTY="${FGred} *${RCLR}"
+BASH_THEME_GIT_PROMPT_DIRTY="" # Commented since we have other flags to indicate dirty below
 BASH_THEME_GIT_PROMPT_ADDED="${FGgreen}+${RCLR}"
 BASH_THEME_GIT_PROMPT_MODIFIED="${FGblue}x${RCLR}"
 BASH_THEME_GIT_PROMPT_DELETED="${FGred}-${RCLR}"
@@ -16,7 +17,7 @@ BASH_THEME_GIT_PROMPT_UNMERGED="${FGyellow}^${RCLR}"
 BASH_THEME_GIT_PROMPT_UNTRACKED="${FGcyan}.${RCLR}"
 
 # Format for git_prompt_long_sha() and git_prompt_short_sha()
-BASH_THEME_GIT_PROMPT_SHA_BEFORE=" ${FGyellow}"
+BASH_THEME_GIT_PROMPT_SHA_BEFORE="${FGyellow}"
 BASH_THEME_GIT_PROMPT_SHA_AFTER="${RCLR}"
 
 # Colors vary depending on time lapsed.
@@ -34,9 +35,9 @@ PROMPT_BASE_COLOR=""
 BASH_THEME_REPO_NAME_COLOR=""
 BASH_THEME_SVN_PROMPT_PREFIX=" ${FGcyan}["
 BASH_THEME_SVN_PROMPT_SUFFIX="${FGcyan}]${RCLR}"
-BASH_THEME_SVN_PROMPT_DIRTY="${FGred} *${RCLR}"
-BASH_THEME_SVN_PROMPT_CLEAN="${FGgreen} =${RCLR}"
-BASH_THEME_SVN_PROMPT_REV_BEFORE=" ${FGyellow}"
+BASH_THEME_SVN_PROMPT_DIRTY="${FGred}*${RCLR}"
+BASH_THEME_SVN_PROMPT_CLEAN="${FGgreen}=${RCLR}"
+BASH_THEME_SVN_PROMPT_REV_BEFORE="${FGyellow}"
 BASH_THEME_SVN_PROMPT_REV_AFTER="${RCLR}"
 
 # Trim working path to 1/2 of screen width
@@ -91,38 +92,11 @@ function prompt_on() {
             ;;
     esac
 
-    # # Check battery status
-    #     PR_BATT='$(battery_pct_prompt)'
-    # else
-    #     PR_BATT=''
-    # fi
-
-    # # Check active screens
-    # if [ $(active_screens) ]; then
-    #     PR_SCRN='$(active_screens_prompt)'
-    # else
-    #     PR_SCRN=''
-    # fi
-
-    # # Check background jobs
-    # if [ $(bg_jobs) ]; then
-    #     PR_BGJOBS='$(bg_jobs_prompt)'
-    # else
-    #     PR_BGJOBS=''
-    # fi
-
-    # # Check stopped jobs
-    # if [ $(st_jobs) ]; then
-    #     PR_STJOBS='$(st_jobs_prompt)'
-    # else
-    #     PR_STJOBS=''
-    # fi
-
     # Left command prompt
     PS1="\n${PR_CLR}${HOSTNAME}${FGgreen}"'$(prompt_pwd)$(battery_pct_prompt)'
 
     for plugin in "${plugins[@]}"; do
-        [[ "$plugin" == "git" ]] && PS1=${PS1}'$(git_prompt_info)' && BASH_THEME_GIT_PROMPT_DIRTY="${FGred} *${RCLR}$(git_prompt_status)";
+        [[ "$plugin" == "git" ]] && PS1=${PS1}'$(git_prompt_info)' && BASH_THEME_GIT_PROMPT_DIRTY="$BASH_THEME_GIT_PROMPT_DIRTY$(git_prompt_status)";
         [[ "$plugin" == "svn" ]] && PS1=${PS1}'$(svn_prompt_info)';
     done
 

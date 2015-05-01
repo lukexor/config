@@ -1,11 +1,20 @@
 # ==========================================================
 # == Global Bash Functions
 
+function sqlcsv() {
+    cat | sed "s/'/\'/;s/\t/\",\"/g;s/^/\"/;s/$/\"/;s/\n//g"
+}
 function schk() {
 for file in $(git status|egrep 'new file|modified'|egrep '(.pm|.pl)$' |cut -d: -f2|cut -d' ' -f4); do
-    echo $file
     perl -c $file
   done
+}
+
+updatedb() {
+    case "${OSTYPE}" in
+        darwin*) sudo /usr/libexec/locate.updatedb ;;
+        *) updatedb ;;
+    esac
 }
 
 cwa() {
