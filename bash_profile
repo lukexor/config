@@ -55,6 +55,9 @@ if [[ -d /usr/local/Cellar/maven/3.2.2/libexec ]] ; then
 fi
 if [[ -d ${HOME}/fcs ]] ; then
 	export FON_DIR=${HOME}/fcs
+    export FCS_DEVEL=1
+    export FCS_APP_URL=http://dev-app.lotsofclouds.fonality.com/
+    export FCS_CP_URL=http://dev-cp.lotsofclouds.fonality.com/
 fi
 
 # Grep
@@ -88,6 +91,9 @@ if [ -d "${HOME}/lib" ]; then
 		pathprepend $dir PERL5LIB
 	done
 fi
+
+pathappend '/usr/git-2.2.2/perl' PERL5LIB
+pathappend "${HOME}/perl5/lib" PERL5LIB
 
 if [ -d "${HOME}/fcs/lib" ]; then
     pathappend "${HOME}/fcs/lib" PERL5LIB
@@ -150,4 +156,5 @@ export INPUTRC
 
 [ -d "${HOME}/.profile" ] && . "${HOME}/.profile"
 case "$-" in *i*) [ -r "${HOME}/.bashrc" ] && . "${HOME}/.bashrc"; esac
+[ $SHLVL -eq 1 ] && eval "$(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib)"
 # pathprepend "${HOME}/vagrant_dir/fcs-f" PERL5LIB

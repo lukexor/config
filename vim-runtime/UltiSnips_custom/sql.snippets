@@ -52,7 +52,7 @@ BEGIN;
 
 	${2:updates}
 
-	INSERT INTO fcs.db_update (filename) VALUES ('`!v expand('%:t')`.sql') ON DUPLICATE KEY UPDATE applied_on = NOW();
+	INSERT INTO fcs.db_update (filename) VALUES ('`!v expand('%:t')`') ON DUPLICATE KEY UPDATE applied_on = NOW();
 COMMIT;
 endsnippet
 
