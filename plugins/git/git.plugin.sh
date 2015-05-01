@@ -19,7 +19,7 @@ alias gcex='echo "gc #time 1w 2d 5h 30m #comment Task completed #send-for-code-r
 alias gcm='git checkout master'
 alias gcount='git shortlog -sn'
 alias gcp='git cherry-pick'
-alias gd='git diff --color-words -w'
+alias gd='git diff -w'
 alias gdt='git difftool'
 alias gf='git fetch origin'
 alias gfg='git ls-files | grep -i'
@@ -57,6 +57,20 @@ alias gun='git reset HEAD --'
 # Functions
 gdv() { git diff -w "$@" | view -; }
 
+ghlp() {
+    echo "Git Help:"
+    echo "  Git Status Symbols:"
+    echo "    x : Local modifications"
+    echo "    + : Files added"
+    echo "    - : Files deleted"
+    echo "    > : Files renamed"
+    echo "    . : Untracked files"
+    echo "    ! : Ahead of origin"
+    echo "    ^ : Unmerged changes"
+    echo "    * : Dirty"
+    echo "    = : Clean"
+}
+
 fu() {
 	if [ -e /usr/local/fonality/bin/fcs_update ]; then
 		echo "sudo /usr/local/fonality/bin/fcs_update ${1:--s}"
@@ -72,7 +86,7 @@ gmd() {
 	git checkout develop && git pull && git merge $current_branch && git push origin develop && fu '-s'
 }
 glt() {
-  version=$(git tag | cut -d/ -f2 | sort -t "${1}" -k 2n | tail -1)
+  version=$(git tag | grep ${1} | cut -d/ -f2 | sort -t "${2}" -k 2n | tail -1)
   echo "releases/${version}"
 }
 
@@ -133,7 +147,7 @@ gops() {
 # Get git info
 git_prompt_info() {
     ref=$(git symbolic-ref HEAD 2> /dev/null) || return
-    echo "$BASH_THEME_GIT_PROMPT_PREFIX$(current_branch)$(parse_git_dirty)$(git_prompt_short_sha)$BASH_THEME_GIT_PROMPT_SUFFIX"
+    echo "$BASH_THEME_GIT_PROMPT_PREFIX$(current_branch) $(parse_git_dirty) $(git_prompt_short_sha) $(git_time_since_commit)$BASH_THEME_GIT_PROMPT_SUFFIX"
 }
 
 # Determine the time since last commit. If branch is clean,
@@ -157,11 +171,11 @@ git_time_since_commit() {
             SUB_MINUTES=$((MINUTES % 60))
 
             if [ "$HOURS" -gt 24 ]; then
-                echo "${BASH_THEME_GIT_TIME_SINCE_COMMIT_BEFORE}${DAYS}d${SUB_HOURS}h${SUB_MINUTES}m${BASH_THEME_GIT_TIME_SINCE_COMMIT_AFTER}"
+                echo "${BASH_THEME_GIT_TIME_SINCE_COMMIT_LONG}${BASH_THEME_GIT_TIME_SINCE_COMMIT_BEFORE}${DAYS}d${SUB_HOURS}h${SUB_MINUTES}m${BASH_THEME_GIT_TIME_SINCE_COMMIT_AFTER}${RCLR}"
             elif [ "$MINUTES" -gt 60 ]; then
-                echo "${BASH_THEME_GIT_TIME_SINCE_COMMIT_BEFORE}${HOURS}h${SUB_MINUTES}m${BASH_THEME_GIT_TIME_SINCE_COMMIT_AFTER}"
+                echo "${BASH_THEME_GIT_TIME_SHORT_COMMIT_MEDIUM}${BASH_THEME_GIT_TIME_SINCE_COMMIT_BEFORE}${HOURS}h${SUB_MINUTES}m${BASH_THEME_GIT_TIME_SINCE_COMMIT_AFTER}${RCLR}"
             else
-                echo "${BASH_THEME_GIT_TIME_SINCE_COMMIT_BEFORE}${MINUTES}m${BASH_THEME_GIT_TIME_SINCE_COMMIT_AFTER}"
+                echo "${BASH_THEME_GIT_TIME_SINCE_COMMIT_SHORT}${BASH_THEME_GIT_TIME_SINCE_COMMIT_BEFORE}${MINUTES}m${BASH_THEME_GIT_TIME_SINCE_COMMIT_AFTER}${RCLR}"
             fi
         else
             echo "${BASH_THEME_GIT_TIME_SINCE_COMMIT_BEFORE}~${BASH_THEME_GIT_TIME_SINCE_COMMIT_AFTER}"

@@ -88,33 +88,36 @@ if [ -d "${HOME}/lib" ]; then
 		pathprepend $dir PERL5LIB
 	done
 fi
-
+if [ -d "${HOME}/perl5" ]; then
+    eval $(perl -I ~/perl5/lib/perl5/ -Mlocal::lib)
+fi
 if [ -d "${HOME}/fcs/lib" ]; then
-    pathappend "${HOME}/fcs/lib" PERL5LIB
     export FON_DIR="${HOME}/fcs"
     export FCS_DEVEL=1
 	export NO_MYSQL_AUTOCONNECT=1
 fi
-
-pathprepend "${HOME}/.rvm/bin"
-pathprepend "/usr/local/bin"
-pathprepend "${HOME}/fcs/bin"
-
 if [ -d "${HOME}/bin" ]; then
     for dir in $(find "${HOME}/bin" -type d -name bin); do
         pathprepend $dir
     done
 fi
+if [ -d "${HOME}/dev/tools/android-sdk-macosx/" ]; then
+	export ANDROID_HOME="${HOME}/dev/tools/android-sdk-macosx/"
+fi
 
+pathprepend "/usr/local/bin"
+pathprepend "${HOME}/.rvm/bin"
+pathprepend "${HOME}/fcs/lib" PERL5LIB
+pathprepend "${HOME}/fcs/bin"
+pathprepend "${HOME}/lib" PERL5LIB
+pathprepend "${HOME}/perl5/lib/perl5/" PERL5LIB
 pathprepend "${HOME}/opt/bin"
 pathprepend "${HOME}/bin"
-
-# ----------------------------------------------------------
-# -- Host-Specific Paths
-
-pathprepend ${HOME}/bin/fon
-pathappend /var/adm/bin-5.0
-pathappend /usr/local/bin-5.0
+pathprepend "${HOME}/bin/fon"
+pathappend "/var/adm/bin-5.0"
+pathappend "/usr/local/bin-5.0"
+pathappend "${ANDROID_HOME}/tools"
+pathappend "${ANDROID_HOME}/platform-tools"
 
 # ----------------------------------------------------------
 # -- Java
@@ -123,10 +126,9 @@ pathprepend "${JAVA_HOME}/bin"
 
 # ----------------------------------------------------------
 # -- MacPorts Installer addition on 2014-05-14_at_09:06:16: adding an appropriate PATH variable for use with MacPorts.
-# export PATH=/opt/local/bin:/opt/local/sbin:$PATH
 pathprepend "/opt/local/sbin"
 pathprepend "/opt/local/bin"
-# Finished adapting your PATH environment variable for use with MacPorts.
+pathprepend "/opt/local/man" MANPATH
 
 # ----------------------------------------------------------
 # -- Inputrc
@@ -151,3 +153,14 @@ export INPUTRC
 [ -d "${HOME}/.profile" ] && . "${HOME}/.profile"
 case "$-" in *i*) [ -r "${HOME}/.bashrc" ] && . "${HOME}/.bashrc"; esac
 # pathprepend "${HOME}/vagrant_dir/fcs-f" PERL5LIB
+
+export PERL_MM_OPT='INSTALL_BASE='${HOME}'/perl5'
+
+##
+# Your previous /Users/caeledh/.bash_profile file was backed up as /Users/caeledh/.bash_profile.macports-saved_2015-01-26_at_14:18:06
+##
+
+# MacPorts Installer addition on 2015-01-26_at_14:18:06: adding an appropriate PATH variable for use with MacPorts.
+export PATH="/opt/local/bin:/opt/local/sbin:$PATH"
+# Finished adapting your PATH environment variable for use with MacPorts.
+
