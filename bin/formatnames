@@ -10,11 +10,13 @@ use Getopt::Long;
 # use Data::Dumper;
 
 my $check;
+my $directories;
 my $verbose;
 
 GetOptions
 (
-    "c|check" => \$check,
+    "c|check"   => \$check,
+    "d|dir"     => \$directories,
     "v|verbose" => \$verbose,
 );
 
@@ -27,6 +29,7 @@ if (not defined $args[0])
 Usage:  $0 <directory|filename>
 
         -c | --check    Print conversion, but don't rename files
+        -d | --dir      Operate on directories
         -v | --verbose  Print verbose messages
 DIE
 }
@@ -101,6 +104,8 @@ sub rename_file
 {
     my ($oldname, $newname) = @_;
 
+    return if (-d $oldname && !$directories);
+
     if ($oldname eq $newname)
     {
         print "Skipping '$oldname' :: Names match.\n" if $verbose;
@@ -114,7 +119,7 @@ sub rename_file
     else
     {
         print "'$oldname'  --->  '$newname'\n";
-        if (-e $newname)
+        if (lc $oldname ne lc $newname && -e $newname)
         {
             print "$newname already exists!\n";
             print "Do you want to move it anyways?";
@@ -136,16 +141,24 @@ sub rename_file
 sub strip
 {
     my $name = shift;
+
+    return $name if (-d $name && !$directories);
+
     my $newname = lc $name;
 
     $newname =~ s#^[-_\.\s+]##g; # Remove any leading dashes, underscores, spaces or periods
     $newname =~ s#[-_\.\s+]\$##g; # Removing any trailing dashes, underscores, spaces or periods
-    $newname =~ s#[-<>:\?\*\|\s]#_#g; # Replace any dash, weird characters or spaces with underscores
-    $newname =~ s#["+\(\)\[\]]##g; # Remove all double quotes and extra symbols
+    $newname =~ s#[-<>:,\?\*\|\s]#_#g; # Replace any dash, weird characters or spaces with underscores
+    $newname =~ s#[!\?&"+'{}\(\)\[\]]##g; # Remove all double quotes and extra symbols
     $newname =~ s#\.{2,}#\.#g; # Replace 2 or more periods with a single period
     $newname =~ s#_\.#\.#g; # Replace an _. with just a period
     $newname =~ s#\_{2,}#_#g; # Replace 2 or more underscores with a single underscore
-    # $newname =~ s#\.(?=.*\.)#_#g; # Replace all but the last period with underscore
+    $newname =~ s#\.(?=.*\.)#_#g; # Replace all but the last period with underscore
+
+    if ( length ($newname) > 100 && !$directories )
+    {
+        $newname = substr($newname, -100);
+    }
 
     return $newname;
 }

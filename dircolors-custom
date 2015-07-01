@@ -136,7 +136,7 @@ EIGHTBIT 1
 ### By file type
 
 NORMAL 00 # global default
-RESET 0 # reset to "normal" color
+# RESET 0 # reset to "normal" color
 FILE 00 # normal file
 DIR 36 # directory
 LINK 34 # symbolic link
@@ -144,7 +144,7 @@ LINK 34 # symbolic link
 # MULTIHARDLINK 04 # regular file with more than one link
 SETUID 37;41 # file that is setuid (u+s)
 SETGID 30;43 # file that is setgid (g+s)
-CAPABILITY 30;41 # file with capability
+# CAPABILITY 30;41 # file with capability
 STICKY_OTHER_WRITABLE 31;42 # dir that is sticky and other-writable (+t,o+w)
 OTHER_WRITABLE 30;44 # dir that is other-writable (o+w) and not sticky
 STICKY 30;42 # dir with the sticky bit set (+t) and not other-writable

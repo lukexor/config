@@ -6,7 +6,7 @@
     token = ad713daa071e284256dfde40ad14b65e
 [merge]
     tool = vimdiff
-	verbosity = 5
+    #verbosity = 5
 [diff]
     tool = vimdiff
 [difftool]

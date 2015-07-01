@@ -1,9 +1,9 @@
 --blank-lines-before-subs=2 # Default: 1
 --comma-arrow-breakpoints=0 # Break after every comma following => key/value pairs
---maximum-line-length=80 # Default: 80
+--maximum-line-length=120 # Default: 80
 --nooutdent-labels
 --nooutdent-long-lines
 --nospace-for-semicolon # e.g. for (i = 0; i < $value; i++) { ... }
---opening-brace-on-new-line
 --output-line-ending=unix
 --standard-error-output
+--opening-token-right
