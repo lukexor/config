@@ -2,8 +2,13 @@
 # == .bash_profile
 # Loaded if interactive login or non-interactive login shell
 
-# Functions to help us manage paths.  Second argument is the name of the
-# path variable to be modified (default: PATH)
+# ----------------------------------------------------------
+# -- Helper functions
+
+sourcefile() { [[ -r "$1" ]] && source $1; }
+
+# Functions to help us manage paths.
+# Arguments: $path, $ENV_VAR (default: $PATH)
 pathremove () {
         local IFS=':'
         local NEWPATH
@@ -31,144 +36,128 @@ pathappend () {
 		fi
 }
 
-# pathadd() {
-#     [[ $BASH_VERSINFO > 3 ]] && shopt -s compat31
-#     [ -d "${1}" ] && [[ ! "$PATH" =~ "(^|:)$1(:|$)" ]] && PATH="$1":"$PATH"
-# }
+# ----------------------------------------------------------
+# -- Source
+
+[[ -d "$HOME/.profile" ]] && source "$HOME/.profile"
 
 # ----------------------------------------------------------
 # -- Global Shell Variables
 
 # History
-export HISTCONTROL="ignoreboth"
-export HISTIGNORE="h:history:&:[bf]g:exit"
-export HISTFILE="${HOME}/.bhist"
-export HISTFILESIZE="10000" # Number of commands saved in HISTFILE
-export HISTSIZE="1000" # Number of commands saved in command history
-export HISTTIMEFORMAT="[%F %a %T] " # YYYY-MM-DD DAY HH:MM:SS
-# export JAVA_HOME="/usr"
-if [[ -z "$JAVA_HOME" && -x /usr/libexec/java_home ]] ; then
+export HISTCONTROL='ignoreboth'
+export HISTIGNORE='h:history:&:[bf]g:exit'
+export HISTFILE="$HOME/.bhist"
+export HISTFILESIZE=10000 # Number of commands saved in HISTFILE
+export HISTSIZE=1000 # Number of commands saved in command history
+export HISTTIMEFORMAT='[%F %a %T] ' # YYYY-MM-DD DAY HH:MM:SS
+
+if [[ -z "$JAVA_HOME" && -x '/usr/libexec/java_home ]]' ]] ; then
 	export JAVA_HOME=$(/usr/libexec/java_home)
 fi
-if [[ -d /usr/local/Cellar/maven/3.2.2/libexec ]] ; then
-	export MAVEN_HOME=/usr/local/Cellar/maven/3.2.2/libexec
+if [[ -z "$MAVEN_HOME" && -d '/usr/local/Cellar/maven/3.2.2/libexec' ]] ; then
+	export MAVEN_HOME='/usr/local/Cellar/maven/3.2.2/libexec'
 fi
-if [[ -d ${HOME}/fcs ]] ; then
-	export FON_DIR=${HOME}/fcs
-    export FCS_DEVEL=1
-    export FCS_APP_URL=http://dev-app.lotsofclouds.fonality.com/
-    export FCS_CP_URL=http://dev-cp.lotsofclouds.fonality.com/
+if [[ -d "$HOME/fcs" ]] ; then
+	export FON_DIR="$HOME/fcs"
+    pathprepend "$HOME/fcs" PERL5LIB
+    if [[ ! "$HOSTNAME" =~ fcs-app ]]; then
+        export FCS_DEVEL=1
+    fi
+    if [[ "$HOSTNAME" =~ devbox5 ]]; then
+        export FCS_APP_URL='http://dev-app.lotsofclouds.fonality.com/'
+        export FCS_CP_URL='http://dev-cp.lotsofclouds.fonality.com/'
+    fi
 fi
+if [[ -d "$HOME/dev/tools/android-sdk-macosx/" ]]; then
+	export ANDROID_HOME="$HOME/dev/tools/android-sdk-macosx/"
+    pathappend "${ANDROID_HOME}/tools"
+    pathappend "${ANDROID_HOME}/platform-tools"
+fi
+
+export PERL_MM_OPT='INSTALL_BASE='${HOME}'/perl5'
 
 # Grep
-export GREP_OPTIONS="--color=auto"
-export GREP_COLOR="1;32"
+export GREP_OPTIONS='--color=auto'
+export GREP_COLOR='1;32'
 
 # Pager
-export PAGER="less"
+export PAGER='less'
 
 # Virtualenvwrapper
-if [ -d "${HOME}/Dropbox/dev/virtualenvs" ]; then
-	export WORKON_HOME=${HOME}/Dropbox/dev/virtualenvs
+if [[ -d "$HOME/Dropbox/dev/virtualenvs" ]]; then
+	export WORKON_HOME="$HOME/Dropbox/dev/virtualenvs"
+fi
+# Load virtualenvwrapper
+if [[ -e '/usr/local/bin/python' ]]; then
+    export VIRTUALENVWRAPPER_PYTHON='/usr/local/bin/python'
+else
+    export VIRTUALENVWRAPPER_PYTHON='/usr/bin/python'
 fi
 
 # Fix YCM with vim
 # export DYLD_FORCE_FLAT_NAMESPACE=1
 
 # ----------------------------------------------------------
-# -- Host-Specific Shell Variables
-
-case "${HOSTNAME}" in
-  tech ) export CPVER=5; export PERLLIB=/code-5.0/ ;;
-  zhayedan ) export GITPERLLIB=${HOME}/perl5/lib/perl5/:${HOME}/perl5/perlbrew/perls/perl-5.16.0/lib/site_perl/5.16.0/App/gh ;;
-esac
-
-# ----------------------------------------------------------
 # -- Global Paths
 
-if [ -d "${HOME}/lib" ]; then
-	for dir in $(find "${HOME}/lib" -type d -name perl*); do
+if [[ -d "$HOME/lib" ]]; then
+	for dir in $(find "$HOME/lib" -type d -name perl*); do
 		pathprepend $dir PERL5LIB
 	done
 fi
-
-pathappend '/usr/git-2.2.2/perl' PERL5LIB
-pathappend "${HOME}/perl5/lib" PERL5LIB
-
-if [ -d "${HOME}/perl5" ]; then
-    eval $(perl -I ~/perl5/lib/perl5/ -Mlocal::lib)
-fi
-if [ -d "${HOME}/fcs/lib" ]; then
-    export FON_DIR="${HOME}/fcs"
-    export FCS_DEVEL=1
-	export NO_MYSQL_AUTOCONNECT=1
-fi
-if [ -d "${HOME}/bin" ]; then
-    for dir in $(find "${HOME}/bin" -type d -name bin); do
+if [[ -d "$HOME/bin" ]]; then
+    for dir in $(find "$HOME/bin" -type d -name bin); do
         pathprepend $dir
     done
 fi
-if [ -d "${HOME}/dev/tools/android-sdk-macosx/" ]; then
-	export ANDROID_HOME="${HOME}/dev/tools/android-sdk-macosx/"
-fi
 
-pathprepend "/usr/local/bin"
-pathprepend "${HOME}/.rvm/bin"
-pathprepend "${HOME}/fcs/lib" PERL5LIB
-pathprepend "${HOME}/fcs/bin"
-pathprepend "${HOME}/lib" PERL5LIB
-pathprepend "${HOME}/perl5/lib/perl5/" PERL5LIB
-pathprepend "${HOME}/opt/bin"
-pathprepend "${HOME}/bin"
-pathprepend "${HOME}/bin/fon"
-pathappend "/var/adm/bin-5.0"
-pathappend "/usr/local/bin-5.0"
-pathappend "${ANDROID_HOME}/tools"
-pathappend "${ANDROID_HOME}/platform-tools"
+pathprepend "/opt/local/man" MANPATH
 
-# ----------------------------------------------------------
-# -- Java
-pathprepend "${MAVEN_HOME}/bin"
-pathprepend "${JAVA_HOME}/bin"
-
-# ----------------------------------------------------------
-# -- MacPorts Installer addition on 2014-05-14_at_09:06:16: adding an appropriate PATH variable for use with MacPorts.
 pathprepend "/opt/local/sbin"
 pathprepend "/opt/local/bin"
-pathprepend "/opt/local/man" MANPATH
+pathprepend "${MAVEN_HOME}/bin"
+pathprepend "${JAVA_HOME}/bin"
+pathprepend "/usr/local/bin"
+pathprepend "$HOME/.rvm/bin"
+pathprepend "$HOME/opt/bin"
+pathprepend "$HOME/fcs/bin"
+pathprepend "$HOME/bin/fon"
+pathprepend "$HOME/bin"
+pathappend "/var/adm/bin-5.0"
+pathappend "/usr/local/bin-5.0"
+
+pathprepend '/usr/git-2.2.2/perl' PERL5LIB
+pathprepend "$HOME/perl5/lib/perl5/" PERL5LIB
+pathprepend "$HOME/perl5/lib" PERL5LIB
+pathprepend "$HOME/fcs/lib" PERL5LIB
+pathprepend "$HOME/lib" PERL5LIB
+
+pathappend "$HOME/perl5/lib/perl5/" GITPERLLIB
+pathappend "$HOME/perl5/perlbrew/perls/perl-5.16.0/lib/site_perl/5.16.0/App/gh" GITPERLLIB
 
 # ----------------------------------------------------------
 # -- Inputrc
 
-if [ -z "${INPUTRC}" -a ! -f "${HOME}/.inputrc" ]; then
-    INPUTRC="/etc/inputrc"
+if [[ -z "$INPUTRC" && ! -f "$HOME/.inputrc" ]]; then
+    INPUTRC='/etc/inputrc'
 fi
 export INPUTRC
 
 # ----------------------------------------------------------
-# -- Cleanup
+# -- Environment
 
-# unset pathremove
-# unset pathappend
-# unset pathprepend
+PS1="\W > "
 
-# ----------------------------------------------------------
-# -- Source
-
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
-
-[ -d "${HOME}/.profile" ] && . "${HOME}/.profile"
-case "$-" in *i*) [ -r "${HOME}/.bashrc" ] && . "${HOME}/.bashrc"; esac
-[ $SHLVL -eq 1 ] && eval "$(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib)"
-# pathprepend "${HOME}/vagrant_dir/fcs-f" PERL5LIB
-
-export PERL_MM_OPT='INSTALL_BASE='${HOME}'/perl5'
-
-##
-# Your previous /Users/caeledh/.bash_profile file was backed up as /Users/caeledh/.bash_profile.macports-saved_2015-01-26_at_14:18:06
-##
-
-# MacPorts Installer addition on 2015-01-26_at_14:18:06: adding an appropriate PATH variable for use with MacPorts.
-export PATH="/opt/local/bin:/opt/local/sbin:$PATH"
-# Finished adapting your PATH environment variable for use with MacPorts.
-
+# Commented out performance profiling code
+res1=$(date +%s.%N)
+case "$-" in *i*) [[ -r "$HOME/.bashrc" ]] && source "$HOME/.bashrc"; esac
+res2=$(date +%s.%N)
+dt=$(echo "$res2 - $res1" | bc)
+dd=$(echo "$dt/86400" | bc)
+dt2=$(echo "$dt-86400*$dd" | bc)
+dh=$(echo "$dt2/3600" | bc)
+dt3=$(echo "$dt2-3600*$dh" | bc)
+dm=$(echo "$dt3/60" | bc)
+ds=$(echo "$dt3-60*$dm" | bc)
+printf "Total runtime: %d:%02d:%02d:%02.4f\n" $dd $dh $dm $ds

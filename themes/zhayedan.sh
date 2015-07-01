@@ -50,7 +50,7 @@ function prompt_pwd() {
         local pwd_offset=$(( ${#PWD} - ${pwd_max_len} + 3 ))
         PWD="${trunc_symbol}${PWD[${pwd_offset},${#PWD}]}"
     fi
-    echo -e " ${PWD}"
+    echo -e "${PWD}"
 }
 
 function prompt_on() {
@@ -93,14 +93,22 @@ function prompt_on() {
     esac
 
     # Left command prompt
-    PS1="\n${PR_CLR}${HOSTNAME}${FGgreen}"'$(prompt_pwd)$(battery_pct_prompt)'
+    case ${OSTYPE} in
+        darwin*) export PS1_HOST="" ;;
+        *) export PS1_HOST="${HOSTNAME} " ;;
+    esac
+    PS1_HOST=""
+    PS1="\[${PR_CLR}\]${PS1_HOST}\[${FGgreen}\]"'$(prompt_pwd)'
 
     for plugin in "${plugins[@]}"; do
-        [[ "$plugin" == "git" ]] && PS1=${PS1}'$(git_prompt_info)' && BASH_THEME_GIT_PROMPT_DIRTY="$BASH_THEME_GIT_PROMPT_DIRTY$(git_prompt_status)";
-        [[ "$plugin" == "svn" ]] && PS1=${PS1}'$(svn_prompt_info)';
+        if [[ "$plugin" == "git" ]]; then
+            # PS1=${PS1}'$(git_prompt_info)'
+            BASH_THEME_GIT_PROMPT_DIRTY="$BASH_THEME_GIT_PROMPT_DIRTY$(git_prompt_status)"
+        fi
+        # [[ "$plugin" == "svn" ]] && PS1=${PS1}'$(svn_prompt_info)';
     done
 
-    PS1=${PS1}'$(active_screens_prompt)$(bg_jobs_prompt)$(st_jobs_prompt)'"${PR_CLR} >${RCLR} \n> "
+    PS1=${PS1}"\[${FGcyan}\]"'$(active_screens)$(bg_jobs)$(st_jobs)'"\[${PR_CLR}\] >\[${RCLR}\] "
     PROMPT_COMMAND=${PROMPT_COMMAND}'PS1=${PS1}'
 
     # PS2 continuation prompt
@@ -108,8 +116,8 @@ function prompt_on() {
 }
 
 function prompt_off() {
-    PROMPT_COMMAND='PS1="${PR_CLR}${HOSTNAME}${FGgreen}$(prompt_pwd)$(active_screens_prompt)\
-$(bg_jobs_prompt)$(st_jobs_prompt)${PR_CLR} >${RCLR} \n> "'
+    PROMPT_COMMAND='PS1="\[${PR_CLR}\]${PS1_HOST}\[${FGgreen}\]$(prompt_pwd)$(active_screens_prompt)\
+$(bg_jobs_prompt)$(st_jobs_prompt)\[${PR_CLR}\] >\[${RCLR}\] "'
 }
 
 prompt_on

@@ -6,3 +6,4 @@
 --nospace-for-semicolon # e.g. for (i = 0; i < $value; i++) { ... }
 --output-line-ending=unix
 --standard-error-output
+--opening-token-right

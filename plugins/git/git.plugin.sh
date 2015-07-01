@@ -24,7 +24,7 @@ alias gdt='git difftool'
 alias gf='git fetch origin'
 alias gfg='git ls-files | grep -i'
 alias gg='git grep -Ii'
-alias gi='git_info.sh'
+alias gi='echo $(git_prompt_info)'
 alias gif='git_info.sh full'
 alias gla='alias|grep git|cut -c 7-'
 alias glf='git log -p'
@@ -48,7 +48,7 @@ alias gsha=git_prompt_short_sha
 alias gshal=git_prompt_long_sha
 alias gsr='git svn rebase'
 alias gss='git status -s'
-alias gst='git status'
+alias gst='echo $(git_prompt_info);git status'
 alias gsl='git --no-pager stash list'
 alias gt=git_time_since_commit
 alias gtoday='git --no-pager log --graph --pretty=format:"%C(yellow)%h %ad%Cred%d %Creset%Cblue[%cn]%Creset  %s (%ar)" --date=iso --all --branches=* --remotes=* --since="23 hours ago" --author="$(git config user.name)"'
