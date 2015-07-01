@@ -1,3 +1,4 @@
+*.css
 *.min.js
 *.sql
 .git
