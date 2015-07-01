@@ -2,12 +2,42 @@
 # == .bashrc
 # Loaded if interactive non-login shell
 
+sourcefile() { [[ -r "$1" ]] && source $1; }
+
+# Functions to help us manage paths.
+# Arguments: $path, $ENV_VAR (default: $PATH)
+pathremove () {
+    local IFS=':'
+    local NEWPATH
+    local DIR
+    local PATHVARIABLE=${2:-PATH}
+    for DIR in ${!PATHVARIABLE} ; do
+            if [ "$DIR" != "$1" ] ; then
+                NEWPATH=${NEWPATH:+$NEWPATH:}$DIR
+            fi
+    done
+    export $PATHVARIABLE="$NEWPATH"
+}
+pathprepend () {
+    pathremove $1 $2
+    if [[ -d $1 ]] ; then
+        local PATHVARIABLE=${2:-PATH}
+        export $PATHVARIABLE="$1${!PATHVARIABLE:+:${!PATHVARIABLE}}"
+    fi
+}
+pathappend () {
+    pathremove $1 $2
+    if [[ -d $1 ]] ; then
+        local PATHVARIABLE=${2:-PATH}
+        export $PATHVARIABLE="${!PATHVARIABLE:+${!PATHVARIABLE}:}$1"
+    fi
+}
+
 # Exit if not interactive
 case "$-" in
     *i* ) ;;
     * ) return ;;
 esac
-
 # ----------------------------------------------------------
 # -- Source
 
@@ -114,6 +144,19 @@ alias cp='cp -ia'
 alias mv='mv -i'
 alias md='mkdir -p' # Make sub-directories as needed
 alias rd='rmdir'
+
+# Various CD shortcuts
+if [[ -d "$HOME/fcs/" ]]; then
+    alias wa="cd $HOME/fcs/lib/Fap/WebApp/Action/"
+    alias f="cd $HOME/fcs/lib/Fap/"
+    alias dbregen="/usr/bin/perl -I$HOME/fcs/lib $HOME/fcs/bin/tools/database/regenerate_DBIx"
+fi
+if [[ -d "$HOME/Dropbox/dev" ]]; then
+    export DEVHOME="$HOME/Dropbox/dev"
+    alias s="cd $DEVHOME/websites/"
+    alias d="cd $DEVHOME"
+    alias ios="cd $DEVHOME/ios"
+fi
 
 # System
 alias _='sudo'
@@ -227,14 +270,6 @@ updatedb() {
         *) updatedb ;;
     esac
 }
-
-# Various CD commands
-export DEVHOME="$HOME/Dropbox/dev";
-wa() { cd "$HOME/fcs/lib/Fap/WebApp/Action/"; }
-f() { cd "$HOME/fcs/lib/Fap/"; }
-s() { cd "$DEVHOME/websites"; }
-d() { cd "$DEVHOME"; }
-ios() { cd "$DEVHOME/ios"; }
 
 tags() { ctags --exclude=@$HOME/.ctagsexclude; }
 

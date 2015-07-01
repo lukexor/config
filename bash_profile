@@ -2,44 +2,16 @@
 # == .bash_profile
 # Loaded if interactive login or non-interactive login shell
 
-# ----------------------------------------------------------
-# -- Helper functions
-
-sourcefile() { [[ -r "$1" ]] && source $1; }
-
-# Functions to help us manage paths.
-# Arguments: $path, $ENV_VAR (default: $PATH)
-pathremove () {
-        local IFS=':'
-        local NEWPATH
-        local DIR
-        local PATHVARIABLE=${2:-PATH}
-        for DIR in ${!PATHVARIABLE} ; do
-                if [ "$DIR" != "$1" ] ; then
-                  NEWPATH=${NEWPATH:+$NEWPATH:}$DIR
-                fi
-        done
-        export $PATHVARIABLE="$NEWPATH"
-}
-pathprepend () {
-        pathremove $1 $2
-		if [[ -d $1 ]] ; then
-			local PATHVARIABLE=${2:-PATH}
-			export $PATHVARIABLE="$1${!PATHVARIABLE:+:${!PATHVARIABLE}}"
-		fi
-}
-pathappend () {
-        pathremove $1 $2
-		if [[ -d $1 ]] ; then
-			local PATHVARIABLE=${2:-PATH}
-			export $PATHVARIABLE="${!PATHVARIABLE:+${!PATHVARIABLE}:}$1"
-		fi
-}
+startn=$(date +%s.%N)
+starts=$(date +%s)
+PS1="\W > "
 
 # ----------------------------------------------------------
 # -- Source
 
+[[ -d "/etc/profile" ]] && source "/etc/profile"
 [[ -d "$HOME/.profile" ]] && source "$HOME/.profile"
+case "$-" in *i*) [[ -r "$HOME/.bashrc" ]] && source "$HOME/.bashrc"; esac
 
 # ----------------------------------------------------------
 # -- Global Shell Variables
@@ -145,19 +117,20 @@ fi
 export INPUTRC
 
 # ----------------------------------------------------------
-# -- Environment
+# -- Time profiling
 
-PS1="\W > "
-
-# Commented out performance profiling code
-res1=$(date +%s.%N)
-case "$-" in *i*) [[ -r "$HOME/.bashrc" ]] && source "$HOME/.bashrc"; esac
-res2=$(date +%s.%N)
-dt=$(echo "$res2 - $res1" | bc)
-dd=$(echo "$dt/86400" | bc)
-dt2=$(echo "$dt-86400*$dd" | bc)
-dh=$(echo "$dt2/3600" | bc)
-dt3=$(echo "$dt2-3600*$dh" | bc)
-dm=$(echo "$dt3/60" | bc)
-ds=$(echo "$dt3-60*$dm" | bc)
-printf "Total runtime: %d:%02d:%02d:%02.4f\n" $dd $dh $dm $ds
+endn=$(date +%s.%N)
+ends=$(date +%s)
+if [[ $(which bc 2>/dev/null) ]]; then
+    dt=$(echo "$endn - $startn" | bc)
+    dd=$(echo "$dt/86400" | bc)
+    dt2=$(echo "$dt-86400*$dd" | bc)
+    dh=$(echo "$dt2/3600" | bc)
+    dt3=$(echo "$dt2-3600*$dh" | bc)
+    dm=$(echo "$dt3/60" | bc)
+    ds=$(echo "$dt3-60*$dm" | bc)
+    printf "Total runtime: %d:%02d:%02d:%02.4f\n" $dd $dh $dm $ds
+else
+    dt=$(($ends - $starts))
+    printf "Total runtime: %ds\n" $dt
+fi
