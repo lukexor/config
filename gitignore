@@ -6,7 +6,9 @@
 *.exe
 *.o
 *.so
-# *.mp
+*.mp
+build/
+dist/
 
 # Temporary files #
 ###################
@@ -14,6 +16,8 @@
 *.swp
 *.swo
 *~
+*.bak
+*.orig
 
 # Packages #
 ############
@@ -30,6 +34,8 @@
 ######################
 *.log
 *.sqlite
+./data/
+./save/
 
 # OS generated files #
 ######################
@@ -41,9 +47,8 @@ Thumbs.db
 # Misc #
 ########
 tags*
-bin/minecraft*
 .includepath
 .project
 .settings/
-test_scripts/
 .remote-sync.json
+.gmf_branches

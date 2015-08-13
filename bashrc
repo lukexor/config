@@ -104,6 +104,16 @@ BGwhite=$(setbg 7)
 
 RCLR=$(tput sgr0)
 
+GRY='\[\033[0;90m\]'
+WHI='\[\033[0;37m\]'
+BLU='\[\033[0;34m\]'
+YEL='\[\033[0;33m\]'
+HCYA='\[\033[0;96m\]'
+GRE='\[\033[0;32m\]'
+CYA='\[\033[0;36m\]'
+RED='\[\033[0;31m\]'
+NC='\[\033[0m\]'
+
 # ----------------------------------------------------------
 # -- Shell Options
 
@@ -144,6 +154,7 @@ alias cp='cp -ia'
 alias mv='mv -i'
 alias md='mkdir -p' # Make sub-directories as needed
 alias rd='rmdir'
+alias p='pwd'
 
 # Various CD shortcuts
 if [[ -d "$HOME/fcs/" ]]; then
@@ -171,7 +182,7 @@ alias nano=$EDITOR
 alias emacs=$EDITOR
 
 # Git
-alias syncgit='for file in $(git status|grep modified|cut -d: -f2|tr -d " "); do scp $file lpetherbridge@devbox5.lotsofclouds.fonality.com:~/fcs/$file; done'
+alias syncgit='for file in $(git status|grep modified|cut -d: -f3|tr -d " "); do scp $file lpetherbridge@devbox5.lotsofclouds.fonality.com:~/fcs/$file; done'
 
 # Python
 alias py='python'
@@ -216,13 +227,15 @@ alias scr='screen -DR'
 alias scm='screen -S "main"'
 
 # Misc
-alias g='grep -in'
 alias da='date "+%Y-%m-%d %H:%M:%S"'
-alias which='type -a'
-alias path='echo -e ${PATH//:/"\n"}'
-alias topmem='ps -eo pmem,pcpu,pid,user,args | sort -k 1 -r | head -20';
-alias x='extract'
+alias g='grep -in'
+alias grep='grep -in'
 alias offenders='uptime;ps aux | perl -ane"print if \$F[2] > 0.9"'
+alias path='echo -e ${PATH//:/"\n"}'
+alias prove='prove -v'
+alias topmem='ps -eo pmem,pcpu,pid,user,args | sort -k 1 -r | head -20';
+alias which='type -a'
+alias x='extract'
 
 # ls
 if [[ "$OSTYPE" =~ 'darwin' ]]; then
@@ -262,6 +275,41 @@ schk() {
     for file in $(git status|egrep 'new file|modified'|egrep '(.pm|.pl)$' |cut -d: -f2|cut -d' ' -f4); do
         perl -c $file
     done
+}
+
+gmf() {
+    local branch_file='.gmf_branches'
+    if [[ -f ${branch_file} ]]; then
+        local current_branch=$(current_branch)
+        local branches=()
+        local i=0
+        while read line; do
+            branches[$i]=$line
+            i=$(($i + 1))
+        done < ${branch_file}
+        local main_branch=${branches[0]}
+
+        command="GIT_MERGE_AUTOEDIT=no;echo 'Merging ${current_branch} into ${main_branch}' &&"
+        command="$command git checkout ${main_branch} && "
+        command="$command git pull && "
+        command="$command git merge ${current_branch} && "
+        command="$command git push origin ${main_branch} "
+        for this_branch in "${branches[@]}"; do
+            if [ "${this_branch}" = "${main_branch}" ]; then
+                continue
+            fi
+            command="$command && echo 'Merging ${main_branch} into ${this_branch}' &&"
+            command="$command git checkout ${this_branch} && "
+            command="$command git pull && "
+            command="$command git merge ${main_branch} && "
+            command="$command git push origin ${this_branch}"
+        done
+        command="$command && git checkout ${main_branch}"
+        echo $command
+        if _ask_yes_no "Proceed?"; then
+            eval $command
+        fi
+    fi
 }
 
 updatedb() {
@@ -410,26 +458,26 @@ fi
 function active_screens() {
     screens=$(screen -ls 2>/dev/null | grep -c Detach | tr -d '[[:space:]]')
     if [[ $screens > 0 ]]; then
-        echo ' scr:'$screens
+        echo $screens
     fi
 }
 function bg_jobs() {
     jobs=$(jobs -r | wc -l | tr -d '[[:space:]]')
     if [[ $jobs > 0 ]]; then
-        echo ' bg:'$jobs
+        echo $jobs
     fi
 }
 function st_jobs() {
     jobs=$(jobs -s | wc -l | tr -d '[[:space:]]')
     if [[ $jobs -gt 0 ]]; then
-        echo ' st:'$jobs
+        echo $jobs
     fi
 }
 
 # ----------------------------------------------------------
 # -- Plugins
 
-export PLUGIN_DIR="${HOME}/.plugins/"
+export PLUGIN_DIR="${HOME}/.plugins"
 export BASH_THEME="${HOME}/.themes/zhayedan.sh"
 
 plugins=(host git ssh-agent)
@@ -449,6 +497,7 @@ do
     sourcefile $sfile
     unset pfile
 done
+unset plugin
 
 # Load theme
 sourcefile $BASH_THEME

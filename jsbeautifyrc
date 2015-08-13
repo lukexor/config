@@ -6,6 +6,56 @@
     "indent_with_tabs": false,
     "preserve_newlines": true,
     "max_preserve_newlines": 2,
-    "jslint_happy": true,
+    "brace_style": "collapse",
     "indent_handlebars": true
+    "wrap_line_length": 79,
+
+    "css": {
+       "indent_size": 2,
+       "selector_separator_newline": false,
+       "newline_between_rules": false,
+       "indent_comments": true,
+       "force_indentation": false,
+       "convert_quotes": "none",
+       "align_assignments": false
+   },
+   "html": {
+        "indent_inner_html": false,
+        "indent_size": 2,
+        "indent_scripts": "normal",
+        "wrap_line_length": 250,
+        "wrap_attributes": "auto",
+        "wrap_attributes_indent_size": 2,
+        "unformatted": [
+            "a",
+            "sub",
+            "sup",
+            "b",
+            "i",
+            "u"
+        ],
+    },
+    "js": {
+        "indent_size": 2,
+        "space_in_paren": true,
+        "jslint_happy": true,
+        "space_after_anon_function": true,
+        "break_chained_methods": true,
+        "keep_array_indentation": true,
+        "keep_function_indentation": false,
+        "space_before_conditional": true,
+        "eval_code": false,
+        "unescape_strings": false,
+    },
+    "ruby": {
+        "indent_size": 2,
+    },
+    "cson": {
+        "indent_size": 2,
+    },
+    "sql": {
+        "indent_size": 2,
+        "keywords": "upper",
+        "identifiers": "lower"
+    },
 }

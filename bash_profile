@@ -16,7 +16,10 @@ case "$-" in *i*) [[ -r "$HOME/.bashrc" ]] && source "$HOME/.bashrc"; esac
 # ----------------------------------------------------------
 # -- Global Shell Variables
 
+export GIT_MERGE_AUTOEDIT=no
+
 # History
+export HOSTNAME=$(hostname)
 export HISTCONTROL='ignoreboth'
 export HISTIGNORE='h:history:&:[bf]g:exit'
 export HISTFILE="$HOME/.bhist"
@@ -32,14 +35,21 @@ if [[ -z "$MAVEN_HOME" && -d '/usr/local/Cellar/maven/3.2.2/libexec' ]] ; then
 fi
 if [[ -d "$HOME/fcs" ]] ; then
 	export FON_DIR="$HOME/fcs"
-    pathprepend "$HOME/fcs" PERL5LIB
-    if [[ ! "$HOSTNAME" =~ fcs-app ]]; then
-        export FCS_DEVEL=1
-    fi
-    if [[ "$HOSTNAME" =~ devbox5 ]]; then
-        export FCS_APP_URL='http://dev-app.lotsofclouds.fonality.com/'
-        export FCS_CP_URL='http://dev-cp.lotsofclouds.fonality.com/'
-    fi
+	export NO_MYSQL_AUTOCONNECT=1
+  pathprepend "$HOME/fcs" PERL5LIB
+  if [[ ! "$HOSTNAME" =~ fcs-app ]]; then
+      export FCS_DEVEL=1
+			export FCS_APP_URL='http://portal.fonality.com/'
+      export FCS_CP_URL='http://cp.fonality.com/'
+  fi
+  if [[ "$HOSTNAME" =~ devbox5 ]]; then
+      export FCS_APP_URL='http://dev-app.lotsofclouds.fonality.com/'
+      export FCS_CP_URL='http://dev-cp.lotsofclouds.fonality.com/'
+  fi
+	if [[ "$HOSTNAME" =~ zhayedan ]]; then
+      export FCS_APP_URL='http://dev-app.lotsofclouds.fonality.com/'
+      export FCS_CP_URL='http://dev-cp.lotsofclouds.fonality.com/'
+  fi
 fi
 if [[ -d "$HOME/dev/tools/android-sdk-macosx/" ]]; then
 	export ANDROID_HOME="$HOME/dev/tools/android-sdk-macosx/"
@@ -86,8 +96,6 @@ fi
 
 pathprepend "/opt/local/man" MANPATH
 
-pathprepend "/opt/local/sbin"
-pathprepend "/opt/local/bin"
 pathprepend "${MAVEN_HOME}/bin"
 pathprepend "${JAVA_HOME}/bin"
 pathprepend "/usr/local/bin"
@@ -98,6 +106,8 @@ pathprepend "$HOME/bin/fon"
 pathprepend "$HOME/bin"
 pathappend "/var/adm/bin-5.0"
 pathappend "/usr/local/bin-5.0"
+pathappend "/opt/local/sbin"
+pathappend "/opt/local/bin"
 
 pathprepend '/usr/git-2.2.2/perl' PERL5LIB
 pathprepend "$HOME/perl5/lib/perl5/" PERL5LIB
@@ -129,8 +139,8 @@ if [[ $(which bc 2>/dev/null) ]]; then
     dt3=$(echo "$dt2-3600*$dh" | bc)
     dm=$(echo "$dt3/60" | bc)
     ds=$(echo "$dt3-60*$dm" | bc)
-    printf "Total runtime: %d:%02d:%02d:%02.4f\n" $dd $dh $dm $ds
+    printf "\033[0;33mTotal runtime: %d:%02d:%02d:%02.4f\033[0m\n" $dd $dh $dm $ds
 else
     dt=$(($ends - $starts))
-    printf "Total runtime: %ds\n" $dt
+    printf "\033[0;33mTotal runtime: %ds\033[0m\n" $dt
 fi

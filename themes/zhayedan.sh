@@ -50,20 +50,19 @@ function prompt_pwd() {
         local pwd_offset=$(( ${#PWD} - ${pwd_max_len} + 3 ))
         PWD="${trunc_symbol}${PWD[${pwd_offset},${#PWD}]}"
     fi
-    echo -e "${PWD}"
+    echo -e " ${PWD}"
 }
 
 function prompt_on() {
     # User is colored differently based on root user
     if [ "${UID}" -eq 0 ]
     then
-        PR_CLR="${BGred}${FGwhite}"
+        PR_CLR="${BGred}${FGred}"
     else
-        if [[ "${USER}" == "${LOGNAME}" ]]
-        then
-            PR_CLR="${RCLR}${FGred}"
+        if [[ "${USER}" == "${LOGNAME}" ]]; then
+            PR_CLR="${RCLR}${FGblue}"
         else
-            PR_CLR="${RCLR}${FGgreen}"
+            PR_CLR="${RCLR}${FGyellow}"
         fi
     fi
     export PR_CLR
@@ -97,27 +96,31 @@ function prompt_on() {
         darwin*) export PS1_HOST="" ;;
         *) export PS1_HOST="${HOSTNAME} " ;;
     esac
-    PS1_HOST=""
-    PS1="\[${PR_CLR}\]${PS1_HOST}\[${FGgreen}\]"'$(prompt_pwd)'
 
     for plugin in "${plugins[@]}"; do
         if [[ "$plugin" == "git" ]]; then
-            # PS1=${PS1}'$(git_prompt_info)'
             BASH_THEME_GIT_PROMPT_DIRTY="$BASH_THEME_GIT_PROMPT_DIRTY$(git_prompt_status)"
         fi
         # [[ "$plugin" == "svn" ]] && PS1=${PS1}'$(svn_prompt_info)';
     done
 
-    PS1=${PS1}"\[${FGcyan}\]"'$(active_screens)$(bg_jobs)$(st_jobs)'"\[${PR_CLR}\] >\[${RCLR}\] "
-    PROMPT_COMMAND=${PROMPT_COMMAND}'PS1=${PS1}'
+    export PS1=$GR'['$WH'\@'$GR']'${BGJOBS}${STJOBS}${GITB}' '$CY'\W'${CUR}${NC}
+    export PROMPT_COMMAND=${PROMPT_COMMAND}'PS1="\n\
+$GRY[$WHI\@$GRY]\
+`if [[ $(active_screens) ]]; then echo " $GRY[$BLU$(active_screens)$GRY]"; fi`\
+`if [[ $(bg_jobs) ]]; then echo "$GRY[$YEL$(bg_jobs)$GRY]"; fi`\
+`if [[ $(st_jobs) ]]; then echo "$GRY[$HCYA$(st_jobs)$GRY]"; fi`\
+`if [[ $(parse_git_branch) ]]; then echo " $GRY($GRE$(parse_git_branch)$GRY)"; fi` \
+$CYA\W \
+$RED> $NC\
+"'
 
     # PS2 continuation prompt
-    PS2="${PR_CLR} >>${RCLR} "
+    export PS2=" >> "
 }
 
 function prompt_off() {
-    PROMPT_COMMAND='PS1="\[${PR_CLR}\]${PS1_HOST}\[${FGgreen}\]$(prompt_pwd)$(active_screens_prompt)\
-$(bg_jobs_prompt)$(st_jobs_prompt)\[${PR_CLR}\] >\[${RCLR}\] "'
+    PROMPT_COMMAND='PS1="$(prompt_pwd) > "'
 }
 
 prompt_on

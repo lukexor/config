@@ -48,7 +48,7 @@ alias gsha=git_prompt_short_sha
 alias gshal=git_prompt_long_sha
 alias gsr='git svn rebase'
 alias gss='git status -s'
-alias gst='echo $(git_prompt_info);git status'
+alias gst='git status'
 alias gsl='git --no-pager stash list'
 alias gt=git_time_since_commit
 alias gtoday='git --no-pager log --graph --pretty=format:"%C(yellow)%h %ad%Cred%d %Creset%Cblue[%cn]%Creset  %s (%ar)" --date=iso --all --branches=* --remotes=* --since="23 hours ago" --author="$(git config user.name)"'
@@ -211,6 +211,11 @@ git_prompt_short_sha() {
 # Formats prompt string for current git commit long SHA
 git_prompt_long_sha() {
   SHA=$(git rev-parse HEAD 2> /dev/null) && echo "$BASH_THEME_GIT_PROMPT_SHA_BEFORE$SHA$BASH_THEME_GIT_PROMPT_SHA_AFTER"
+}
+
+parse_git_branch() {
+  branch=$(git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/' )
+  echo $branch
 }
 
 # Get the status of the working tree
