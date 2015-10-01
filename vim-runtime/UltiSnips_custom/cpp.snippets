@@ -1,0 +1,48 @@
+snippet head "C++ Header Comment" b
+/* -----------------------------------------------------------------------------
+** Author: Lucas Petherbridge
+** Email: luc6@pdx.edu
+**
+** Course: CS162-001
+** Program #${1:Project Number}
+**
+** Date: `date +'%Y-%m-%d'`
+**
+** ${2:Description: TODO}
+** ---------------------------------------------------------------------------*/
+
+#include <iostream>
+using namespace std;
+
+int main() {
+  ${3:// ...}
+
+  return 0;
+}
+endsnippet
+
+snippet func "C++ Function w/ Comment" b
+/* -----------------------------------------------------------------------------
+** ${1:function_name}()
+**
+** ${2:Description: TODO}
+**
+** Params:
+**   ${3:None}
+** Returns: ${4:void}
+** ---------------------------------------------------------------------------*/
+${5:void} $1(${6:void}) {
+  ${7:// ...}
+
+  return;
+}
+endsnippet
+
+snippet defineg "#define Header Guard" b
+#ifndef ${1:PROJECT}_${2:PATH}_${3:FILE}_H_
+#define $1_$2_$3_H_
+
+${4:// ...}
+
+#endif // $1_$2_$3_H_
+endsnippet
