@@ -20,6 +20,8 @@ dist/
 *.bak
 *.orig
 cover_db/
+tmp/
+.prove
 
 # Packages #
 ############

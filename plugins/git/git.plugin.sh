@@ -73,8 +73,8 @@ ghlp() {
 
 fu() {
 	if [ -e /usr/local/fonality/bin/fcs_update ]; then
-		echo "sudo /usr/local/fonality/bin/fcs_update ${1:--s}"
-		sudo /usr/local/fonality/bin/fcs_update ${1:--s}
+		echo "sudo /usr/local/fonality/bin/fcs_update $*"
+		sudo /usr/local/fonality/bin/fcs_update $*
 	fi
 }
 
