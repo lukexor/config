@@ -18,6 +18,8 @@ dist/
 *~
 *.bak
 *.orig
+tmp/
+.prove
 
 # Packages #
 ############
