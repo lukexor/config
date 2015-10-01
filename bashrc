@@ -182,7 +182,7 @@ alias nano=$EDITOR
 alias emacs=$EDITOR
 
 # Git
-alias syncgit='for file in $(git status|grep modified|cut -d: -f3|tr -d " "); do scp $file lpetherbridge@devbox5.lotsofclouds.fonality.com:~/fcs/$file; done'
+alias sg='for file in $(git status|egrep "modified|new file"|cut -d: -f2|tr -d " "|sort|uniq); do scp $file lpetherbridge@devbox5.lotsofclouds.fonality.com:~/fcs/$file; done'
 
 # Python
 alias py='python'
@@ -206,6 +206,8 @@ alias vs="vi $HOME/.screenrc"
 
 # SSH
 alias slp="ssh lp"
+alias sls="ssh luc6@linux.cs.pdx.edu"
+alias sqz="ssh luc6@quizor2.cs.pdx.edu"
 alias sshl='ssh-add -L' # List ssh-agent identities
 alias st='ssh -A lpetherbridge@tech.fonality.com'
 alias sw2='ssh -A lpetherbridge@web-dev2.fonality.com'
@@ -417,6 +419,7 @@ ra() {
     fi
 }
 aweb() { [[ -f "$HOME/.ssh/webhost_key" ]] && /usr/bin/ssh-add "$HOME/.ssh/webhost_key"; }
+als() { [[ -f "$HOME/.ssh/id_rsa_psu" ]] && /usr/bin/ssh-add "$HOME/.ssh/id_rsa_psu"; }
 akey() {
     ra
     # If Aladdin etoken connected
