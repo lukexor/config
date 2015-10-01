@@ -180,13 +180,13 @@ set linebreak " Wrap long lines at a character in breakat
 set list listchars=tab:\|\ ,trail:-,extends:>,precedes:<,nbsp:x " display indentation guides
 highlight SpecialKey ctermfg=darkgrey guifg=darkgrey
 set wrap " wrap default
-set shiftwidth=4 " Number of spaces used for each spent of indent
+set shiftwidth=2 " Number of spaces used for each spent of indent
 set shiftround " Indent/Outdent to nearest tabstop
 set matchpairs+=<:> " Allow % to bounce between angles too
 set smarttab " Tabs according to shiftwidth
-set softtabstop=4 " Spaces a tab counts for when backspacing or inserting tabs
-set tabstop=4 " The number of spaces a tab counts as
-set textwidth=120
+set softtabstop=2 " Spaces a tab counts for when backspacing or inserting tabs
+set tabstop=2 " The number of spaces a tab counts as
+set textwidth=80
 set wrapmargin=10 " Number of characters from the right where wrapping starts
 if has('spell')
 	set spelllang=en
