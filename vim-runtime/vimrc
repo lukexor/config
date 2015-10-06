@@ -282,7 +282,7 @@ map 0 ^
 " vnoremap <s-k> :m-2<CR>gv=gv
 
 " Show yank ring window
-nnoremap <leader>r :YRShow<CR>
+nnoremap <leader>y :YRShow<CR>
 
 " Change NERDTree to current file directory
 nnoremap <leader>nc :NERDTreeFind<CR>:2wincmd w<CR>
@@ -409,6 +409,8 @@ map <leader>w :w!<cr>
 autocmd FileType ruby map <leader>r :call RunWith("ruby")<cr>
 autocmd FileType python map <leader>r :call RunWith("python")<cr>
 autocmd FileType perl map <leader>r :call RunWith("perl")<cr>
+set makeprg=gcc\ -o\ %<\ %>
+autocmd FileType cpp map <leader>r :!g++ %:p -o %:p:r && ./%:t:r<cr>
 
 map <leader>j :make<CR>
 
