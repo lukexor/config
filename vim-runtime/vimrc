@@ -485,18 +485,18 @@ function! ToggleMouse()
 endfunction
 
 " Highlights lines longer than 80 chars
-" function! ToggleOverLengthHi()
-" 	if exists("b:overlengthhi") && b:overlengthhi
-" 		highlight clear OverLength
-" 		let b:overlengthhi = 0
-" 		echo "overlength hilight off"
-" 	else
-" 		highlight OverLength ctermfg=black ctermbg=lightgrey guibg=#592929
-" 		match OverLength /\%81v.\+/
-" 		let b:overlengthhi = 1
-" 		echo "overlength hilight on"
-" 	endif
-" endfunction
+function! ToggleOverLengthHi()
+	if exists("b:overlengthhi") && b:overlengthhi
+		highlight clear OverLength
+		let b:overlengthhi = 0
+		echo "overlength hilight off"
+	else
+		highlight OverLength ctermfg=black ctermbg=lightgrey guibg=#592929
+		match OverLength /\%81v.\+/
+		let b:overlengthhi = 1
+		echo "overlength hilight on"
+	endif
+endfunction
 
 " Save and run the command, measuring time it takes to run
 function! RunWith(command)
