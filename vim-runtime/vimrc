@@ -410,7 +410,7 @@ autocmd FileType ruby map <leader>r :call RunWith("ruby")<cr>
 autocmd FileType python map <leader>r :call RunWith("python")<cr>
 autocmd FileType perl map <leader>r :call RunWith("perl")<cr>
 set makeprg=gcc\ -o\ %<\ %>
-autocmd FileType cpp map <leader>r :!g++ %:p -o %:p:r && ./%:t:r<cr>
+autocmd FileType cpp map <leader>r :w<cr>:!g++ %:p -o %:p:r && ./%:t:r<cr>
 
 map <leader>j :make<CR>
 
