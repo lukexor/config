@@ -65,6 +65,14 @@ set undolevels=1000 " How many undos
 " == Display Settings
 
 set background=dark " Dark BG is good
+set background=dark " Dark BG is good
+set encoding=utf8 " UTF8 encoding is best
+set ff=unix
+set ffs=unix,dos,mac " Default file types
+set number " Line numbers
+set cpoptions+=n
+
+set t_Co=256 " Force 256 colors
 set encoding=utf8 " UTF8 encoding is best
 set ff=unix
 set ffs=unix,dos,mac " Default file types
@@ -76,7 +84,7 @@ set t_Co=256 " Force 256 colors
 "   runtime! plugin/guicolorscheme.vim
 "   GuiColorScheme xcode-midnight
 " else
-  colorscheme railscast " Custom colorscheme
+  colorscheme zhayedan " Custom colorscheme
 " endif
 
 syntax enable
@@ -206,6 +214,7 @@ set wildignore+=log/**
 set wildignore+=tmp/**
 set wildignore+=*.png,*.jpg,*.gif
 set wildignore+=*.swp,*.bak,*.pyc,*.class
+set wildignore+=*/build/**
 
 " ==========================================================
 " == Scrolling
@@ -382,8 +391,6 @@ nnoremap <leader>m :CtrlPMRU<CR>
 
 " Use <leader>d to open ctrlp
 let g:ctrlp_map = '<leader>s'
-" Ignore these directories
-set wildignore+=*/build/**
 " disable caching
 let g:ctrlp_use_caching=0
 
@@ -486,16 +493,16 @@ endfunction
 
 " Highlights lines longer than 80 chars
 function! ToggleOverLengthHi()
-	if exists("b:overlengthhi") && b:overlengthhi
-		highlight clear OverLength
-		let b:overlengthhi = 0
-		echo "overlength hilight off"
-	else
-		highlight OverLength ctermfg=black ctermbg=lightgrey guibg=#592929
-		match OverLength /\%81v.\+/
-		let b:overlengthhi = 1
-		echo "overlength hilight on"
-	endif
+  if exists("b:overlengthhi") && b:overlengthhi
+    highlight clear OverLength
+    let b:overlengthhi = 0
+    echo "overlength hilight off"
+  else
+    highlight OverLength ctermfg=black ctermbg=lightgrey guibg=#592929
+    match OverLength /\%81v.\+/
+    let b:overlengthhi = 1
+    echo "overlength hilight on"
+  endif
 endfunction
 
 " Save and run the command, measuring time it takes to run
@@ -591,7 +598,7 @@ autocmd BufEnter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTree
 " a huge javascript inside an html file.
 autocmd BufEnter * :syntax sync fromstart
 autocmd BufEnter * if &filetype == "" | set ft=txt | endif " Sets default filetype to txt
-autocmd BufNewFile,BufRead *.html set filetype=htmldjango
+" autocmd BufNewFile,BufRead *.html set filetype=htmldjango
 autocmd BufEnter *.conf set ft=yaml
 autocmd BufEnter *.t set ft=perl
 
