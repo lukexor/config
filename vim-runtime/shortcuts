@@ -1,8 +1,15 @@
 |-------------------------------------------------------------------------------------------------------------------------|
-|  <F2>  NERDTree/TagBar        |  <F3>  Toggle paste         |  <F4>  Toggle wrap/list     |  <F5>  Toggle line #s       |
+|  <F2>  Tree View/Tag View     |  <F3>  Toggle Paste         |  <F4>  Toggle wrap/tabs     |  <F5>  Toggle line #s       |
 |  <F6>  SyntasticCheck         |  <F7>  Toggle Mouse         |  <F8>  Toggle Textmode      |                             |
 |                               |                             |                             |                             |
-|  ,,    Search files           |  ,.    Search tags          |  ,m    Search recent        |  ,r    Show recent yanks    |
-|  ,tn   New tab                |  ,ep   Edit snippets        |  ,s    Strip trailing       |  ,rt   Retab spaces w/ tabs |
+|  ,s    Fuzzy Search Files     |  ,st   Search tags          |  ,m    Search Most Recent   |  ,r    Save & Execute file  |
+|  ,tn   New tab                |  ,te   Edit in Tab          |  ,tc   Close Tab            |  ,w    Save File            |
+|  ,,    Previous Tab           |  ,.    Next Tab             |  ,ep   Edit snippets        |  ,sv   Source vimrc         |
+|  ,rs   Strip trailing space   |  ,rt   Retab spaces w/ tabs |  ,nc   Tree View of CWD     |  ,l    New Split Tab        |
 |  ,mt   Toggle ShowMarks       |  ,ma   Clear all marks      |  <tab> Word completion      |  <sp>  Toggle fold          |
 |  cs"'  Replace " with '       |  ysiw] Surround with ]      |  ds]   Delete surounding ]  |  zM/ZR Close/Open all folds |
+|  ;     Type command (:)       |  jk    Navigate screen      |  ,y    Show latest yanks    | ,ev    Edit vimrc           |
+|  ,ss   Toggle Spellcheck      | ,sn    Next misspelled word |  ,sp   Previous misspelled  | ,sa    Add Word             |
+|  ,s?   Spelling Suggestions   | ,q     Quit All             |  ,<CR> Clear search hilight | ,c     Change to CWD        |
+|-------------------------------------------------------------------------------------------------------------------------|
+
