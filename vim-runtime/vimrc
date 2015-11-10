@@ -2,16 +2,16 @@
 " == vimrc
 "
 " AUTHOR
-"	   Lucas Petherbridge
+"    Lucas Petherbridge
 "
 " PLUGINS
 "
 " SHORTCUTS
-"		za - toggle fold under cursor
-"		zA - toggle all folds under cursor
-"		zM - close all folds - set foldlevel to 0, foldenable
-"		zR - open all folds - set foldlevel to highest
-"		zX - reset folds to foldlevel
+"   za - toggle fold under cursor
+"   zA - toggle all folds under cursor
+"   zM - close all folds - set foldlevel to 0, foldenable
+"   zR - open all folds - set foldlevel to highest
+"   zX - reset folds to foldlevel
 
 " ==========================================================
 " == Startup
@@ -25,9 +25,9 @@ set nocompatible
 " Load all plugins in ~/.vim-runtime/bundle
 
 if v:version > 700
-	let g:pathogen_disabled = ['snipmate']
-	call pathogen#helptags()
-	call pathogen#infect()
+  let g:pathogen_disabled = ['snipmate']
+  call pathogen#helptags()
+  call pathogen#infect()
 endif
 
 " ==========================================================
@@ -43,12 +43,12 @@ let ft = &filetype
 set tags=./tags
 
 " Tell vim to remember certain things when we exit
-"	'100  : marks will be remembered for up to 100 previously edited files
-"	f1	 :	enable capital marks
-"	"100 :	will save up to 100 lines for each register
-"	:20  :	up to 20 lines of command-line history will be remembered
-"	%	 :	saves and restores the buffer list
-"	n... :	where to save the viminfo files
+" '100  : marks will be remembered for up to 100 previously edited files
+" f1   :  enable capital marks
+" "100 :  will save up to 100 lines for each register
+" :20  :  up to 20 lines of command-line history will be remembered
+" %  :  saves and restores the buffer list
+" n... :  where to save the viminfo files
 set viminfo='100,f1,"100,:20,%,n~/.viminfo
 
 if has("autocmd")
@@ -73,10 +73,10 @@ set cpoptions+=n
 
 set t_Co=256 " Force 256 colors
 " if (!has('gui_running') && filereadable(expand("$HOME/.vim-runtime/plugin/guicolorscheme.vim")))
-"	  runtime! plugin/guicolorscheme.vim
-"	  GuiColorScheme xcode-midnight
+"   runtime! plugin/guicolorscheme.vim
+"   GuiColorScheme xcode-midnight
 " else
-	colorscheme railscast " Custom colorscheme
+  colorscheme railscast " Custom colorscheme
 " endif
 
 syntax enable
@@ -102,22 +102,22 @@ set laststatus=2 " Always show the statusline
 set title
 " Format the statusline
 set statusline=%{HasPaste()} " Whether pastemode is on or not
-set statusline+=%F		" Tail of the filename
+set statusline+=%F    " Tail of the filename
 set statusline+=\ [%{strlen(&fenc)?&fenc:'none'}, " File encoding
 set statusline+=%{&ff}] " File format
-set statusline+=%h		" Help file flag
-set statusline+=%m		" Modified flag
-set statusline+=%r		" Read only flag
-set statusline+=%w		" Preview window flag
-set statusline+=%y		" Filetype
+set statusline+=%h    " Help file flag
+set statusline+=%m    " Modified flag
+set statusline+=%r    " Read only flag
+set statusline+=%w    " Preview window flag
+set statusline+=%y    " Filetype
 set statusline+=[%{&fo}] " Formatoptions enabled
 set statusline+=\ [%{CurDir()}] " Current directory
-set statusline+=%=		" Left/right separator
-set statusline+=%l/%L	" Cursor line/total lines
-set statusline+=\ %P	" Percent through file
-set statusline+=\ c\ %c		" Cursor column
+set statusline+=%=    " Left/right separator
+set statusline+=%l/%L " Cursor line/total lines
+set statusline+=\ %P  " Percent through file
+set statusline+=\ c\ %c   " Cursor column
 if v:version > 700
-	set statusline+=\ %{exists('g:loaded_fugitive')?fugitive#statusline():''} " Git status
+  set statusline+=\ %{exists('g:loaded_fugitive')?fugitive#statusline():''} " Git status
 endif
 
 " ==========================================================
@@ -146,10 +146,10 @@ set whichwrap+=<,> " Allow left/right arrow keys move to the next line
 " == Fold options
 
 if exists('&foldenable')
-	set foldmethod=indent " Fold based on indent
-	set foldnestmax=2 " Deepest fold
-	set foldlevel=1 " The default depth to fold
-	set nofoldenable " Dont fold by default
+  set foldmethod=indent " Fold based on indent
+  set foldnestmax=2 " Deepest fold
+  set foldlevel=1 " The default depth to fold
+  set nofoldenable " Dont fold by default
 endif
 
 " ==========================================================
@@ -165,9 +165,9 @@ set nowb
 
 " Keep undo history across sessions by storing in a file
 if exists('&undofile')
-	silent !mkdir ~/.vim-runtime/undodir > /dev/null 2>&1
-	set undodir=~/.vim-runtime/undodir
-	set undofile
+  silent !mkdir ~/.vim-runtime/undodir > /dev/null 2>&1
+  set undodir=~/.vim-runtime/undodir
+  set undofile
 endif
 
 " ==========================================================
@@ -189,7 +189,7 @@ set tabstop=2 " The number of spaces a tab counts as
 set textwidth=80
 set wrapmargin=10 " Number of characters from the right where wrapping starts
 if has('spell')
-	set spelllang=en
+  set spelllang=en
 endif
 
 filetype plugin indent on " Enable filetype plugin
@@ -295,6 +295,7 @@ vnoremap <silent> * :call VisualSearch('f')<CR>
 
 " When you press gv you vimgrep after the selected text
 vnoremap <silent> gv :call VisualSearch('gv')<CR>
+vnoremap <silent> gv :call VisualSearch('gv')<CR>
 
 " ----------------------------------------------------------
 " -- Settings Toggle
@@ -375,12 +376,12 @@ cno $c e <C-\>eCurrentFileDir("e")<cr>
 " -- Plugins
 
 " CtrlP
-nnoremap <leader>, :CtrlP<CR>
-nnoremap <leader>. :CtrlPTag<CR>
+" nnoremap <leader>s :CtrlP<CR>
+nnoremap <leader>st :CtrlPTag<CR>
 nnoremap <leader>m :CtrlPMRU<CR>
 
 " Use <leader>d to open ctrlp
-let g:ctrlp_map = '<leader>d'
+let g:ctrlp_map = '<leader>s'
 " Ignore these directories
 set wildignore+=*/build/**
 " disable caching
@@ -396,8 +397,8 @@ map <leader>tc :tabclose<cr>
 map <leader>tm :tabmove
 map <leader><up> :tabr<cr>
 map <leader><down> :tabl<cr>
-map <leader><left> :tabp<cr>
-map <leader><right> :tabn<cr>
+map <leader>, :tabp<cr>
+map <leader>. :tabn<cr>
 
 " ----------------------------------------------------------
 " -- Quick Shortcuts
@@ -410,7 +411,7 @@ autocmd FileType ruby map <leader>r :call RunWith("ruby")<cr>
 autocmd FileType python map <leader>r :call RunWith("python")<cr>
 autocmd FileType perl map <leader>r :call RunWith("perl")<cr>
 set makeprg=gcc\ -o\ %<\ %>
-autocmd FileType cpp map <leader>r :!g++ %:p -o %:p:r && ./%:t:r<cr>
+autocmd FileType cpp map <leader>r :w<cr>:!g++ *.cpp *.o -o main.exe && ./main.exe<cr>
 
 map <leader>j :make<CR>
 
@@ -420,16 +421,15 @@ map <leader>sv :so ~/.vim-runtime/vimrc<cr>
 " Fast editing of various files
 map <leader>ev :tabnew ~/.vim-runtime/vimrc<cr>
 map <leader>ep :execute 'sp ~/.vim-runtime/UltiSnips_custom/' . &filetype . '.snippets'<cr>
-map <leader>et :CtrlP %:p:h/t/<CR>
 
 " Quit all windows without saving
 map <leader>q :qall!<cr>
 
 " Remove trailing whitespace
-map <leader>s :%s/\s\+$//<cr>:noh<cr>
+map <leader>rs :%s/\s\+$//<cr>:noh<cr>
 
 " Replace tabs with spaces
-" map <leader>rt :%s/\t/	/g<cr>:noh<cr>
+" map <leader>rt :%s/\t/  /g<cr>:noh<cr>
 map <leader>rt :%retab!<cr>
 
 " Disable search highlighting
@@ -449,87 +449,87 @@ cmap w!! w !sudo tee % >/dev/null
 
 " NERDTree Tagbar toggle
 function! ToggleSideBars()
-	if exists("b:sidebars") && b:sidebars
-		echo "sidebars off"
-		NERDTreeClose
-		TagbarClose
-		2wincmd w
-		let b:sidebars = 0
-	else
-		echo "sidebars on"
-		if filereadable(expand('%:p'))
-			NERDTreeFind
-		else
-			NERDTree
-		endif
-		TagbarOpen
-		2wincmd w
-		let b:sidebars = 1
-	endif
+  if exists("b:sidebars") && b:sidebars
+    echo "sidebars off"
+    NERDTreeClose
+    TagbarClose
+    2wincmd w
+    let b:sidebars = 0
+  else
+    echo "sidebars on"
+    if filereadable(expand('%:p'))
+      NERDTreeFind
+    else
+      NERDTree
+    endif
+    TagbarOpen
+    2wincmd w
+    let b:sidebars = 1
+  endif
 endfunction
 
 " Toggle mouse use
 function! ToggleMouse()
-	if !exists("s:old_mouse")
-	  let s:old_mouse = "a"
-	endif
+  if !exists("s:old_mouse")
+    let s:old_mouse = "a"
+  endif
 
-	if &mouse == ""
-		let &mouse = s:old_mouse
-		echo "Mouse is for Vim (" . &mouse . ")"
-	else
-		let s:old_mouse = &mouse
-		let &mouse=""
-		echo "Mouse is for terminal"
-	endif
+  if &mouse == ""
+    let &mouse = s:old_mouse
+    echo "Mouse is for Vim (" . &mouse . ")"
+  else
+    let s:old_mouse = &mouse
+    let &mouse=""
+    echo "Mouse is for terminal"
+  endif
 endfunction
 
 " Highlights lines longer than 80 chars
 " function! ToggleOverLengthHi()
-" 	if exists("b:overlengthhi") && b:overlengthhi
-" 		highlight clear OverLength
-" 		let b:overlengthhi = 0
-" 		echo "overlength hilight off"
-" 	else
-" 		highlight OverLength ctermfg=black ctermbg=lightgrey guibg=#592929
-" 		match OverLength /\%81v.\+/
-" 		let b:overlengthhi = 1
-" 		echo "overlength hilight on"
-" 	endif
+"   if exists("b:overlengthhi") && b:overlengthhi
+"     highlight clear OverLength
+"     let b:overlengthhi = 0
+"     echo "overlength hilight off"
+"   else
+"     highlight OverLength ctermfg=black ctermbg=lightgrey guibg=#592929
+"     match OverLength /\%81v.\+/
+"     let b:overlengthhi = 1
+"     echo "overlength hilight on"
+"   endif
 " endfunction
 
 " Save and run the command, measuring time it takes to run
 function! RunWith(command)
-	execute "w"
-	execute "!clear;time " . a:command . " " .expand("%:p")
+  execute "w"
+  execute "!clear;time " . a:command . " " .expand("%:p")
 endfunction
 
 " Visual search function
 function! VisualSearch(direction) range
-	let l:saved_reg = @"
-	execute "normal! vgvy"
+  let l:saved_reg = @"
+  execute "normal! vgvy"
 
-	let l:pattern = escape(@", '\\/.*$^~[]')
-	let l:pattern = substitute(l:pattern, "\n$", "", "")
+  let l:pattern = escape(@", '\\/.*$^~[]')
+  let l:pattern = substitute(l:pattern, "\n$", "", "")
 
-	if a:direction == 'b'
-		execute "normal ?" . l:pattern . "^M"
-	elseif a:direction == 'f'
-		execute "normal /" . l:pattern . "^M"
-	endif
+  if a:direction == 'b'
+    execute "normal ?" . l:pattern . "^M"
+  elseif a:direction == 'f'
+    execute "normal /" . l:pattern . "^M"
+  endif
 
-	let @/ = l:pattern
-	let @" = l:saved_reg
+  let @/ = l:pattern
+  let @" = l:saved_reg
 endfunction
 
 " Gets current directory and replaces $HOME with, also trims to 40 chars
 function! CurDir()
-	let curdir = substitute(getcwd(), $HOME, "~", "g")
-	if strlen(curdir) > 40
-		return "..." . curdir[-40:]
-	else
-		return curdir
-	endif
+  let curdir = substitute(getcwd(), $HOME, "~", "g")
+  if strlen(curdir) > 40
+    return "..." . curdir[-40:]
+  else
+    return curdir
+  endif
 endfunction
 
 " Get current working directory
@@ -545,11 +545,11 @@ endfunction
 
 " Returns [PASTE] if pastemode is enabled
 function! HasPaste()
-	if &paste
-		return '[PASTE] '
-	else
-		return ''
-	endif
+  if &paste
+    return '[PASTE] '
+  else
+    return ''
+  endif
 endfunction
 
 " Toggle text editor like formatting
@@ -559,15 +559,15 @@ endfunction
 " n - recognize numbered lists
 " 2 - Use indent of second line of paragraph when formatting
 function! ToggleTextMode()
-	if exists("b:textmode") && b:textmode
-		set formatoptions-=tawn2
-		let b:textmode = 0
-		echo "text mode off"
-	else
-		let b:textmode = 1
-		set formatoptions+=tawn2
-		echo "text mode on"
-	endif
+  if exists("b:textmode") && b:textmode
+    set formatoptions-=tawn2
+    let b:textmode = 0
+    echo "text mode off"
+  else
+    let b:textmode = 1
+    set formatoptions+=tawn2
+    echo "text mode on"
+  endif
 endfunction
 
 " ==========================================================
@@ -580,8 +580,8 @@ autocmd FileType perl source ~/.vim-runtime/perltest.vim
 " Open NERDTree automatically
 autocmd vimenter * call ToggleSideBars()
 if v:version > 702
-	set colorcolumn=+1
-	highlight ColorColumn ctermbg=235 guibg=235
+  set colorcolumn=+1
+  highlight ColorColumn ctermbg=235 guibg=235
 endif
 
 " Closes if NERDTree is the only open window

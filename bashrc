@@ -53,7 +53,7 @@ fi
 # -- Interactive Shell Variables
 
 case "$OSTYPE" in
-    darwin*) export EDITOR="atom" ;;
+    darwin*) export EDITOR="vim" ;;
     *) export EDITOR="vim" ;;
 esac
 
