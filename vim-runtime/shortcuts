@@ -1,15 +1,16 @@
-|-------------------------------------------------------------------------------------------------------------------------|
-|  <F2>  Tree View/Tag View     |  <F3>  Toggle Paste         |  <F4>  Toggle wrap/tabs     |  <F5>  Toggle line #s       |
-|  <F6>  SyntasticCheck         |  <F7>  Toggle Mouse         |  <F8>  Toggle Textmode      |                             |
-|                               |                             |                             |                             |
-|  ,s    Fuzzy Search Files     |  ,st   Search tags          |  ,m    Search Most Recent   |  ,r    Save & Execute file  |
-|  ,tn   New tab                |  ,te   Edit in Tab          |  ,tc   Close Tab            |  ,w    Save File            |
-|  ,,    Previous Tab           |  ,.    Next Tab             |  ,ep   Edit snippets        |  ,sv   Source vimrc         |
-|  ,rs   Strip trailing space   |  ,rt   Retab spaces w/ tabs |  ,nc   Tree View of CWD     |  ,l    New Split Tab        |
-|  ,mt   Toggle ShowMarks       |  ,ma   Clear all marks      |  <tab> Word completion      |  <sp>  Toggle fold          |
-|  cs"'  Replace " with '       |  ysiw] Surround with ]      |  ds]   Delete surounding ]  |  zM/ZR Close/Open all folds |
-|  ;     Type command (:)       |  jk    Navigate screen      |  ,y    Show latest yanks    | ,ev    Edit vimrc           |
-|  ,ss   Toggle Spellcheck      | ,sn    Next misspelled word |  ,sp   Previous misspelled  | ,sa    Add Word             |
-|  ,s?   Spelling Suggestions   | ,q     Quit All             |  ,<CR> Clear search hilight | ,c     Change to CWD        |
-|-------------------------------------------------------------------------------------------------------------------------|
+|  <F1>    Shorcuts Help              |  <F2>    Tree View/Tag View         |  <F3>    Toggle Paste               |  <F4>    Toggle wrap/tabs           |
+|  <F5>    Toggle line #s             |  <F6>    SyntasticCheck             |  <F7>    Toggle Mouse               |  <F8>    Toggle Textmode            |  
 
+|  <space>o    Open (c-t Open Tab)    |  <space>ot   Search tag             |  <space>or   Open Recent            |  <space>r    Save & Execute file    |
+|  <space>tn   New tab                |  <space>te   Edit in Tab            |  <space>tc   Close Tab              |  <space>w    Save File              |
+|  <space>,    Previous Tab           |  <space>.    Next Tab               |  <space>ep   Edit snippets          |  <space>sv   Source vimrc           |
+|  <space>rs   Strip trailing space   |  <space>rt   Retab spaces w/ tabs   |  <space>nc   Tree View of CWD       |  <space>l    New Split Tab          |
+|  <space>mt   Toggle ShowMarks       |  <space>ma   Clear all marks        |  <space>f    Toggle fold            |  <space>ev   Edit vimrc             |
+|  <space>ss   Toggle Spellcheck      |  <space>sn   Next misspelled word   |  <space>sp   Previous misspelled    |  <space>sa   Add Word               |
+|  <space>s?   Spelling Suggestions   |  <space>q    Quit All               |  <space><CR> Clear search hilight   |  <space>c    Change to CWD          |
+|  <space>y    Show latest yanks      |  <space>m    Make                   |
+
+|  zo          Open one fold          |  zO          Open folds recursive   |  zc          Close one fold         |   zC         Close folds recursive  |
+|  zR          Open all folds         |  zM          Close all folds        |  zi          Toggle folds           | 
+|  cs"'        Replace " with '       |  ysiw]       Surround with ]        |  ds]         Delete surounding ]    |   zM/ZR      Close/Open all folds   |
+|  ;           Type command (:)       |  jk          Navigate screen        |  <tab>       Word completion        |    

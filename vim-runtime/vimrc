@@ -3,15 +3,6 @@
 "
 " AUTHOR
 "    Lucas Petherbridge
-"
-" PLUGINS
-"
-" SHORTCUTS
-"   za - toggle fold under cursor
-"   zA - toggle all folds under cursor
-"   zM - close all folds - set foldlevel to 0, foldenable
-"   zR - open all folds - set foldlevel to highest
-"   zX - reset folds to foldlevel
 
 " ==========================================================
 " == Startup
@@ -80,12 +71,7 @@ set number " Line numbers
 set cpoptions+=n
 
 set t_Co=256 " Force 256 colors
-" if (!has('gui_running') && filereadable(expand("$HOME/.vim-runtime/plugin/guicolorscheme.vim")))
-"   runtime! plugin/guicolorscheme.vim
-"   GuiColorScheme xcode-midnight
-" else
-  colorscheme zhayedan " Custom colorscheme
-" endif
+colorscheme zhayedan " Custom colorscheme
 
 syntax enable
 let perl_include_pod = 1 " Syntax highlight pod documentation correctly
@@ -109,21 +95,19 @@ set laststatus=2 " Always show the statusline
 
 set title
 " Format the statusline
-set statusline=%{HasPaste()} " Whether pastemode is on or not
-set statusline+=%F    " Tail of the filename
+set statusline=%F    " Tail of the filename
 set statusline+=\ [%{strlen(&fenc)?&fenc:'none'}, " File encoding
 set statusline+=%{&ff}] " File format
-set statusline+=%h    " Help file flag
+set statusline+=[fo:%{&fo}] " Formatoptions enabled
+set statusline+=\ %y    " Filetype
+set statusline+=[%{CurDir()}] " Current directory
 set statusline+=%m    " Modified flag
 set statusline+=%r    " Read only flag
-set statusline+=%w    " Preview window flag
-set statusline+=%y    " Filetype
-set statusline+=[%{&fo}] " Formatoptions enabled
-set statusline+=\ [%{CurDir()}] " Current directory
+set statusline+=%{HasPaste()} " Whether pastemode is on or not
 set statusline+=%=    " Left/right separator
-set statusline+=%l/%L " Cursor line/total lines
-set statusline+=\ %P  " Percent through file
-set statusline+=\ c\ %c   " Cursor column
+set statusline+=Line:%l/%L, " Cursor line/total lines
+set statusline+=\ Col:%c   " Cursor column
+set statusline+=\ (%p%%)   " Percent through file
 if v:version > 700
   set statusline+=\ %{exists('g:loaded_fugitive')?fugitive#statusline():''} " Git status
 endif
@@ -154,10 +138,52 @@ set whichwrap+=<,> " Allow left/right arrow keys move to the next line
 " == Fold options
 
 if exists('&foldenable')
-  set foldmethod=indent " Fold based on indent
-  set foldnestmax=2 " Deepest fold
+  set foldmethod=expr " Fold based on indent
+  set foldexpr=GetFoldLevel(v:lnum)
+  set foldnestmax=5 " Deepest fold
   set foldlevel=1 " The default depth to fold
-  set nofoldenable " Dont fold by default
+  set foldenable
+  set foldminlines=1
+
+  function! NextNonBlankLine(lnum)
+    let numlines = line('$')
+    let current = a:lnum + 1
+
+    while current <= numlines
+      if getline(current) =~? '\v\S'
+        return current
+      endif
+
+      let current += 1
+    endwhile
+
+    let invalid_line = -2
+    return invalid_line
+  endfunction
+
+  function! IndentLevel(lnum)
+    return indent(a:lnum) / &shiftwidth
+  endfunction
+
+  function! GetFoldLevel(lnum)
+    let undefined_fold_level = '-1'
+
+    if getline(a:lnum) =~? '\v^\s*$'
+      return undefined_fold_level
+    endif
+
+    let this_indent = IndentLevel(a:lnum)
+    let next_indent = IndentLevel(NextNonBlankLine(a:lnum))
+
+    if next_indent == this_indent
+      return this_indent
+    elseif next_indent < this_indent
+      return this_indent
+    elseif next_indent > this_indent
+      return '>' . next_indent
+
+    return '0'
+  endfunction
 endif
 
 " ==========================================================
@@ -232,6 +258,7 @@ let NERDChristmasTree = 1
 let NERDTreeAutoCenter = 1
 let NERDTreeDirArrows = 1
 let NERDTreeWinSize = 35
+let NERDTreeMapOpenInTab = '<CR>'
 let g:tagbar_width = 25
 let g:showmarks_enable = 0 " Enable showmarks by default
 highlight ShowMarksHLl guifg=#DA4939 ctermfg=167 gui=NONE cterm=NONE " a-z marks
@@ -245,8 +272,8 @@ let g:UltiSnipsSnippetDirectories=["UltiSnips", "UltiSnips_custom"]
 " ==========================================================
 " == Mappings
 
-let mapleader = "," " With a map leader it's possible to do extra key combinations
-let g:mapleader = ","
+let mapleader = "\<Space>" "With a map leader it's possible to do extra key combinations
+let g:mapleader = "\<Space>"
 let g:ycm_key_list_select_completion = ['<C-TAB>', '<Down>']
 let g:ycm_key_list_previous_completion = ['<C-S-TAB>', '<Up>']
 let g:SuperTabDefaultCompletionType = '<C-Tab>'
@@ -273,22 +300,8 @@ nnoremap <C-k> 12k
 vnoremap <C-j> 12j
 nnoremap <C-k> 12k
 
-" Force myself to use hjkl
-" map <up> <nop>
-" map <down> <nop>
-" map <left> <nop>
-" map <right> <nop>
-
 " Map 0 to move cursor to beginning of line
 map 0 ^
-
-" Move a line of text using CTRL+[jk]
-" nnoremap <s-j> :m+<CR>==
-" nnoremap <s-k> :m-2<CR>==
-" inoremap <s-j> <Esc>:m+<CR>==gi
-" inoremap <s-k> <Esc>:m-2<CR>==gi
-" vnoremap <s-j> :m'>+<CR>gv=gv
-" vnoremap <s-k> :m-2<CR>gv=gv
 
 " Show yank ring window
 nnoremap <leader>y :YRShow<CR>
@@ -310,39 +323,29 @@ vnoremap <silent> gv :call VisualSearch('gv')<CR>
 " -- Settings Toggle
 
 " Show shortcuts
-map <F1> <Esc>:10split ~/.vim-runtime/shortcuts<CR>
-map! <F1> <Esc>:10split ~/.vim-runtime/shortcuts<CR>
+nmap <F1> :10split ~/.vim-runtime/shortcuts<CR>gg:wincmd j<CR>
+imap <F1> <Esc>:10split ~/.vim-runtime/shortcuts<CR>gg:wincmd j<CR>i
 
-" NERDTree
-map <F2> <Esc>:call ToggleSideBars()<CR>
-map! <F2> <Esc>:call ToggleSideBars()<CR>i
+nmap <F2> :call ToggleSideBars()<CR>
+imap <F2> <Esc>:call ToggleSideBars()<CR>i
 
-" Toggle insert paste
-map <F3> <Esc>:set invpaste paste?<CR>
-map! <F3> <Esc>:set invpaste paste?<CR>i
-set pastetoggle=<F2>
+nmap <F3> :set invpaste paste?<CR>
+imap <F3> <Esc>:set invpaste paste?<CR>i
 
-" Toggle wrap
-map <F4> <Esc>:set wrap!<CR>:set list!<CR>
-map! <F4> <Esc>:set wrap!<CR>:set list!<CR>i
+nmap <F4> :set wrap!<CR>:set list!<CR>
+imap <F4> <Esc>:set wrap!<CR>:set list!<CR>i
 
-" Toggle line numbers and list
-" map <F5> <Esc>:set invnu<CR>:set list!<CR>:call ToggleSideBars()<CR>
-" map! <F5> <Esc>:set invnu<CR>:set list!<CR>:call ToggleSideBars()<CR>i
-map <F5> <Esc>:set invnu<CR>:set list!<CR>
-map! <F5> <Esc>:set invnu<CR>:set list!<CR>
+nmap <F5> :set invnu<CR>:set list!<CR>
+imap <F5> <Esc>:set invnu<CR>:set list!<CR>i
 
-" Syntax check file
-map <F6> <Esc>:SyntasticCheck<CR>
-map! <F6> <Esc>:SyntasticCheck<CR>i
+nmap <F6> :SyntasticCheck<CR>
+imap <F6> <Esc>:SyntasticCheck<CR>i
 
-" Toggle mouse
-map <F7> <Esc>:call ToggleMouse()<CR>
-map! <F7> <Esc>:call ToggleMouse()<CR>i
+nmap <F7> :call ToggleMouse()<CR>
+imap <F7> <Esc>:call ToggleMouse()<CR>i
 
-" Toggle text mode
-map <F8> <Esc>:call ToggleTextMode()<CR>
-map! <F8> <Esc>:call ToggleTextMode()<CR>i
+nmap <F8> :call ToggleTextMode()<CR>
+imap <F8> <Esc>:call ToggleTextMode()<CR>i
 
 " ----------------------------------------------------------
 " -- Formatting
@@ -385,27 +388,35 @@ cno $c e <C-\>eCurrentFileDir("e")<cr>
 " -- Plugins
 
 " CtrlP
-" nnoremap <leader>s :CtrlP<CR>
-nnoremap <leader>st :CtrlPTag<CR>
-nnoremap <leader>m :CtrlPMRU<CR>
+nnoremap <leader>o :CtrlP<CR>
+nnoremap <leader>ot :CtrlPTag<CR>
+nnoremap <leader>or :CtrlPMRU<CR>
 
-" Use <leader>d to open ctrlp
-let g:ctrlp_map = '<leader>s'
+let g:ctrlp_open_new_file = 't' " Open new files in a tab
 " disable caching
-let g:ctrlp_use_caching=0
+let g:ctrlp_use_caching = 0
+if executable('ag')
+    set grepprg=ag\ --nogroup\ --nocolor
+    let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
+else
+  let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files . -co --exclude-standard', 'find %s -type f']
+  let g:ctrlp_prompt_mappings = {
+    \ 'AcceptSelection("e")': ['<space>', '<cr>', '<2-LeftMouse>'],
+    \ }
+endif
 
 " ----------------------------------------------------------
 " -- Tabs
 
 " Tab configuration
-map <leader>tn :tabnew<cr>
-map <leader>te :tabedit
-map <leader>tc :tabclose<cr>
-map <leader>tm :tabmove
-map <leader><up> :tabr<cr>
-map <leader><down> :tabl<cr>
-map <leader>, :tabp<cr>
-map <leader>. :tabn<cr>
+nmap <leader>tn :tabnew<cr>
+nmap <leader>te :tabedit 
+nmap <leader>tc :tabclose<cr>
+nmap <leader>tm :tabmove 
+nmap <leader><up> :tabr<cr>
+nmap <leader><down> :tabl<cr>
+nmap <leader><left> :tabp<cr>
+nmap <leader><right> :tabn<cr>
 
 " ----------------------------------------------------------
 " -- Quick Shortcuts
@@ -417,10 +428,9 @@ map <leader>w :w!<cr>
 autocmd FileType ruby map <leader>r :call RunWith("ruby")<cr>
 autocmd FileType python map <leader>r :call RunWith("python")<cr>
 autocmd FileType perl map <leader>r :call RunWith("perl")<cr>
-set makeprg=gcc\ -o\ %<\ %>
-autocmd FileType cpp map <leader>r :w<cr>:!g++ *.cpp *.o -o main.exe && ./main.exe<cr>
+autocmd FileType cpp map <leader>r :make<cr>:!find . -type f -perm -u=x -exec {} \;<cr>
 
-map <leader>j :make<CR>
+map <leader>m :make<CR>
 
 " Source vimrc
 map <leader>sv :so ~/.vim-runtime/vimrc<cr>
@@ -441,9 +451,6 @@ map <leader>rt :%retab!<cr>
 
 " Disable search highlighting
 map <leader><cr> :nohlsearch<cr>
-
-" Fold on space
-map <space> za
 
 " Change to current working directory of file being edit
 map <leader>c :lcd %:p:h<cr>
@@ -473,6 +480,12 @@ function! ToggleSideBars()
     2wincmd w
     let b:sidebars = 1
   endif
+endfunction
+
+function! MirrorSideBars()
+    NERDTreeMirror
+    TagbarOpen
+    2wincmd w
 endfunction
 
 " Toggle mouse use
@@ -585,7 +598,8 @@ autocmd! bufwritepost vimrc source ~/.vim-runtime/vimrc " When vimrc is edited, 
 autocmd FileType perl source ~/.vim-runtime/perltest.vim
 
 " Open NERDTree automatically
-autocmd vimenter * call ToggleSideBars()
+" autocmd vimenter * call ToggleSideBars()
+" autocmd BufNewFile * call MirrorSideBars()
 if v:version > 702
   set colorcolumn=+1
   highlight ColorColumn ctermbg=235 guibg=235

@@ -176,7 +176,7 @@ alias df='df -kh' # Human readable in 1K block sizes with file system type
 alias stop='kill -STOP'
 
 # Editing - All roads lead to $EDITOR
-alias vi=$EDITOR
+alias vi="$EDITOR -p"
 alias svi="sudo $EDITOR"
 alias nano=$EDITOR
 alias emacs=$EDITOR

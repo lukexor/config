@@ -1,0 +1,27 @@
+snippet makefile "Generic Makefile" b
+CC=gcc
+CXX=g++
+RM=rm -f
+
+SRCS=${1:source.cpp}
+OBJS=$(subst .cpp,.o,$(SRCS))
+
+all: ${2:executable}
+
+$2: $(OBJS)
+	$(CXX) $(LDFLAGS) -o $2 $(OBJS) $(LDLIBS)
+
+depend: .depend
+
+.depend: $(SRCS)
+	rm -f ./.depend
+	$(CXX) $(CPPFLAGS) -MM $^>>./.depend;
+
+clean:
+	$(RM) $(OBJS)
+
+dist-clean: clean
+	$(RM) *~ .depend
+
+include .depend
+endsnippet

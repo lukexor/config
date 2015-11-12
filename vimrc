@@ -60,10 +60,52 @@ else
   set ttyfast " Smoother changes
   set t_vb= " Unsets the visual bell termcap code
   if exists('&foldenable')
-    set foldmethod=indent " Fold based on indent
-    set foldnestmax=2 " Deepest fold
+    set foldmethod=expr " Fold based on indent
+    set foldexpr=GetFoldLevel(v:lnum)
+    set foldnestmax=5 " Deepest fold
     set foldlevel=1 " The default depth to fold
-    set nofoldenable " Dont fold by default
+    set foldenable
+    set foldminlines=1
+
+    function! NextNonBlankLine(lnum)
+      let numlines = line('$')
+      let current = a:lnum + 1
+
+      while current <= numlines
+        if getline(current) =~? '\v\S'
+          return current
+        endif
+
+        let current += 1
+      endwhile
+
+      let invalid_line = -2
+      return invalid_line
+    endfunction
+
+    function! IndentLevel(lnum)
+      return indent(a:lnum) / &shiftwidth
+    endfunction
+
+    function! GetFoldLevel(lnum)
+      let undefined_fold_level = '-1'
+
+      if getline(a:lnum) =~? '\v^\s*$'
+        return undefined_fold_level
+      endif
+
+      let this_indent = IndentLevel(a:lnum)
+      let next_indent = IndentLevel(NextNonBlankLine(a:lnum))
+
+      if next_indent == this_indent
+        return this_indent
+      elseif next_indent < this_indent
+        return this_indent
+      elseif next_indent > this_indent
+        return '>' . next_indent
+
+      return '0'
+    endfunction
   endif
   set nobackup
   set noswapfile
@@ -105,7 +147,7 @@ else
   set scrolloff=8 " Scroll when 8 lines away from margin
   set sidescrolloff=15 " Scroll when 15 lines away from margin
   set sidescroll=1 " Minimum number of columns to scroll horizontally
-  let mapleader = "," " With a map leader it's possible to do extra key combinations
+  let mapleader = "\<Space>" " With a map leader it's possible to do extra key combinations
   nnoremap ; :
   nnoremap j gj
   nnoremap k gk
@@ -143,7 +185,6 @@ else
   map <leader>q :qall!<cr>
   map <leader>rs :%s/\s\+$//<cr>:noh<cr>
   map <leader><cr> :nohlsearch<cr>
-  map <space> za
   function! HasPaste()
     if &paste
       return '[PASTE] '
