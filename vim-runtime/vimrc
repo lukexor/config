@@ -428,7 +428,7 @@ map <leader>w :w!<cr>
 autocmd FileType ruby map <leader>r :call RunWith("ruby")<cr>
 autocmd FileType python map <leader>r :call RunWith("python")<cr>
 autocmd FileType perl map <leader>r :call RunWith("perl")<cr>
-autocmd FileType cpp map <leader>r :make<cr>:!find . -type f -perm -u=x -exec {} \;<cr>
+autocmd FileType cpp map <leader>r :FILES=$(find . -iname '*.cpp' -o -iname '*.o') g++ $FILES<cr>
 
 map <leader>m :make<CR>
 
