@@ -18,10 +18,10 @@ function! Prove ( taint )
     cfile
 endfunction
 
-nmap ,t :call  Prove ("")<cr>
-nmap ,T :call  Prove ("-T ")<cr>
-nmap ,w :let   g:testfile = expand("%")<cr>:echo "testfile is now" g:testfile<cr>
-nmap ,W :unlet g:testfile<cr>:echo "testfile undefined; will run all tests"<cr>
+nnoremap ,t :call  Prove ("")<cr>
+nnoremap ,T :call  Prove ("-T ")<cr>
+nnoremap ,w :let   g:testfile = expand("%")<cr>:echo "testfile is now" g:testfile<cr>
+nnoremap ,W :unlet g:testfile<cr>:echo "testfile undefined; will run all tests"<cr>
 
 " based on compiler/perl.vim by Christian J. Robinson <infynity@onewest.net>
 " added formats for test failures

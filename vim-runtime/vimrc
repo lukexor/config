@@ -42,9 +42,10 @@ set tags=./tags
 " n... :  where to save the viminfo files
 set viminfo='100,f1,"100,:20,%,n~/.viminfo
 
-if has("autocmd")
-  au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
-endif
+augroup slash
+  autocmd!
+  autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+augroup END
 
 set grepprg=grep\ -nH\ $* " Set grep to always print filename headers
 set autoread " Set to auto read when a file is changed from the outside
@@ -81,11 +82,14 @@ set cursorline
 " Default Colors for CursorLine
 highlight  CursorLine ctermbg=017 ctermfg=None
 
-" Change Color when entering Insert Mode
-autocmd InsertEnter * highlight  CursorLine ctermbg=235 ctermfg=None
+augroup hilight
+  autocmd!
+  " Change Color when entering Insert Mode
+  autocmd InsertEnter * highlight  CursorLine ctermbg=235 ctermfg=None
 
-" Revert Color to default when leaving Insert Mode
-autocmd InsertLeave * highlight  CursorLine ctermbg=017 ctermfg=None
+  " Revert Color to default when leaving Insert Mode
+  autocmd InsertLeave * highlight  CursorLine ctermbg=017 ctermfg=None
+augroup END
 
 
 " ==========================================================
@@ -95,21 +99,21 @@ set laststatus=2 " Always show the statusline
 
 set title
 " Format the statusline
-set statusline=%F    " Tail of the filename
+set statusline=%.25F    " Tail of the filename
 set statusline+=\ [%{strlen(&fenc)?&fenc:'none'}, " File encoding
 set statusline+=%{&ff}] " File format
 set statusline+=[fo:%{&fo}] " Formatoptions enabled
-set statusline+=\ %y    " Filetype
-set statusline+=[%{CurDir()}] " Current directory
+set statusline+=%y    " Filetype
+set statusline+=\ [%.25{CurDir()}] " Current directory
 set statusline+=%m    " Modified flag
 set statusline+=%r    " Read only flag
 set statusline+=%{HasPaste()} " Whether pastemode is on or not
 set statusline+=%=    " Left/right separator
-set statusline+=Line:%l/%L, " Cursor line/total lines
-set statusline+=\ Col:%c   " Cursor column
-set statusline+=\ (%p%%)   " Percent through file
+set statusline+=Line:%4l/%-4L " Cursor line/total lines
+set statusline+=\ Col:%2c   " Cursor column
+set statusline+=\ %3p%%   " Percent through file
 if v:version > 700
-  set statusline+=\ %{exists('g:loaded_fugitive')?fugitive#statusline():''} " Git status
+  set statusline+=\ \ %{exists('g:loaded_fugitive')?fugitive#statusline():''} " Git status
 endif
 
 " ==========================================================
@@ -273,15 +277,26 @@ let g:UltiSnipsSnippetDirectories=["UltiSnips", "UltiSnips_custom"]
 " == Mappings
 
 let mapleader = "\<Space>" "With a map leader it's possible to do extra key combinations
-let g:mapleader = "\<Space>"
+
+" ----------------------------------------------------------
+" -- Plugins
+let g:yankring_replace_n_pkey = '<C=[>'
+let g:yankring_replace_n_nkey = '<C-]>'
 let g:ycm_key_list_select_completion = ['<C-TAB>', '<Down>']
 let g:ycm_key_list_previous_completion = ['<C-S-TAB>', '<Up>']
 let g:SuperTabDefaultCompletionType = '<C-Tab>'
 let g:SuperTabNoCompleteAfter = ['^', ',', '\s', '\t']
 let g:SuperTabNoCompleteBefore = ['\n', '$', '\s', '\t']
 let g:user_zen_leader_key = '<leader>z' " zencoding
+
+" Show yank ring window
+nnoremap <leader>y :YRShow<CR>
+
+" Change NERDTree to current file directory
+nnoremap <leader>nc :NERDTreeFind<CR>:2wincmd w<CR>
+
 nnoremap ; :
-nnoremap ` <NOP>
+" nnoremap ` <NOP>
 
 " ----------------------------------------------------------
 " -- Navigation
@@ -292,6 +307,16 @@ nnoremap k gk
 vnoremap j gj
 vnoremap k gk
 
+inoremap <left> <nop>
+inoremap <right> <nop>
+nnoremap <left> <nop>
+nnoremap <right> <nop>
+noremap <up> <nop>
+noremap <down> <nop>
+
+inoremap <esc> <esc>:echom "Use jk"<cr>a
+inoremap jk <esc>
+
 set mouse=a
 set ttymouse=xterm2
 
@@ -300,14 +325,9 @@ nnoremap <C-k> 12k
 vnoremap <C-j> 12j
 nnoremap <C-k> 12k
 
-" Map 0 to move cursor to beginning of line
-map 0 ^
-
-" Show yank ring window
-nnoremap <leader>y :YRShow<CR>
-
-" Change NERDTree to current file directory
-nnoremap <leader>nc :NERDTreeFind<CR>:2wincmd w<CR>
+nnoremap - ddp
+nnoremap _ dd<up>P
+noremap 0 ^
 
 " ----------------------------------------------------------
 " -- Search
@@ -317,66 +337,96 @@ vnoremap <silent> * :call VisualSearch('f')<CR>
 
 " When you press gv you vimgrep after the selected text
 vnoremap <silent> gv :call VisualSearch('gv')<CR>
-vnoremap <silent> gv :call VisualSearch('gv')<CR>
 
 " ----------------------------------------------------------
 " -- Settings Toggle
 
 " Show shortcuts
-nmap <F1> :10split ~/.vim-runtime/shortcuts<CR>gg:wincmd j<CR>
-imap <F1> <Esc>:10split ~/.vim-runtime/shortcuts<CR>gg:wincmd j<CR>i
+nnoremap <F1> :10split ~/.vim-runtime/shortcuts<CR>gg:wincmd j<CR>
+inoremap <F1> <Esc>:10split ~/.vim-runtime/shortcuts<CR>gg:wincmd j<CR>i
 
-nmap <F2> :call ToggleSideBars()<CR>
-imap <F2> <Esc>:call ToggleSideBars()<CR>i
+nnoremap <F2> :call ToggleSideBars()<CR>
+inoremap <F2> <Esc>:call ToggleSideBars()<CR>i
 
-nmap <F3> :set invpaste paste?<CR>
-imap <F3> <Esc>:set invpaste paste?<CR>i
+nnoremap <F3> :set invpaste paste?<CR>
+inoremap <F3> <Esc>:set invpaste paste?<CR>i
 
-nmap <F4> :set wrap!<CR>:set list!<CR>
-imap <F4> <Esc>:set wrap!<CR>:set list!<CR>i
+nnoremap <F4> :set wrap!<CR>:set list!<CR>
+inoremap <F4> <Esc>:set wrap!<CR>:set list!<CR>i
 
-nmap <F5> :set invnu<CR>:set list!<CR>
-imap <F5> <Esc>:set invnu<CR>:set list!<CR>i
+nnoremap <F5> :set invnu<CR>:set list!<CR>
+inoremap <F5> <Esc>:set invnu<CR>:set list!<CR>i
 
-nmap <F6> :SyntasticCheck<CR>
-imap <F6> <Esc>:SyntasticCheck<CR>i
+nnoremap <F6> :SyntasticCheck<CR>
+inoremap <F6> <Esc>:SyntasticCheck<CR>i
 
-nmap <F7> :call ToggleMouse()<CR>
-imap <F7> <Esc>:call ToggleMouse()<CR>i
+nnoremap <F7> :call ToggleMouse()<CR>
+inoremap <F7> <Esc>:call ToggleMouse()<CR>i
 
-nmap <F8> :call ToggleTextMode()<CR>
-imap <F8> <Esc>:call ToggleTextMode()<CR>i
+nnoremap <F8> :call ToggleTextMode()<CR>
+inoremap <F8> <Esc>:call ToggleTextMode()<CR>i
 
 " ----------------------------------------------------------
 " -- Formatting
 
+augroup filetype_formats
+  autocmd!
+  autocmd FileType html setlocal nowrap
+  autocmd FileType txt setlocal nolist nonumber
+  autocmd FileType txt setlocal nofoldenable
+
+  autocmd FileType perl source ~/.vim-runtime/perltest.vim
+
+  " Make sure the syntax is always right, even when in the middle of
+  " a huge javascript inside an html file.
+  autocmd BufEnter * :syntax sync fromstart
+  autocmd BufEnter * if &filetype == "" | set ft=txt | endif " Sets default filetype to txt
+  autocmd BufEnter *.conf set ft=yaml
+  autocmd BufEnter *.t set ft=perl
+
+  " Check perl syntax with :make
+  autocmd FileType perl set makeprg=perl\ -c\ %\ $*
+  autocmd FileType perl set errorformat=%f:%l%m
+augroup END
+
+" Surround word in various symbols
+nnoremap " viw<esc>a"<esc>hbi"<esc>lel
+nnoremap ' viw<esc>a'<esc>hbi'<esc>lel
+nnoremap <leader>< viw<esc>a><esc>hbi<<esc>lel
+nnoremap <leader>[ viw<esc>a]<esc>hbi[<esc>lel
+nnoremap <leader>( viw<esc>a)<esc>hbi(<esc>lel
+
+" Uppercase curent word in insert/normal modes
+inoremap <c-u> <esc>viwU
+nnoremap <c-u> viwU
+
 " Make tab indent code
 vmap <tab> >gv
 vmap <s-tab> <gv
-nmap <tab> >>
-nmap <s-tab> <<
+nnoremap <tab> >>
+nnoremap <s-tab> <<
 
 " Run perltidy in visual mode
 vmap <leader>p :!perltidy --quiet --standard-output --nostandard-error-output<CR>
 
-map <leader>l :rightb vnew<cr>
+noremap <leader>l :rightb vnew<cr>
 
 " Remove the Windows ^M - when the encodings gets messed up
-map <leader>wm mmHmt:%s/<C-V><cr>//ge<cr>'tzt'm
+" noremap <leader>wm mmHmt:%s/<C-V><cr>//ge<cr>'tzt'm
 
 " Pressing ,ss will toggle and untoggle spell checking
-map <leader>ss :setlocal spell!<cr>
+noremap <leader>ss :setlocal spell!<cr>
 
 " Next misspelled word
-map <leader>sn ]s
+noremap <leader>sn ]s
 " Previous misspelled word
-map <leader>sp [s
+noremap <leader>sp [s
 " Add highlighted word
-map <leader>sa zg
+noremap <leader>sa zg
 " Remove highlighted word
-map <leader>sr zw
+noremap <leader>sr zw
 " List spelling corrections
-map <leader>s? z=
+noremap <leader>s? z=
 
 " ----------------------------------------------------------
 " -- Auto-complete
@@ -409,54 +459,55 @@ endif
 " -- Tabs
 
 " Tab configuration
-nmap <leader>tn :tabnew<cr>
-nmap <leader>te :tabedit 
-nmap <leader>tc :tabclose<cr>
-nmap <leader>tm :tabmove 
-nmap <leader><up> :tabr<cr>
-nmap <leader><down> :tabl<cr>
-nmap <leader><left> :tabp<cr>
-nmap <leader><right> :tabn<cr>
+noremap <c-n> <esc>:tabnew<cr>
+noremap <c-e> <esc>:tabedit 
+nnoremap <leader>tm :tabmove 
+nnoremap <c-a> :tabp<cr>
+nnoremap <c-d> :tabn<cr>
+inoremap <c-a> <esc>:tabp<cr>i
+inoremap <c-d> <esc>:tabn<cr>i
 
 " ----------------------------------------------------------
 " -- Quick Shortcuts
 
 " Fast saving
-map <leader>w :w!<cr>
+nnoremap <leader>w :w!<cr>
 
 " execute current file
-autocmd FileType ruby map <leader>r :call RunWith("ruby")<cr>
-autocmd FileType python map <leader>r :call RunWith("python")<cr>
-autocmd FileType perl map <leader>r :call RunWith("perl")<cr>
-autocmd FileType cpp map <leader>r :FILES=$(find . -iname '*.cpp' -o -iname '*.o') g++ $FILES<cr>
+augroup file_executes
+  autocmd!
+  autocmd FileType ruby nnoremap <leader>r :call RunWith("ruby")<cr>
+  autocmd FileType python nnoremap <leader>r :call RunWith("python")<cr>
+  autocmd FileType perl nnoremap <leader>r :call RunWith("perl")<cr>
+  autocmd FileType cpp nnoremap <leader>r :FILES=$(find . -iname '*.cpp' -o -iname '*.o') g++ $FILES<cr>
+augroup END
 
-map <leader>m :make<CR>
+noremap <c-m> <esc>:make<CR>
 
 " Source vimrc
-map <leader>sv :so ~/.vim-runtime/vimrc<cr>
+nnoremap <leader>sv :so ~/.vim-runtime/vimrc<cr>
 
 " Fast editing of various files
-map <leader>ev :tabnew ~/.vim-runtime/vimrc<cr>
-map <leader>ep :execute 'sp ~/.vim-runtime/UltiSnips_custom/' . &filetype . '.snippets'<cr>
+nnoremap <leader>ev :vsplit ~/.vim-runtime/vimrc<cr>
+nnoremap <leader>ep :execute 'sp ~/.vim-runtime/UltiSnips_custom/' . &filetype . '.snippets'<cr>
 
 " Quit all windows without saving
-map <leader>q :qall!<cr>
+noremap <leader>q :qall!<cr>
 
 " Remove trailing whitespace
-map <leader>rs :%s/\s\+$//<cr>:noh<cr>
+nnoremap <leader>rs :%s/\s\+$//<cr>:noh<cr>
 
 " Replace tabs with spaces
-" map <leader>rt :%s/\t/  /g<cr>:noh<cr>
-map <leader>rt :%retab!<cr>
+nnoremap <leader>rt :%retab!<cr>
 
 " Disable search highlighting
-map <leader><cr> :nohlsearch<cr>
+nnoremap <leader><cr> :nohlsearch<cr>
 
 " Change to current working directory of file being edit
-map <leader>c :lcd %:p:h<cr>
+nnoremap <leader>c :lcd %:p:h<cr>
 
 " Write a file with sudo
-cmap w!! w !sudo tee % >/dev/null
+cnoremap w!! w !sudo tee % >/dev/null
 
 " ==========================================================
 " == Functions
@@ -473,7 +524,6 @@ function! ToggleSideBars()
     echo "sidebars on"
     if filereadable(expand('%:p'))
       NERDTreeFind
-    else
       NERDTree
     endif
     TagbarOpen
@@ -593,9 +643,10 @@ endfunction
 " ==========================================================
 " == Auto Commands
 
-autocmd! bufwritepost vimrc source ~/.vim-runtime/vimrc " When vimrc is edited, reload it
-
-autocmd FileType perl source ~/.vim-runtime/perltest.vim
+augroup source_vimrc
+  autocmd!
+  autocmd bufwritepost vimrc source ~/.vim-runtime/vimrc " When vimrc is edited, reload it
+augroup END
 
 " Open NERDTree automatically
 " autocmd vimenter * call ToggleSideBars()
@@ -606,19 +657,16 @@ if v:version > 702
 endif
 
 " Closes if NERDTree is the only open window
-autocmd BufEnter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
+augroup NERDTree
+  autocmd!
+  autocmd BufEnter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
+augroup END
 
-" Make sure the syntax is always right, even when in the middle of
-" a huge javascript inside an html file.
-autocmd BufEnter * :syntax sync fromstart
-autocmd BufEnter * if &filetype == "" | set ft=txt | endif " Sets default filetype to txt
-" autocmd BufNewFile,BufRead *.html set filetype=htmldjango
-autocmd BufEnter *.conf set ft=yaml
-autocmd BufEnter *.t set ft=perl
-
-" Check perl syntax with :make
-autocmd FileType perl set makeprg=perl\ -c\ %\ $*
-autocmd FileType perl set errorformat=%f:%l%m
-
-" autocmd QuickFixCmdPost [^l]* nested copen 3
-" autocmd QuickFixCmdPost    l* nested lwindow
+" ==========================================================
+" == Abbreviations
+iabbrev teh the
+iabbrev adn and
+iabbrev waht what
+iabbrev tehn then
+iabbrev @@ lukexor@gmail.com
+iabbrev ccopy Copyright Lucas Petherbridge, All Rights Reserved.
