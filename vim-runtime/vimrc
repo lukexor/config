@@ -414,6 +414,8 @@ noremap <leader>l :rightb vnew<cr>
 " Remove the Windows ^M - when the encodings gets messed up
 " noremap <leader>wm mmHmt:%s/<C-V><cr>//ge<cr>'tzt'm
 
+nnoremap <leader>wc :!wc -w %<cr>
+
 " Pressing ,ss will toggle and untoggle spell checking
 noremap <leader>ss :setlocal spell!<cr>
 
