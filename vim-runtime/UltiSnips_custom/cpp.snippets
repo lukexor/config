@@ -26,7 +26,7 @@ snippet func "C++ Function w/ Comment" b
 
 
 // ${1:Description: TODO}
-${2:void} $3(${4:void})
+${2:void} ${3:function{( ${4:void} )
 {
   ${5:// ...}
 
@@ -35,10 +35,10 @@ ${2:void} $3(${4:void})
 endsnippet
 
 snippet defineg "#define Header Guard" b
-#ifndef ${1:PROJECT}_${2:PATH}_${3:FILE}_H_
-#define $1_$2_$3_H_
+#ifndef ${1:`!v toupper(Filename('$1_H', 'UNTITLED_H'))`}
+#define $1
 
-${4:// ...}
+${2}
 
-#endif // $1_$2_$3_H_
+#endif /* end of include guard: $1 */j
 endsnippet

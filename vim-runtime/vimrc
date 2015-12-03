@@ -57,7 +57,6 @@ set undolevels=1000 " How many undos
 " == Display Settings
 
 set background=dark " Dark BG is good
-set background=dark " Dark BG is good
 set encoding=utf8 " UTF8 encoding is best
 set ff=unix
 set ffs=unix,dos,mac " Default file types
@@ -297,6 +296,15 @@ nnoremap <leader>nc :NERDTreeFind<CR>:2wincmd w<CR>
 
 nnoremap ; :
 " nnoremap ` <NOP>
+let g:btm_rainbow_color = 1
+if exists("g:btm_rainbow_color") && g:btm_rainbow_color
+   call rainbow_parenthsis#LoadSquare ()
+   call rainbow_parenthsis#LoadRound ()
+   call rainbow_parenthsis#LoadBraces ()
+   call rainbow_parenthsis#LoadChevrons ()
+   call rainbow_parenthsis#Activate ()
+   " call rainbow_parenthsis#Toggle ()
+endif
 
 " ----------------------------------------------------------
 " -- Navigation
@@ -309,12 +317,14 @@ vnoremap k gk
 
 inoremap <left> <nop>
 inoremap <right> <nop>
+inoremap <up> <nop>
+inoremap <down> <nop>
 nnoremap <left> <nop>
 nnoremap <right> <nop>
-noremap <up> <nop>
-noremap <down> <nop>
+nnoremap <up> <nop>
+nnoremap <down> <nop>
 
-inoremap <esc> <esc>:echom "Use jk"<cr>a
+" inoremap <esc> <esc>:echom "Use jk"<cr>a
 inoremap jk <esc>
 
 set mouse=a

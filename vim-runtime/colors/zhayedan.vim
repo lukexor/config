@@ -30,6 +30,20 @@ hi Function     guifg=#FFC66D   guibg=NONE      ctermfg=221    ctermbg=NONE     
 hi Identifier   guifg=#2974b7   guibg=NONE      ctermfg=025    ctermbg=NONE      gui=none      cterm=none
 hi BIdentifier  guifg=#2974b7   guibg=NONE      ctermfg=025    ctermbg=NONE      gui=bold      cterm=bold
 
+" TagHighlight custom highlights
+hi Class guifg=#2974b7   guibg=NONE      ctermfg=025    ctermbg=NONE      gui=none      cterm=none
+hi DefinedName guifg=#2974b7   guibg=NONE      ctermfg=025    ctermbg=NONE      gui=none      cterm=none
+hi Enumerator guifg=#2974b7   guibg=NONE      ctermfg=025    ctermbg=NONE      gui=none      cterm=none
+hi Function guifg=#2974b7   guibg=NONE      ctermfg=025    ctermbg=NONE      gui=none      cterm=none
+hi EnumerationName guifg=#2974b7   guibg=NONE      ctermfg=025    ctermbg=NONE      gui=none      cterm=none
+hi Member guifg=#2974b7   guibg=NONE      ctermfg=025    ctermbg=NONE      gui=none      cterm=none
+hi Structure guifg=#2974b7   guibg=NONE      ctermfg=025    ctermbg=NONE      gui=none      cterm=none
+hi Type guifg=#2974b7   guibg=NONE      ctermfg=025    ctermbg=NONE      gui=none      cterm=none
+hi Union guifg=#2974b7   guibg=NONE      ctermfg=025    ctermbg=NONE      gui=none      cterm=none
+hi GlobalConstant guifg=#2974b7   guibg=NONE      ctermfg=025    ctermbg=NONE      gui=none      cterm=none
+hi GlobalVariable guifg=#2974b7   guibg=NONE      ctermfg=025    ctermbg=NONE      gui=none      cterm=none
+hi LocalVariable guifg=#2974b7   guibg=NONE      ctermfg=025    ctermbg=NONE      gui=none      cterm=none
+
 hi Statement    guifg=#598629   guibg=NONE      ctermfg=070    ctermbg=NONE      gui=none      cterm=none
 hi BStatement   guifg=#598629   guibg=NONE      ctermfg=070    ctermbg=NONE      gui=bold      cterm=bold
 
