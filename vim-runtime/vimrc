@@ -280,7 +280,7 @@ let mapleader = "\<Space>" "With a map leader it's possible to do extra key comb
 
 " ----------------------------------------------------------
 " -- Plugins
-let g:yankring_replace_n_pkey = '<C=[>'
+let g:yankring_replace_n_pkey = '<C-[>'
 let g:yankring_replace_n_nkey = '<C-]>'
 let g:ycm_key_list_select_completion = ['<C-TAB>', '<Down>']
 let g:ycm_key_list_previous_completion = ['<C-S-TAB>', '<Up>']
@@ -466,8 +466,8 @@ noremap <c-e> <esc>:tabedit
 nnoremap <leader>tm :tabmove 
 nnoremap <c-a> :tabp<cr>
 nnoremap <c-d> :tabn<cr>
-inoremap <c-a> <esc>:tabp<cr>i
-inoremap <c-d> <esc>:tabn<cr>i
+inoremap <c-a> <esc>:tabp<cr>a
+inoremap <c-d> <esc>:tabn<cr>a
 
 " ----------------------------------------------------------
 " -- Quick Shortcuts
@@ -481,7 +481,7 @@ augroup file_executes
   autocmd FileType ruby nnoremap <leader>r :call RunWith("ruby")<cr>
   autocmd FileType python nnoremap <leader>r :call RunWith("python")<cr>
   autocmd FileType perl nnoremap <leader>r :call RunWith("perl")<cr>
-  autocmd FileType cpp nnoremap <leader>r :FILES=$(find . -iname '*.cpp' -o -iname '*.o') g++ $FILES<cr>
+  autocmd FileType cpp nnoremap <leader>r :!g++ `find ./ -iname '*.cpp' -o -iname '*.o'` -o main.exe && ./main.exe<cr>
 augroup END
 
 noremap <c-m> <esc>:make<CR>
