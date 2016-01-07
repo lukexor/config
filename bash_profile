@@ -24,7 +24,7 @@ export HISTCONTROL='ignoreboth'
 export HISTIGNORE='h:history:&:[bf]g:exit'
 export HISTFILE="$HOME/.bhist"
 export HISTFILESIZE=10000 # Number of commands saved in HISTFILE
-export HISTSIZE=1000 # Number of commands saved in command history
+export HISTSIZE=5000 # Number of commands saved in command history
 export HISTTIMEFORMAT='[%F %a %T] ' # YYYY-MM-DD DAY HH:MM:SS
 
 if [[ -z "$JAVA_HOME" && -x '/usr/libexec/java_home ]]' ]] ; then

@@ -1,9 +1,10 @@
-|  <F1>    Shorcuts Help              |  <F2>    Tree View/Tag View         |  <F3>    Toggle Paste               |  <F4>    Toggle wrap/tabs           |
+|  <F1>    Shorcuts Help              |  <F2>    Tree View                  |  <F3>    Toggle Paste               |  <F4>    Toggle wrap/tabs           |
 |  <F5>    Toggle line #s             |  <F6>    SyntasticCheck             |  <F7>    Toggle Mouse               |  <F8>    Toggle Textmode            |  
+|  <F9>    Toggle Tag Bar             |
 
-|  <space>o    Open (c-t Open Tab)    |  <space>ot   Search tag             |  <space>or   Open Recent            |  <space>r    Save & Execute file    |
-|  <space>tn   New tab                |  <space>te   Edit in Tab            |  <space>tc   Close Tab              |  <space>w    Save File              |
-|  <space>,    Previous Tab           |  <space>.    Next Tab               |  <space>ep   Edit snippets          |  <space>sv   Source vimrc           |
+|  Ctrl-O      Open (c-t Open Tab)    |  <space>ot   Search tag             |  <space>or   Open Recent            |  <space>r    Save & Execute file    |
+|  Ctrl-N      New tab                |  Ctrl-E      Edit in Tab            |                                     |  <space>w    Save File              |
+|  Ctrl-A      Previous Tab           |  Ctrl-D      Next Tab               |  <space>ep   Edit snippets          |  <space>sv   Source vimrc           |
 |  <space>rs   Strip trailing space   |  <space>rt   Retab spaces w/ tabs   |  <space>nc   Tree View of CWD       |  <space>l    New Split Tab          |
 |  <space>mt   Toggle ShowMarks       |  <space>ma   Clear all marks        |  <space>f    Toggle fold            |  <space>ev   Edit vimrc             |
 |  <space>ss   Toggle Spellcheck      |  <space>sn   Next misspelled word   |  <space>sp   Previous misspelled    |  <space>sa   Add Word               |

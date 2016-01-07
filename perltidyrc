@@ -1,10 +1,20 @@
---blank-lines-before-subs=2 # Default: 1 - Adds n spaces before subroutine declarations
+--blank-lines-before-subs=3 # Default: 1 - Adds n spaces before subroutine declarations
+--block-brace-tightness=1  # %bf = map { $_ => -M $_ } grep {/\.deb$/} dirents '.';
+--brace-tightness=1  # $obj->{ $parsed_sql->{'table'}[0] };
+--closing-token-indentation=0
 --comma-arrow-breakpoints=0 # Break after every comma following => key/value pairs
+--continuation-indentation=2
+--cuddled-else
+--indent-columns=4 # columns per indentation level
+--line-up-parentheses
 --maximum-line-length=80 # Default: 80
---indent-columns=4 # n columns per indentation level
 --nooutdent-labels
 --nooutdent-long-lines
 --nospace-for-semicolon # e.g. for (i = 0; i < $value; i++) { ... }
---output-line-ending=unix
---standard-error-output
 --opening-token-right
+--output-line-ending=unix
+--paren-tightness=2  # if ((my $len_tab = length($tabstr)) > 0) { 
+--square-bracket-tightness=1  # $width = $col[ $j + $k ] - $col[$j];
+--standard-error-output
+--vertical-tightness=0
+--want-break-before="% + - * / x != == >= <= =~ !~ < > | & = **= += *= &= <<= &&= -= /= |= >>= ||= //= .= %= ^= x="

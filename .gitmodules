@@ -61,3 +61,6 @@
 [submodule "vim-runtime/vim-snippets"]
 	path = vim-runtime/vim-snippets
 	url = https://github.com/honza/vim-snippets.git
+[submodule "vim-runtime/bundle/vim-nerdtree-tabs"]
+	path = vim-runtime/bundle/vim-nerdtree-tabs
+	url = https://github.com/jistr/vim-nerdtree-tabs.git

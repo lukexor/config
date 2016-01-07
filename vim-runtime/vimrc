@@ -258,6 +258,8 @@ set sidescroll=1 " Minimum number of columns to scroll horizontally
 let MRU_Max_Entries = 400 " Most Recently Used files
 let NERDTreeMouseMode = 2 " Single click for directories, double click for files
 let NERDChristmasTree = 1
+let g:nerdtree_tabs_open_on_console_startup = 1
+let g:nerdtree_tabs_focus_on_files = 1
 let NERDTreeAutoCenter = 1
 let NERDTreeDirArrows = 1
 let NERDTreeWinSize = 35
@@ -279,8 +281,6 @@ let mapleader = "\<Space>" "With a map leader it's possible to do extra key comb
 
 " ----------------------------------------------------------
 " -- Plugins
-let g:yankring_replace_n_pkey = '<C-[>'
-let g:yankring_replace_n_nkey = '<C-]>'
 let g:ycm_key_list_select_completion = ['<C-TAB>', '<Down>']
 let g:ycm_key_list_previous_completion = ['<C-S-TAB>', '<Up>']
 let g:SuperTabDefaultCompletionType = '<C-Tab>'
@@ -376,6 +376,9 @@ inoremap <F7> <Esc>:call ToggleMouse()<CR>i
 nnoremap <F8> :call ToggleTextMode()<CR>
 inoremap <F8> <Esc>:call ToggleTextMode()<CR>i
 
+nnoremap <F9> :call ToggleTagBar()<CR>
+inoremap <F9> <Esc>:call ToggleTagBar()<CR>i
+
 " ----------------------------------------------------------
 " -- Formatting
 
@@ -455,8 +458,8 @@ nnoremap <leader>ot :CtrlPTag<CR>
 nnoremap <leader>or :CtrlPMRU<CR>
 
 let g:ctrlp_open_new_file = 't' " Open new files in a tab
+let g:ctrlp_map = '<c-o>'
 " disable caching
-let g:ctrlp_use_caching = 0
 if executable('ag')
     set grepprg=ag\ --nogroup\ --nocolor
     let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
@@ -491,7 +494,7 @@ augroup file_executes
   autocmd FileType ruby nnoremap <leader>r :call RunWith("ruby")<cr>
   autocmd FileType python nnoremap <leader>r :call RunWith("python")<cr>
   autocmd FileType perl nnoremap <leader>r :call RunWith("perl")<cr>
-  autocmd FileType cpp nnoremap <leader>r :!g++ `find ./ -iname '*.cpp' -o -iname '*.o'` -o main.exe && ./main.exe<cr>
+  autocmd FileType cpp nnoremap <leader>r :call CompileAndRun()<cr>
 augroup END
 
 noremap <c-m> <esc>:make<CR>
@@ -524,22 +527,28 @@ cnoremap w!! w !sudo tee % >/dev/null
 " ==========================================================
 " == Functions
 
-" NERDTree Tagbar toggle
+" TagBar toggle
+function! ToggleTagBar()
+  if exists("b:tagbar") && b:tagbar
+    TagbarClose
+    let b:tagbar = 0
+  else
+    TagbarOpen
+    let b:tagbar = 1
+  endif
+endfunction
+
+" NERDTree toggle
 function! ToggleSideBars()
   if exists("b:sidebars") && b:sidebars
-    echo "sidebars off"
-    NERDTreeClose
-    TagbarClose
-    2wincmd w
+    NERDTreeMirrorToggle
+    wincmd w
     let b:sidebars = 0
   else
-    echo "sidebars on"
     if filereadable(expand('%:p'))
-      NERDTreeFind
-      NERDTree
+      NERDTreeMirrorToggle
     endif
-    TagbarOpen
-    2wincmd w
+    wincmd w
     let b:sidebars = 1
   endif
 endfunction
@@ -573,17 +582,29 @@ function! ToggleOverLengthHi()
     let b:overlengthhi = 0
     echo "overlength hilight off"
   else
-    highlight OverLength ctermfg=black ctermbg=lightgrey guibg=#592929
-    match OverLength /\%81v.\+/
-    let b:overlengthhi = 1
+    call EnableOverLengthHi()
     echo "overlength hilight on"
   endif
+endfunction
+
+function! EnableOverLengthHi()
+  if &ft =~ 'txt'
+    return
+  endif
+  highlight OverLength ctermfg=black ctermbg=lightgrey guibg=#592929
+  match OverLength /\%81v.\+/
+  let b:overlengthhi = 1
 endfunction
 
 " Save and run the command, measuring time it takes to run
 function! RunWith(command)
   execute "w"
-  execute "!clear;time " . a:command . " " .expand("%:p")
+  execute "!clear;time " . a:command . " " . expand("%:p")
+endfunction
+
+function! CompileAndRun()
+  execute "w"
+  execute "!clear;time g++ `find ./ -d 1 -iname '*.cpp' -o -iname '*.o'` -o main.exe && ./main.exe"
 endfunction
 
 " Visual search function
@@ -661,16 +682,20 @@ augroup source_vimrc
 augroup END
 
 " Open NERDTree automatically
-" autocmd vimenter * call ToggleSideBars()
-" autocmd BufNewFile * call MirrorSideBars()
 if v:version > 702
   set colorcolumn=+1
   highlight ColorColumn ctermbg=235 guibg=235
 endif
 
+augroup HiLight
+  autocmd!
+  autocmd BufEnter * call EnableOverLengthHi()
+augroup END
+
 " Closes if NERDTree is the only open window
 augroup NERDTree
   autocmd!
+  " autocmd vimenter * call ToggleSideBars()
   autocmd BufEnter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
 augroup END
 

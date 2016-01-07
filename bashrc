@@ -216,6 +216,8 @@ alias sfcs='ssh -A lpetherbridge@devbox5.lotsofclouds.fonality.com'
 alias sfcsqa='ssh -A lpetherbridge@qa-app.lotsofclouds.fonality.com'
 alias sfcsstg='ssh -A lpetherbridge@fcs-stg-app1.lax01.fonality.com'
 alias sfcsstg2='ssh -A lpetherbridge@fcs-stg2-app1.lax01.fonality.com'
+alias sfcsstg4='ssh -A lpetherbridge@fcs-app1.stage4.arch.fonality.com'
+alias sfcsstg5='ssh -A lpetherbridge@fcs-app1.stage5.arch.fonality.com'
 alias sfcsstgb='ssh -A lpetherbridge@fcs-stg-bastion.lax01.fonality.com'
 
 # Sourcing
