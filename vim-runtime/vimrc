@@ -145,7 +145,7 @@ if exists('&foldenable')
   set foldexpr=GetFoldLevel(v:lnum)
   set foldnestmax=5 " Deepest fold
   set foldlevel=1 " The default depth to fold
-  set foldenable
+  set nofoldenable
   set foldminlines=1
 
   function! NextNonBlankLine(lnum)
@@ -486,7 +486,7 @@ inoremap <c-d> <esc>:tabn<cr>a
 " -- Quick Shortcuts
 
 " Fast saving
-nnoremap <leader>w :w!<cr>
+nnoremap <leader>w :wa!<cr>
 
 " execute current file
 augroup file_executes
@@ -588,10 +588,7 @@ function! ToggleOverLengthHi()
 endfunction
 
 function! EnableOverLengthHi()
-  if &ft =~ 'txt'
-    return
-  endif
-  highlight OverLength ctermfg=black ctermbg=lightgrey guibg=#592929
+  highlight OverLength ctermbg=235
   match OverLength /\%81v.\+/
   let b:overlengthhi = 1
 endfunction
@@ -681,7 +678,6 @@ augroup source_vimrc
   autocmd bufwritepost vimrc source ~/.vim-runtime/vimrc " When vimrc is edited, reload it
 augroup END
 
-" Open NERDTree automatically
 if v:version > 702
   set colorcolumn=+1
   highlight ColorColumn ctermbg=235 guibg=235
