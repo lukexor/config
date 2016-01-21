@@ -147,11 +147,11 @@ snippet fun "function" b
 
 
 
-// ${1:TODO(Luke): Description}
-// @pre  ${5:Preconditions}
-// @post  ${6:Postconditions}
-// @param  ${7:Parameters}
-// @return  ${8:Returns}
+/* ${5:TODO(Luke): Description}
+   @pre  ${6:Preconditions}
+   @post  ${7:Postconditions}
+   @param  $3
+   @return  ${9:1 if the operation was successful, otherwise 0} */
 ${1:void} ${2:function_name}(${3:void})
 {
 	${VISUAL}${0}
@@ -160,21 +160,29 @@ ${1:void} ${2:function_name}(${3:void})
 }
 endsnippet
 
+snippet funh "function header" b
+/* ${1:TODO(Luke): Description}
+   @pre  ${2:Preconditions}
+   @post  ${3:Postconditions}
+   @param  ${4:Parameters}
+   @return  ${5:1 if the operation was successful, otherwise 0} */
+endsnippet
+
 snippet fund "function declaration" b
 ${1:void} ${2:function_name}(${3:void});
 endsnippet
 
 snippet head "Header Comment" b
-// -----------------------------------------------------------------------------
-// `!v expand('%:p:t')`
-//
-// Copyright `date +'%Y'` Lucas Petherbridge
-// Author: Lucas Petherbridge <luc6@pdx.edu>
-// Course: ${1:CS163}
-// Program #${2:1}
-//
-// ${3:TODO(Luke): Description}
-// -----------------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
+   `!v expand('%:p:t')`
+
+   Copyright `date +'%Y'` Lucas Petherbridge
+   Author: Lucas Petherbridge <luc6@pdx.edu>
+   Course: ${1:CS163}
+   Program #${2:1}
+
+   ${3:TODO(Luke): Description}
+----------------------------------------------------------------------------- */
 
 ${VISUAL}${0}
 endsnippet

@@ -10,6 +10,20 @@
 build/
 dist/
 
+# Automake files #
+##################
+*.in
+*.m4
+.deps/
+*.cache/
+configure
+config.status
+depcomp
+install-sh
+missing
+test-driver
+*.trs
+
 # Temporary files #
 ###################
 *.tmp

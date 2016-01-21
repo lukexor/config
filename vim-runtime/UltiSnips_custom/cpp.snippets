@@ -5,9 +5,6 @@ extends c
 # We want to overwrite everything in parent ft.
 priority -48
 
-###########################################################################
-#														 TextMate Snippets														#
-###########################################################################
 snippet cl "class .. (class)"
 class ${1:`!p snip.rv = snip.basename or "name"`}
 {
@@ -19,6 +16,13 @@ class ${1:`!p snip.rv = snip.basename or "name"`}
  private:
 	${0:/* data */}
 };
+endsnippet
+
+snippet ns "namespace .. (namespace)"
+namespace ${1:name}
+{
+	${VISUAL}${0}
+}  // namespace $1
 endsnippet
 
 # vim:ft=snippets:

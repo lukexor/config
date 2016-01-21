@@ -595,13 +595,13 @@ endfunction
 
 " Save and run the command, measuring time it takes to run
 function! RunWith(command)
-  execute "w"
+  execute "wall"
   execute "!clear;time " . a:command . " " . expand("%:p")
 endfunction
 
 function! CompileAndRun()
-  execute "w"
-  execute "!clear;time g++ `find ./ -d 1 -iname '*.cpp' -o -iname '*.o'` -o main.exe && ./main.exe"
+  execute "wall"
+  execute "!clear;g++ -Wall -Wextra -Werror `find ./ -maxdepth 1 -iname '*.cpp' -o -iname '*.o'` -o main.exe && ./main.exe"
 endfunction
 
 " Visual search function
