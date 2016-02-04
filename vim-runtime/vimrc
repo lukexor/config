@@ -16,7 +16,7 @@ set nocompatible
 " Load all plugins in ~/.vim-runtime/bundle
 
 if v:version > 700
-  let g:pathogen_disabled = ['snipmate', 'delimitMate']
+  let g:pathogen_disabled = ['snipmate', 'delimitMate', 'youcompleteme']
   call pathogen#helptags()
   call pathogen#infect()
 endif
@@ -601,7 +601,8 @@ endfunction
 
 function! CompileAndRun()
   execute "wall"
-  execute "!clear;g++ -Wall -Wextra -Werror `find ./ -maxdepth 1 -iname '*.cpp' -o -iname '*.o'` -o main.exe && ./main.exe"
+  " execute "!clear;g++ -Wall -Wextra -Werror `find ./ -maxdepth 1 -iname '*.cpp' -o -iname '*.o'` -o main.exe && ./main.exe"
+  execute "!clear;g++ -Werror `find ./ -maxdepth 1 -iname '*.cpp' -o -iname '*.o'` -o main.exe && ./main.exe"
 endfunction
 
 " Visual search function

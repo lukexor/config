@@ -155,6 +155,7 @@ alias mv='mv -i'
 alias md='mkdir -p' # Make sub-directories as needed
 alias rd='rmdir'
 alias p='pwd'
+alias cdc='cd ~/dev/classes/cs163/'
 
 # Various CD shortcuts
 if [[ -d "$HOME/fcs/" ]]; then
@@ -262,7 +263,7 @@ alias lr='ls -lR' # Recursive ls
 # -- Functions
 
 vall() {
-  vi `find . -iname '*.cpp' -o -iname '*.h'|sort`
+  vi `find . -maxdepth 1 -iname '*.cpp' -o -iname '*.h'|sort`
 }
 
 make() {

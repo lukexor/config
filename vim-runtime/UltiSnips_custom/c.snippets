@@ -8,12 +8,6 @@ snippet def "#define ..."
 #define ${1}
 endsnippet
 
-snippet ifndef "#ifndef ... #define ... #endif"
-#ifndef ${1/([A-Za-z0-9_]+).*/$1/}
-#define ${1:SYMBOL} ${2:value}
-#endif
-endsnippet
-
 snippet #if "#if #endif" b
 #if ${1:0}
 ${VISUAL}${0}
@@ -140,7 +134,7 @@ snippet st "struct"
 struct ${1:`!p snip.rv = (snip.basename or "name") + "_t"`}
 {
 	${0:/* data */}
-};
+};  // end $1
 endsnippet
 
 snippet fun "function" b
@@ -157,7 +151,7 @@ ${1:void} ${2:function_name}(${3:void})
 	${VISUAL}${0}
 
 	return${4};
-}
+}  // end $2
 endsnippet
 
 snippet funh "function header" b
@@ -187,13 +181,13 @@ snippet head "Header Comment" b
 ${VISUAL}${0}
 endsnippet
 
-snippet defineg "#define Header Guard" b
+snippet defg "#define Header Guard" b
 #ifndef ${1:`!v toupper(Filename('$1_H', 'UNTITLED_H'))`}
 #define $1
 
 ${2}
 
-#endif // end include guard: $1 */j
+#endif // $1
 endsnippet
 
 
