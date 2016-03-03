@@ -4,13 +4,15 @@
 --closing-token-indentation=0
 --comma-arrow-breakpoints=0 # Break after every comma following => key/value pairs
 --continuation-indentation=2
---cuddled-else
+--nocuddled-else
 --indent-columns=4 # columns per indentation level
---line-up-parentheses
 --maximum-line-length=80 # Default: 80
 --nooutdent-labels
 --nooutdent-long-lines
 --nospace-for-semicolon # e.g. for (i = 0; i < $value; i++) { ... }
+-opening-brace-on-new-line
+--opening-sub-brace-on-new-line
+--opening-anonymous-sub-brace-on-new-line
 --opening-token-right
 --output-line-ending=unix
 --paren-tightness=2  # if ((my $len_tab = length($tabstr)) > 0) { 
