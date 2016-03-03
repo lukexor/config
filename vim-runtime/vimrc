@@ -258,7 +258,7 @@ set sidescroll=1 " Minimum number of columns to scroll horizontally
 let MRU_Max_Entries = 400 " Most Recently Used files
 let NERDTreeMouseMode = 2 " Single click for directories, double click for files
 let NERDChristmasTree = 1
-let g:nerdtree_tabs_open_on_console_startup = 1
+let g:nerdtree_tabs_open_on_console_startup = 0
 let g:nerdtree_tabs_focus_on_files = 1
 let NERDTreeAutoCenter = 1
 let NERDTreeDirArrows = 1
@@ -692,7 +692,7 @@ augroup END
 " Closes if NERDTree is the only open window
 augroup NERDTree
   autocmd!
-  " autocmd vimenter * call ToggleSideBars()
+  autocmd vimenter * call ToggleSideBars()
   autocmd BufEnter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
 augroup END
 
