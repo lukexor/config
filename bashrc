@@ -262,6 +262,14 @@ alias lr='ls -lR' # Recursive ls
 # ----------------------------------------------------------
 # -- Functions
 
+function sudo() {
+  prompt_off
+  PS1="$GRY[${RED}root$GRY] $CYA\W $RED> $NC"
+  PROMPT_COMMAND=""
+  /usr/bin/sudo $*
+  prompt_on
+}
+
 vall() {
   vi `find . -maxdepth 1 -iname '*.cpp' -o -iname '*.h' -o -iname '*.tpp' | sort`
 }
