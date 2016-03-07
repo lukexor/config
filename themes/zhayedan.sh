@@ -94,7 +94,7 @@ function prompt_on() {
     # Left command prompt
     case ${OSTYPE} in
         darwin*) export PS1_HOST="" ;;
-        *) export PS1_HOST="${HOSTNAME} " ;;
+        *) export PS1_HOST="${HOSTNAME}" ;;
     esac
 
     for plugin in "${plugins[@]}"; do
@@ -106,11 +106,12 @@ function prompt_on() {
 
     export PS1=$GR'['$WH'\@'$GR']'${BGJOBS}${STJOBS}${GITB}' '$CY'\W'${CUR}${NC}
     export PROMPT_COMMAND=${PROMPT_COMMAND}'PS1="\n\
-$GRY[$WHI\@$GRY]\
+`if [[ $(parse_git_branch) ]]; then echo "$GRY($GRE$(parse_git_branch)$GRY)\n"; fi`\
+$GRY[$WHI\@$GRY] \
 `if [[ $(active_screens) ]]; then echo " $GRY[$BLU$(active_screens)$GRY]"; fi`\
 `if [[ $(bg_jobs) ]]; then echo "$GRY[$YEL$(bg_jobs)$GRY]"; fi`\
 `if [[ $(st_jobs) ]]; then echo "$GRY[$HCYA$(st_jobs)$GRY]"; fi`\
-`if [[ $(parse_git_branch) ]]; then echo " $GRY($GRE$(parse_git_branch)$GRY)"; fi` \
+`if [[ $PS1_HOST ]]; then echo "$GRY{$PR_CLR$PS1_HOST$GRY} "; fi`\
 $CYA\W \
 $RED> $NC\
 "'
