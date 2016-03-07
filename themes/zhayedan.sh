@@ -93,7 +93,7 @@ function prompt_on() {
 
     # Left command prompt
     case ${OSTYPE} in
-        darwin*) export PS1_HOST="" ;;
+        darwin*) export PS1_HOST="mac" ;;
         *) export PS1_HOST="${HOSTNAME}" ;;
     esac
 
@@ -101,20 +101,17 @@ function prompt_on() {
         if [[ "$plugin" == "git" ]]; then
             BASH_THEME_GIT_PROMPT_DIRTY="$BASH_THEME_GIT_PROMPT_DIRTY$(git_prompt_status)"
         fi
-        # [[ "$plugin" == "svn" ]] && PS1=${PS1}'$(svn_prompt_info)';
     done
 
-    export PS1=$GR'['$WH'\@'$GR']'${BGJOBS}${STJOBS}${GITB}' '$CY'\W'${CUR}${NC}
     export PROMPT_COMMAND=${PROMPT_COMMAND}'PS1="\n\
-`if [[ $(parse_git_branch) ]]; then echo "$GRY($GRE$(parse_git_branch)$GRY)\n"; fi`\
 $GRY[$WHI\@$GRY] \
 `if [[ $(active_screens) ]]; then echo " $GRY[$BLU$(active_screens)$GRY]"; fi`\
 `if [[ $(bg_jobs) ]]; then echo "$GRY[$YEL$(bg_jobs)$GRY]"; fi`\
 `if [[ $(st_jobs) ]]; then echo "$GRY[$HCYA$(st_jobs)$GRY]"; fi`\
 `if [[ $PS1_HOST ]]; then echo "$GRY{$PR_CLR$PS1_HOST$GRY} "; fi`\
-$CYA\W \
-$RED> $NC\
-"'
+`if [[ $(parse_git_branch) ]]; then echo "$GRY($GRE$(parse_git_branch)$GRY) "; fi`\
+$CYA\W\n$NC\
+> "'
 
     # PS2 continuation prompt
     export PS2=" >> "
