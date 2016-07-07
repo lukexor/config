@@ -10,12 +10,14 @@ class ${1:`!p snip.rv = snip.basename or "name"`}
 {
  public:
 	${1/(\w+).*/$1/}();
-	${2:${1/(\w+).*/$1/}(${3:arguments});
-	}virtual ~${1/(\w+).*/$1/}();
+	${1/(\w+).*/$1/}(const ${1/(\w+).*/$1/} & source);  // copy constructor
+	virtual ~${1/(\w+).*/$1/}();
+	virtual ${1/(\w+).*/$1/} & operator=(const ${1/(\w+).*/$1/} & source);
+
+ protected:
 
  private:
-	${0:/* data */}
-};
+};  // end ${1/(\w+).*/$1/}
 endsnippet
 
 snippet ns "namespace .. (namespace)"

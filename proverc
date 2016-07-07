@@ -7,9 +7,9 @@
 --timer # Print time after each test
 --normalize # Normalize output
 # -t # Enable Taint warnings
-#-w # Enable warnings
-# -j 9 # Enable up to 5 jobs to run in parallel
+# -w # Enable warnings
+-j 9 # Enable up to 5 jobs to run in parallel
 #-a tmp/prove_test_out.tgz # Store TAP results in archive
-# --state=save # Save state for next run (fast, slow, failed, hot, etc)
+--state=slow # Save state for next run (fast, slow, failed, hot, etc)
 # All tests are allowed to run in parallel, except ZenDesk
 --rules='seq=ZenDesk.pm' --rules='par=**'

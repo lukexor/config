@@ -13,13 +13,13 @@ main();
 
 sub main
 {
-	${1:# All the logics...}
+    ${1}
 
-	return 1;
+    return 1;
 }
 endsnippet
 
-snippet pod "POD heading documentation (pod)" b
+snippet head "POD heading documentation (pod)" b
 =pod
 
 =head1 NAME
@@ -58,7 +58,7 @@ ${10:function description}
 __END__
 endsnippet
 
-snippet podl "POD License (podl)" b
+snippet headl "POD License (podl)" b
 =head1 LICENSE
 
 Copyright (c) `date +%Y` `!v g:snips_author`
@@ -91,7 +91,7 @@ are those of the authors and should not be interpreted as representing
 official policies, either expressed or implied, of the FreeBSD Project.
 endsnippet
 
-snippet podsub "POD function documentation" b
+snippet funh "POD function documentation" b
 =head2 ${1:function}
 
 =over 4
@@ -107,38 +107,38 @@ Returns: ${4:TODO}
 
 endsnippet
 
-snippet sub "Function (sub)" b
+snippet fun "Function (sub)" b
 sub ${1:function}
 {
-	my ${2:$self = shift};
+    my ${2:($self) = @_};
 
-	${3:# logic all the things!}
+    ${3}
 }
 endsnippet
 
 snippet ife "Conditional if..else (ife)"
 if ( ${1:condition} )
 {
-	${2:# body...}
+    ${2}
 }
 else
 {
-	${3:# else...}
+    ${3}
 }
 endsnippet
 
 snippet ifee "Conditional if..elsif..else (ifee)"
 if ( ${1:condition} )
 {
-	${2:# body...}
+    ${2}
 }
 elsif ( ${3:condition} )
 {
-	${4:# elsif...}
+    ${4}
 }
 else
 {
-	${5:# else...}
+    ${5}
 }
 endsnippet
 
@@ -180,7 +180,7 @@ use warnings;
 
 BEGIN { use_ok('${1:ClassName'}); }
 
-${2:# Tests...}
+${2}
 
 done_testing();
 endsnippet
@@ -200,13 +200,13 @@ use warnings;
 
 ${3:sub ${4:setup} : Test${5:(setup)}
 {
-	${6:# logic...}
+    ${6}
 };}
 
 1;
 endsnippet
 
-snippet class "class"
+snippet class "cl"
 package ${1:ClassName};
 
 ${2:use namespace::autoclean;
@@ -261,47 +261,47 @@ endsnippet
 snippet try "Try::Tiny (try)"
 try
 {
-	${1:# do something risky...}
+    ${1}
 }
 catch
 {
-	${3:# handle failure...}
+    ${3}
 };
 endsnippet
 
 snippet tryf "Try::Tiny with finally (tryf)"
 try
 {
-	${1:# do something risky...}
+    ${1}
 }
 catch
 {
-	${3:# handle failure...}
+    ${3}
 }
 finally
 {
-	${4:# cleanup...}
+    ${4}
 };
 endsnippet
 
 snippet cfor "C-style for loop (cfor)"
 ${1:LABEL}: for ( my $${2:var} = 0; $$2 < ${3:expression}; $$2++ )
 {
-	${4:# body...}
+    ${4}
 }
 endsnippet
 
 snippet for "foreach loop (for)"
 ${1:LABEL}: foreach ${2:my $${3:x}} ( @${4:array} )
 {
-	${5:# body...}
+    ${5}
 }
 endsnippet
 
 snippet if "if"
 if ( ${1:condition} )
 {
-	${2:# body...}
+    ${2}
 }
 endsnippet
 
@@ -312,33 +312,17 @@ endsnippet
 snippet while "while"
 ${1:LABEL}: while ( ${2:condition} )
 {
-	${3:# body...}
+    ${3}
 }
-endsnippet
-
-snippet subpod "Subroutine pod documentation (subpod)" b
-=head2 ${1:function}
-
-=over 4
-
-${2:description}
-
-Args: ${3:TODO}
-Returns: ${4:TODO}
-
-=back
-
-=cut
-
 endsnippet
 
 snippet has "has"
 has '${1:attribute}' => (
-	'is'      => '${2:ro}',
-	'isa'     => '${3:Str}',
-	'lazy'    => 1,
-	'default' => ${4:''},
-${5:	'writer'  => '_$1',}${5/.+/\n/});
+    'is'      => '${2:ro}',
+    'isa'     => '${3:Str}',
+    'lazy'    => 1,
+    'default' => ${4:''},
+);
 endsnippet
 
 snippet immute "immute"
@@ -354,5 +338,22 @@ snippet warnd "warn Dumper (warnd)"
 use Data::Dumper;
 warn Dumper ${1:value};
 endsnippet
+
+snippet ml "Migration Log (ml)"
+# Change log to IN_PROGRESS
+require Fap::Migration::Log;
+my $migration_log = Fap::Migration::Log->new(
+	'server_id' => $input->{'server_id'}
+);
+$migration_log->get();
+$migration_log->status('IN_PROGRESS');
+$migration_log->update();
+endsnippet
+
+snippet mlf "Migration Log Fail (mlf)"
+$migration_log->status('FAILED');
+$migration_log->update();
+endsnippet
+
 
 # vim:ft=snippets:

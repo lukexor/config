@@ -155,7 +155,7 @@ alias mv='mv -i'
 alias md='mkdir -p' # Make sub-directories as needed
 alias rd='rmdir'
 alias p='pwd'
-alias cdc='cd ~/dev/classes/cs163/'
+alias cdc='cd ~/Dropbox/classes/cs202/'
 
 # Various CD shortcuts
 if [[ -d "$HOME/fcs/" ]]; then
@@ -220,6 +220,7 @@ alias sfcsstg2='ssh -A lpetherbridge@fcs-stg2-app1.lax01.fonality.com'
 alias sfcsstg3='ssh -A lpetherbridge@fcs-app1.stage3.arch.fonality.com'
 alias sfcsstg4='ssh -A lpetherbridge@fcs-app1.stage4.arch.fonality.com'
 alias sfcsstg5='ssh -A lpetherbridge@fcs-app1.stage5.arch.fonality.com'
+alias sfcsstg6='ssh -A lpetherbridge@fcs-app1.stage6.arch.fonality.com'
 alias sfcsstgb='ssh -A lpetherbridge@fcs-stg-bastion.lax01.fonality.com'
 
 # Sourcing
@@ -235,13 +236,19 @@ alias scm='screen -S "main"'
 # Misc
 alias da='date "+%Y-%m-%d %H:%M:%S"'
 alias g='grep -in'
-alias grep='grep -in'
+alias grep='grep -in --color=auto'
 alias offenders='uptime;ps aux | perl -ane"print if \$F[2] > 0.9"'
 alias path='echo -e ${PATH//:/"\n"}'
 alias prove='prove -v'
-alias topmem='ps -eo pmem,pcpu,pid,user,args | sort -k 1 -r | head -20';
+alias topmem='ps -eo pmem,pcpu,pid,user,args | sort -k 1 -r | head -20 | cut -d- -f1';
+alias topcpu='ps -eo pmem,pcpu,pid,user,args | sort -k 2 -r | head -20 | cut -d- -f1';
 alias which='type -a'
 alias x='extract'
+
+function pprofile() {
+  perl -d:NYTProf $*;
+  nytprofhtml --open;
+}
 
 # ls
 if [[ "$OSTYPE" =~ 'darwin' ]]; then
@@ -271,7 +278,7 @@ function sudo() {
 }
 
 vall() {
-  vi `find . -maxdepth 1 -iname '*.cpp' -o -iname '*.h' -o -iname '*.tpp' | sort`
+  vi `find . -maxdepth 1 -iname '*.c*' -o -iname '*.h' -o -iname '*.tpp' | sort`
 }
 
 make() {
@@ -384,7 +391,7 @@ _xtitle_do() { # sets screen/term title and executes command
     if [[ -f "$2" ]]; then
         title="$1 $(basename $2)"
     else
-        title="$*"
+        title="$1"
     fi
     case "$TERM" in
         xterm* | rxvt ) echo -n -e "\033]0;$title\007" ;;

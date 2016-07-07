@@ -60,8 +60,7 @@ fi
 export PERL_MM_OPT='INSTALL_BASE='${HOME}'/perl5'
 
 # Grep
-export GREP_OPTIONS='--color=auto'
-export GREP_COLOR='1;32'
+export GREP_COLORS='1;32'
 
 # Pager
 export PAGER='less'

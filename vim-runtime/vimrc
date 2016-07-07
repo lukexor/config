@@ -97,23 +97,27 @@ augroup END
 set laststatus=2 " Always show the statusline
 
 set title
+let NERDTreeStatusline='NERDTree'
 " Format the statusline
-set statusline=%.25F    " Tail of the filename
-set statusline+=\ [%{strlen(&fenc)?&fenc:'none'}, " File encoding
-set statusline+=%{&ff}] " File format
-set statusline+=[fo:%{&fo}] " Formatoptions enabled
-set statusline+=%y    " Filetype
-set statusline+=\ [%.25{CurDir()}] " Current directory
+" set statusline=%{CurDir()}    " Tail of the filename
+set statusline=%f
+" set statusline+=\ [%{strlen(&fenc)?&fenc:'none'}, " File encoding
+" set statusline+=%{&ff}] " File format
+" set statusline+=[fo:%{&fo}] " Formatoptions enabled
+set statusline+=\ %y    " Filetype
 set statusline+=%m    " Modified flag
 set statusline+=%r    " Read only flag
-set statusline+=%{HasPaste()} " Whether pastemode is on or not
+set statusline+=%{HasPaste()}\  " Whether pastemode is on or not
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
 set statusline+=%=    " Left/right separator
-set statusline+=Line:%4l/%-4L " Cursor line/total lines
-set statusline+=\ Col:%2c   " Cursor column
-set statusline+=\ %3p%%   " Percent through file
-if v:version > 700
-  set statusline+=\ \ %{exists('g:loaded_fugitive')?fugitive#statusline():''} " Git status
-endif
+set statusline+=%l/%L " Cursor line/total lines
+set statusline+=\:%c   " Cursor column
+set statusline+=\ %p%%   " Percent through file
+" if v:version > 700
+"   set statusline+=\ \ %{exists('g:loaded_fugitive')?fugitive#statusline():''} " Git status
+" endif
 
 " ==========================================================
 " == Usage settings
@@ -258,7 +262,7 @@ set sidescroll=1 " Minimum number of columns to scroll horizontally
 let MRU_Max_Entries = 400 " Most Recently Used files
 let NERDTreeMouseMode = 2 " Single click for directories, double click for files
 let NERDChristmasTree = 1
-let g:nerdtree_tabs_open_on_console_startup = 1
+let g:nerdtree_tabs_open_on_console_startup = 0
 let g:nerdtree_tabs_focus_on_files = 1
 let NERDTreeAutoCenter = 1
 let NERDTreeDirArrows = 1
@@ -272,6 +276,22 @@ highlight ShowMarksHLo guifg=#2B2B2B ctermfg=159 guibg=#C0C0FF " All other marks
 highlight ShowMarksHLm guifg=#DA4939 ctermfg=167 gui=NONE cterm=NONE " Multiple marks on same line
 let delimitMate_expand_cr = 1
 let g:syntastic_mode_map = { 'mode': 'passive' }
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_loc_list_height = 5
+let g:syntastic_auto_loc_list = 0
+let g:syntastic_check_on_wq = 0
+let g:syntastic_javascript_checkers = ['eslint']
+
+let g:syntastic_error_symbol = '❌'
+let g:syntastic_style_error_symbol = '[]'
+let g:syntastic_warning_symbol = '^'
+let g:syntastic_style_warning_symbol = '??'
+
+highlight link SyntasticErrorSign SignColumn
+highlight link SyntasticWarningSign SignColumn
+highlight link SyntasticStyleErrorSign SignColumn
+highlight link SyntasticStyleWarningSign SignColumn
+
 let g:UltiSnipsSnippetDirectories=["UltiSnips", "UltiSnips_custom"]
 
 " ==========================================================
@@ -427,7 +447,7 @@ noremap <leader>l :rightb vnew<cr>
 " Remove the Windows ^M - when the encodings gets messed up
 " noremap <leader>wm mmHmt:%s/<C-V><cr>//ge<cr>'tzt'm
 
-nnoremap <leader>wc :!wc -w %<cr>
+nnoremap <leader>cw :!wc -w %<cr>
 
 " Pressing ,ss will toggle and untoggle spell checking
 noremap <leader>ss :setlocal spell!<cr>
@@ -495,6 +515,7 @@ augroup file_executes
   autocmd FileType python nnoremap <leader>r :call RunWith("python")<cr>
   autocmd FileType perl nnoremap <leader>r :call RunWith("perl")<cr>
   autocmd FileType cpp nnoremap <leader>r :call CompileAndRun()<cr>
+  autocmd FileType cpp nnoremap <leader>c :call Compile()<cr>
 augroup END
 
 noremap <c-m> <esc>:make<CR>
@@ -519,7 +540,7 @@ nnoremap <leader>rt :%retab!<cr>
 nnoremap <leader><cr> :nohlsearch<cr>
 
 " Change to current working directory of file being edit
-nnoremap <leader>c :lcd %:p:h<cr>
+nnoremap <leader>cd :lcd %:p:h<cr>
 
 " Write a file with sudo
 cnoremap w!! w !sudo tee % >/dev/null
@@ -599,10 +620,17 @@ function! RunWith(command)
   execute "!clear;time " . a:command . " " . expand("%:p")
 endfunction
 
+function! Compile()
+  execute "wall"
+  " execute "!clear;g++ -g -Wall -Wextra -Werror `find ./ -maxdepth 2 -iname '*.cpp' -o -iname '*.o'` -o main.exe"
+  " execute "!clear;g++ -g -Wall `find ./ -maxdepth 2 -iname '*.cpp' -o -iname '*.o'` -o main.exe"
+  execute "!clear;make"
+endfunction
+
 function! CompileAndRun()
   execute "wall"
-  " execute "!clear;g++ -Wall -Wextra -Werror `find ./ -maxdepth 1 -iname '*.cpp' -o -iname '*.o'` -o main.exe && ./main.exe"
-  execute "!clear;g++ -Werror `find ./ -maxdepth 1 -iname '*.cpp' -o -iname '*.o'` -o main.exe && ./main.exe"
+  " execute "!clear;g++ -g -Wall -Wextra -Werror `find ./ -maxdepth 2 -iname '*.cpp' -o -iname '*.o'` -o main.exe && ./main.exe"
+  execute "!clear;make && make test"
 endfunction
 
 " Visual search function

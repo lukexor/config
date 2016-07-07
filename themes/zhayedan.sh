@@ -105,7 +105,7 @@ function prompt_on() {
 
     export PROMPT_COMMAND=${PROMPT_COMMAND}'PS1="\n\
 $GRY[$WHI\@$GRY]\
-`if [[ $(active_screens) ]]; then echo " $GRY[$BLU$(active_screens)$GRY]"; fi`\
+`if [[ $(active_screens) ]]; then echo "$GRY[$BLU$(active_screens)$GRY]"; fi`\
 `if [[ $(bg_jobs) ]]; then echo "$GRY[$YEL$(bg_jobs)$GRY]"; fi`\
 `if [[ $(st_jobs) ]]; then echo "$GRY[$HCYA$(st_jobs)$GRY]"; fi`\
 `if [[ $PS1_HOST ]]; then echo " $GRY{$PR_CLR$PS1_HOST$GRY} "; fi`\
