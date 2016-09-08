@@ -235,11 +235,10 @@ alias scm='screen -S "main"'
 
 # Misc
 alias da='date "+%Y-%m-%d %H:%M:%S"'
-alias g='grep -in'
-alias grep='grep -in --color=auto'
+alias g='grep -n'
+alias grep='grep -n --color=auto'
 alias offenders='uptime;ps aux | perl -ane"print if \$F[2] > 0.9"'
 alias path='echo -e ${PATH//:/"\n"}'
-alias prove='prove -v'
 alias topmem='ps -eo pmem,pcpu,pid,user,args | sort -k 1 -r | head -20 | cut -d- -f1';
 alias topcpu='ps -eo pmem,pcpu,pid,user,args | sort -k 2 -r | head -20 | cut -d- -f1';
 alias which='type -a'

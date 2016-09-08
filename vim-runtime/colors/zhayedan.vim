@@ -87,7 +87,7 @@ hi TabLine      guibg=#000000        guibg=#b0b0b0   ctermfg=000     ctermbg=252
 hi TabLineFill  guifg=#404040   guibg=#b0b0b0   ctermfg=240    ctermbg=252       gui=none      cterm=none
 hi TabLineSel   guifg=#e0e0e0   guibg=#205070   ctermfg=fg     ctermbg=024       gui=bold      cterm=bold
 hi VertSplit    guifg=#606060   guibg=#b0b0b0   ctermfg=245    ctermbg=252       gui=none      cterm=none
-hi Folded       guibg=#000000        guibg=#000099   ctermfg=000     ctermbg=blue       gui=none      cterm=none
+hi Folded       guibg=#000000        guibg=#000099   ctermfg=grey     ctermbg=none gui=none      cterm=none
 hi FoldColumn   guibg=#000000        guibg=#000099   ctermfg=000     ctermbg=blue       gui=none      cterm=none
 
 " == Spelling =="{{{

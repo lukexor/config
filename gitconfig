@@ -41,3 +41,5 @@
     release = releases/
     hotfix = hotfixes/
     versiontag = v
+[credential]
+	helper = osxkeychain

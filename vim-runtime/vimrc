@@ -147,9 +147,9 @@ set whichwrap+=<,> " Allow left/right arrow keys move to the next line
 if exists('&foldenable')
   set foldmethod=expr " Fold based on indent
   set foldexpr=GetFoldLevel(v:lnum)
-  set foldnestmax=5 " Deepest fold
+  set foldnestmax=4 " Deepest fold
   set foldlevel=1 " The default depth to fold
-  set nofoldenable
+  set foldenable
   set foldminlines=1
 
   function! NextNonBlankLine(lnum)
@@ -372,8 +372,8 @@ vnoremap <silent> gv :call VisualSearch('gv')<CR>
 " -- Settings Toggle
 
 " Show shortcuts
-nnoremap <F1> :10split ~/.vim-runtime/shortcuts<CR>gg:wincmd j<CR>
-inoremap <F1> <Esc>:10split ~/.vim-runtime/shortcuts<CR>gg:wincmd j<CR>i
+nnoremap <F1> :17split ~/.vim-runtime/shortcuts<CR>gg:wincmd j<CR>
+inoremap <F1> <Esc>:17split ~/.vim-runtime/shortcuts<CR>gg:wincmd j<CR>i
 
 nnoremap <F2> :call ToggleSideBars()<CR>
 inoremap <F2> <Esc>:call ToggleSideBars()<CR>i
@@ -407,8 +407,6 @@ augroup filetype_formats
   autocmd FileType html setlocal nowrap
   autocmd FileType txt setlocal nolist nonumber
   autocmd FileType txt setlocal nofoldenable
-
-  autocmd FileType perl source ~/.vim-runtime/perltest.vim
 
   " Make sure the syntax is always right, even when in the middle of
   " a huge javascript inside an html file.
@@ -496,7 +494,7 @@ endif
 " Tab configuration
 noremap <c-n> <esc>:tabnew<cr>
 noremap <c-e> <esc>:tabedit 
-nnoremap <leader>tm :tabmove 
+" nnoremap <leader>tm :tabmove 
 nnoremap <c-a> :tabp<cr>
 nnoremap <c-d> :tabn<cr>
 inoremap <c-a> <esc>:tabp<cr>a
@@ -524,8 +522,8 @@ noremap <c-m> <esc>:make<CR>
 nnoremap <leader>sv :so ~/.vim-runtime/vimrc<cr>
 
 " Fast editing of various files
-nnoremap <leader>ev :vsplit ~/.vim-runtime/vimrc<cr>
-nnoremap <leader>ep :execute 'sp ~/.vim-runtime/UltiSnips_custom/' . &filetype . '.snippets'<cr>
+nnoremap <leader>ev :tabe ~/.vim-runtime/vimrc<cr>
+nnoremap <leader>ep :execute 'tabe ~/.vim-runtime/UltiSnips_custom/' . &filetype . '.snippets'<cr>
 
 " Quit all windows without saving
 noremap <leader>q :qall!<cr>
