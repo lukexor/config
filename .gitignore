@@ -1,8 +1,9 @@
 atom/packages/
 atom/storage/
-vim-runtime/yankring_history_v2.txt
-vim-runtime/.netrwhist
-vim-runtime/undodir/*
+vim/yankring_history_v2.txt
+vim/.netrwhist
+vim/undodir/*
+vim/plugged/*
 *~
 *.sw?
 *.pyc
