@@ -1,0 +1,78 @@
+<F1>    Help
+<F2>    File Tree
+<F3>    Paste
+<F4>    Tagbar
+
+<C-o>     Open (<C-t> Open in Tab)
+<C-h>     Open Recent
+<C-t>     Search Tags
+<C-p>     Search Snippets
+
+=== Tabs
+<C-n>         New tab
+<leader>l     New Split Tab
+<C-a>         Previous Tab
+<C-d>         Next Tab
+
+=== Code
+<leader>m     Make
+
+=== Formatting
+<leader>rs    Strip trailing space
+<leader>rt    Retab spaces w/ tabs
+<leader>mt    Toggle ShowMarks
+<leader>ma    Clear all marks
+
+=== Folds
+zo    Open one fold
+zO    Open fold recursive
+zR    Open all folds
+zc    Close one fold
+zC    Close fold recursive
+zM    Close all folds
+zi    Enable/Disable folds
+
+=== Quick Edits
+<leader>ev    Edit vimrc
+<leader>ep    Edit snippets
+<leader>sv    Source vimrc
+
+=== Spelling
+<leader>ss    Toggle Spellcheck
+<leader>sn    Next misspelled word
+<leader>sp    Previous misspelled
+<leader>sa    Add Word
+<leader>s?    Spelling Suggestions
+
+cs"'      Replace " with '
+ysiw]     Surround with ]
+ds]       Delete surounding ]
+
+=== Git Commands
+Git [args]
+Gstatus
+Gcommit
+Gmerge
+GPull
+Gpush
+Glog
+
+=== FZF Commands
+Files
+GFiles
+Buffers
+Tags
+BTags
+Marks
+Windows
+History
+Snippets
+Commits
+BCommits
+Maps
+
+=== TComment
+gc{motion}
+gc<Count>c{motion}
+gcc
+gc (Visual Mode)

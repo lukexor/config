@@ -198,8 +198,7 @@ alias rpmls='rpm -qlp' # list rpm contents
 alias rpminfo='rpm -qip' # list rpm info
 
 # Edit configurations
-alias vv="vi $HOME/.vimrc"
-alias vvrc="vi $HOME/.vim-runtime/vimrc"
+alias vrc="vi $HOME/.vimrc"
 alias vbo="vi $HOME/.bash_logout"
 alias vbp="vi $HOME/.bash_profile"
 alias vb="vi $HOME/.bashrc"
@@ -549,3 +548,5 @@ function workon() {
             ;;
     esac
 }
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
