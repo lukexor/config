@@ -15,8 +15,7 @@ set nocompatible
 
 set runtimepath=~/.vim,$VIMRUNTIME
 
-" Leader - ( Spacebar )
-let mapleader=" "
+let mapleader=","
 
 " ==================================================================================================
 " == Plugins
@@ -45,6 +44,8 @@ let g:airline#extensions#whitespace#trailing_format = 'trail[%s]'
 let g:airline#extensions#whitespace#mixed_indent_format = 'mixi[%s]'
 let g:airline#extensions#whitespace#long_format = 'long[%s]'
 let g:airline#extensions#whitespace#mixed_indent_file_format = 'mix-i-f[%s]'
+let g:airline#extensions#tabline#enabled = 1    " Enable buffers as tabs at the top
+let g:airline#extensions#tabline#show_splits = 0    " Disable showing number of splits
 
 let g:easytags_async=1    " Generate ctags in the background
 set tags=./tags     " Use a local tags file instead of the global
@@ -86,6 +87,7 @@ let g:showmarks_enable = 0
 " n... :  where to save the viminfo files
 set viminfo='10,f1,\"100,:20,%,n~/.viminfo
 
+set updatetime=250
 set lazyredraw
 set grepprg=grep\ -nH\ $*:    " Set grep to always print filename headers
 
