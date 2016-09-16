@@ -1,78 +1,74 @@
 --recurse=yes
---tag-relative=yes
 --extra=fq
---links=no
---fields=+lKSn
---excmd=p
+--fields=+aimtlKSn
+--excmd=number
 
 --langdef=CoffeeScript
---langmap=CoffeeScript:.coffee
---regex-CoffeeScript=/^[ \t]*(@?[a-zA-Z$_\.0-9]+)[ \t]*(=|\:)[ \t]*(\(.*\))?[ \t]*(-|=)>/\1/f,function/
---regex-CoffeeScript=/^[ \t]*([a-zA-Z$_0-9]+\:\:[a-zA-Z$_\.0-9]+)[ \t]*(=|\:)[ \t]*(\(.*\))?[ \t]*(-|=)>/\1/f,function/
---regex-CoffeeScript=/^[ \t]*describe[ \t]"(.+)"[ \t]*,[ \t]+[-=]>/\1/f,function/
---regex-CoffeeScript=/^[ \t]*describe[ \t]'(.+)'[ \t]*,[ \t]+[-=]>/\1/f,function/
---regex-CoffeeScript=/^[ \t]*it[ \t]"([^"]+)"[ \t]*,[ \t]+[-=]>/\1/f,function/
---regex-CoffeeScript=/^[ \t]*it[ \t]'([^']+)'[ \t]*,[ \t]+[-=]>/\1/f,function/
---regex-CoffeeScript=/^[ \t]*f+describe[ \t]"(.+)"[ \t]*,[ \t]+[-=]>/focused\: \1/f,function/
---regex-CoffeeScript=/^[ \t]*f+describe[ \t]'(.+)'[ \t]*,[ \t]+[-=]>/focused: \1/f,function/
---regex-CoffeeScript=/^[ \t]*f+it[ \t]"([^"]+)"[ \t]*,[ \t]+[-=]>/focused: \1/f,function/
---regex-CoffeeScript=/^[ \t]*f+it[ \t]'([^']+)'[ \t]*,[ \t]+[-=]>/focused: \1/f,function/
---regex-CoffeeScript=/^[ \t]*xdescribe[ \t]"(.+)"[ \t]*,[ \t]+[-=]>/disabled\: \1/f,function/
---regex-CoffeeScript=/^[ \t]*xdescribe[ \t]'(.+)'[ \t]*,[ \t]+[-=]>/disabled: \1/f,function/
---regex-CoffeeScript=/^[ \t]*xit[ \t]"([^"]+)"[ \t]*,[ \t]+[-=]>/disabled: \1/f,function/
---regex-CoffeeScript=/^[ \t]*xit[ \t]'([^']+)'[ \t]*,[ \t]+[-=]>/disabled: \1/f,function/
---regex-CoffeeScript=/^[ \t]*class[ \t]*([a-zA-Z$_\.0-9]+)[ \t]*/\1/f,function/
-
+--langdef=Cson
 --langdef=Css
---langmap=Css:.css
+--langdef=Go
+--langdef=Json
+--langdef=Markdown
+--langdef=Sass
+--langdef=Yaml
+--langmap=C++:+.mm
+--langmap=CoffeeScript:.coffee
+--langmap=Cson:+.gyp
+--langmap=Cson:.cson
 --langmap=Css:+.less
 --langmap=Css:+.scss
---regex-Css=/^[ \t]*(.+)[ \t]*\{/\1/f,function/
---regex-Css=/^[ \t]*(.+)[ \t]*,[ \t]*$/\1/f,function/
-
---langdef=Sass
---langmap=Sass:.sass
---regex-Sass=/^[ \t]*([#.]*[a-zA-Z_0-9]+)[ \t]*$/\1/f,function/
-
---langdef=Yaml
---langmap=Yaml:.yaml
---langmap=Yaml:+.yml
---regex-Yaml=/^[ \t]*([a-zA-Z_0-9 ]+)[ \t]*\:[ \t]*/\1/f,function/
-
---regex-Html=/^[ \t]*<([a-zA-Z]+)[ \t]*.*>/\1/f,function/
-
---langdef=Markdown
---langmap=Markdown:.md
+--langmap=Css:.css
+--langmap=Go:.go
+--langmap=javascript:.js
+--langmap=Json:.json
+--langdef=less
+--langmap=less:.less
 --langmap=Markdown:+.markdown
 --langmap=Markdown:+.mdown
 --langmap=Markdown:+.mkd
 --langmap=Markdown:+.mkdown
 --langmap=Markdown:+.ron
---regex-Markdown=/^#+[ \t]*([^#]+)/\1/f,function/
-
---langdef=Json
---langmap=Json:.json
---regex-Json=/^[ \t]*"([^"]+)"[ \t]*\:/\1/f,function/
-
---langdef=Cson
---langmap=Cson:.cson
---langmap=Cson:+.gyp
---regex-Cson=/^[ \t]*'([^']+)'[ \t]*\:/\1/f,function/
---regex-Cson=/^[ \t]*"([^"]+)"[ \t]*\:/\1/f,function/
---regex-Cson=/^[ \t]*([^'"]+)[ \t]*\:/\1/f,function/
-
---langmap=C++:+.mm
-
---langmap=Ruby:+(Rakefile)
-
+--langmap=Markdown:.md
 --langmap=Php:+.module
+--langmap=Ruby:+(Rakefile)
+--langmap=Sass:.sass
+--langmap=vim:+(vimrc)
+--langmap=Yaml:+.yml
+--langmap=Yaml:.yaml
 
---langdef=Go
---langmap=Go:.go
---regex-Go=/func([ \t]+\([^)]+\))?[ \t]+([a-zA-Z0-9_]+)/\2/f,func/
---regex-Go=/var[ \t]+([a-zA-Z_][a-zA-Z0-9_]*)/\1/v,var/
---regex-Go=/type[ \t]+([a-zA-Z_][a-zA-Z0-9_]*)/\1/t,type/
-
---regex-JavaScript=/(,|(;|^)[ \t]*(var|let|([A-Za-z_$][A-Za-z0-9_$.]+\.)*))[ \t]*([A-Za-z0-9_$]+)[ \t]*=[ \t]*function[ \t]*\(/\5/,function/
---regex-JavaScript=/function[ \t]+([A-Za-z0-9_$]+)[ \t]*\([^)]*\)/\1/,function/
---regex-JavaScript=/(,|^)[ \t]*([A-Za-z_$][A-Za-z0-9_$]+)[ \t]*:[ \t]*function[ \t]*\(/\2/,function/
+--exclude=.git
+--exclude=.hg
+--exclude=.svn
+--exclude=*.Master
+--exclude=*.bak
+--exclude=*.cache
+--exclude=*.class
+--exclude=*.csproj
+--exclude=*.csproj.user
+--exclude=*.dll
+--exclude=*.map
+--exclude=*.min.*
+--exclude=*.pdb
+--exclude=*.pyc
+--exclude=*.sln
+--exclude=*.sql
+--exclude=*.swp
+--exclude=*.tar.*
+--exclude=*/plugged/*
+--exclude=*/undodir/*
+--exclude=angular*.js
+--exclude=bootstrap*.js
+--exclude=bower_components
+--exclude=cscope.*
+--exclude=d3*.js
+--exclude=feedback*.js
+--exclude=jquery*.js
+--exclude=log
+--exclude=min
+--exclude=node_modules
+--exclude=plugins/*
+--exclude=tags
+--exclude=tmp/*
+--exclude=underscore*.js
+--exclude=vega*.js
+--exclude=vendor

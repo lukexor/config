@@ -19,7 +19,7 @@ alias gcex='echo "gc #time 1w 2d 5h 30m #comment Task completed #send-for-code-r
 alias gcm='git checkout master'
 alias gcount='git shortlog -sn'
 alias gcp='git cherry-pick'
-alias gd='git diff -w'
+alias gd='git diff -w --word-diff=color'
 alias gdt='git difftool'
 alias gf='git fetch origin'
 alias gfg='git ls-files | grep -i'

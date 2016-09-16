@@ -1,0 +1,38 @@
+# == Images
+
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.svg
+*.tiff
+*.ttf
+*.ico
+
+# == Media
+*.swf
+
+# == Archives
+
+*.tgz
+*.gz
+*.tar.gz
+*.zip
+*.jar
+*.tar
+*.iso
+
+# == Binaries
+
+bin/*
+
+# == Misc
+
+.git
+.svn
+*.log
+*.woff
+*.eot
+*.pdf
+*.db
+tags

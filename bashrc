@@ -350,8 +350,6 @@ updatedb() {
     esac
 }
 
-tags() { ctags --exclude=@$HOME/.ctagsexclude; }
-
 push() { _echodo "scp $* cael@lp:~/"; }
 pull() { _echodo "scp cael@lp:~/$1 ./"; }
 
