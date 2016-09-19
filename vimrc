@@ -1,14 +1,14 @@
-" == Vim "{{{1
+" == Vim {{{1
 " =======
 
 let mapleader=" "
+let maplocalleader=","
 set nocompatible    " Disable VI backwards compatible settings. Must be first
 
 set autowrite     " Automatically :write before running commands
 " Set directory to store backup files in.
 " These are created when saving, and deleted after successfully written
 set backupdir^=/tmp//
-set clipboard=unnamed     " Allows yank and put to use the system clipboard
 set cpoptions+=W    " Don't overwrite readonly files with :w!
 " Always use vertical diffs
 set diffopt+=vertical
@@ -18,7 +18,7 @@ set fileformat=unix
 set fileformats=unix,dos,mac    " Default file types
 set foldenable
 set foldmethod=indent
-set foldnestmax=4     " Deepest folds allowed
+set foldnestmax=1     " Deepest folds allowed for indent and syntax methods
 set gdefault    " Never have to type /g at the end of search / replace again
 set grepprg=grep\ -nH\ $*:    " Set grep to always print filename headers
 set hidden    " Hide buffers instead of closing them
@@ -54,7 +54,7 @@ set term=xterm-256color
 set ttyfast     " Smoother redraw
 set ttymouse=xterm2     " Better mouse handling for newer terminals
 set undolevels=100    " How many undos
-set updatetime=250    " How often to write to the swap file when nothing is pressed
+set updatetime=1000    " How often to write to the swap file when nothing is pressed
 " Tell vim to remember certain things when we exit
 " '10  : marks will be remembered for up to 10 previously edited files
 " f1   :  enable capital marks
@@ -77,7 +77,7 @@ if has('spell')
   set spelllang=en
 endif
 
-" == Abbreviations "{{{1
+" == Abbreviations {{{1
 " =================
 iabbrev teh the
 iabbrev adn and
@@ -86,7 +86,7 @@ iabbrev tehn then
 iabbrev @@ lukexor@gmail.com
 iabbrev ccopy Copyright Lucas Petherbridge, All Rights Reserved.
 
-" == Autocommands "{{{1
+" == Autocommands {{{1
 " ================
 
 augroup filetype_formats
@@ -95,14 +95,12 @@ augroup filetype_formats
   autocmd FileType markdown,html setlocal nowrap
   autocmd FileType html let g:AutoPairs['<']='>'
   autocmd FileType vim if has_key(g:AutoPairs, '"') | unlet g:AutoPairs['"'] | endif
-  autocmd FileType markdown,html,text setlocal nofoldenable | setlocal wrap
+  autocmd FileType markdown,html,text setlocal nofoldenable
   autocmd FileType text,help let g:airline#extensions#wordcount#enabled=1 |
       \ setlocal wrap |
       \ set nolist
   " Allow stylesheets to autocomplete hyphenated words
   autocmd FileType css,scss,sass,less setlocal iskeyword+=-
-  " Run perltidy in visual mode
-  autocmd FileType perl vnoremap <buffer> <leader>t :!perltidy --quiet --standard-output --nostandard-error-output<CR>
   autocmd FileType perl setlocal shiftwidth=4 softtabstop=4
 
   " Make sure the syntax is always right, even when in the middle of
@@ -112,6 +110,7 @@ augroup filetype_formats
   autocmd BufNewFile,BufRead *.t set filetype=perl
   autocmd BufNewFile,BufRead *.tt set filetype=tt2html.html.javascript.css
   autocmd BufNewFile,BufRead *.txt set filetype=help
+  autocmd BufWritePre,BufRead *.html,*.tt :execute 'normal gg' . maplocalleader . '=G'
   autocmd BufEnter * :syntax sync fromstart
 augroup END
 
@@ -156,7 +155,7 @@ augroup vimrcEx
 
 augroup END
 
-" == Functions "{{{1
+" == Functions {{{1
 " =============
 
 function! FollowSymlink()
@@ -208,7 +207,7 @@ function! CloseBuffer()
   endif
 endfunction
 
-" == Format "{{{1
+" == Format {{{1
 " ==========
 
 " Enable filetype specific settings
@@ -233,7 +232,7 @@ set softtabstop=2     " Spaces a tab counts for when backspacing or inserting ta
 set textwidth=100     " Max width for text on the screen
 set wrapmargin=0    " Number of chars from the right before wrapping
 
-" == Plugins "{{{1
+" == Plugins {{{1
 " ===========
 
 " Load up all of our plugins using vim-plug
@@ -264,6 +263,7 @@ let g:airline_symbols.notexists='∄'
 let g:airline_symbols.paste='ρ'
 let g:airline_symbols.spell='Ꞩ'
 let g:airline_symbols.whitespace='Ξ'
+let g:EasyClipShareYanks=1
 let g:easytags_file='./tags'
 let g:easytags_async=1    " Generate ctags in the background
 let g:easytags_dynamic_files=1
@@ -291,7 +291,7 @@ let g:session_autosave='yes'
 let g:session_autosave_periodic=3     " Automatically save the current session every 3 minutes
 let g:session_autosave_silent=1     " Silence any messages
 let g:session_default_to_last=1     " Default opening the last used session
-let g:showmarks_enable=0
+let g:showmarks_enable=1
 let g:syntastic_always_populate_loc_list=1
 let g:syntastic_auto_loc_list=1
 let g:syntastic_enable_perl_checker=1
@@ -305,52 +305,63 @@ let g:syntastic_style_error_symbol='[]'
 let g:syntastic_style_warning_symbol='??'
 let g:syntastic_warning_symbol='^'
 let g:tagbar_width=40
+let g:UltiSnipsEditSplit='vertical'
+let g:UltiSnipsSnippetDirectories=[$HOME.'/.vim/UltiSnips', $HOME.'/.vim/plugged/vim-snippets/UltiSnips/']
 let vim_markdown_preview_browser='Google Chrome'
 
-" == Mappings "{{{1
+" == Mappings {{{1
 " ============
 
-" -- Editing Mappings "{{{2
+" -- Editing Mappings {{{2
 
-" Select inner word
-nnoremap <leader>i viw
-" Save all changed buffers if file exists and is not read-only
-nnoremap <leader>w :update<CR>
-nnoremap <leader>wa :wall<CR>
+augroup mappings
+  autocmd!
+  " Run perltidy in visual mode
+  autocmd FileType perl vnoremap <buffer> <leader>t :!perltidy --quiet --standard-output --nostandard-error-output<CR>
+augroup END
+
+" Use jk to get out of insert mode
+inoremap jk <ESC>
+nnoremap <leader>w :write<CR>
 nnoremap <leader>m :make<CR>
 " Move current line down one
-nnoremap - ddp
+nnoremap <leader>j ddp
 " Move current line up one
-nnoremap _ dd<up>P
+nnoremap <leader>k dd<up>P
 " Use enter to create new lines w/o entering insert mode
 nnoremap <CR> o<Esc>
-" Below is to fix issues with the ABOVE mappings in quickfix window
-autocmd CmdwinEnter * nnoremap <CR> <CR>
-autocmd BufReadPost quickfix nnoremap <CR> <CR>
+augroup enter
+  autocmd!
+  " Below is to fix issues with the ABOVE mappings in quickfix window
+  autocmd CmdwinEnter * nnoremap <CR> <CR>
+  autocmd BufReadPost quickfix nnoremap <CR> <CR>
+augroup END
 " Stop highlight after searching
 nnoremap <silent> <leader><CR> :nohlsearch<CR>
 " Toggle spellcheck
 nnoremap <leader>st :setlocal spell!<CR>
-" Next misspelled word
-nnoremap <leader>sn ]s
-" Previous misspelled word
-nnoremap <leader>sp [s
-" Add highlighted word
-nnoremap <leader>sa zg
-" Remove highlighted word
-nnoremap <leader>sr zw
-" List spelling corrections
-nnoremap <leader>s? z=
 " Surround word in various symbols. This works faster than surround.vim
+vnoremap <leader>" <esc>`>a"<esc>`<i"<esc>`>ll
+vnoremap <leader>' <esc>`>a'<esc>`<i'<esc>`>ll
+vnoremap <leader>< <esc>`>a><esc>`<i<<esc>`>ll
+vnoremap <leader>> <esc>`>a><esc>`<i<<esc>`>ll
+vnoremap <leader>[ <esc>`>a]<esc>`<i[<esc>`>ll
+vnoremap <leader>] <esc>`>a]<esc>`<i[<esc>`>ll
+vnoremap <leader>{ <esc>`>a}<esc>`<i{<esc>`>ll
+vnoremap <leader>} <esc>`>a}<esc>`<i{<esc>`>ll
+vnoremap <leader>( <esc>`>a)<esc>`<i(<esc>`>ll
+vnoremap <leader>) <esc>`>a)<esc>`<i(<esc>`>ll
 nnoremap <leader>" viw<esc>a"<esc>hbi"<esc>lel
 nnoremap <leader>' viw<esc>a'<esc>hbi'<esc>lel
+nnoremap <leader>` viw<esc>a`<esc>hbi`<esc>lel
 nnoremap <leader>< viw<esc>a><esc>hbi<<esc>lel
+nnoremap <leader>> viw<esc>a><esc>hbi<<esc>lel
 nnoremap <leader>[ viw<esc>a]<esc>hbi[<esc>lel
+nnoremap <leader>] viw<esc>a]<esc>hbi[<esc>lel
 nnoremap <leader>{ viw<esc>a}<esc>hbi{<esc>lel
+nnoremap <leader>} viw<esc>a}<esc>hbi{<esc>lel
 nnoremap <leader>( viw<esc>a)<esc>hbi(<esc>lel
-" Uppercase curent word in insert/normal modes
-inoremap <c-u> <esc>viwU
-nnoremap <c-u> viwU
+nnoremap <leader>) viw<esc>a)<esc>hbi(<esc>lel
 " Count the number of words in the current document
 nnoremap <leader>cw :!wc -w %<CR>
 " Remove trailing whitespace
@@ -360,36 +371,26 @@ nnoremap <leader>rt :%retab!<CR>
 " Reindent entire file. NOTE: This may indent unexpectedly
 nnoremap <leader>ri mzgg=G`z
 
-" -- Fold Mappings "{{{2
-
-" Make folds easier
-" Open one fold under the cursor
-nnoremap + zo
-" Open all folds
-nnoremap = zR
-" Close one fold under the cursor
-nnoremap - zc
-" Close all folds
-nnoremap _ zM
-
-" -- Function Mappings "{{{2
+" -- Function Mappings {{{2
 
 " Display custom help window with shortcut references
-nnoremap <F1> :vsplit $HOME/.vim/help<CR>
-inoremap <F1> <Esc>:vsplit $HOME/.vim/help<CR>
-nnoremap <F2> :NERDTreeToggle<CR>
+noremap <F2> :NERDTreeToggle<CR>
 inoremap <F2> <Esc>:NERDTreeToggle<CR>i
-nnoremap <F3> :TagbarToggle<CR>
+noremap <F3> :TagbarToggle<CR>
 inoremap <F3> <Esc>:TagbarToggle<CR>i
+noremap <F12> :edit $HOME/.vim/help.md<CR>
+inoremap <F12> <Esc>:edit $HOME/.vim/help.md<CR>
 
-" -- Movement Mappings "{{{2
+" -- Movement Mappings {{{2
 
+" Remap add mark, because vim-easyclip uses m as 'move'
+nnoremap gm m
 " Quicker window movement
-nnoremap <C-h> <C-w>h
-nnoremap <C-j> <C-w>j
-nnoremap <C-k> <C-w>k
-nnoremap <C-l> <C-w>l
 " Warning: C-h may be interpreted as <BS> in neovim
+noremap <C-h> <C-w>h
+noremap <C-j> <C-w>j
+noremap <C-k> <C-w>k
+noremap <C-l> <C-w>l
 nnoremap K <PageUp>
 nnoremap J <PageDown>
 " Navigate properly when lines are wrapped
@@ -400,8 +401,11 @@ vnoremap k gk
 " Use tab to jump between blocks, because it's easier
 nnoremap <tab> %
 vnoremap <tab> %
+" Easier beginning/end of line
+nnoremap H 0
+nnoremap L $
 
-" -- Plugin Mappings "{{{2
+" -- Plugin Mappings {{{2
 
 let g:AutoPairsShortcutToggle='<C-0>'
 let g:AutoPairsShortcutFastWrap='<C-l>'
@@ -411,11 +415,11 @@ xmap ga <Plug>(EasyAlign)
 nmap ga <Plug>(EasyAlign)
 " FZF Open various files
 inoremap <C-f> <plug>(fzf-complete-line)
-nnoremap <C-b> :call SetProjectRoot()<CR>:Buffers<CR>
-nnoremap <C-o> :call SetProjectRoot()<CR>:Files<CR>
-nnoremap <C-e> :call SetProjectRoot()<CR>:Snippets<CR>
-nnoremap <C-u> :call SetProjectRoot()<CR>:History<CR>
-nnoremap <C-t> :call SetProjectRoot()<CR>:Tags<CR>
+noremap <C-b> :call SetProjectRoot()<CR>:Buffers<CR>
+noremap <C-o> :call SetProjectRoot()<CR>:Files<CR>
+noremap <C-e> :call SetProjectRoot()<CR>:Snippets<CR>
+noremap <C-u> :call SetProjectRoot()<CR>:History<CR>
+noremap <C-t> :call SetProjectRoot()<CR>:Tags<CR>
 " Fugitive
 nnoremap <leader>gst :Gstatus<CR>
 nnoremap <leader>gd :Gdiff<CR>
@@ -430,14 +434,13 @@ nnoremap <leader>s :SaveSession<space>
 nnoremap <leader>o :OpenSession<space>
 let vim_markdown_preview_hotkey='<leader>pm'
 
-" -- System Mapping "{{{2
+" -- System Mapping {{{2
 
-" Source vimrc
-nnoremap <leader>sv :so ~/.vimrc<CR>
-" Edit vimrc
-nnoremap <leader>ev :e ~/.vimrc<CR>
+nnoremap <leader>sv :source $MYVIMRC<CR>
+nnoremap <leader>ev :vsplit $MYVIMRC<CR>
+nnoremap <leader>ep :UltiSnipsEdit<CR>
 
-" -- Windows Mapping "{{{2
+" -- Windows Mapping {{{2
 
 nnoremap <leader>1 :b1<CR>
 nnoremap <leader>2 :b2<CR>
@@ -448,19 +451,10 @@ nnoremap <leader>6 :b6<CR>
 nnoremap <leader>7 :b7<CR>
 nnoremap <leader>8 :b8<CR>
 nnoremap <leader>9 :b9<CR>
-" For copying/pasting to/from clipboard
-nnoremap <leader>y :.w !pbcopy<CR><CR>
-vnoremap <leader>y :w !pbcopy<CR><CR>
-nnoremap <leader>p :r !pbpaste<CR>
-nnoremap <leader>P k:r !pbpaste<CR>
-" Opens a new buffer to the right
-nnoremap <leader>l :rightbelow vnew<CR>
 " Create and move between buffers
-nnoremap <C-n> <esc>:enew<CR>
-nnoremap <C-a> :bprevious<CR>
-nnoremap <C-d> :bnext<CR>
-inoremap <C-a> <esc>:bprevious<CR>a
-inoremap <C-d> <esc>:bnext<CR>a
+noremap <leader>n <esc>:enew<CR>
+noremap <leader>a :bprevious<CR>
+noremap <leader>d :bnext<CR>
 " Zoom a vim pane, <C-w>= to re-balance
 nnoremap <leader>- :wincmd _<CR>:wincmd \|<CR>
 nnoremap <leader>= :wincmd =<CR>
@@ -470,21 +464,12 @@ nnoremap <silent> <Left> :vertical resize -5<CR>
 nnoremap <silent> <Up> :resize +5<CR>
 nnoremap <silent> <Down> :resize -5<CR>
 " Switch between the last two files
-nnoremap <leader><leader> <c-^>
-" Quickly close current buffer
-nnoremap <leader>q :call CloseBuffer()<CR>
-" Close all buffers and exit vim
-nnoremap <leader>Q :qall!<CR>
-" Quit and save current buffer
-noremap <leader>wq :w<CR>:bd<CR>
-" Save all buffers and exit vim
-noremap <leader>wQ :wall<CR>:qall!<CR>
-" Save and exit
-noremap <leader>x :x<CR>
-" Close the current window/buffer
-nnoremap ZZ :call CloseBuffer()<CR>
+nnoremap <leader><leader> b#
+nnoremap <leader>q :quit<CR>
+nnoremap <leader>Q :quit!<CR>
+noremap <leader>x :call CloseBuffer()<CR>
 
-" == Syntax "{{{1
+" == Syntax {{{1
 " ==========
 
 colorscheme solarized
@@ -523,7 +508,7 @@ highlight link SyntasticWarningSign SignColumn
 highlight link SyntasticStyleErrorSign SignColumn
 highlight link SyntasticStyleWarningSign SignColumn
 
-" == Windows "{{{1
+" == Windows {{{1
 " ===========
 
 " Open new split panes to right and bottom, which feels more natural

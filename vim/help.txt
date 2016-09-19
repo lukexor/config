@@ -1,0 +1,172 @@
+== Functions {{{1
+
+<F1>          Help
+<F2>          File Tree
+<F3>          Tagbar
+<F12>         Map QuickRef
+
+== Tabs {{{1
+
+<leader>n     New Buffer
+<leader>a     Previous Buffer
+<leader>d     Next Buffer
+
+== Code {{{1
+
+<leader>m     Make
+
+== Formatting {{{1
+
+<leader>rs    Strip trailing space
+<leader>rt    Retab spaces w/ tabs
+<leader>mt    Toggle ShowMarks
+<leader>ma    Clear all marks
+ga            Start EasyAlign
+
+== Folds {{{1
+
+zo            Open one fold
+zO            Open fold recursive
+zR            Open all folds
+zc            Close one fold
+zC            Close fold recursive
+zM            Close all folds
+zi            Enable/Disable folds
+
+== Quick Edits {{{1
+
+<leader>ev    Edit vimrc
+<leader>ep    Edit snippets
+<leader>sv    Source vimrc
+
+== Spelling {{{1
+
+<leader>ss    Toggle Spellcheck
+<leader>sn    Next misspelled word
+<leader>sp    Previous misspelled
+<leader>sa    Add Word
+<leader>s?    Spelling Suggestions
+
+cs"'          Replace " with '
+ds]           Delete surounding ]
+
+== Git Commands {{{1
+
+:Git          [args]    Execute any git command
+:GBrowse      Open current file in GitHub
+:Gmove        Git moves and renames buffer
+:Gremove      Git removes and deletes buffer
+
+<leader>gm    [args]    Merge a branch or tag
+<leader>gst   [args]    Opens Git status in a buffer window
+  -           Add/Reset file
+  p           Add/Reset Patch file
+<leader>gc    Commits currently staged changes, prompts for commit message
+<leader>gpl   Update the current branch
+<leader>gps   Push the current branch
+<leader>glg   Open the git log in a split window
+<leader>gd    Compared staged version of file with working
+<leader>gb    Bring up a git blame panel
+  <ENTER>     Edit commit
+  o           Edit commit with split window
+
+[c            Next git Hunk
+]c            Next git Hunk
+<leader>hp    Preview git hunk
+<leader>hs    Stage git hunk
+<leader>hu    Undo git hunk
+
+== FZF Commands {{{1
+
+<C-b>         Open buffer
+<C-o>         Fuzzy open file
+<C-p>         Search Snippets
+<C-m>         Search File History
+<C-t>         Search All Tags
+:BCommits     Search Commits for current buffer
+:BTags        Search Tags for current buffer
+:Commits      Search All Commits
+:GFiles       Open Git file
+:Maps         Search Mappings
+:Marks        Search Marks
+
+== Commenting {{{1
+
+[count]gcc    Comment out {count} lines
+
+== Sessions
+
+SaveSession {name}     Save a vim session
+OpenSession {name}     Open a vim session
+DeleteSession {name}   Delete a vim session
+
+== Alternate Files {{{1
+
+:A            switches to the header file corresponding to the current file being edited (or vise versa)
+:AS           splits and switches
+:AV           vertical splits and switches
+:AN           cycles through matches
+:IH           switches to file under cursor
+:IHS          splits and switches
+:IHV          vertical splits and switches
+:IHN          cycles through matches
+<leader>ih    switches to file under cursor
+<leader>is    switches to the alternate file of file under cursor (e.g. on  <foo.h> switches to foo.cpp)
+<leader>ihn   cycles through matches
+
+== Verbs {{{1
+
+# All verbs are in the form [count]{cmd}{motion}
+
+>             Indent
+["x]gr        Replace {motion} with contents of register x
+["x]grr       Replace [count] lines with contents of register x
+c             Change
+cp,cP         Copy to system clipboard, cP copies the current line
+cv            Paste the contents of the clipboard to the next line
+d             Delete
+gU            Convert to uppercase
+gc            Toggle Comment
+gs            Sort lines, within a line motion sort by commas
+gt,gT         Convert to Title Case, gT converts the whole line
+gu            Convert to lowercase
+m             Move (Yanks and Deletes)
+v             Visually Select
+y             Yank
+
+== Motions/Text-Objects {{{1
+
+/             Search next match
+`             `Go to Mark
+ai,ii         Inner/Around Current or Greater Indent Level
+aI,iI         Inner/Around Current Same Indent Level
+ar,ir         Inner/Around Ruby Block
+ie,ae         Inner/Around Entire Buffer
+i),a)         Inner/Around Parenthesis
+i>,a>         Inner/Around Block
+i["'],a["']   Inner/Around Quotes
+i[wW],a[wW]   Inner/Around Word/WORD
+i],a]         Inner/Around Brackets
+il,al         Inner/Around Current Line
+ip,ap         Inner/Around Paragraph
+is/as         Inner/Around Sentence
+it,at         Inner/Around Tag
+i},a}         Inner/Around Curly Braces
+f,F           Find next character
+t,T           Find before next character
+w,W           word/WORD
+b,B           Back word/WORD
+
+== Misc {{{1
+
+gm            Add Mark
+]s            Next mispelled word
+[s            Previous misspelled word
+zg            Add word to dictionary
+zw            Remove word from dictionary
+z=            List spelling corrections
+
+CTRL-N        Paste Next
+CTRL-P        Paste Previous
+
+# vim:ft=help:foldmethod=marker:foldlevel=0

@@ -3,11 +3,15 @@
 # Used to define Readline variables
 ##==========================================================================##
 
+$include /etc/inputrc
+
 # Make sure we don't output everything on the 1 line
 set horizontal-scroll-mode off
 
 # Disable bell
 set bell-style none
+
+set convert-meta on
 
 # Case-insensitive filename matching & completion
 set completion-ignore-case on
