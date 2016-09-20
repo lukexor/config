@@ -74,7 +74,9 @@ Plug 'nelstrom/vim-textobj-rubyblock'     " Ruby textobj
 " ===================
 
 Plug 'JamshedVesuna/vim-markdown-preview'    " Preview markdown in a browser
-Plug 'SirVer/ultisnips'    " Code Snippets
+if v:version >= 704
+  Plug 'SirVer/ultisnips'    " Code Snippets
+endif
 Plug 'fatih/vim-go', { 'for': 'go' }    " GoLang support
 Plug 'honza/vim-snippets'     " Snippet files
 Plug 'jez/vim-superman'   " Allows editing of man pages in vim with syntax highlighting

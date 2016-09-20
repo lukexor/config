@@ -38,7 +38,9 @@ set wildignore+=tmp/**
 set wildignore+=*.png,*.jpg,*.gif
 set wildignore+=*.swp,*.bak,*.pyc,*.class
 set wildignore+=*/build/**
-set relativenumber    " Toggle relative line numbering
+if v:version >= 704
+  set relativenumber    " Toggle relative line numbering
+endif
 set sessionoptions-=help    " Don't save help windows
 set scrolloff=8     " Start scrolling when we're # lines away from margins
 set showcmd     " Display incomplete command
@@ -144,10 +146,12 @@ augroup vimrcEx
   autocmd InsertLeave * highlight CursorLine ctermbg=017 ctermfg=None
 
   " Turns relative line numbers on and off when entering and exiting insert mode
-  autocmd FocusLost * call ToggleRelativeOn()
-  autocmd FocusGained * call ToggleRelativeOn()
-  autocmd InsertEnter * call ToggleRelativeOn()
-  autocmd InsertLeave * call ToggleRelativeOn()
+  if v:version >= 704
+    autocmd FocusLost * call ToggleRelativeOn()
+    autocmd FocusGained * call ToggleRelativeOn()
+    autocmd InsertEnter * call ToggleRelativeOn()
+    autocmd InsertLeave * call ToggleRelativeOn()
+  endif
 
 augroup END
 
@@ -183,14 +187,16 @@ function! SetProjectRoot()
 endfunction
 
 " Enables toggling of relative line number with absolute
-function! ToggleNumbersOn()
-  set nu!
-  set rnu
-endfunction
-function! ToggleRelativeOn()
-  set rnu!
-  set nu
-endfunction
+if v:version >= 704
+  function! ToggleNumbersOn()
+    set number!
+    set relativenumber
+  endfunction
+  function! ToggleRelativeOn()
+    set relativenumber!
+    set number
+  endfunction
+endif
 
 " Closes current buffer without destroying splits, and if it's the last buffer, exits vim
 function! CloseBuffer()
@@ -219,7 +225,12 @@ set expandtab     " Replace the tab key with spaces
 " l   Don't format long lines in insert mode if it was longer than textwidth
 " q   Allow using gq to format comments
 " r   Insert comment after hitting <Enter> in Insert mode
-set formatoptions=1cjlnq
+set formatoptions+=1clnq
+" t   Auto-wrap using textwidth
+set formatoptions-=t
+if v:version >= 704
+  set formatoptions+=j
+endif
 set linebreak     " Wrap long lines at a character in breakat
 set nowrap    " Default line wrap
 set shiftround    " Round to nearest multiple of shiftwidth
@@ -232,8 +243,8 @@ set wrapmargin=0    " Number of chars from the right before wrapping
 " ===========
 
 " Load up all of our plugins using vim-plug
-if filereadable(expand("~/.vim/bundles.vim"))
-  source ~/.vim/bundles.vim
+if filereadable(expand("~/.vim/plugins.vim"))
+  source ~/.vim/plugins.vim
 endif
 
 " Ensure dictionary is defined but don't overwrite it
@@ -301,8 +312,10 @@ let g:syntastic_style_error_symbol='[]'
 let g:syntastic_style_warning_symbol='??'
 let g:syntastic_warning_symbol='^'
 let g:tagbar_width=40
-let g:UltiSnipsEditSplit='vertical'
-let g:UltiSnipsSnippetDirectories=[$HOME.'/.vim/UltiSnips', $HOME.'/.vim/plugged/vim-snippets/UltiSnips/']
+if v:version >= 704
+  let g:UltiSnipsEditSplit='vertical'
+  let g:UltiSnipsSnippetDirectories=[$HOME.'/.vim/UltiSnips', $HOME.'/.vim/plugged/vim-snippets/UltiSnips/']
+endif
 let vim_markdown_preview_browser='Google Chrome'
 
 " == Mappings {{{1
@@ -406,7 +419,9 @@ let vim_markdown_preview_hotkey='<leader>pm'
 
 " -- System Mapping {{{2
 
-noremap <leader>ep :UltiSnipsEdit<CR>
+if v:version >= 704
+  noremap <leader>ep :UltiSnipsEdit<CR>
+endif
 noremap <leader>ev :vsplit $MYVIMRC<CR>
 noremap <leader>m :make<CR>
 noremap <leader>sv :source $MYVIMRC<CR>
