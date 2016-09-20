@@ -2,6 +2,7 @@
 # == .bashrc
 # Loaded if interactive non-login shell
 
+set -o vi
 sourcefile() { [[ -r "$1" ]] && source $1; }
 
 # Functions to help us manage paths.
@@ -177,7 +178,7 @@ alias df='df -kh' # Human readable in 1K block sizes with file system type
 alias stop='kill -STOP'
 
 # Editing - All roads lead to $EDITOR
-alias vi="$EDITOR -p"
+alias vi="$EDITOR"
 alias svi="sudo $EDITOR"
 alias nano=$EDITOR
 alias emacs=$EDITOR

@@ -1,4 +1,9 @@
-# Headers
+*markdown.txt*
+
+                                                                *markdown-ref*
+
+==============================================================================
+Headers
 
   # H1
 
@@ -18,13 +23,17 @@
   Alt-H2
   ------
 
-# Emphasis
+==============================================================================
+Emphasis
+
 Emphasis, aka italics, with *asterisks* or _underscores_.
 Strong emphasis, aka bold, with **asterisks** or __underscores__.
 Combined emphasis with **asterisks and _underscores_**.
 Strikethrough uses two tildes. ~~Scratch this.~~
 
-# Lists
+==============================================================================
+Lists
+
 1. First ordered list item
 2. Another item
   * Unordered sub-list. 
@@ -44,7 +53,9 @@ required.)
 - Or minuses
 + Or pluses
 
-# Links
+==============================================================================
+Links
+
 [I'm an inline-style link](https://www.google.com)
 
 [I'm an inline-style link with title](https://www.google.com "Google's Homepage")
@@ -65,7 +76,9 @@ Some text to show that the reference links can follow later.
 [1]: http://slashdot.org
 [link text itself]: http://www.reddit.com
 
-# Images
+==============================================================================
+Images
+
 Inline-style:
 ![alt text](https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Logo Title Text 1")
 
@@ -73,7 +86,9 @@ Reference-style:
 ![alt text][logo]
 [logo]: https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Logo Title Text 2"
 
-# Code and Syntax Highlighting
+==============================================================================
+Code and Syntax Highlighting
+
 Inline `code` has `back-ticks around` it.
 
 Blocks use three back-ticks
@@ -93,7 +108,9 @@ No language indicated, so no syntax highlighting.
 But let's throw in a <b>tag</b>.
 ```
 
-# Tables
+==============================================================================
+Tables
+
 Colons can be used to align columns.
 
 | Tables        | Are           | Cool  |
@@ -110,7 +127,9 @@ Markdown | Less | Pretty
 *Still* | `renders` | **nicely**
 1 | 2 | 3
 
-# Blockquotes
+==============================================================================
+Blockquotes
+
 > Blockquotes are very handy in email to emulate reply text.
 > This line is part of the same quote.
 
@@ -118,7 +137,9 @@ Quote break.
 
 > This is a very long line that will still be quoted properly when it wraps. Oh boy let's keep writing to make sure this is long enough to actually wrap for everyone. Oh, you can *put* **Markdown** into a blockquote.
 
-# Inline HTML
+==============================================================================
+Inline HTML
+
 <dl>
   <dt>Definition list</dt>
   <dd>Is something people use sometimes.</dd>
@@ -127,7 +148,8 @@ Quote break.
   <dd>Does *not* work **very** well. Use HTML <em>tags</em>.</dd>
 </dl>
 
-# Horizontal Rule
+==============================================================================
+Horizontal Rule
 
 Three or more...
 
@@ -143,7 +165,9 @@ ___
 
 Underscores
 
-# Line Breaks
+==============================================================================
+Line Breaks
+
 Here's a line for us to start with.
 
 This line is separated from the one above by two newlines, so it will be a *separate paragraph*.
@@ -151,12 +175,16 @@ This line is separated from the one above by two newlines, so it will be a *sepa
 This line is also a separate paragraph, but...
 This line is only separated by a single newline, so it's a separate line in the *same paragraph*.
 
-# Youtube Videos
+==============================================================================
+Youtube Videos
+
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=YOUTUBE_VIDEO_ID_HERE
 " target="_blank"><img src="http://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg" 
 alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
 
 [![IMAGE ALT TEXT HERE](http://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg)](http://www.youtube.com/watch?v=YOUTUBE_VIDEO_ID_HERE)
 
-# Comments
+==============================================================================
+Comments
+
 [//]: # (Here's a comment)

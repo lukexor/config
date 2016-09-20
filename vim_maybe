@@ -1,6 +1,0 @@
-nnoremap <leader>ep :execute 'tabe ~/.vim-runtime/UltiSnips_custom/' . &filetype . '.snippets'<cr>
-let g:UltiSnipsSnippetDirectories=["UltiSnips", "UltiSnips_custom"]
-
-let g:snips_author = 'Lucas Petherbridge' " Set author for snippets
-let g:snips_authoremail = 'lukexor@gmail.com'
-let g:snippets_dir = "~/.vim-runtime/snippets" " Set snippets directory

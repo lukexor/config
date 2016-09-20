@@ -12,9 +12,13 @@ trim_trailing_whitespace = true
 [Makefile]
 indent_style = tab
 
-[*.{js,rb,yml,html,cson,json,coffee}]
+[*.{js,rb,yml,html,cson,json,coffee,Rakefile}]
 indent_style = space
 indent_size = 2
 
 [*.md]
 trim_trailing_whitespace = false
+
+[*.snippets]
+indent_style = tab
+indent_size = 4

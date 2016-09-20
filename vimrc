@@ -2,7 +2,6 @@
 " =======
 
 let mapleader=" "
-let maplocalleader=","
 set nocompatible    " Disable VI backwards compatible settings. Must be first
 
 set autowrite     " Automatically :write before running commands
@@ -28,7 +27,6 @@ set ignorecase    " Case insensitive searching (unless specified)
 set lazyredraw    " Don't redraw screen during macros or commands
 " Set < and > as brackets for jumping with %
 set matchpairs+=<:>
-set mouse=a     " Allow mouse in all modes
 " Completion mode - match longest then next full match
 set wildmode=list:longest,full
 " Stuff to ignore when tab completing
@@ -52,7 +50,6 @@ set smartcase     " Ignores ignorecase when searching for upercase characters
 set tags=./tags     " Use a local tags file instead of the global
 set term=xterm-256color
 set ttyfast     " Smoother redraw
-set ttymouse=xterm2     " Better mouse handling for newer terminals
 set undolevels=100    " How many undos
 set updatetime=1000    " How often to write to the swap file when nothing is pressed
 " Tell vim to remember certain things when we exit
@@ -110,7 +107,6 @@ augroup filetype_formats
   autocmd BufNewFile,BufRead *.t set filetype=perl
   autocmd BufNewFile,BufRead *.tt set filetype=tt2html.html.javascript.css
   autocmd BufNewFile,BufRead *.txt set filetype=help
-  autocmd BufWritePre,BufRead *.html,*.tt :execute 'normal gg' . maplocalleader . '=G'
   autocmd BufEnter * :syntax sync fromstart
 augroup END
 
@@ -245,7 +241,6 @@ if !exists('g:airline_symbols')
   let g:airline_symbols={}
 endif
 
-let NERDTreeMouseMode=2     " Single click for directories, double click for files
 let g:airline#extensions#tabline#enabled=1    " Enable buffers as tabs at the top
 let g:airline#extensions#tabline#show_splits=0    " Disable showing number of splits
 let g:airline#extensions#tabline#buffer_nr_show=1     " Show buffer numbers
@@ -263,6 +258,7 @@ let g:airline_symbols.notexists='∄'
 let g:airline_symbols.paste='ρ'
 let g:airline_symbols.spell='Ꞩ'
 let g:airline_symbols.whitespace='Ξ'
+let g:airline#extensions#tmuxline#enabled=0
 let g:EasyClipShareYanks=1
 let g:easytags_file='./tags'
 let g:easytags_async=1    " Generate ctags in the background
@@ -291,7 +287,7 @@ let g:session_autosave='yes'
 let g:session_autosave_periodic=3     " Automatically save the current session every 3 minutes
 let g:session_autosave_silent=1     " Silence any messages
 let g:session_default_to_last=1     " Default opening the last used session
-let g:showmarks_enable=1
+let g:showmarks_enable=0
 let g:syntastic_always_populate_loc_list=1
 let g:syntastic_auto_loc_list=1
 let g:syntastic_enable_perl_checker=1
@@ -323,7 +319,6 @@ augroup END
 " Use jk to get out of insert mode
 inoremap jk <ESC>
 nnoremap <leader>w :write<CR>
-nnoremap <leader>m :make<CR>
 " Move current line down one
 nnoremap <leader>j ddp
 " Move current line up one
@@ -340,28 +335,6 @@ augroup END
 nnoremap <silent> <leader><CR> :nohlsearch<CR>
 " Toggle spellcheck
 nnoremap <leader>st :setlocal spell!<CR>
-" Surround word in various symbols. This works faster than surround.vim
-vnoremap <leader>" <esc>`>a"<esc>`<i"<esc>`>ll
-vnoremap <leader>' <esc>`>a'<esc>`<i'<esc>`>ll
-vnoremap <leader>< <esc>`>a><esc>`<i<<esc>`>ll
-vnoremap <leader>> <esc>`>a><esc>`<i<<esc>`>ll
-vnoremap <leader>[ <esc>`>a]<esc>`<i[<esc>`>ll
-vnoremap <leader>] <esc>`>a]<esc>`<i[<esc>`>ll
-vnoremap <leader>{ <esc>`>a}<esc>`<i{<esc>`>ll
-vnoremap <leader>} <esc>`>a}<esc>`<i{<esc>`>ll
-vnoremap <leader>( <esc>`>a)<esc>`<i(<esc>`>ll
-vnoremap <leader>) <esc>`>a)<esc>`<i(<esc>`>ll
-nnoremap <leader>" viw<esc>a"<esc>hbi"<esc>lel
-nnoremap <leader>' viw<esc>a'<esc>hbi'<esc>lel
-nnoremap <leader>` viw<esc>a`<esc>hbi`<esc>lel
-nnoremap <leader>< viw<esc>a><esc>hbi<<esc>lel
-nnoremap <leader>> viw<esc>a><esc>hbi<<esc>lel
-nnoremap <leader>[ viw<esc>a]<esc>hbi[<esc>lel
-nnoremap <leader>] viw<esc>a]<esc>hbi[<esc>lel
-nnoremap <leader>{ viw<esc>a}<esc>hbi{<esc>lel
-nnoremap <leader>} viw<esc>a}<esc>hbi{<esc>lel
-nnoremap <leader>( viw<esc>a)<esc>hbi(<esc>lel
-nnoremap <leader>) viw<esc>a)<esc>hbi(<esc>lel
 " Count the number of words in the current document
 nnoremap <leader>cw :!wc -w %<CR>
 " Remove trailing whitespace
@@ -378,8 +351,8 @@ noremap <F2> :NERDTreeToggle<CR>
 inoremap <F2> <Esc>:NERDTreeToggle<CR>i
 noremap <F3> :TagbarToggle<CR>
 inoremap <F3> <Esc>:TagbarToggle<CR>i
-noremap <F12> :edit $HOME/.vim/help.md<CR>
-inoremap <F12> <Esc>:edit $HOME/.vim/help.md<CR>
+noremap <F12> :help lp-help<CR>
+inoremap <F12> <Esc>:help lp-help<CR>
 
 " -- Movement Mappings {{{2
 
@@ -387,10 +360,10 @@ inoremap <F12> <Esc>:edit $HOME/.vim/help.md<CR>
 nnoremap gm m
 " Quicker window movement
 " Warning: C-h may be interpreted as <BS> in neovim
-noremap <C-h> <C-w>h
-noremap <C-j> <C-w>j
-noremap <C-k> <C-w>k
-noremap <C-l> <C-w>l
+" noremap <C-h> <C-w>h
+" noremap <C-j> <C-w>j
+" noremap <C-k> <C-w>k
+" noremap <C-l> <C-w>l
 nnoremap K <PageUp>
 nnoremap J <PageDown>
 " Navigate properly when lines are wrapped
@@ -401,9 +374,6 @@ vnoremap k gk
 " Use tab to jump between blocks, because it's easier
 nnoremap <tab> %
 vnoremap <tab> %
-" Easier beginning/end of line
-nnoremap H 0
-nnoremap L $
 
 " -- Plugin Mappings {{{2
 
@@ -415,10 +385,10 @@ xmap ga <Plug>(EasyAlign)
 nmap ga <Plug>(EasyAlign)
 " FZF Open various files
 inoremap <C-f> <plug>(fzf-complete-line)
-noremap <C-b> :call SetProjectRoot()<CR>:Buffers<CR>
+noremap <leader>b :call SetProjectRoot()<CR>:Buffers<CR>
 noremap <C-o> :call SetProjectRoot()<CR>:Files<CR>
-noremap <C-e> :call SetProjectRoot()<CR>:Snippets<CR>
-noremap <C-u> :call SetProjectRoot()<CR>:History<CR>
+noremap <C-i> :call SetProjectRoot()<CR>:Snippets<CR>
+noremap <leader>h :call SetProjectRoot()<CR>:History<CR>
 noremap <C-t> :call SetProjectRoot()<CR>:Tags<CR>
 " Fugitive
 nnoremap <leader>gst :Gstatus<CR>
@@ -436,9 +406,13 @@ let vim_markdown_preview_hotkey='<leader>pm'
 
 " -- System Mapping {{{2
 
-nnoremap <leader>sv :source $MYVIMRC<CR>
-nnoremap <leader>ev :vsplit $MYVIMRC<CR>
-nnoremap <leader>ep :UltiSnipsEdit<CR>
+noremap <leader>ep :UltiSnipsEdit<CR>
+noremap <leader>ev :vsplit $MYVIMRC<CR>
+noremap <leader>m :make<CR>
+noremap <leader>sv :source $MYVIMRC<CR>
+noremap <leader>t :echom "Run Tests not setup yet"<CR>
+" Make CTRL-C exit the same as escape
+inoremap <C-c> <Esc>
 
 " -- Windows Mapping {{{2
 
@@ -464,10 +438,14 @@ nnoremap <silent> <Left> :vertical resize -5<CR>
 nnoremap <silent> <Up> :resize +5<CR>
 nnoremap <silent> <Down> :resize -5<CR>
 " Switch between the last two files
-nnoremap <leader><leader> b#
-nnoremap <leader>q :quit<CR>
-nnoremap <leader>Q :quit!<CR>
+noremap <leader>l :b#<CR>
+noremap <leader>q :quit<CR>
+noremap <leader>Q :quit!<CR>
 noremap <leader>x :call CloseBuffer()<CR>
+" Switch to alternate file/header
+noremap <leader>A :A<CR>
+" Disable EX mode
+noremap Q <NOP>
 
 " == Syntax {{{1
 " ==========
