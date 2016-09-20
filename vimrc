@@ -474,7 +474,9 @@ set noerrorbells  " No sound on errors
 set visualbell    " stop that ANNOYING beeping
 " Default Colors for CursorLine
 set cursorline    " Highlight the cursorline - slows redraw
-set colorcolumn=+1    " Sets a vertical line highlight at tetwidth - slows redraw
+if v:version >= 704
+  set colorcolumn=+1    " Sets a vertical line highlight at tetwidth - slows redraw
+endif
 highlight CursorLine ctermbg=017 ctermfg=None
 
 " Disable syntax highlighting for really large files
