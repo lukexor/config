@@ -137,11 +137,10 @@ alias gstdb='glg origin/develop ^$(current_branch)'
 
 gco() {
     git checkout $@
-    tags > /dev/null 2>&1 &
+    ctags > /dev/null 2>&1 &
 }
 gops() {
-    git push origin $(current_branch) $@
-    tags > /dev/null 2>&1 &
+    git push origin $(current_branch) $@ -u
 }
 
 # Get git info

@@ -1,0 +1,17 @@
+snippet begin "BEGIN a transaction" b
+BEGIN;
+  USE ${1:database};
+
+  $0
+
+  ${2:INSERT INTO fcs.db_update (filename) VALUES ('`!p snip.rv = snip.fn`') ON DUPLICATE KEY UPDATE applied_on = NOW();}
+COMMIT;
+endsnippet
+
+snippet create "CREATE a table" b
+CREATE TABLE ${1:table} (
+  $1_id int(10) unsigned NOT NULL auto_increment,
+  $0
+  PRIMARY KEY ($1_id),
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+endsnippet

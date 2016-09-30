@@ -27,6 +27,7 @@ set ignorecase    " Case insensitive searching (unless specified)
 set lazyredraw    " Don't redraw screen during macros or commands
 " Set < and > as brackets for jumping with %
 set matchpairs+=<:>
+set number
 " Completion mode - match longest then next full match
 set wildmode=list:longest,full
 " Stuff to ignore when tab completing
@@ -85,79 +86,37 @@ iabbrev tehn then
 iabbrev @@ lukexor@gmail.com
 iabbrev ccopy Copyright Lucas Petherbridge, All Rights Reserved.
 
-" == Autocommands {{{1
-" ================
-
-augroup filetype_formats
-  autocmd!
-
-  autocmd FileType markdown,html setlocal nowrap
-  autocmd FileType html let g:AutoPairs['<']='>'
-  autocmd FileType vim if has_key(g:AutoPairs, '"') | unlet g:AutoPairs['"'] | endif
-  autocmd FileType markdown,html,text setlocal nofoldenable
-  autocmd FileType text,help let g:airline#extensions#wordcount#enabled=1 |
-      \ setlocal wrap |
-      \ set nolist
-  " Allow stylesheets to autocomplete hyphenated words
-  autocmd FileType css,scss,sass,less setlocal iskeyword+=-
-  autocmd FileType perl setlocal shiftwidth=4 softtabstop=4
-
-  " Make sure the syntax is always right, even when in the middle of
-  " a huge javascript inside an html file.
-  autocmd BufNewFile,BufRead *.conf set filetype=yaml
-  autocmd BufNewFile,BufRead *.md set filetype=markdown
-  autocmd BufNewFile,BufRead *.t set filetype=perl
-  autocmd BufNewFile,BufRead *.tt set filetype=tt2html.html.javascript.css
-  autocmd BufNewFile,BufRead *.txt set filetype=help
-  autocmd BufEnter * :syntax sync fromstart
-augroup END
-
-augroup vimrcEx
-  autocmd!
-
-  " Automatically rebalance windows on vim resize
-  autocmd VimResized * :wincmd =
-
-  " Follow symlink and set working directory
-  autocmd BufEnter * call FollowSymlink() | call SetProjectRoot()
-  " Don't do it for commit messages, when the position is invalid, or when
-  " When editing a file, always jump to the last known cursor position.
-  " inside an event handler (happens when dropping a file on gvim).
-  autocmd BufReadPost *
-    \ if &ft != 'gitcommit' && line("'\"") > 0 && line("'\"") <= line("$") |
-    \   exe "normal! g`\"" |
-    \ endif
-
-  " Trigger autoread when changing buffers or coming back to vim in terminal.
-  autocmd FocusGained,BufEnter * :silent! !
-  " Closes if NERDTree is the only open window
-  autocmd BufEnter *
-    \ if winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary" |
-    \ qall! |
-    \ endif
-
-  " Save whenever switching windows or leaving vim. This is useful when running
-  " the tests inside vim without having to save all files first.
-  autocmd FocusLost,WinLeave * :silent! wa
-
-  " Change Color when entering Insert Mode
-  autocmd InsertEnter * highlight CursorLine ctermbg=235 ctermfg=None
-  " Revert Color to default when leaving Insert Mode
-  autocmd InsertLeave * highlight CursorLine ctermbg=017 ctermfg=None
-
-  " Turns relative line numbers on and off when entering and exiting insert mode
-  if v:version >= 704
-    autocmd FocusLost * call ToggleRelativeOn()
-    autocmd FocusGained * call ToggleRelativeOn()
-    autocmd InsertEnter * call ToggleRelativeOn()
-    autocmd InsertLeave * call ToggleRelativeOn()
-  endif
-
-augroup END
 
 " == Functions {{{1
 " =============
 
+function! RunTests()
+  if &filetype == 'perl'
+    let filename = expand('%:p:s?.*lib/??:r:gs?/?::?')
+    if !empty(b:test_method)
+      echom 'Testing ' . filename . '::' . b:test_method
+      execute ':!clear && make test TEST=' . filename . ' METHOD=' . b:test_method
+    else
+      echom 'Testing ' . filename
+      execute ':!clear && make test TEST=' . filename
+    endif
+  else
+    echom 'Tests not set up for ' . &filetype 'files'
+  endif
+endfunction
+let b:test_method=""
+function! SetTestMethod()
+  let b:test_method=tagbar#currenttag("%s","")
+  if !empty(b:test_method)
+    echom 'Test Method set to ' . b:test_method
+  else
+    echom 'Test Method cleared'
+  endif
+endfunction
+function! ClearTestMethod()
+  let b:test_method=""
+  echom 'Test Method cleared'
+endfunction
 function! FollowSymlink()
   let current_file=expand('%:p')
   " Check if file type is a symlink
@@ -326,7 +285,7 @@ let vim_markdown_preview_browser='Google Chrome'
 augroup mappings
   autocmd!
   " Run perltidy in visual mode
-  autocmd FileType perl vnoremap <buffer> <leader>t :!perltidy --quiet --standard-output --nostandard-error-output<CR>
+  autocmd FileType perl vnoremap <buffer> <leader>f :!perltidy --quiet --standard-output --nostandard-error-output<CR>
 augroup END
 
 " Use jk to get out of insert mode
@@ -371,14 +330,6 @@ inoremap <F12> <Esc>:help lp-help<CR>
 
 " Remap add mark, because vim-easyclip uses m as 'move'
 nnoremap gm m
-" Quicker window movement
-" Warning: C-h may be interpreted as <BS> in neovim
-" noremap <C-h> <C-w>h
-" noremap <C-j> <C-w>j
-" noremap <C-k> <C-w>k
-" noremap <C-l> <C-w>l
-nnoremap K <PageUp>
-nnoremap J <PageDown>
 " Navigate properly when lines are wrapped
 nnoremap j gj
 nnoremap k gk
@@ -424,8 +375,10 @@ if v:version >= 704
 endif
 noremap <leader>ev :vsplit $MYVIMRC<CR>
 noremap <leader>m :make<CR>
+noremap <leader>sm :call SetTestMethod()<CR>
+noremap <leader>cm :call ClearTestMethod()<CR>
 noremap <leader>sv :source $MYVIMRC<CR>
-noremap <leader>t :echom "Run Tests not setup yet"<CR>
+noremap <leader>t :call RunTests()<CR>
 " Make CTRL-C exit the same as escape
 inoremap <C-c> <Esc>
 
@@ -465,10 +418,9 @@ noremap Q <NOP>
 " == Syntax {{{1
 " ==========
 
-colorscheme solarized
 set background=dark
-" Set default font in mac vim and gvim
-set guifont=Literation\ Mono\ for\ Powerline:s12
+let g:solarized_termtrans=1
+colorscheme solarized
 set list    " Enable visibility of unprintable chars
 set noerrorbells  " No sound on errors
 set visualbell    " stop that ANNOYING beeping
@@ -513,6 +465,76 @@ set winminheight=0
 set winwidth=110
 set winheight=9999
 set helpheight=9999
+
+" == Autocommands {{{1
+" ================
+
+augroup filetype_formats
+  autocmd!
+
+  autocmd FileType markdown,html setlocal nowrap
+  autocmd FileType html let g:AutoPairs['<']='>'
+  autocmd FileType vim if has_key(g:AutoPairs, '"') | unlet g:AutoPairs['"'] | endif
+  autocmd FileType markdown,html,text setlocal nofoldenable
+  autocmd FileType text,help let g:airline#extensions#wordcount#enabled=1 |
+      \ setlocal wrap |
+      \ set nolist
+  " Allow stylesheets to autocomplete hyphenated words
+  autocmd FileType css,scss,sass,less setlocal iskeyword+=-
+  autocmd FileType perl setlocal shiftwidth=4 softtabstop=4
+
+  " Make sure the syntax is always right, even when in the middle of
+  " a huge javascript inside an html file.
+  autocmd BufNewFile,BufRead *.conf set filetype=yaml
+  autocmd BufNewFile,BufRead *.md set filetype=markdown
+  autocmd BufNewFile,BufRead *.t set filetype=perl
+  autocmd BufNewFile,BufRead *.tt set filetype=tt2html.html.javascript.css
+  autocmd BufNewFile,BufRead *.txt set filetype=help
+  autocmd BufEnter * :syntax sync fromstart
+augroup END
+
+augroup vimrcEx
+  autocmd!
+
+  " Automatically rebalance windows on vim resize
+  autocmd VimResized * :wincmd =
+
+  " Follow symlink and set working directory
+  autocmd BufEnter * call FollowSymlink() | call SetProjectRoot()
+  " Don't do it for commit messages, when the position is invalid, or when
+  " When editing a file, always jump to the last known cursor position.
+  " inside an event handler (happens when dropping a file on gvim).
+  autocmd BufReadPost *
+    \ if &ft != 'gitcommit' && line("'\"") > 0 && line("'\"") <= line("$") |
+    \   exe "normal! g`\"" |
+    \ endif
+
+  " Trigger autoread when changing buffers or coming back to vim in terminal.
+  autocmd FocusGained,BufEnter * :silent! !
+  " Closes if NERDTree is the only open window
+  autocmd BufEnter *
+    \ if winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary" |
+    \ qall! |
+    \ endif
+
+  " Save whenever switching windows or leaving vim. This is useful when running
+  " the tests inside vim without having to save all files first.
+  autocmd FocusLost,WinLeave * :silent! wa
+
+  " Change Color when entering Insert Mode
+  autocmd InsertEnter * highlight CursorLine ctermbg=235 ctermfg=None
+  " Revert Color to default when leaving Insert Mode
+  autocmd InsertLeave * highlight CursorLine ctermbg=017 ctermfg=None
+
+  " Turns relative line numbers on and off when entering and exiting insert mode
+  if v:version >= 704
+    autocmd FocusLost * call ToggleRelativeOn()
+    autocmd FocusGained * call ToggleRelativeOn()
+    autocmd InsertEnter * call ToggleRelativeOn()
+    autocmd InsertLeave * call ToggleRelativeOn()
+  endif
+
+augroup END
 
 " }}}
 

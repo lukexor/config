@@ -74,7 +74,7 @@ Plug 'nelstrom/vim-textobj-rubyblock'     " Ruby textobj
 " ===================
 
 Plug 'JamshedVesuna/vim-markdown-preview'    " Preview markdown in a browser
-if v:version >= 704
+if v:version >= 704 && has("python")
   Plug 'SirVer/ultisnips'    " Code Snippets
 endif
 Plug 'fatih/vim-go', { 'for': 'go' }    " GoLang support

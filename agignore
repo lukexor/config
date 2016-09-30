@@ -24,7 +24,7 @@
 
 # == Binaries
 
-bin/*
+bin/*.exe
 
 # == Misc
 
