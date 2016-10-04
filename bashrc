@@ -637,7 +637,7 @@ prompt_on() {
   PS1=${PS1}'`if [[ $PS1_HOST ]]; then echo " '$GRY'{'$PR_CLR$PS1_HOST$GRY'} "; fi`'
 
   if [[ $(declare -f parse_git_branch) ]]; then
-    PS1=${PS1}'`if [[ $(parse_git_branch) ]]; then echo "'$GRY'('$BLU'$(parse_git_branch)'$GRY' | $(git_prompt_status)'$GRY') "; fi`'
+    PS1=${PS1}'`if [[ $(parse_git_branch) ]]; then echo "'$GRY'('$BLU'$(parse_git_branch)'$GRY' | $(parse_git_dirty)$(git_prompt_status)'$GRY') "; fi`'
   fi
   PS1=${PS1}"$CYA\W\n$NC> "
 
