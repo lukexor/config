@@ -35,22 +35,30 @@ endsnippet
 
 snippet h1 "A H1 style header" b
 `!p
+snip.rv += get_comment_format()[0] + ' == '
+`${1:Header}
+`!p
 if not snip.c:
   width = int(vim.eval("&textwidth - (virtcol('.') == 1 ? 0 : virtcol('.'))")) - 2 or 78
 snip.rv = get_comment_format()[0]
 snip.rv += ' ' + width * '='
-snip.rv += '\n' + get_comment_format()[0] + ' == '
-`${1:Header}
+`
 $0
 endsnippet
 
 snippet h2 "A H2 style header" b
 `!p
+snip.rv += get_comment_format()[0] + ' -- '
+`${1:Header}
+`!p
 if not snip.c:
   width = int(vim.eval("&textwidth - (virtcol('.') == 1 ? 0 : virtcol('.'))")) - 2 or 78
 snip.rv = get_comment_format()[0]
 snip.rv += ' ' + width * '-'
-snip.rv += '\n' + get_comment_format()[0] + ' -- '
-`${1:Header}
+`
 $0
+endsnippet
+
+snippet f1 "Fold level 1 (f1)"
+{{{1$0
 endsnippet

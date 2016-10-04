@@ -19,7 +19,7 @@ alias gcex='echo "gc #time 1w 2d 5h 30m #comment Task completed #send-for-code-r
 alias gcm='git checkout master'
 alias gcount='git shortlog -sn'
 alias gcp='git cherry-pick'
-alias gd='git diff -w --word-diff=color'
+alias gd='git diff'
 alias gdt='git difftool'
 alias gf='git fetch origin'
 alias gfg='git ls-files | grep -i'
@@ -57,7 +57,7 @@ alias gun='git reset HEAD --'
 # Functions
 gdv() { git diff -w "$@" | view -; }
 
-ghlp() {
+gh() {
     echo "Git Help:"
     echo "  Git Status Symbols:"
     echo "    x : Local modifications"
@@ -102,18 +102,6 @@ gtg() {
 
 # Checkout a ticket branch
 gbt() { git checkout tickets/$1; }
-
-# gfm() {
-#     git fetch origin
-#     git merge origin/$(current_branch)
-# }
-# gfr() {
-#     git fetch origin
-#     git rebase origin/$(current_branch)
-# }
-# grr() {
-    #git filter-branch --tree-filter "rm -f $*" HEAD
-# }
 
 # Git and svn mix
 alias git-svn-dcommit-push='git svn dcommit && git push github master:svntrunk'
