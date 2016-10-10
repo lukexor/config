@@ -1,35 +1,84 @@
-" == Vim {{{1
-" =======
+" == Vim Settings   {{{1
+" ==================================================================================================
 
-let mapleader=" "
-set nocompatible    " Disable VI backwards compatible settings. Must be first
-
-set autowrite     " Automatically :write before running commands
-" Set directory to store backup files in.
-" These are created when saving, and deleted after successfully written
+let b:fsize=getfsize(@%)
+let mapleader=' '
+set nocompatible                 " Disable VI backwards compatible settings. Must be first
+set autoindent                   " Copy indent from current line when adding a new line
+set autoread
+set autowrite                    " Automatically :write before running commands
+                                 " Set directory to store backup files in.
+                                 " These are created when saving, and deleted after successfully written
+set background=dark
+set backspace=indent,eol,start
 set backupdir^=/tmp//
-set cpoptions+=W    " Don't overwrite readonly files with :w!
-" Always use vertical diffs
+set complete-=i
+if b:fsize <= 1000000
+  set cursorline                 " Highlight the cursorline - slows redraw
+  if v:version >= 704
+    set colorcolumn=+1           " Sets a vertical line highlight at tetwidth - slows redraw
+  endif
+endif
+set cpoptions+=W                 " Don't overwrite readonly files with :w!
 set diffopt+=vertical
+
 " Set directory to store swap files in
 set directory^=/tmp//
+set display+=lastline
+set encoding=utf-8
+set expandtab                    " Replace the tab key with spaces
 set fileformat=unix
-set fileformats=unix,dos,mac    " Default file types
+set fileformats=unix,dos,mac     " Default file types
+
+" Enable filetype specific settings
+if has('autocmd')
+  filetype plugin indent on
+endif
 set foldenable
 set foldmethod=indent
-set foldnestmax=1     " Deepest folds allowed for indent and syntax methods
-set gdefault    " Never have to type /g at the end of search / replace again
-set grepprg=grep\ -nH\ $*:    " Set grep to always print filename headers
-set hidden    " Hide buffers instead of closing them
-set history=500     " Save the last # commands
-set hlsearch    " Highlight all search matches
-set ignorecase    " Case insensitive searching (unless specified)
-set lazyredraw    " Don't redraw screen during macros or commands
+set foldnestmax=1                " Deepest folds allowed for indent and syntax methods
+" Set formatting options
+" 1   Don't break after a one-letter word
+" a   Auto-format paragraphs. When combined with c, only happens for comments
+" c   Auto-wrap comments using textwidth, auto-inserting comment leader
+" n   Regonized numbered lists and indent properly. autoindent must be set
+" j   Remove a comment leader when joining lines
+" l   Don't format long lines in insert mode if it was longer than textwidth
+" q   Allow using gq to format comments
+" r   Insert comment after hitting <Enter> in Insert mode
+set formatoptions+=1clnq
+" t   Auto-wrap using textwidth
+set formatoptions-=t
+if v:version > 703 || v:version == 703 && has("patch541")
+  set formatoptions+=j           " Delete comment character when joining commented lines
+endif
+set gdefault                     " Never have to type /g at the end of search / replace again
+set grepprg=grep\ -nH\ $*:       " Set grep to always print filename headers
+set hidden                       " Hide buffers instead of closing them
+set history=1000                 " Save the last # commands
+set hlsearch                     " Highlight all search matches
+set incsearch                    " Highlight incrementally
+set ignorecase                   " Case insensitive searching (unless specified)
+set laststatus=2
+set lazyredraw                   " Don't redraw screen during macros or commands
+set linebreak                    " Wrap long lines at a character in breakat
+set list                         " Enable visibility of unprintable chars
+set listchars=tab:>\ ,trail:-,extends:>,precedes:<,nbsp:+
+
 " Set < and > as brackets for jumping with %
 set matchpairs+=<:>
+set noerrorbells                 " No sound on errors
+set noequalalways                " Don't make windos equal size
+set nowrap                       " Default line wrap
 set number
-" Completion mode - match longest then next full match
+set nrformats-=octal             " Ignore octal when incrementing/decrementing numbers with CTRL-A and CTRl-X
+
+" Search recursively
+set path+=**
+
+set wildmenu                     " Completion mode - match longest then next full match
 set wildmode=list:longest,full
+
 " Stuff to ignore when tab completing
 set wildignore=*.o,*.obj,*~
 set wildignore+=*vim/undodir*
@@ -40,21 +89,46 @@ set wildignore+=*.png,*.jpg,*.gif
 set wildignore+=*.swp,*.bak,*.pyc,*.class
 set wildignore+=*/build/**
 if v:version >= 704
-  set relativenumber    " Toggle relative line numbering
+  set relativenumber             " Toggle relative line numbering
 endif
-set sessionoptions-=help    " Don't save help windows
-set scrolloff=8     " Start scrolling when we're # lines away from margins
-set showcmd     " Display incomplete command
-set showmatch     " Blink to a matching bracket if on screen
-set showmode    " Show current mode (INSERT, VISUAL)
-set sidescrolloff=15    " Start side-scrolling when # characters away
-set sidescroll=5    " Scroll # column at a time
-set smartcase     " Ignores ignorecase when searching for upercase characters
-set tags=./tags     " Use a local tags file instead of the global
+set ruler
+set sessionoptions-=help,options " Don't save help windows
+set scrolloff=8                  " Start scrolling when we're # lines away from margins
+if &shell =~# 'fish$' && (v:version < 704 || v:version == 704 && !has('patch276'))
+  set shell=/bin/bash
+endif
+set shiftround    " Round to nearest multiple of shiftwidth
+set shiftwidth=2  " The amount of space to shift when using >>, << or <tab>
+set showcmd                      " Display incomplete command
+set showmatch                    " Blink to a matching bracket if on screen
+set showmode                     " Show current mode (INSERT, VISUAL)
+set sidescrolloff=15             " Start side-scrolling when # characters away
+set sidescroll=5                 " Scroll # column at a time
+set smartcase                    " Ignores ignorecase when searching for upercase characters
+set smarttab
+" Set spellfile to location that is guaranteed to exist, can be symlinked to
+" Dropbox or kept in Git and managed outside of thoughtbot/dotfiles using rcm.
+if has('spell')
+  set spellfile=$HOME/.vim-spell-en.utf-8.add
+  set spelllang=en
+endif
+set splitbelow                   " New horizontal splits should be below
+set splitright                   " New vertical splits should be to the right
+set softtabstop=2                " Spaces a tab counts for when backspacing or inserting tabs
+if has('path_extra')
+  setglobal tags-=./tags tags-=./tags; tags^=./tags;
+endif
+if has('syntax') && !exists('g:syntax_on')
+  syntax enable
+endif
 set term=xterm-256color
-set ttyfast     " Smoother redraw
-set undolevels=100    " How many undos
-set updatetime=1000    " How often to write to the swap file when nothing is pressed
+set textwidth=100                " Max width for text on the screen
+set ttimeout                     " Timeout on :mappings and key codes
+set ttimeoutlen=100              " Change timeout length to 100 instead of 1000
+set ttyfast                      " Smoother redraw
+set undolevels=100               " How many undos
+set updatetime=1000              " How often to write to the swap file when nothing is pressed
+
 " Tell vim to remember certain things when we exit
 " '10  : marks will be remembered for up to 10 previously edited files
 " f1   :  enable capital marks
@@ -62,7 +136,8 @@ set updatetime=1000    " How often to write to the swap file when nothing is pre
 " :20  :  up to 20 lines of command-line history will be remembered
 " %  :  saves and restores the buffer list
 " n... :  where to save the viminfo files
-set viminfo='10,f1,\"100,:20,%,n~/.viminfo
+set viminfo='10,f1,\"100,:20,%,n~/.viminfo,|
+set visualbell                   " stop that ANNOYING beeping
 
 " Keep undo history across sessions by storing in a file
 if exists('&undofile')
@@ -70,15 +145,18 @@ if exists('&undofile')
   set undodir=$HOME/.vim/undodir
   set undofile
 endif
-" Set spellfile to location that is guaranteed to exist, can be symlinked to
-" Dropbox or kept in Git and managed outside of thoughtbot/dotfiles using rcm.
-if has('spell')
-  set spellfile=$HOME/.vim-spell-en.utf-8.add
-  set spelllang=en
-endif
+" The below allows horizontal and vertical splits to be small and out of the way, giving the active
+" window as much room as possible
+set winheight=10                 " This has to be set to winminheight first in order to work
+set winminheight=10              " Then set min height
+set winheight=9999               " Then set win height to maximum possible
+set winwidth=110                 " Keepjust  current window wide enough to see numbers textwidth=100
+set wrapmargin=0                 " Number of chars from the right before wrapping
 
-" == Abbreviations {{{1
-" =================
+
+" == Abbreviations   {{{1
+" ==================================================================================================
+
 iabbrev teh the
 iabbrev adn and
 iabbrev waht what
@@ -87,8 +165,8 @@ iabbrev @@ lukexor@gmail.com
 iabbrev ccopy Copyright Lucas Petherbridge, All Rights Reserved.
 
 
-" == Autocommands {{{1
-" ================
+" == Autocommands   {{{1
+" ==================================================================================================
 
 augroup filetype_formats
   autocmd!
@@ -108,8 +186,6 @@ augroup vimrcEx
   " Automatically rebalance windows on vim resize
   autocmd VimResized * :wincmd =
 
-  " Follow symlink and set working directory
-  autocmd BufEnter * call FollowSymlink() | call SetProjectRoot()
   " Don't do it for commit messages, when the position is invalid, or when
   " When editing a file, always jump to the last known cursor position.
   " inside an event handler (happens when dropping a file on gvim).
@@ -146,24 +222,24 @@ augroup vimrcEx
 augroup END
 
 
-" == Functions {{{1
-" =============
+" == Functions   {{{1
+" ==================================================================================================
 
+let b:test_method=""
 function! RunTests()
   if &filetype == 'perl'
     let filename = expand('%:p:s?.*lib/??:r:gs?/?::?')
     if !empty(b:test_method)
       echom 'Testing ' . filename . '::' . b:test_method
-      execute ':!clear && make test TEST=' . filename . ' METHOD=' . b:test_method
+      execute ':Make test TEST=' . filename . ' METHOD=' . b:test_method
     else
       echom 'Testing ' . filename
-      execute ':!clear && make test TEST=' . filename
+      execute ':Make test TEST=' . filename
     endif
   else
     echom 'Tests not set up for ' . &filetype 'files'
   endif
 endfunction
-let b:test_method=""
 function! SetTestMethod()
   let b:test_method=tagbar#currenttag("%s","")
   if !empty(b:test_method)
@@ -175,33 +251,6 @@ endfunction
 function! ClearTestMethod()
   let b:test_method=""
   echom 'Test Method cleared'
-endfunction
-function! FollowSymlink()
-  let current_file=expand('%:p')
-  " Check if file type is a symlink
-  if getftype(current_file) == 'link'
-    " If it is a symlink resolve to the actual file path and open the actual file
-    let actual_file=resolve(current_file)
-    silent! execute 'file ' . actual_file
-    if !&readonly
-      silent! execute 'w!'
-    endif
-  end
-endfunction
-" Set working directory to git project root or directory of current file if not git project
-function! SetProjectRoot()
-  " Default to the current file's directory
-  let curr_dir=expand('%:p:h')
-  if isdirectory(curr_dir)
-    lcd %:p:h
-    let git_dir=system("git rev-parse --show-toplevel")
-    " See if the command output starts with 'fatal' (if it does, not in a git repo)
-    let is_not_git_dir=matchstr(git_dir, '^fatal:.*')
-    " If git project, change local directory to git project root
-    if empty(is_not_git_dir) && !empty(git_dir)
-      lcd `=git_dir`
-    endif
-  endif
 endfunction
 
 " Enables toggling of relative line number with absolute
@@ -227,96 +276,30 @@ function! CloseBuffer()
   endif
 endfunction
 
-" == Format {{{1
-" ==========
-
-" Enable filetype specific settings
-filetype plugin indent on
-set autoindent    " Copy indent from current line when adding a new line
-set expandtab     " Replace the tab key with spaces
-" Set formatting options
-" 1   Don't break after a one-letter word
-" a   Auto-format paragraphs. When combined with c, only happens for comments
-" c   Auto-wrap comments using textwidth, auto-inserting comment leader
-" n   Regonized numbered lists and indent properly. autoindent must be set
-" j   Remove a comment leader when joining lines
-" l   Don't format long lines in insert mode if it was longer than textwidth
-" q   Allow using gq to format comments
-" r   Insert comment after hitting <Enter> in Insert mode
-set formatoptions+=1clnq
-" t   Auto-wrap using textwidth
-set formatoptions-=t
-if v:version >= 704
-  set formatoptions+=j
-endif
-set linebreak     " Wrap long lines at a character in breakat
-set nowrap    " Default line wrap
-set shiftround    " Round to nearest multiple of shiftwidth
-set shiftwidth=2    " The amount of space to shift when using >>, << or <tab>
-set softtabstop=2     " Spaces a tab counts for when backspacing or inserting tabs
-set textwidth=100     " Max width for text on the screen
-set wrapmargin=0    " Number of chars from the right before wrapping
-
-" == Plugins {{{1
-" ===========
+" == Plugin Settings   {{{1
+" ==================================================================================================
 
 " Load up all of our plugins using vim-plug
 if filereadable(expand("~/.vim/plugins.vim"))
   source ~/.vim/plugins.vim
 endif
 
-" Ensure dictionary is defined but don't overwrite it
-if !exists('g:airline_symbols')
-  let g:airline_symbols={}
-endif
+let g:solarized_termtrans=1
+colorscheme solarized
 
-let g:airline#extensions#tabline#enabled=1    " Enable buffers as tabs at the top
-let g:airline#extensions#tabline#show_splits=0    " Disable showing number of splits
-let g:airline#extensions#tabline#buffer_nr_show=1     " Show buffer numbers
-let g:airline#extensions#whitespace#long_format='long[%s]'
-let g:airline#extensions#whitespace#mixed_indent_file_format='mix-i-f[%s]'
-let g:airline#extensions#whitespace#mixed_indent_format='mixi[%s]'
-let g:airline#extensions#whitespace#trailing_format='trail[%s]'
-let g:airline_powerline_fonts=1     " Enable special font symbols for airline status
-let g:airline_right_sep=''
-let g:airline_section_y=''    " Disable fileencoding and fileformat info
-let g:airline_symbols.crypt='🔒'
-let g:airline_symbols.linenr='¶'
-let g:airline_symbols.maxlinenr='☰'
-let g:airline_symbols.notexists='∄'
-let g:airline_symbols.paste='ρ'
-let g:airline_symbols.spell='Ꞩ'
-let g:airline_symbols.whitespace='Ξ'
-let g:airline#extensions#tmuxline#enabled=0
 let g:EasyClipShareYanks=1
-let g:easytags_file='./tags'
-let g:easytags_async=1    " Generate ctags in the background
-let g:easytags_dynamic_files=1
-" Uses less accurate, but faster highlighting
-let g:easytags_syntax_keyword='always'
-" Update tags every minute instead of every 4 seconds
-let g:easytags_updatetime_min=60000
-let g:easytags_resolve_links=1
-let g:fzf_buffers_jump=1    " Jump to existing window if possible
-let g:fzf_commits_log_options='--graph --pretty=format:"%C(yellow)%h (%p) %ai%Cred%d %Creset%Cblue[%ae]%Creset %s (%ar). %b %N"'
-let g:fzf_source='find * -name .git -prune -o -name AppData -prune
-  \ -o -type f -print -o -type d -print -o -type l -print'
 " Override find and use ag instead which will honor .gitignore and only search text files
 if executable('ag')
   let $FZF_DEFAULT_COMMAND='ag --hidden -g ""'
 endif
-let g:rooter_change_directory_for_non_project_files='current'
-let g:rooter_resolve_links=1
-let g:rooter_silent_chdir=1
-" Ignore directories; CD for all files
-let g:rooter_targets='*'
-let g:rooter_use_lcd=1
-let g:session_autoload='no'    " Loads 'default' session when vim is opened without files
+let g:fzf_buffers_jump=1          " Jump to existing window if possible
+let g:fzf_commits_log_options='--graph --pretty=format:"%C(yellow)%h (%p) %ai%Cred%d %Creset%Cblue[%ae]%Creset %s (%ar). %b %N"'
+let g:fzf_source='find * -name .git -prune -o -name AppData -prune -o -type f -print -o -type d -print -o -type l -print'
+let g:session_autoload='no'       " Loads 'default' session when vim is opened without files
 let g:session_autosave='yes'
-let g:session_autosave_periodic=3     " Automatically save the current session every 3 minutes
-let g:session_autosave_silent=1     " Silence any messages
-let g:session_default_to_last=1     " Default opening the last used session
-let g:showmarks_enable=0
+let g:session_autosave_periodic=3 " Automatically save the current session every 3 minutes
+let g:session_autosave_silent=1   " Silence any messages
+let g:session_default_to_last=1   " Default opening the last used session
 let g:syntastic_always_populate_loc_list=1
 let g:syntastic_auto_loc_list=1
 let g:syntastic_enable_perl_checker=1
@@ -334,20 +317,21 @@ if v:version >= 704
   let g:UltiSnipsEditSplit='vertical'
   let g:UltiSnipsSnippetDirectories=[$HOME.'/.vim/UltiSnips', $HOME.'/.vim/plugged/vim-snippets/UltiSnips/']
 endif
-let vim_markdown_preview_browser='Google Chrome'
 
-" == Mappings {{{1
-" ============
 
-" -- Editing Mappings {{{2
+" == Mappings   {{{1
+" ==================================================================================================
+
+" -- Editing   {{{2
+" --------------------------------------------------------------------------------------------------
 
 " Use jk to get out of insert mode
 inoremap jk <ESC>
 nnoremap <leader>w :write<CR>
 " Move current line down one
-nnoremap <leader>j ddp
+nnoremap J ddp
 " Move current line up one
-nnoremap <leader>k dd<up>P
+nnoremap K dd<up>P
 " Use enter to create new lines w/o entering insert mode
 nnoremap <CR> o<Esc>
 augroup enter
@@ -357,7 +341,7 @@ augroup enter
   autocmd BufReadPost quickfix nnoremap <CR> <CR>
 augroup END
 " Stop highlight after searching
-nnoremap <silent> <leader><CR> :nohlsearch<CR>
+nnoremap <silent> <leader><CR> :nohlsearch<C-R>=has('diff')?'<Bar>diffupdate':''<CR><CR><C-L>
 " Toggle spellcheck
 nnoremap <leader>st :setlocal spell!<CR>
 " Count the number of words in the current document
@@ -369,7 +353,9 @@ nnoremap <leader>rt :%retab!<CR>
 " Reindent entire file. NOTE: This may indent unexpectedly
 nnoremap <leader>ri mzgg=G`z
 
-" -- Function Mappings {{{2
+
+" -- Functions   {{{2
+" --------------------------------------------------------------------------------------------------
 
 " Display custom help window with shortcut references
 noremap <F2> :NERDTreeToggle<CR>
@@ -379,7 +365,9 @@ inoremap <F3> <Esc>:TagbarToggle<CR>i
 noremap <F12> :help lp-help<CR>
 inoremap <F12> <Esc>:help lp-help<CR>
 
-" -- Movement Mappings {{{2
+
+" -- Movement   {{{2
+" --------------------------------------------------------------------------------------------------
 
 " Remap add mark, because vim-easyclip uses m as 'move'
 nnoremap gm m
@@ -392,7 +380,9 @@ vnoremap k gk
 nnoremap <tab> %
 vnoremap <tab> %
 
-" -- Plugin Mappings {{{2
+
+" -- Plugins   {{{2
+" --------------------------------------------------------------------------------------------------
 
 let g:AutoPairsShortcutToggle='<C-0>'
 let g:AutoPairsShortcutFastWrap='<C-l>'
@@ -401,12 +391,11 @@ xmap ga <Plug>(EasyAlign)
 " Start interactive EasyAlign for a motion/text object (e.g. gaip)
 nmap ga <Plug>(EasyAlign)
 " FZF Open various files
-inoremap <C-f> <plug>(fzf-complete-line)
-noremap <leader>b :call SetProjectRoot()<CR>:Buffers<CR>
-noremap <C-o> :call SetProjectRoot()<CR>:Files<CR>
-noremap <C-i> :call SetProjectRoot()<CR>:Snippets<CR>
-noremap <leader>h :call SetProjectRoot()<CR>:History<CR>
-noremap <C-t> :call SetProjectRoot()<CR>:Tags<CR>
+noremap <leader>b :Buffers<CR>
+noremap <leader>F :Files<CR>
+noremap <leader>S :Snippets<CR>
+noremap <leader>H :History<CR>
+noremap <leader>T :Tags<CR>
 " Fugitive
 nnoremap <leader>gst :Gstatus<CR>
 nnoremap <leader>gd :Gdiff<CR>
@@ -416,19 +405,21 @@ nnoremap <leader>gm :Gmerge<space>
 nnoremap <leader>gps :Gpush<CR>
 nnoremap <leader>glg :Glog<CR>
 nnoremap <leader>gb :Gblame<CR>
-" Session
-nnoremap <leader>s :SaveSession<space>
-nnoremap <leader>o :OpenSession<space>
-let vim_markdown_preview_hotkey='<leader>pm'
 noremap <leader>c :SyntasticCheck<CR>
-
-" -- System Mapping {{{2
-
 if v:version >= 704
   noremap <leader>ep :UltiSnipsEdit<CR>
 endif
+if exists(":MirrorEdit")
+  noremap <leader>M :MirrorEdit
+endif
+
+
+" -- System   {{{2
+" --------------------------------------------------------------------------------------------------
+
 noremap <leader>ev :vsplit $MYVIMRC<CR>
-noremap <leader>m :make<CR>
+noremap <leader>m :Make!<CR>
+noremap <leader>C :Dispatch! ctags -R<CR>:echom "Tags Generated"<CR>
 noremap <leader>sm :call SetTestMethod()<CR>
 noremap <leader>cm :call ClearTestMethod()<CR>
 noremap <leader>sv :source $MYVIMRC<CR>
@@ -437,7 +428,8 @@ noremap <leader>t :call RunTests()<CR>
 inoremap <C-c> <Esc>
 noremap <leader>z <C-Z>
 
-" -- Windows Mapping {{{2
+" -- Tab/Window Control   {{{2
+" --------------------------------------------------------------------------------------------------
 
 nnoremap <leader>1 :b1<CR>
 nnoremap <leader>2 :b2<CR>
@@ -450,9 +442,10 @@ nnoremap <leader>8 :b8<CR>
 nnoremap <leader>9 :b9<CR>
 " Create and move between buffers
 noremap <leader>n <esc>:enew<CR>
-noremap <leader>a :bprevious<CR>
-noremap <leader>d :bnext<CR>
-" Zoom a vim pane, <C-w>= to re-balance
+noremap <leader>h :bprevious<CR>
+noremap <leader>l :bnext<CR>
+nnoremap cd :exe 'lcd ' . fnamemodify(resolve(expand('%')), ':h')<CR>:echo 'cd ' . fnamemodify(resolve(expand('%')), ':h')<CR>
+" Zoom a vim pane
 nnoremap <leader>- :wincmd _<CR>:wincmd \|<CR>
 nnoremap <leader>= :wincmd =<CR>
 " Resize panes
@@ -461,7 +454,7 @@ nnoremap <silent> <Left> :vertical resize -5<CR>
 nnoremap <silent> <Up> :resize +5<CR>
 nnoremap <silent> <Down> :resize -5<CR>
 " Switch between the last two files
-noremap <leader>l :b#<CR>
+noremap <leader>k :ls<CR>
 noremap <leader>q :quit<CR>
 noremap <leader>Q :quit!<CR>
 noremap <leader>x :call CloseBuffer()<CR>
@@ -470,33 +463,15 @@ noremap <leader>A :A<CR>
 " Disable EX mode
 noremap Q <NOP>
 
-" == Syntax {{{1
-" ==========
 
-set background=dark
-let g:solarized_termtrans=1
-colorscheme solarized
-set list    " Enable visibility of unprintable chars
-set noerrorbells  " No sound on errors
-set visualbell    " stop that ANNOYING beeping
-" Default Colors for CursorLine
-set cursorline    " Highlight the cursorline - slows redraw
-if v:version >= 704
-  set colorcolumn=+1    " Sets a vertical line highlight at tetwidth - slows redraw
-endif
-highlight CursorLine ctermbg=017 ctermfg=None
-
-" Disable syntax highlighting for really large files
-autocmd FileType * if getfsize(@%) > 100000 |
-  \ syntax off |
-  \ setlocal nocursorline |
-  \ setlocal colorcolumn="" |
-  \ endif
+" -- Syntax Highlighting   {{{1
+" --------------------------------------------------------------------------------------------------
 
 " These settings are for perl.vim syntax
 let perl_include_pod=1    " Syntax highlight pod documentation correctly
 let perl_extended_vars=1    " Syntax color complex things like @{${'foo'}}
 
+highlight CursorLine ctermbg=017 ctermfg=None
 " a-z marks
 highlight ShowMarksHLl ctermfg=grey ctermbg=235
 " A-Z marks
@@ -509,19 +484,6 @@ highlight link SyntasticErrorSign SignColumn
 highlight link SyntasticWarningSign SignColumn
 highlight link SyntasticStyleErrorSign SignColumn
 highlight link SyntasticStyleWarningSign SignColumn
-
-" == Windows {{{1
-" ===========
-
-" Open new split panes to right and bottom, which feels more natural
-set splitbelow
-set splitright
-" Auto resize Vim splits to active split
-set noequalalways     " Don't make windos equal size
-set winminheight=0
-set winwidth=110
-set winheight=9999
-set helpheight=9999
 
 
 " }}}

@@ -6,15 +6,15 @@
 --continuation-indentation=2
 --nocuddled-else
 --indent-columns=4 # columns per indentation level
---maximum-line-length=80 # Default: 80
+--maximum-line-length=100 # Default: 80
 --nooutdent-labels
 --nooutdent-long-lines
 --nospace-for-semicolon # e.g. for (i = 0; i < $value; i++) { ... }
--opening-brace-on-new-line
+--opening-brace-on-new-line
 --opening-sub-brace-on-new-line
 --opening-anonymous-sub-brace-on-new-line
 --output-line-ending=unix
---paren-tightness=2  # if ((my $len_tab = length($tabstr)) > 0) { 
+--paren-tightness=2  # if ((my $len_tab = length($tabstr)) > 0) {
 --square-bracket-tightness=1  # $width = $col[ $j + $k ] - $col[$j];
 --standard-error-output
 --vertical-tightness=0

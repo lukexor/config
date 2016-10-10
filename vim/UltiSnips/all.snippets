@@ -36,7 +36,7 @@ endsnippet
 snippet h1 "A H1 style header" b
 `!p
 snip.rv += get_comment_format()[0] + ' == '
-`${1:Header}
+`${1:Header}   {{{1
 `!p
 if not snip.c:
   width = int(vim.eval("&textwidth - (virtcol('.') == 1 ? 0 : virtcol('.'))")) - 2 or 78
@@ -49,7 +49,7 @@ endsnippet
 snippet h2 "A H2 style header" b
 `!p
 snip.rv += get_comment_format()[0] + ' -- '
-`${1:Header}
+`${1:Header}   {{{2
 `!p
 if not snip.c:
   width = int(vim.eval("&textwidth - (virtcol('.') == 1 ? 0 : virtcol('.'))")) - 2 or 78

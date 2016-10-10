@@ -25,5 +25,5 @@ Fix italics in vim
 Set up newer vim on all stg environments locally
 Install ctags locally on all stg environments
 Find a way to easily edit a file locally and scp it over to the same directory remotely
-Add Run() function for executing script files without closing it, possibly add in Tmux support later
-Add Tmux support for <leader>t for testing and <leader>m for making
+Replace as many plugins as possible with default vim configuration
+Go through all vimrc settings, find the defaults and remove settings that duplicate defaults

@@ -85,12 +85,8 @@ pathprepend "$HOME/lib" PERL5LIB
 pathappend "$HOME/perl5/lib/perl5/" GITPERLLIB
 pathappend "$HOME/perl5/perlbrew/perls/perl-5.16.0/lib/site_perl/5.16.0/App/gh" GITPERLLIB
 
-if [[ -z "$INPUTRC" && ! -f "$HOME/.inputrc" ]]; then
-  INPUTRC='/etc/inputrc'
-fi
-export INPUTRC
-
 # VI style line editing
+export EDITOR="vim"
 set -o vi
 
 # Exit if not interactive
@@ -107,23 +103,23 @@ esac
 # == Source {{{1
 # ==================================================================================================
 
-[ $SHLVL -eq 1 ] && eval "$(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib)"
-
-sourcefile "$HOME/perl5/perlbrew/etc/bashrc"
-sourcefile "$HOME/.rvm/scripts/rvm"
-sourcefile '/usr/local/bin/virtualenvwrapper.sh'
-sourcefile ~/.fzf.bash
-
-export EDITOR="vim"
+if [ -z $FILES_SOURCED ]; then
+  [ $SHLVL -eq 1 ] && eval "$(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib)"
+  sourcefile "$HOME/perl5/perlbrew/etc/bashrc"
+  # sourcefile "$HOME/.rvm/scripts/rvm"
+  # sourcefile '/usr/local/bin/virtualenvwrapper.sh'
+  sourcefile ~/.fzf.bash
+  export FILES_SOURCED=1
+fi
 
 
 
 # == Colors {{{1
 # ==================================================================================================
 
-function setfg() { tput setaf $1; }
-function setbfg() { tput bold; tput setaf $1; }
-function setbg() { tput setab $1; }
+function setfg() { tput sgr0; tput setaf $1; }
+function setbfg() { tput sgr0; tput bold; tput setaf $1; }
+function setbg() { tput sgr0; tput setab $1; }
 
 FGblack=$(setfg 0)
 FGred=$(setfg 1)
@@ -233,6 +229,7 @@ alias _='sudo'
 alias du='du -kh' # Human readable in 1K block sizes
 alias df='df -kh' # Human readable in 1K block sizes with file system type
 alias stop='kill -STOP'
+alias info='info --vi-keys'
 
 # Editing - All roads lead to $EDITOR
 alias vi="$EDITOR"
@@ -336,7 +333,7 @@ make() {
   fi
 }
 _ask_yes_no() {
-  echo -en "${RED}$@ [y/n] ${RCLR}" ; read ans
+  echo -en "${FGred}$@ [y/n] ${RCLR}" ; read ans
   case "$ans" in
     y*|Y*)
       return 0
@@ -564,54 +561,16 @@ BASH_THEME_GIT_TIME_SINCE_COMMIT_AFTER=""
 prompt_pwd() {
   local pwd_max_len=$(($(tput cols) / 2))
   local trunc_symbol="..."
-  PWD="${PWD/$HOME/~}"
+  PWD="${PWD/$HOME/'~'}"
   if [ ${#PWD} -gt ${pwd_max_len} ]
   then
     local pwd_offset=$(( ${#PWD} - ${pwd_max_len} + 3 ))
     PWD="${trunc_symbol}${PWD[${pwd_offset},${#PWD}]}"
   fi
-  echo -e " ${PWD}"
+  echo -e "${PWD}"
 }
 
 prompt_on() {
-  # User is colored differently based on root user
-  if [ "${UID}" -eq 0 ]
-  then
-    PR_CLR="${BRED}${RED}"
-  else
-    if [[ "${USER}" == "${LOGNAME}" ]]; then
-      PR_CLR="${RCLR}${BLU}"
-    else
-      PR_CLR="${RCLR}${YEL}"
-    fi
-  fi
-  export PR_CLR
-
-  # Set terminal title
-  TTY=$(tty)
-  case "${TERM}" in
-    xterm* )
-      PROMPT_COMMAND='history -a; history -c; history -r; echo -ne "${USER}(${SHLVL}): $(prompt_pwd) | ${TTY:5}\007";'
-      ;;
-    screen* )
-      PROMPT_COMMAND='history -a; history -c; history -r; echo -ne "\033_screen \005 (\005t) | ${USER}(${SHLVL}): $(prompt_pwd) | ${TTY:5}\033\\";'
-      ;;
-    * )
-      PROMPT_COMMAND=''
-      ;;
-  esac
-
-  # Set screen title
-  case "${TERM}" in
-    screen* )
-      PROMPT_COMMAND=${PROMPT_COMMAND}'echo -ne "\033k${SCREEN_TITLE:-${HOSTNAME}}\033\\";'
-      ;;
-    * )
-      PROMPT_COMMAND=''
-      ;;
-  esac
-
-  # Left command prompt
   case ${OSTYPE} in
     darwin*)
       export PS1_HOST="mac"
@@ -621,36 +580,30 @@ prompt_on() {
       ;;
   esac
 
-  # for plugin in "${plugins[@]}"; do
-  #   if [[ "$plugin" == "git" ]]; then
-  #     BASH_THEME_GIT_PROMPT_DIRTY="$BASH_THEME_GIT_PROMPT_DIRTY$(git_prompt_status)"
-  #   fi
-  # done
-
-  export PS1="\n$GRY[$WHI\@$GRY]"
-  if [[ $(declare -f bg_jobs) ]]; then
-    PS1=${PS1}'`if [[ $(bg_jobs) ]]; then echo "'$GRY'['$YEL'$(bg_jobs)'$GR']"; fi`'
+  echo -ne "\n$FGbgreen[$FGwhite$(date +'%F %R')$FGbgreen]"
+  if [[ $(declare -f bg_jobs) && $(bg_jobs) ]]; then
+    echo -ne "$FGbgreen[$FGyellow$(bg_jobs)$FGbgreen]"
   fi
-  if [[ $(declare -f st_jobs) ]]; then
-    PS1=${PS1}'`if [[ $(st_jobs) ]]; then echo "'$GRY'['$RED'$(st_jobs)'$GRY']"; fi`'
+  if [[ $(declare -f st_jobs) && $(st_jobs) ]]; then
+    echo -ne "$FGbgreen[$FGred$(st_jobs)$FGbgreen]"
   fi
-  PS1=${PS1}'`if [[ $PS1_HOST ]]; then echo " '$GRY'{'$PR_CLR$PS1_HOST$GRY'} "; fi`'
-
-  if [[ $(declare -f parse_git_branch) ]]; then
-    PS1=${PS1}'`if [[ $(parse_git_branch) ]]; then echo "'$GRY'('$BLU'$(parse_git_branch)'$GRY' | $(parse_git_dirty)$(git_prompt_status)'$GRY') "; fi`'
+  if [[ $PS1_HOST ]]; then
+    echo -ne " $FGbgreen{$FGgreen$PS1_HOST$FGbgreen} "
   fi
-  PS1=${PS1}"$CYA\W\n$NC> "
 
-  export PROMPT_COMMAND=${PROMPT_COMMAND}'PS1=${PS1}'
-  # PS2 continuation prompt
-  export PS2=" >> "
+  # if [[ $(declare -f parse_git_branch) && $(parse_git_branch) ]]; then
+  #   echo -ne "$FGbgreen($FGblue$(parse_git_branch)$FGBgreen|$(parse_git_dirty)$(git_prompt_status)$FGbgreen) "
+  # fi
+  echo -e "$FGcyan$(prompt_pwd)$RCLR"
+  PS1=" > "
+  PS2=" >> "
 }
 
 prompt_off() {
-  PROMPT_COMMAND='PS1="$(prompt_pwd) > "'
+  PS1='$(prompt_pwd) > '
 }
 
-prompt_on
+PROMPT_COMMAND="prompt_on"
 
 
 

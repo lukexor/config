@@ -1,2 +1,2 @@
-bind "[D" ed-prev-word # ctrl-left
-bind "[C" em-next-word # ctrl-right
+bind -v
+bind \\t rl_complete

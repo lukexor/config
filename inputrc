@@ -5,42 +5,39 @@
 
 $include /etc/inputrc
 
-# Make sure we don't output everything on the 1 line
 set horizontal-scroll-mode off
-
-# Disable bell
-set bell-style none
-
 set convert-meta on
-
-# Case-insensitive filename matching & completion
 set completion-ignore-case on
 
 # Marks completed directories and symlinked directories by appending a /
 set mark-directories on
 set mark-symlinked-directories on
-
-# Marks modified history lines with a *
-# set mark-modified-lines on
+set match-hidden-files off
 
 # Helps word-completion in the middle of words by not duplicating text
 set skip-completed-text on
 
-"\eOD": backward-word # ctrl-left
-"\eOC": forward-word # ctrl-right
-# "\e[D": backward-word # ctrl-left
-# "\e[C": forward-word # ctrl-right
-"\e\e[D": backward-word # alt-left
-"\e\e[C": forward-word # alt-right
+# Show possible completions instead of ringing bell
+set show-all-if-ambiguous on
+set show-all-if-unmodified on
 
-# for linux console
-"\e[1~": beginning-of-line # home
-"\e[4~": end-of-line # end
-"\e[5~": beginning-of-history # page-up
-"\e[6~": end-of-history # page-down
-"\e[3~": delete-char # delete
-"\e[2~": quoted-insert # insert
+set show-mode-in-prompt on
+set vi-cmd-mode-string :
+set vi-ins-mode-string +
+set editing-mode vi
 
-# for xterm
-"\eOH": beginning-of-line # home
-"\eOF": end-of-line # end
+"\C-a": beginning-of-line
+"\C-e": end-of-line
+"\C-f": forward-char
+"\C-b": backward-char
+"\M-f": forward-word
+"\M-b": backward-word
+"\C-l": clear-screen
+"\C-p": previous-history
+"\C-n": next-history
+"\C-d": end-of-file
+"\C-d": delete-char
+"\M-d": kill-word
+"\C-w": backward-kill-word
+"\C-k": kill-line
+"\C-u": unix-line-discard
