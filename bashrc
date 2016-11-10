@@ -1,6 +1,7 @@
 # == Start Profiling {{{1
 # ==================================================================================================
 
+
 startn=$(date +%s.%N)
 starts=$(date +%s)
 
@@ -87,7 +88,7 @@ pathappend "$HOME/perl5/perlbrew/perls/perl-5.16.0/lib/site_perl/5.16.0/App/gh" 
 
 # VI style line editing
 export EDITOR="vim"
-set -o vi
+# set -o vi
 
 # Exit if not interactive
 case "$-" in
@@ -103,14 +104,10 @@ esac
 # == Source {{{1
 # ==================================================================================================
 
-if [ -z $FILES_SOURCED ]; then
-  [ $SHLVL -eq 1 ] && eval "$(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib)"
-  sourcefile "$HOME/perl5/perlbrew/etc/bashrc"
-  # sourcefile "$HOME/.rvm/scripts/rvm"
-  # sourcefile '/usr/local/bin/virtualenvwrapper.sh'
-  sourcefile ~/.fzf.bash
-  export FILES_SOURCED=1
-fi
+[ $SHLVL -eq 1 ] && eval "$(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib)"
+sourcefile "$HOME/perl5/perlbrew/etc/bashrc"
+# sourcefile "$HOME/.rvm/scripts/rvm"
+# sourcefile '/usr/local/bin/virtualenvwrapper.sh'
 
 
 
@@ -253,9 +250,9 @@ alias rpmls='rpm -qlp' # list rpm contents
 alias rpminfo='rpm -qip' # list rpm info
 
 # Edit configurations
-alias vrc="vi $HOME/.vimrc"
-alias vbp="vi $HOME/.bash_profile"
-alias vb="vi $HOME/.bashrc"
+alias vrc="vi $HOME/.dotfiles/vimrc"
+alias vbp="vi $HOME/.dotfiles/bash_profile"
+alias vb="vi $HOME/.dotfiles/bashrc"
 
 # SSH
 alias slp="ssh lp"
@@ -278,7 +275,6 @@ alias ssb='ssh -A lpetherbridge@fcs-stg-bastion.lax01.fonality.com'
 # Sourcing
 alias b="source $HOME/.bashrc"
 alias bp="source $HOME/.bash_profile"
-alias sa="source $HOME/.ssh/ssh-agent-$HOSTNAME"
 
 # Misc
 alias da='date "+%Y-%m-%d %H:%M:%S"'
@@ -312,6 +308,10 @@ alias lr='ls -lR' # Recursive ls
 # == Functions {{{1
 # ==================================================================================================
 
+ssh() {
+  TERM=${TERM/tmux/screen}
+  /usr/local/bin/ssh $*
+}
 vf() {
   vim scp://lpetherbridge@devbox5.lotsofclouds.fonality.com/~/fcs/$*
 }
@@ -430,28 +430,21 @@ unixtime() { date --date="1970-01-01 $* sec GMT"; }
 
 myps() { ps -f $@ -u $USER -o pid,%cpu,%mem,bsdtime,command ; }
 
+sa() {
+  sourcefile /tmp/ssh-agent-$HOSTNAME-info
+}
 ra() {
-  if _ask_yes_no "Restart ssh-agent?"; then
-    case "$TERM" in
-      screen* )
-        echo "We're in a screen. I refuse to restart ssh-agent."
-        ;;
-      * )
-        echo "Killing existing ssh-agent instances..."
-        while [ $(ps aux | grep ssh-agent | grep -v grep | wc -l) -gt 0 ]; do
-          pkill -f ssh-agent
-        done
-        unset SSH_AUTH_SOCK
-        unset SSH_AGENT_PID
-        sourcefile "$PLUGIN_DIR/ssh-agent/ssh-agent.plugin.sh"
-        ;;
-    esac
+  if [ $1 ] || [ _ask_yes_no "Restart ssh-agent?" ]; then
+    rm -f /tmp/ssh-agent-$HOSTNAME
+    pkill -f ssh-agent
+    echo `ssh-agent -s -a /tmp/ssh-agent-$HOSTNAME` >| /tmp/ssh-agent-$HOSTNAME-info
+    source /tmp/ssh-agent-$HOSTNAME-info
   fi
 }
 aweb() { [[ -f "$HOME/.ssh/webhost_key" ]] && /usr/bin/ssh-add "$HOME/.ssh/webhost_key"; }
 als() { [[ -f "$HOME/.ssh/id_rsa_psu" ]] && /usr/bin/ssh-add "$HOME/.ssh/id_rsa_psu"; }
 akey() {
-  ra
+  ra "1"
   # If Aladdin etoken connected
   if [ $(system_profiler SPUSBDataType 2> /dev/null| grep OMNIKEY -c) -gt 0 ]; then
     /usr/bin/ssh-add -s '/usr/local/lib/libaetpkss.dylib'
@@ -509,7 +502,7 @@ st_jobs() {
 export PLUGIN_DIR="${HOME}/.plugins"
 export BASH_THEME="${HOME}/.themes/zhayedan.sh"
 
-plugins=(host git ssh-agent)
+plugins=(host git)
 export SSH_AGENT_FWD="yes"
 
 # Load all of the plugins
@@ -604,7 +597,6 @@ prompt_off() {
 }
 
 PROMPT_COMMAND="prompt_on"
-
 
 
 # == End Profiling {{{1

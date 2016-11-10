@@ -15,12 +15,12 @@ select opt in "${options[@]}"
 do
   case $opt in
     "New Dev Session")
-      tmux new-session -d 'vim'
-      tmux rename-session dev
-      tmux rename-window vim
-      tmux new-window -n shell
-      tmux select-window -t vim
-      tmux -2 attach-session -d
+      SESSION=dev-$RANDOM
+      tmux new-session -s $SESSION -n editor -d
+      tmux send-keys -t $SESSION 'vim' C-m
+      tmux new-window -n shell -t $SESSION
+      tmux select-window -t editor
+      tmux attach -t $SESSION
       break
       ;;
     "New Session")

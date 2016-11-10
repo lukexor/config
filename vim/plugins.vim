@@ -5,24 +5,21 @@ call plug#begin('~/.vim/plugged')
 " == Editing   {{{1
 " ==================================================================================================
 
-Plug 'christoomey/vim-system-copy' " Better OS clipboard integration
-Plug 'ciaranm/detectindent'        " Autodetect indent style for current file to stay consistent
-Plug 'easymotion/vim-easymotion'   " Move around vim easier
-" Plug 'ervandew/supertab'           " Auto-completion
-Plug 'justinmk/vim-ipmotion'       " Improves { and } motions
-Plug 'reedes/vim-pencil'           " Makes vim like a writing editor
-Plug 'sheerun/vim-polyglot'        " Syntax support for a variety of languages
-Plug 'svermeulen/vim-easyclip'     " Better clipboard interaction
-Plug 'tmhedberg/matchit'           " Advanced % matching
-Plug 'tommcdo/vim-exchange'        " Allows easy exchanging of text
-Plug 'tpope/vim-abolish'           " Adds useful shorthand for abbreviations and search/replace
-Plug 'tpope/vim-commentary'        " Commenting quality of life improvements
-Plug 'tpope/vim-surround'          " Enables surrounding text with quotes or brackets easier
-Plug 'tpope/vim-unimpaired'        " Adds a lot of shortcuts complimentary pairs of mappings
+Plug 'ervandew/supertab'             " Auto-completion
 Plug 'christoomey/vim-sort-motion'   " Easier sorting
+Plug 'christoomey/vim-system-copy'   " Better OS clipboard integration
 Plug 'jiangmiao/auto-pairs'          " Auto-complete bracket pairs
 Plug 'junegunn/vim-easy-align'       " Makes aligning chunks of code super easy
+Plug 'justinmk/vim-ipmotion'         " Improves { and } motions
+Plug 'reedes/vim-pencil'             " Makes vim like a writing editor
+Plug 'sheerun/vim-polyglot'          " Syntax support for a variety of languages
+Plug 'svermeulen/vim-easyclip'       " Better clipboard interaction
+Plug 'tmhedberg/matchit'             " Advanced % matching
+Plug 'tommcdo/vim-exchange'          " Allows easy exchanging of text
+Plug 'tpope/vim-commentary'          " Commenting quality of life improvements
 Plug 'tpope/vim-endwise'             " Adds ending structures to blocks e.g. endif
+Plug 'tpope/vim-surround'            " Enables surrounding text with quotes or brackets easier
+Plug 'tpope/vim-unimpaired'          " Adds a lot of shortcuts complimentary pairs of mappings
 Plug 'vim-scripts/HTML-AutoCloseTag' " Auto-closes HTML tags e.g. </body>
 
 
@@ -76,11 +73,9 @@ if v:version >= 704 && has("python")
   Plug 'SirVer/ultisnips'   " Code Snippets
 endif
 Plug 'honza/vim-snippets'   " Snippet files
-Plug 'othree/html5.vim'     " Improved HTML syntax
 Plug 'scrooloose/syntastic' " Syntax checking
 Plug 'tpope/vim-dispatch'   " Allows building/testing to go on in the background
 Plug 'tpope/vim-repeat'     " Repeat last command using .
-Plug 'vim-perl/vim-perl'    " Improved perl syntax
 Plug 'zenbro/mirror.vim'    " Easily edit mirror files across systems using SCP
 
 

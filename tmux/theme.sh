@@ -2,11 +2,11 @@
 ## COLOUR
 
 tm_icon=""
-tm_color_active=colour51
-tm_color_inactive=colour241
-tm_color_feature=colour198
-tm_color_music=colour41
-tm_active_border_color=colour51
+tm_color_active=red
+tm_color_inactive=blue
+tm_color_feature=white
+tm_color_music=green
+tm_active_border_color=yellow
 
 # separators
 tm_separator_left_bold="◀"

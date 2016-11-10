@@ -1,29 +1,29 @@
 Configure vim to open web URLs and add to Help documentation
-Configure vim to render Markdown in browser
 Customize Syntastic for work - Optimize performance
 Customize UltiSnips for Perl, Java, Python, C, vim, and bash
 Draft Code Complete checklist/reference document
-Draft Help and keybinds for Syntastic
-Draft Help and keybinds for compiling/executing current file/test files
-Draft Help and keybinds for supertab
-Draft Help document for ASCII codes
-Draft Help document for ShowMarks
-Draft Help document for VIM colorcodes
-Draft Help document for easyalign
-Draft quick Reference documentation for FFXVI fights
-Review :Maps listing and update Help documentation
-Review NERDTree usage documentation
-Review ShowMarks usage documentation
+Draft Help and keybinds for all plugins/vimrc (use :Maps)
+Draft Ref document for ASCII codes
+Draft Ref document for VIM colorcodes
+Draft Ref document for FFXVI fights
 Review Syntastic customization
 Review Tagbar usage documentation
 Review Tmux usage documentation
-Fix tmux startup session to work correctly
 Update bashrc/pash_profile the same way vimrc was updated
 Find why vim is so slow after starting on dev-app (likely easytags or something)
-Disable powerline text for cross-playform compatibility
-Fix italics in vim
 Set up newer vim on all stg environments locally
 Install ctags locally on all stg environments
-Find a way to easily edit a file locally and scp it over to the same directory remotely
 Replace as many plugins as possible with default vim configuration
 Go through all vimrc settings, find the defaults and remove settings that duplicate defaults
+
+Add vim shortcut for surrounds ( ysiw', ysiw", etc )
+Add vim shortcut for deleting {''} (ds'ds{)
+add vim shortcut for extract method
+add vim shortcut for gaip=
+add vim shortcut for ysiw}lysiw'
+add vim shortcut for surround with sprintf("<selection>", $1)
+Fix perl words including _
+Fix perl words not including . when there's no spaces - maybe a shortcut for ciw that includes dots
+Make editing of packages work with ciw, etc (word using ::)
+Add vim shortcut for editing both a local .t file matching the current filename as well as a test
+class file located at t/lib/Test/<filename>

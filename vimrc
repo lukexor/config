@@ -3,6 +3,8 @@
 
 let b:fsize=getfsize(@%)
 let mapleader=' '
+let maplocalleader=','
+
 set nocompatible                 " Disable VI backwards compatible settings. Must be first
 set autoindent                   " Copy indent from current line when adding a new line
 set autoread
@@ -13,6 +15,7 @@ set background=dark
 set backspace=indent,eol,start
 set backupdir^=/tmp//
 set complete-=i
+set completeopt+=longest,menuone
 if b:fsize <= 1000000
   set cursorline                 " Highlight the cursorline - slows redraw
   if v:version >= 704
@@ -36,7 +39,7 @@ if has('autocmd')
 endif
 set foldenable
 set foldmethod=indent
-set foldnestmax=1                " Deepest folds allowed for indent and syntax methods
+set foldnestmax=2                " Deepest folds allowed for indent and syntax methods
 " Set formatting options
 " 1   Don't break after a one-letter word
 " a   Auto-format paragraphs. When combined with c, only happens for comments
@@ -210,34 +213,37 @@ augroup vimrcEx
   autocmd InsertEnter * highlight CursorLine ctermbg=235 ctermfg=None
   " Revert Color to default when leaving Insert Mode
   autocmd InsertLeave * highlight CursorLine ctermbg=017 ctermfg=None
-
-  " Turns relative line numbers on and off when entering and exiting insert mode
-  if v:version >= 704
-    autocmd FocusLost * call ToggleRelativeOn()
-    autocmd FocusGained * call ToggleRelativeOn()
-    autocmd InsertEnter * call ToggleRelativeOn()
-    autocmd InsertLeave * call ToggleRelativeOn()
-  endif
-
 augroup END
 
 
 " == Functions   {{{1
 " ==================================================================================================
 
-let b:test_method=""
-function! RunTests()
+let g:test_method=""
+function! RunTests(...)
   if &filetype == 'perl'
     let filename = expand('%:p:s?.*lib/??:r:gs?/?::?')
-    if !empty(b:test_method)
-      echom 'Testing ' . filename . '::' . b:test_method
-      execute ':Make test TEST=' . filename . ' METHOD=' . b:test_method
+    let cmd = 'Make'
+    if !empty(a:1) && a:1 == 'background'
+      let cmd = 'Make!'
+    endif
+    if !empty(g:test_method)
+      echom 'Testing ' . filename . '::' . g:test_method
+      execute ':' . cmd . ' test TEST=' . filename . ' METHOD=' . g:test_method
     else
       echom 'Testing ' . filename
-      execute ':Make test TEST=' . filename
+      execute ':' . cmd . ' test TEST=' . filename
     endif
   else
     echom 'Tests not set up for ' . &filetype 'files'
+  endif
+endfunction
+function! RunCover()
+  if &filetype == 'perl'
+    execute 'let $HARNESS_PERL_SWITCHES="-MDevel::Cover"'
+    call RunTests('background')
+  else
+    echom 'Coverage not set up for ' . &filetype 'files'
   endif
 endfunction
 function! SetTestMethod()
@@ -253,28 +259,6 @@ function! ClearTestMethod()
   echom 'Test Method cleared'
 endfunction
 
-" Enables toggling of relative line number with absolute
-if v:version >= 704
-  function! ToggleNumbersOn()
-    set number!
-    set relativenumber
-  endfunction
-  function! ToggleRelativeOn()
-    set relativenumber!
-    set number
-  endfunction
-endif
-
-" Closes current buffer without destroying splits, and if it's the last buffer, exits vim
-function! CloseBuffer()
-  let buf_count=len(filter(range(1, bufnr('$')), 'buflisted(v:val)'))
-  if buf_count > 1
-    bprevious
-    bdelete #
-  else
-    quit
-  endif
-endfunction
 
 " == Plugin Settings   {{{1
 " ==================================================================================================
@@ -287,7 +271,8 @@ endif
 let g:solarized_termtrans=1
 colorscheme solarized
 
-let g:EasyClipShareYanks=1
+let g:EasyClipShareYanks=1    " Share yanks across all vim sessions
+let g:EasyClipAlwaysMoveCursorToEndOfPaste=1    " Affects multi-line pastes
 " Override find and use ag instead which will honor .gitignore and only search text files
 if executable('ag')
   let $FZF_DEFAULT_COMMAND='ag --hidden -g ""'
@@ -300,11 +285,14 @@ let g:session_autosave='yes'
 let g:session_autosave_periodic=3 " Automatically save the current session every 3 minutes
 let g:session_autosave_silent=1   " Silence any messages
 let g:session_default_to_last=1   " Default opening the last used session
+let g:SuperTabDefaultCompletionType="context"
+let g:SuperTabLongestEnhanced=1
 let g:syntastic_always_populate_loc_list=1
 let g:syntastic_auto_loc_list=1
 let g:syntastic_enable_perl_checker=1
 let g:syntastic_error_symbol='❌'
-let g:syntastic_javascript_checkers=['eslint']
+let g:syntastic_javascript_checkers=['eslint', 'jshint']
+" let g:syntastic_javascript_jshint_args='--config /Users/caeledh/.jshintrc'
 let g:syntastic_loc_list_height=5
 let g:syntastic_mode_map={ 'mode': 'passive' }
 let g:syntastic_perl_checkers=['perl', 'perlcritic']
@@ -342,8 +330,6 @@ augroup enter
 augroup END
 " Stop highlight after searching
 nnoremap <silent> <leader><CR> :nohlsearch<C-R>=has('diff')?'<Bar>diffupdate':''<CR><CR><C-L>
-" Toggle spellcheck
-nnoremap <leader>st :setlocal spell!<CR>
 " Count the number of words in the current document
 nnoremap <leader>cw :!wc -w %<CR>
 " Remove trailing whitespace
@@ -352,18 +338,7 @@ nnoremap <leader>rs mz:silent! %s/\s\+$//<CR>:noh<CR>`z
 nnoremap <leader>rt :%retab!<CR>
 " Reindent entire file. NOTE: This may indent unexpectedly
 nnoremap <leader>ri mzgg=G`z
-
-
-" -- Functions   {{{2
-" --------------------------------------------------------------------------------------------------
-
-" Display custom help window with shortcut references
-noremap <F2> :NERDTreeToggle<CR>
-inoremap <F2> <Esc>:NERDTreeToggle<CR>i
-noremap <F3> :TagbarToggle<CR>
-inoremap <F3> <Esc>:TagbarToggle<CR>i
-noremap <F12> :help lp-help<CR>
-inoremap <F12> <Esc>:help lp-help<CR>
+vnoremap <buffer> <leader>f :!perltidy --quiet --standard-output --nostandard-error-output<CR>
 
 
 " -- Movement   {{{2
@@ -376,26 +351,29 @@ nnoremap j gj
 nnoremap k gk
 vnoremap j gj
 vnoremap k gk
-" Use tab to jump between blocks, because it's easier
-nnoremap <tab> %
-vnoremap <tab> %
 
 
 " -- Plugins   {{{2
 " --------------------------------------------------------------------------------------------------
 
-let g:AutoPairsShortcutToggle='<C-0>'
-let g:AutoPairsShortcutFastWrap='<C-l>'
-" Start interactive EasyAlign in visual mode (e.g. vipga)
-xmap ga <Plug>(EasyAlign)
+let g:AutoPairsShortcutToggle='<C-\>'
+let g:SuperTabMappingTabLiteral='<c-t>'
+nnoremap <leader>cf <Plug>EasyClipToggleFormattedPaste
+inoremap <C-p> <Plug>EasyClipInsertModePaste
+nnoremap M <Plug>MoveMotionEndOfLinePlug
+noremap <localleader>1 :NERDTreeToggle<CR>
+noremap <localleader>2 :TagbarToggle<CR>
+" Start interactive EasyAlign for a visual selection (e.g. vipga)
+vmap ga <Plug>(EasyAlign)
 " Start interactive EasyAlign for a motion/text object (e.g. gaip)
 nmap ga <Plug>(EasyAlign)
 " FZF Open various files
-noremap <leader>b :Buffers<CR>
+noremap <leader>B :Buffers<CR>
 noremap <leader>F :Files<CR>
 noremap <leader>S :Snippets<CR>
 noremap <leader>H :History<CR>
 noremap <leader>T :Tags<CR>
+noremap <leader>P :IPaste<CR>
 " Fugitive
 nnoremap <leader>gst :Gstatus<CR>
 nnoremap <leader>gd :Gdiff<CR>
@@ -405,13 +383,13 @@ nnoremap <leader>gm :Gmerge<space>
 nnoremap <leader>gps :Gpush<CR>
 nnoremap <leader>glg :Glog<CR>
 nnoremap <leader>gb :Gblame<CR>
-noremap <leader>c :SyntasticCheck<CR>
-if v:version >= 704
+noremap <leader>sc :SyntasticCheck<CR>
+if v:version >= 704 && has("python")
   noremap <leader>ep :UltiSnipsEdit<CR>
 endif
-if exists(":MirrorEdit")
-  noremap <leader>M :MirrorEdit
-endif
+noremap <leader>ME :MirrorEdit<space>
+noremap <leader>MP :MirrorPush<space>
+noremap <leader>ML :MirrorPull<space>
 
 
 " -- System   {{{2
@@ -422,28 +400,19 @@ noremap <leader>m :Make!<CR>
 noremap <leader>C :Dispatch! ctags -R<CR>:echom "Tags Generated"<CR>
 noremap <leader>sm :call SetTestMethod()<CR>
 noremap <leader>cm :call ClearTestMethod()<CR>
-noremap <leader>sv :source $MYVIMRC<CR>
-noremap <leader>t :call RunTests()<CR>
-" Make CTRL-C exit the same as escape
-inoremap <C-c> <Esc>
+noremap <leader>sv :write<CR>:source $MYVIMRC<CR>:edit<CR>
+noremap <leader>t :call RunTests("")<CR>
+noremap <leader>ct :call RunCover()<CR>
 noremap <leader>z <C-Z>
 
 " -- Tab/Window Control   {{{2
 " --------------------------------------------------------------------------------------------------
 
-nnoremap <leader>1 :b1<CR>
-nnoremap <leader>2 :b2<CR>
-nnoremap <leader>3 :b3<CR>
-nnoremap <leader>4 :b4<CR>
-nnoremap <leader>5 :b5<CR>
-nnoremap <leader>6 :b6<CR>
-nnoremap <leader>7 :b7<CR>
-nnoremap <leader>8 :b8<CR>
-nnoremap <leader>9 :b9<CR>
 " Create and move between buffers
-noremap <leader>n <esc>:enew<CR>
+noremap <leader>n :enew<CR>
 noremap <leader>h :bprevious<CR>
 noremap <leader>l :bnext<CR>
+noremap <leader>k :b #<CR>
 nnoremap cd :exe 'lcd ' . fnamemodify(resolve(expand('%')), ':h')<CR>:echo 'cd ' . fnamemodify(resolve(expand('%')), ':h')<CR>
 " Zoom a vim pane
 nnoremap <leader>- :wincmd _<CR>:wincmd \|<CR>
@@ -453,13 +422,10 @@ nnoremap <silent> <Right> :vertical resize +5<CR>
 nnoremap <silent> <Left> :vertical resize -5<CR>
 nnoremap <silent> <Up> :resize +5<CR>
 nnoremap <silent> <Down> :resize -5<CR>
-" Switch between the last two files
-noremap <leader>k :ls<CR>
 noremap <leader>q :quit<CR>
-noremap <leader>Q :quit!<CR>
-noremap <leader>x :call CloseBuffer()<CR>
-" Switch to alternate file/header
-noremap <leader>A :A<CR>
+noremap <leader>Q :qall<CR>
+noremap <leader>x :x<CR>
+noremap <leader>d :bdelete<CR>
 " Disable EX mode
 noremap Q <NOP>
 
