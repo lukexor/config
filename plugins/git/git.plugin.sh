@@ -36,8 +36,7 @@ alias gdt='git describe --tags --abbrev=0'
 alias gll='git --no-pager log --pretty=format:"%C(yellow)%h (%p) %ai%Cred%d %Creset%Cblue[%ae]%Creset %s (%ar). %b %N" --numstat -10'
 alias glnc='git log --pretty=format:"%h%d [%cn]  %s (%ar)"'
 alias gm='git merge --no-ff'
-alias gpl='git pull'
-alias gfr='git pull --rebase'
+alias gpl='echo "use gfr"'
 alias gps='git push'
 alias gpt='git push --tags'
 alias gr='git rebase'
@@ -49,6 +48,7 @@ alias gshal=git_prompt_long_sha
 alias gsr='git svn rebase'
 alias gss='git status -s'
 alias gst='git status'
+alias gbi='echo $(git_prompt_info);'
 alias gsl='git --no-pager stash list'
 alias gt=git_time_since_commit
 alias gtoday='git --no-pager log --graph --pretty=format:"%C(yellow)%h %ad%Cred%d %Creset%Cblue[%cn]%Creset  %s (%ar)" --date=iso --all --branches=* --remotes=* --since="23 hours ago" --author="$(git config user.name)"'
@@ -56,6 +56,21 @@ alias gun='git reset HEAD --'
 
 # Functions
 gdv() { git diff -w "$@" | view -; }
+
+git() {
+  if [ $1 = "merge" ]; then
+    echo "Use gm which uses --no-ff"
+  else
+    /usr/bin/env git $*
+  fi
+}
+
+gfr() {
+  branch=$(current_branch)
+  echo "git fetch origin && git rebase -p origin/$branch"
+  git fetch origin
+  git rebase -p origin/$branch
+}
 
 gh() {
     echo "Git Help:"

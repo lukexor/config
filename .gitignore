@@ -10,6 +10,6 @@ atom/storage/
 bin/minecraft*
 tags*
 vim/.netrwhist
-vim/plugged/*
+vim/plugins/*
 vim/sessions/
 vim/undodir/*

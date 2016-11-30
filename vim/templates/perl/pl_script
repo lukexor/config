@@ -1,0 +1,45 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+
+$!++;
+
+use Carp;
+use Data::Dumper;
+
+main();
+
+sub main
+{
+}
+
+__END__
+
+=head1 NAME
+
+<filename> - [description]
+
+=head1 SYNOPSIS
+
+    <filename> [options]
+
+=head1 DESCRIPTION
+
+[extended description]
+
+=head1 OPTIONS
+
+=over 8
+
+=item B<--option>
+
+[Option description]
+
+=back
+
+=head1 EXAMPLES
+
+None
+
+=cut

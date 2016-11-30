@@ -54,11 +54,11 @@ sourcefile '/etc/bashrc'
 # ==================================================================================================
 
 # History
-export HISTCONTROL="erasedups"  # Erase duplicates in history before saving current command
-export HISTIGNORE='h:history:&:[bf]g:exit'
-export HISTFILESIZE=100000 # Number of lines saved in HISTFILE
-export HISTSIZE=10000 # Number of commands saved in command history
-export HISTTIMEFORMAT='[%F %a %T] ' # YYYY-MM-DD DAY HH:MM:SS
+HISTCONTROL="erasedups"  # Erase duplicates in history before saving current command
+HISTIGNORE='h:history:&:[bf]g:exit'
+HISTFILESIZE=100000 # Number of lines saved in HISTFILE
+HISTSIZE=10000 # Number of commands saved in command history
+HISTTIMEFORMAT='[%F %a %T] ' # YYYY-MM-DD DAY HH:MM:SS
 
 export FON_DIR="$HOME/fcs"
 export FCS_DEVEL=1
@@ -87,7 +87,7 @@ pathappend "$HOME/perl5/lib/perl5/" GITPERLLIB
 pathappend "$HOME/perl5/perlbrew/perls/perl-5.16.0/lib/site_perl/5.16.0/App/gh" GITPERLLIB
 
 # VI style line editing
-export EDITOR="vim"
+EDITOR="vim"
 # set -o vi
 
 # Exit if not interactive
@@ -222,6 +222,7 @@ if [[ -d "$HOME/Dropbox/dev" ]]; then
 fi
 
 # System
+alias u='history -n'  # Sync history from other terminals
 alias _='sudo'
 alias du='du -kh' # Human readable in 1K block sizes
 alias df='df -kh' # Human readable in 1K block sizes with file system type
@@ -250,9 +251,10 @@ alias rpmls='rpm -qlp' # list rpm contents
 alias rpminfo='rpm -qip' # list rpm info
 
 # Edit configurations
-alias vrc="vi $HOME/.dotfiles/vimrc"
-alias vbp="vi $HOME/.dotfiles/bash_profile"
-alias vb="vi $HOME/.dotfiles/bashrc"
+alias vrc="pushd $HOME/.dotfiles/ >> /dev/null; vi $HOME/.dotfiles/vimrc; popd >> /dev/null"
+alias vp="pushd $HOME/.dotfiles/ >> /dev/null; vi $HOME/.dotfiles/vim/plugins.vim; popd >> /dev/null"
+alias vbp="pushd $HOME/.dotfiles/ >> /dev/null; vi $HOME/.dotfiles/bash_profile; popd >> /dev/null"
+alias vb="pushd $HOME/.dotfiles/ >> /dev/null; vi $HOME/.dotfiles/bashrc; popd >> /dev/null"
 
 # SSH
 alias slp="ssh lp"
@@ -405,8 +407,8 @@ mcd() { mkdir -p "$1" && cd "$1"; }
 
 hist_stats() { history | cut -d] -f2 | sort | uniq -c | sort -rn | head; }
 
-n() { echo -n -e "\033]0;$*\007"; export TERM_TITLE=$*; }
-sn() { echo -n -e "\033k$*\033\\"; export SCREEN_TITLE=$*; }
+n() { echo -n -e "\033]0;$*\007"; TERM_TITLE=$*; }
+sn() { echo -n -e "\033k$*\033\\"; SCREEN_TITLE=$*; }
 
 # Grep commands
 h() { if [ -z "$*" ]; then history; else history | egrep "$@"; fi; }
@@ -554,7 +556,7 @@ BASH_THEME_GIT_TIME_SINCE_COMMIT_AFTER=""
 prompt_pwd() {
   local pwd_max_len=$(($(tput cols) / 2))
   local trunc_symbol="..."
-  PWD="${PWD/$HOME/'~'}"
+  PWD=${PWD/$HOME/"~"}
   if [ ${#PWD} -gt ${pwd_max_len} ]
   then
     local pwd_offset=$(( ${#PWD} - ${pwd_max_len} + 3 ))
@@ -566,10 +568,10 @@ prompt_pwd() {
 prompt_on() {
   case ${OSTYPE} in
     darwin*)
-      export PS1_HOST="mac"
+      PS1_HOST="mac"
       ;;
     *)
-      export PS1_HOST="${HOSTNAME}"
+      PS1_HOST="${HOSTNAME}"
       ;;
   esac
 
@@ -584,19 +586,20 @@ prompt_on() {
     echo -ne " $FGbgreen{$FGgreen$PS1_HOST$FGbgreen} "
   fi
 
-  # if [[ $(declare -f parse_git_branch) && $(parse_git_branch) ]]; then
-  #   echo -ne "$FGbgreen($FGblue$(parse_git_branch)$FGBgreen|$(parse_git_dirty)$(git_prompt_status)$FGbgreen) "
-  # fi
+  if [[ $(declare -f parse_git_branch) && $(parse_git_branch) ]]; then
+    echo -ne "$FGbgreen($FGblue$(parse_git_branch)$FGBgreen) "
+  fi
   echo -e "$FGcyan$(prompt_pwd)$RCLR"
-  PS1=" > "
-  PS2=" >> "
 }
+PS1="> "
+PS2=">> "
 
 prompt_off() {
+  PROMPT_COMMAND=""
   PS1='$(prompt_pwd) > '
 }
 
-PROMPT_COMMAND="prompt_on"
+PROMPT_COMMAND="history -a; prompt_on"
 
 
 # == End Profiling {{{1
@@ -621,3 +624,5 @@ fi
 # }}}
 
 # vim:foldmethod=marker:foldlevel=0
+
+[ -f $HOME/.fzf.bash ] && source $HOME/.fzf.bash

@@ -17,3 +17,9 @@ endif
 if maparg("=P") != ""
   nunmap =P
 endif
+
+" Remove some mappings set by GitGutter
+silent! nunmap <leader>hp
+silent! nunmap <leader>hr
+silent! nunmap <leader>hu
+silent! nunmap <leader>hs

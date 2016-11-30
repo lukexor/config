@@ -21,10 +21,10 @@ set skip-completed-text on
 set show-all-if-ambiguous on
 set show-all-if-unmodified on
 
-set show-mode-in-prompt on
-set vi-cmd-mode-string :
-set vi-ins-mode-string +
-set editing-mode vi
+# set show-mode-in-prompt on
+# set vi-cmd-mode-string :
+# set vi-ins-mode-string +
+# set editing-mode vi
 
 "\C-a": beginning-of-line
 "\C-e": end-of-line

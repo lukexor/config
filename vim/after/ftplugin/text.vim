@@ -1,4 +1,2 @@
-setlocal nofoldenable
-setlocal wrap
-setlocal nolist
-let g:airline#extensions#wordcount#enabled=1
+runtime after/ftplugin/global/formatoptions.vim
+runtime after/ftplugin/global/textoptions.vim
