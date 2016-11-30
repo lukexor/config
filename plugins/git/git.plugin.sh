@@ -61,7 +61,7 @@ git() {
   if [ $1 = "merge" ]; then
     echo "Use gm which uses --no-ff"
   else
-    /usr/bin/env git $*
+    command git "$@"
   fi
 }
 
