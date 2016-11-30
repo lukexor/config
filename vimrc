@@ -12,7 +12,7 @@ endif
 
 " Any plugins should come after colorscheme if they override highlighting
 let g:solarized_termtrans=1
-colorscheme solarized
+silent! colorscheme solarized
 
 set nocompatible                 " Disable VI backwards compatible settings. Must be first
 set autoindent                   " Copy indent from current line when adding a new line
@@ -79,7 +79,7 @@ set list                         " Enable visibility of unprintable chars
 set listchars=tab:>\ ,trail:-,extends:>,precedes:<,nbsp:~
 
 " Set < and > as brackets for jumping with %
-set matchpairs+=<:>,«:»
+set matchpairs+=<:>
 set noerrorbells                 " No sound on errors
 set noequalalways                " Don't make windos equal size
 set nomore
@@ -211,10 +211,12 @@ iabbrev waht what
 " Custom plugin to fold around searches
 runtime custom_plugins/foldsearches.vim
 
-augroup Undouble_Completions
-    autocmd!
-    autocmd CompleteDone *  call Undouble_Completions()
-augroup None
+if v:version >= 703
+  augroup Undouble_Completions
+      autocmd!
+      autocmd CompleteDone *  call Undouble_Completions()
+  augroup None
+endif
 
 augroup Perl_Setup
     autocmd!
@@ -235,7 +237,9 @@ augroup filetype_formats
   autocmd BufNewFile,BufRead *      if !&modifiable
   autocmd BufNewFile,BufRead *        setlocal nolist nospell
   autocmd BufNewFile,BufRead *      endif
-  autocmd BufNewFile,BufRead *      :call camelcasemotion#CreateMotionMappings('<localleader>')
+  if exists("*camelcasemotion#CreateMotionMappings")
+    autocmd BufNewFile,BufRead *      :call camelcasemotion#CreateMotionMappings('<localleader>')
+  endif
 augroup END
 
 augroup vimrcEx
