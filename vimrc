@@ -38,8 +38,10 @@ set diffopt+=vertical
 " Set directory to store swap files in
 set directory^=/tmp//
 set display+=lastline
+set encoding=utf-8
 set expandtab                    " Replace the tab key with spaces
 filetype plugin indent on
+set fileencoding=utf-8
 set fileformat=unix
 set fileformats=unix,dos,mac     " Default file types
 set foldenable
@@ -151,7 +153,6 @@ endif
 set term=xterm-256color
 set title
 set titleold=''
-set fileencodings=''
 set textwidth=100                " Max width for text on the screen
 set ttimeout                     " Timeout on :mappings and key codes
 set ttimeoutlen=300              " Change timeout length

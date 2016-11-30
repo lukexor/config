@@ -625,4 +625,4 @@ fi
 
 # vim:foldmethod=marker:foldlevel=0
 
-[ -f $HOME/.fzf.bash ] && source $HOME/.fzf.bash
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
