@@ -5,4 +5,8 @@ ignore = [
     '.gitignore',
     '.gitmodules',
     '.gitconfig',
-    '*.swp']
+    '*.swp',
+    'tags',
+    'resources*',
+    'docs*',
+    'plugins*',]

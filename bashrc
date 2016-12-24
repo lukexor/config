@@ -77,6 +77,7 @@ export WORKON_HOME="$HOME/.virtualenvs"
 pathprepend "$HOME/.rvm/bin"
 pathprepend "$HOME/fcs/bin"
 pathprepend "$HOME/bin"
+pathprepend "/usr/local/opt/coreutils/libexec/gnubin"
 
 pathprepend "$HOME/perl5/lib/perl5/" PERL5LIB
 pathprepend "$HOME/perl5/lib" PERL5LIB
@@ -85,6 +86,8 @@ pathprepend "$HOME/lib" PERL5LIB
 
 pathappend "$HOME/perl5/lib/perl5/" GITPERLLIB
 pathappend "$HOME/perl5/perlbrew/perls/perl-5.16.0/lib/site_perl/5.16.0/App/gh" GITPERLLIB
+
+pathprepend "/usr/local/opt/coreutils/libexec/gnuman" MANPATH
 
 # VI style line editing
 EDITOR="vim"
@@ -164,6 +167,8 @@ NC='\[\033[0m\]'
 # == Shell Options {{{1
 # ==================================================================================================
 
+# [ -f /usr/local/etc/bash_completion  ] && . /usr/local/etc/bash_completion
+
 # Bash 4.00 specific options
 if [[ $BASH_VERSINFO > 3 ]]; then
   shopt -s autocd # Allow cding to directories by typing the directory name
@@ -212,7 +217,7 @@ alias cdc='cd ~/Dropbox/classes/'
 if [[ -d "$HOME/fcs/" ]]; then
   alias wa="cd $HOME/fcs/lib/Fap/WebApp/Action/"
   alias f="cd $HOME/fcs/lib/Fap/"
-  alias dbregen="/usr/bin/perl -I$HOME/fcs/lib $HOME/fcs/bin/tools/database/regenerate_DBIx"
+  alias dbregen="perl -I$HOME/fcs/lib $HOME/fcs/bin/tools/database/regenerate_DBIx"
 fi
 if [[ -d "$HOME/Dropbox/dev" ]]; then
   export DEVHOME="$HOME/Dropbox/dev"
@@ -258,11 +263,17 @@ alias vb="pushd $HOME/.dotfiles/ >> /dev/null; vi $HOME/.dotfiles/bashrc; popd >
 
 # SSH
 alias slp="ssh lp"
+alias spi="ssh pi@192.168.1.110"
+alias spir="ssh pi@24.22.74.212 -p2222"
 alias sls="ssh luc6@linux.cs.pdx.edu"
 alias sqz="ssh luc6@quizor2.cs.pdx.edu"
 alias sshl='ssh-add -L' # List ssh-agent identities
 alias st='ssh -A lpetherbridge@tech.fonality.com'
-alias sw2='ssh -A lpetherbridge@web-dev2.fonality.com'
+sw2() {
+  TERM=${TERM/"screen-256color"/"xterm-256color"}
+  ssh -A lpetherbridge@web-dev2.fonality.com
+  TERM=${TERM/"xterm-256color"/"screen-256color"}
+}
 alias sp='ssh -A lpetherbridge@fcs-app1.fonality.com'
 alias sf='ssh -A lpetherbridge@devbox5.lotsofclouds.fonality.com'
 alias sq='ssh -A lpetherbridge@qa-app.lotsofclouds.fonality.com'
@@ -291,28 +302,31 @@ alias x='extract'
 
 # ls
 if [[ "$OSTYPE" =~ 'darwin' ]]; then
-  alias ls='ls -hFG' # Add colors for filetype recognition
+  alias ls='ls -NhFG --color' # Add colors for filetype recognition
 else
-  alias ls='ls -hF --color=tty'
+  alias ls='ls -NhF --color=tty'
 fi
-alias ll='ls -l' # Long listing
-alias la='ls -Al' # Show hidden files
-alias lx='ls -lXB' # Sort by extension
-alias lk='ls -lSr' # Sort by size, biggest last
-alias lc='ls -ltcr' # Sort by and show change time, most recent last
-alias lu='ls -ltur' # Sort by and show access time, most recent last
-alias lt='ls -ltr' # Sort by date, most recent last
-alias lle='ls -al | less' # Pipe through 'less'
-alias lr='ls -lR' # Recursive ls
+alias ll='ls -Nl' # Long listing
+alias la='ls -NAl' # Show hidden files
+alias lx='ls -NlXB' # Sort by extension
+alias lk='ls -NlSr' # Sort by size, biggest last
+alias lc='ls -Nltcr' # Sort by and show change time, most recent last
+alias lu='ls -Nltur' # Sort by and show access time, most recent last
+alias lt='ls -Nltr' # Sort by date, most recent last
+alias lle='ls -Nal | less' # Pipe through 'less'
+alias lr='ls -NlR' # Recursive ls
 
 
 
 # == Functions {{{1
 # ==================================================================================================
 
+myip() {
+  wget http://ipecho.net/plain -O - -q; echo
+}
 ssh() {
   TERM=${TERM/tmux/screen}
-  /usr/local/bin/ssh $*
+  command ssh $*
 }
 vf() {
   vim scp://lpetherbridge@devbox5.lotsofclouds.fonality.com/~/fcs/$*
@@ -326,13 +340,6 @@ vs2() {
 pprofile() {
   perl -d:NYTProf $*;
   nytprofhtml --open;
-}
-make() {
-  if [[ -d build ]]; then
-    /usr/bin/make -C build $@
-  else
-    /usr/bin/make $@
-  fi
 }
 _ask_yes_no() {
   echo -en "${FGred}$@ [y/n] ${RCLR}" ; read ans
@@ -443,13 +450,13 @@ ra() {
     source /tmp/ssh-agent-$HOSTNAME-info
   fi
 }
-aweb() { [[ -f "$HOME/.ssh/webhost_key" ]] && /usr/bin/ssh-add "$HOME/.ssh/webhost_key"; }
-als() { [[ -f "$HOME/.ssh/id_rsa_psu" ]] && /usr/bin/ssh-add "$HOME/.ssh/id_rsa_psu"; }
+aweb() { [[ -f "$HOME/.ssh/webhost_key" ]] && ssh-add "$HOME/.ssh/webhost_key"; }
+als() { [[ -f "$HOME/.ssh/id_rsa_psu" ]] && ssh-add "$HOME/.ssh/id_rsa_psu"; }
 akey() {
   ra "1"
   # If Aladdin etoken connected
   if [ $(system_profiler SPUSBDataType 2> /dev/null| grep OMNIKEY -c) -gt 0 ]; then
-    /usr/bin/ssh-add -s '/usr/local/lib/libaetpkss.dylib'
+    ssh-add -s '/usr/local/lib/libaetpkss.dylib'
   fi
 }
 
@@ -626,3 +633,4 @@ fi
 # vim:foldmethod=marker:foldlevel=0
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+alias mountsilver='sudo mkdir /Volumes/Silver && sudo mount -o rw,auto,nobrowse -t ntfs /dev/disk2s3 /Volumes/Silver'

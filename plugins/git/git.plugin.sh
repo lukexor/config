@@ -58,7 +58,7 @@ alias gun='git reset HEAD --'
 gdv() { git diff -w "$@" | view -; }
 
 git() {
-  if [ $1 = "merge" ]; then
+  if [ $1 = "merge" ] && [ $2 != "--no-ff" ]; then
     echo "Use gm which uses --no-ff"
   else
     command git "$@"
@@ -117,6 +117,7 @@ gtg() {
 
 # Checkout a ticket branch
 gbt() { git checkout tickets/$1; }
+gbtn() { git checkout -b tickets/$1; }
 
 # Git and svn mix
 alias git-svn-dcommit-push='git svn dcommit && git push github master:svntrunk'

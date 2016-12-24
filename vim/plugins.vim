@@ -8,8 +8,8 @@ call plug#begin('~/.vim/plugins')
 
 Plug 'christoomey/vim-sort-motion'   " Easier sorting
 Plug 'christoomey/vim-system-copy'   " Better OS clipboard integration
-Plug 'ervandew/supertab'             " Tab completion
-Plug 'jiangmiao/auto-pairs'          " Auto-complete bracket pairs
+" Plug 'ervandew/supertab'             " Tab completion
+" Plug 'jiangmiao/auto-pairs'          " Auto-complete bracket pairs
 Plug 'junegunn/vim-easy-align'       " Makes aligning chunks of code super easy
 Plug 'justinmk/vim-ipmotion'         " Improves { and } motions
 Plug 'reedes/vim-pencil'             " Makes vim like a writing editor
@@ -31,7 +31,7 @@ Plug 'honza/vim-snippets'
 " Fuzzy-finder written in Go
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' } |
       \ Plug 'junegunn/fzf.vim'
-Plug 'majutsushi/tagbar', { 'on': 'TagbarToggle' }   " Displays tags in a sidebar
+Plug 'majutsushi/tagbar'    " Displays tags in a sidebar
 Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }  " FileTree
 
 " == Formatting/Display   {{{1
@@ -72,7 +72,7 @@ Plug 'zenbro/mirror.vim'    " Easily edit mirror files across systems using SCP
 
 Plug 'sheerun/vim-polyglot'          " Syntax support for a variety of languages
 Plug 'vim-perl/vim-perl'             " vim Perl support
-Plug 'vim-scripts/HTML-AutoCloseTag' " Auto-closes HTML tags e.g. </body>
+" Plug 'vim-scripts/HTML-AutoCloseTag' " Auto-closes HTML tags e.g. </body>
 
 " == Window Control   {{{1
 " ==================================================================================================

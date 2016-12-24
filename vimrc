@@ -6,25 +6,26 @@ let mapleader=' '
 let maplocalleader=','
 
 " Load up all of our plugins using vim-plug
-if filereadable(expand("~/.vim/plugins.vim"))
-  source ~/.vim/plugins.vim
+if filereadable(expand("$HOME/.vim/plugins.vim"))
+  source $HOME/.vim/plugins.vim
 endif
 
 " Any plugins should come after colorscheme if they override highlighting
 let g:solarized_termtrans=1
-silent! colorscheme solarized
+silent! colorscheme zhayedan
 
 set nocompatible                 " Disable VI backwards compatible settings. Must be first
 set autoindent                   " Copy indent from current line when adding a new line
 set autoread
-set autowrite                    " Automatically :write before running commands
-" Set directory to store backup files in.
-" These are created when saving, and deleted after successfully written
+set autowriteall                 " Automatically :write before running commands
 set background=dark
 set backspace=indent,eol,start
-set backupdir^=/tmp//
+" Set directory to store backup files in.
+" These are created when saving, and deleted after successfully written
+" ^= prepends to the existing list
+set backupdir^=$HOME/.vim/tmp//
 set complete+=kspell
-set completeopt+=longest,menuone
+set completeopt+=longest,menu,preview
 set copyindent
 if b:fsize <= 1000000
   set cursorline                 " Highlight the cursorline - slows redraw
@@ -36,15 +37,15 @@ set cpoptions+=W                 " Don't overwrite readonly files with :w!
 set diffopt+=vertical
 
 " Set directory to store swap files in
-set directory^=/tmp//
+set directory^=$HOME/.vim/tmp//
 set display+=lastline
 set encoding=utf-8
-set expandtab                    " Replace the tab key with spaces
+set noexpandtab                  " Replace the tab key with spaces
 filetype plugin indent on
 set fileencoding=utf-8
 set fileformat=unix
 set fileformats=unix,dos,mac     " Default file types
-set foldenable
+set nofoldenable
 set foldmethod=indent
 set foldnestmax=2                " Deepest folds allowed for indent and syntax methods
 set foldlevel=0
@@ -52,6 +53,7 @@ set foldlevelstart=0
 " Set formatting options
 " 1   Don't break after a one-letter word
 " l   Don't format long lines in insert mode if it was longer than textwidth
+"
 " n   Regonized numbered lists and indent properly. autoindent must be set
 " q   Allow using gq to format comments
 " t   Auto-wrap using textwidth
@@ -78,12 +80,12 @@ set laststatus=2
 set lazyredraw                   " Don't redraw screen during macros or commands
 set linebreak                    " Wrap long lines at a character in breakat
 set list                         " Enable visibility of unprintable chars
-set listchars=tab:>\ ,trail:-,extends:>,precedes:<,nbsp:~
+set listchars=tab:\|\ ,trail:-,extends:»,precedes:«,nbsp:~
 
 " Set < and > as brackets for jumping with %
 set matchpairs+=<:>
 set noerrorbells                 " No sound on errors
-set noequalalways                " Don't make windos equal size
+set noequalalways                " Don't make windows equal size
 set nomore
 set nowrap                       " Default line wrap
 set number
@@ -114,7 +116,7 @@ if &shell =~# 'fish$' && (v:version < 704 || v:version == 704 && !has('patch276'
   set shell=/bin/bash
 endif
 set shiftround                   " Round to nearest multiple of shiftwidth
-set shiftwidth=2                 " The amount of space to shift when using >>, << or <tab>
+" set shiftwidth=2                 " The amount of space to shift when using >>, << or <tab>
 set showcmd                      " Display incomplete command
 set showmatch                    " Blink to a matching bracket if on screen
 set showmode                     " Show current mode (INSERT, VISUAL)
@@ -126,12 +128,12 @@ set smarttab
                                  " Set spellfile to location that is guaranteed to exist, can be symlinked to
                                  " Dropbox or kept in Git and managed outside of thoughtbot/dotfiles using rcm.
 if has('spell')
-  set spellfile=$HOME/.vim-spell-en.utf-8.add
+  set spellfile=$HOME/.vim-spell.utf-8.add
   set spelllang=en
 endif
 set splitbelow                     " New horizontal splits should be below
 set splitright                     " New vertical splits should be to the right
-set softtabstop=2                  " Spaces a tab counts for when backspacing or inserting tabs
+" set softtabstop=2                  " Spaces a tab counts for when backspacing or inserting tabs
 set statusline=%n:\                " Buffer number
 set statusline+=%.30F\             " Full filename truncated to 20 chars
 set statusline+=%m                 " Modified
@@ -146,14 +148,14 @@ set statusline+=\ %p%%             " Percent through file
 if has('syntax') && !exists('g:syntax_on')
   syntax enable
 endif
-set tabstop=2
+" set tabstop=2
 if has('path_extra')
   setglobal tags-=./tags tags-=./tags; tags^=./tags;
 endif
 set term=xterm-256color
 set title
 set titleold=''
-set textwidth=100                " Max width for text on the screen
+set textwidth=80                 " Max width for text on the screen
 set ttimeout                     " Timeout on :mappings and key codes
 set ttimeoutlen=300              " Change timeout length
 set ttyfast                      " Smoother redraw
@@ -170,13 +172,13 @@ set updatecount=10               " Save every 10 characters typed
 "           | |     |   |      |     |     +---Remember last 1000 commands
 "           | |     |   |      |     |     |   +--Save/restore buffer list
 "           v v     v   v      v     v     v   v  +-- Viminfo file
-set viminfo=h,'500,f1,<10000,s1000,/1000,:1000,%,n~/.viminfo,|
+set viminfo=h,'500,f1,<10000,s1000,/1000,:1000,%,n$HOME/.viminfo
 set visualbell                   " stop that ANNOYING beeping
 set virtualedit=block            " Allow virtual block to put cursor where there's no actual text
 
 " Keep undo history across sessions by storing in a file
 if exists('&undofile')
-  silent !mkdir ~/.vim/undodir > /dev/null 2>&1
+  silent !mkdir $HOME/.vim/undodir > /dev/null 2>&1
   set undodir=$HOME/.vim/undodir
   set undofile
 endif
@@ -212,7 +214,7 @@ iabbrev waht what
 " Custom plugin to fold around searches
 runtime custom_plugins/foldsearches.vim
 
-if v:version >= 703
+if v:version >= 800
   augroup Undouble_Completions
       autocmd!
       autocmd CompleteDone *  call Undouble_Completions()
@@ -221,9 +223,9 @@ endif
 
 augroup Perl_Setup
     autocmd!
-    autocmd BufNewFile *.pl :0r ~/.vim/templates/perl/pl_script
-    autocmd BufNewFile *.pm :0r ~/.vim/templates/perl/pm_module
-    autocmd BufNewFile *.t :0r ~/.vim/templates/perl/test_class
+    autocmd BufNewFile *.pl :0r $HOME/.vim/templates/perl/pl_script
+    autocmd BufNewFile *.pm :0r $HOME/.vim/templates/perl/pm_module
+    autocmd BufNewFile *.t :0r $HOME/.vim/templates/perl/test_class
 augroup END
 
 augroup filetype_formats
@@ -393,6 +395,7 @@ let g:session_autosave_periodic=3 " Automatically save the current session every
 let g:session_autosave_silent=1   " Silence any messages
 let g:session_default_to_last=1   " Default opening the last used session
 let g:snips_author='Lucas Petherbridge'
+let g:SuperTabDefaultCompletionType = "<c-x><c-n>"
 let g:SuperTabNoCompleteAfter=['^',',','\s']
 let g:SuperTabLongestEnhanced=1
 let g:SuperTabCrMapping=1
@@ -420,7 +423,6 @@ Doc <localleader>w [{count} CamelCase words forward]
 Doc <localleader>b [{count} CamelCase words backward]
 Doc <localleader>e [Forward to the end of CamelCase word {count}]
 
-Inoremap jj              [Escape from INSERT mode] <ESC>
 Nmap     <leader>"       [Surround current word with double quotes] ysiw"
 Nmap     <leader>'       [Surround current word with single quotes] ysiw'
 Nmap     <leader>(       [Surround current word with parentheses with spaces] ysiw(
@@ -461,7 +463,7 @@ Nnoremap <leader>cm      [Clear currently set test method] :call ClearTestMethod
 Nnoremap <leader>ct      [Run code coverage] :call RunCover()<CR>
 Nnoremap <leader>cw      [Count number of words in the current file] :!wc -w %<CR>
 Nnoremap <leader>d       [Close and delete the current buffer] :bdelete<CR>
-Nnoremap <leader>ep      [Edit vim plugins] :vsplit ~/.vim/plugins.vim<CR>
+Nnoremap <leader>ep      [Edit vim plugins] :vsplit $HOME/.vim/plugins.vim<CR>
 Nnoremap <leader>ev      [Edit vimrc in a vertical split] :vsplit $MYVIMRC<CR>
 Nnoremap <leader>ga      [Stage Git Hunk] :GitGutterStageHunk<CR>
 Nnoremap <leader>gb      [Fugitive git blame] :Gblame<CR>
