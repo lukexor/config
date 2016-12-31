@@ -9,4 +9,4 @@ ignore = [
     'tags',
     'resources*',
     'docs*',
-    'plugins*',]
+    'lib*',]

@@ -1,3 +1,0 @@
-
-[console_scripts]
-journal = journal.main:main

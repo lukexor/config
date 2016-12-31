@@ -107,7 +107,7 @@ esac
 # == Source {{{1
 # ==================================================================================================
 
-[ $SHLVL -eq 1 ] && eval "$(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib)"
+[ $SHLVL -eq 1 ] && [ `perl -l local::lib > /dev/null 2>&1` ] && eval "$(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib)"
 sourcefile "$HOME/perl5/perlbrew/etc/bashrc"
 # sourcefile "$HOME/.rvm/scripts/rvm"
 # sourcefile '/usr/local/bin/virtualenvwrapper.sh'
