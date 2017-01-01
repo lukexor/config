@@ -3,7 +3,7 @@
 
 tm_icon=""
 tm_color_active=red
-tm_color_inactive=blue
+tm_color_inactive=cyan
 tm_color_feature=white
 tm_color_music=green
 tm_active_border_color=yellow
@@ -53,7 +53,7 @@ set-window-option -g clock-mode-colour $tm_color_active
 tm_tunes="#[fg=$tm_color_music]#(osascript ~/.dotfiles/applescripts/tunes.scpt)"
 tm_battery="#(~/.dotfiles/bin/battery_indicator.sh)"
 
-tm_date="#[fg=$tm_color_inactive] %R %d %b"
+tm_date="#[fg=$tm_color_inactive] %Y-%m-%d %H:%M"
 tm_host="#[fg=$tm_color_feature,bold]#h"
 tm_session_name="#[fg=$tm_color_feature,bold]$tm_icon #S"
 

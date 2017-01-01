@@ -5,21 +5,22 @@
 
 use strict;
 use warnings;
-use Data::Dumper;
 
 # Set to the directory you want to have searched for photos
-my $searchPath = "$ENV{'HOME'}/media/pics/wallpapers/nature";
+my $search_path = $ENV{'WALLPAPER_PATH'};
 
 # Edit to the number of seconds between photo switches
-my $switchTime = 3600;
+my $interval = $ENV{'WALLPAPER_INTERVAL'};
 
-my @photos = `find $searchPath -type f | grep -Pi '\.(jpg|jpeg|png|bmp|gif)'`;
+my @paths = split(":", $search_path);
+my @photos;
+P: foreach my $path (@paths) {
+	push @photos, `find $path -type f | grep -Pi '\.(jpg|jpeg|png|bmp|gif)'`;
+}
 chomp(@photos);
-my $photo;
-
 while(1)
 {
-    $photo = $photos[rand($#photos)];
-    `gsettings set org.gnome.desktop.background picture-uri "file:///$photo"`;
-    sleep($switchTime);
+	my $photo = $photos[rand($#photos)];
+	`gsettings set org.gnome.desktop.background picture-uri "file:///$photo"`;
+	sleep($interval);
 }

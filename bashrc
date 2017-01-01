@@ -60,38 +60,29 @@ HISTFILESIZE=100000 # Number of lines saved in HISTFILE
 HISTSIZE=10000 # Number of commands saved in command history
 HISTTIMEFORMAT='[%F %a %T] ' # YYYY-MM-DD DAY HH:MM:SS
 
-export FON_DIR="$HOME/fcs"
-export FCS_DEVEL=1
-export NO_MYSQL_AUTOCONNECT=1
-export FCS_APP_URL='http://dev-app.lotsofclouds.fonality.com/'
-export FCS_CP_URL='http://dev-cp.lotsofclouds.fonality.com/'
-
-if [[ -d "$HOME/dev/tools/android-sdk-macosx/" ]]; then
-  export ANDROID_HOME="$HOME/dev/tools/android-sdk-macosx/"
-  pathappend "${ANDROID_HOME}/tools"
-  pathappend "${ANDROID_HOME}/platform-tools"
+if [ -f $HOME/fcs ]; then
+	export FON_DIR="$HOME/fcs"
+	export FCS_DEVEL=1
+	export NO_MYSQL_AUTOCONNECT=1
+	export FCS_APP_URL='http://dev-app.lotsofclouds.fonality.com/'
+	export FCS_CP_URL='http://dev-cp.lotsofclouds.fonality.com/'
+	pathprepend "$HOME/fcs/bin"
+	pathprepend "$HOME/fcs/lib" PERL5LIB
 fi
 
 export WORKON_HOME="$HOME/.virtualenvs"
+export WALLPAPER_PATH="$HOME/Pictures/girls/wallpaper/"
+export WALLPAPER_INTERVAL=300
 
 pathprepend "$HOME/.rvm/bin"
-pathprepend "$HOME/fcs/bin"
 pathprepend "$HOME/bin"
-pathprepend "/usr/local/opt/coreutils/libexec/gnubin"
-
 pathprepend "$HOME/perl5/lib/perl5/" PERL5LIB
 pathprepend "$HOME/perl5/lib" PERL5LIB
-pathprepend "$HOME/fcs/lib" PERL5LIB
 pathprepend "$HOME/lib" PERL5LIB
-
 pathappend "$HOME/perl5/lib/perl5/" GITPERLLIB
-pathappend "$HOME/perl5/perlbrew/perls/perl-5.16.0/lib/site_perl/5.16.0/App/gh" GITPERLLIB
-
-pathprepend "/usr/local/opt/coreutils/libexec/gnuman" MANPATH
 
 # VI style line editing
 EDITOR="vim"
-# set -o vi
 
 # Exit if not interactive
 case "$-" in
@@ -299,6 +290,7 @@ alias topmem='ps -eo pmem,pcpu,pid,user,args | sort -k 1 -r | head -20 | cut -d-
 alias topcpu='ps -eo pmem,pcpu,pid,user,args | sort -k 2 -r | head -20 | cut -d- -f1';
 alias which='type -a'
 alias x='extract'
+alias tm='tm.sh'
 
 # ls
 if [[ "$OSTYPE" =~ 'darwin' ]]; then
@@ -321,6 +313,47 @@ alias lr='ls -NlR' # Recursive ls
 # == Functions {{{1
 # ==================================================================================================
 
+nb() {
+	pkill -f random_wallpaper_switcher > /dev/null 2>&1
+	(nohup /usr/bin/env perl $HOME/bin/random_wallpaper_switcher.pl >> /tmp/random_wallpaper_switcher.log 2>&1 &)
+}
+cb() {
+	PS3="Please choose your wallpaper set: "
+	options=("Girls" "Erotic" "Geek" "Nature" "All SFW" "All Girls")
+	select opt in "${options[@]}"
+	do
+		case $opt in
+		"Girls")
+			WALLPAPER_PATH=$HOME/Pictures/girls/wallpaper
+			break
+			;;
+		"Erotic")
+			WALLPAPER_PATH=$HOME/Pictures/girls/nude
+			break
+			;;
+		"Geek")
+			WALLPAPER_PATH=$HOME/Pictures/images/desktop_wallpapers/geek
+			break
+			;;
+		"Nature")
+			WALLPAPER_PATH=$HOME/Pictures/images/desktop_wallpapers/nature
+			break
+			;;
+		"All SFW")
+			WALLPAPER_PATH=$HOME/Pictures/images/desktop_wallpapers/
+			break
+			;;
+		"All Girls")
+			WALLPAPER_PATH=$HOME/Pictures/girls/wallpaper:$HOME/Pictures/girls/nude
+			break
+			;;
+		*)
+			echo "Not a valid option"
+			;;
+		esac
+	done
+	nb
+}
 myip() {
   wget http://ipecho.net/plain -O - -q; echo
 }
@@ -582,15 +615,18 @@ prompt_on() {
       ;;
   esac
 
-  echo -ne "\n$FGbgreen[$FGwhite$(date +'%F %R')$FGbgreen]"
+  echo -ne "\n"
+  if [[ ! $TERM =~ screen ]]; then
+    echo -ne "$FGbgreen[$FGwhite$(date +'%F %R')$FGbgreen] "
+  fi
   if [[ $(declare -f bg_jobs) && $(bg_jobs) ]]; then
-    echo -ne "$FGbgreen[$FGyellow$(bg_jobs)$FGbgreen]"
+    echo -ne "$FGbgreen[$FGyellow$(bg_jobs)$FGbgreen] "
   fi
   if [[ $(declare -f st_jobs) && $(st_jobs) ]]; then
-    echo -ne "$FGbgreen[$FGred$(st_jobs)$FGbgreen]"
+    echo -ne "$FGbgreen[$FGred$(st_jobs)$FGbgreen] "
   fi
   if [[ $PS1_HOST ]]; then
-    echo -ne " $FGbgreen{$FGgreen$PS1_HOST$FGbgreen} "
+    echo -ne "$FGbgreen{$FGgreen$PS1_HOST$FGbgreen} "
   fi
 
   if [[ $(declare -f parse_git_branch) && $(parse_git_branch) ]]; then
