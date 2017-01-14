@@ -116,8 +116,8 @@ gtg() {
 }
 
 # Checkout a ticket branch
-gbt() { git checkout tickets/$1; }
-gbtn() { git checkout -b tickets/$1; }
+gbt() { git checkout tickets/$@; }
+gbtn() { git checkout -b tickets/$@; }
 
 # Git and svn mix
 alias git-svn-dcommit-push='git svn dcommit && git push github master:svntrunk'

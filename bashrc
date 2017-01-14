@@ -66,10 +66,19 @@ if [ -f $HOME/fcs ]; then
 	export NO_MYSQL_AUTOCONNECT=1
 	export FCS_APP_URL='http://dev-app.lotsofclouds.fonality.com/'
 	export FCS_CP_URL='http://dev-cp.lotsofclouds.fonality.com/'
+	# export NF_API_URL='https://swagger-arch.fonality.com:10113/'
+	export NF_API_URL='http://sandbox-nf.lax01.fonality.com:10113/'
 	pathprepend "$HOME/fcs/bin"
 	pathprepend "$HOME/fcs/lib" PERL5LIB
 fi
 
+if [[ -d "$HOME/dev/tools/android-sdk-macosx/" ]]; then
+  export ANDROID_HOME="$HOME/dev/tools/android-sdk-macosx/"
+  pathappend "${ANDROID_HOME}/tools"
+  pathappend "${ANDROID_HOME}/platform-tools"
+fi
+
+export HOSTNAME
 export WORKON_HOME="$HOME/.virtualenvs"
 export WALLPAPER_PATH="$HOME/Pictures/girls/wallpaper/"
 export WALLPAPER_INTERVAL=300
@@ -626,11 +635,11 @@ prompt_on() {
     echo -ne "$FGbgreen[$FGred$(st_jobs)$FGbgreen] "
   fi
   if [[ $PS1_HOST ]]; then
-    echo -ne "$FGbgreen{$FGgreen$PS1_HOST$FGbgreen} "
+    echo -ne "$FGbgreen{$FGblue$PS1_HOST$FGbgreen} "
   fi
 
   if [[ $(declare -f parse_git_branch) && $(parse_git_branch) ]]; then
-    echo -ne "$FGbgreen($FGblue$(parse_git_branch)$FGBgreen) "
+    echo -ne "$FGbgreen($FGblue$(parse_git_branch)$FGbgreen) "
   fi
   echo -e "$FGcyan$(prompt_pwd)$RCLR"
 }

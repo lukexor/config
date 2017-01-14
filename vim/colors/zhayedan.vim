@@ -62,8 +62,8 @@ hi Underlined   guifg=fg        guibg=NONE      ctermfg=fg     ctermbg=NONE     
 hi Error        guifg=#e07070   guibg=#503030   ctermfg=167    ctermbg=236       gui=none      cterm=none
 hi Todo         guifg=#e0e090   guibg=#505000   ctermfg=186    ctermbg=NONE      gui=none      cterm=none
 hi MatchParen   guibg=#000000        guibg=#c0e070   ctermfg=015     ctermbg=000       gui=none      cterm=bold
-hi NonText      guifg=#405060   guibg=NONE      ctermfg=024    ctermbg=NONE      gui=none      cterm=none
-hi SpecialKey   guifg=#406050   guibg=NONE      ctermfg=023    ctermbg=NONE      gui=none      cterm=none
+hi NonText      guifg=#505050   guibg=NONE      ctermfg=245    ctermbg=NONE      gui=none      cterm=none
+hi SpecialKey   guifg=#505050   guibg=NONE      ctermfg=245    ctermbg=NONE      gui=none      cterm=none
 hi Title        guifg=#50b0d0   guibg=NONE      ctermfg=074    ctermbg=NONE      gui=bold      cterm=bold
 
 " == Text Selection ==

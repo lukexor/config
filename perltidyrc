@@ -5,4 +5,8 @@
 --nospace-for-semicolon # e.g. for (i = 0; i < $value; i++) { ... }
 --opening-sub-brace-on-new-line
 --output-line-ending=unix
+--paren-tightness=2
 --standard-error-output
+--tabs
+--entab-leading-whitespace=4
+--default-tabsize=4

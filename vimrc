@@ -296,17 +296,24 @@ function! RunTests(...)
     if !empty(a:1) && a:1 == 'background'
       let cmd = 'Make!'
     endif
-    if !empty(g:test_method)
-      echom 'Testing ' . filename . '::' . g:test_method
-      execute ':' . cmd . ' test TEST=' . filename . ' METHOD=' . g:test_method
+    if !empty(b:test_method)
+      echom 'Testing ' . filename . '::' . b:test_method
+      execute ':' . cmd . ' testm TEST=' . filename . ' METHOD=' . b:test_method
     else
       echom 'Testing ' . filename
-      execute ':' . cmd . ' test TEST=' . filename
+      execute ':' . cmd . ' testf TEST=' . filename
     endif
   else
     echom 'Tests not set up for ' . &filetype 'files'
   endif
 endfunction
+
+command! RetabIndents call RetabIndents()
+func! RetabIndents()
+    let saved_view = winsaveview()
+    execute '%s@^\(\ \{'.&ts.'\}\)\+@\=repeat("\t", len(submatch(0))/'.&ts.')@e'
+    call winrestview(saved_view)
+endfunc
 
 function! Undouble_Completions ()
     let col  = getpos('.')[2]
