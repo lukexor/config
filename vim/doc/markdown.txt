@@ -1,9 +1,9 @@
-*markdown.txt*
+markdown.txt
 
                                                                 *markdown-ref*
 
 ==============================================================================
-Headers
+Headers                                                     *markdown-headers*
 
   # H1
 
@@ -24,15 +24,15 @@ Headers
   ------
 
 ==============================================================================
-Emphasis
+Emphasis                                                   *markdown-emphasis*
 
-Emphasis, aka italics, with *asterisks* or _underscores_.
+Emphasis, aka italics, with * asterisks * or _underscores_.
 Strong emphasis, aka bold, with **asterisks** or __underscores__.
 Combined emphasis with **asterisks and _underscores_**.
 Strikethrough uses two tildes. ~~Scratch this.~~
 
 ==============================================================================
-Lists
+Lists                                                         *markdown-lists*
 
 1. First ordered list item
 2. Another item
@@ -54,7 +54,7 @@ required.)
 + Or pluses
 
 ==============================================================================
-Links
+Links                                                         *markdown-links*
 
 [I'm an inline-style link](https://www.google.com)
 
@@ -77,7 +77,7 @@ Some text to show that the reference links can follow later.
 [link text itself]: http://www.reddit.com
 
 ==============================================================================
-Images
+Images                                                       *markdown-images*
 
 Inline-style:
 ![alt text](https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Logo Title Text 1")
@@ -87,7 +87,7 @@ Reference-style:
 [logo]: https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Logo Title Text 2"
 
 ==============================================================================
-Code and Syntax Highlighting
+Code and Syntax Highlighting                                   *markdown-code*
 
 Inline `code` has `back-ticks around` it.
 
@@ -109,7 +109,7 @@ But let's throw in a <b>tag</b>.
 ```
 
 ==============================================================================
-Tables
+Tables                                                       *markdown-tables*
 
 Colons can be used to align columns.
 
@@ -124,32 +124,32 @@ you don't need to make the raw Markdown line up prettily. You can also use inlin
 
 Markdown | Less | Pretty
 --- | --- | ---
-*Still* | `renders` | **nicely**
+Still | `renders` | **nicely**
 1 | 2 | 3
 
 ==============================================================================
-Blockquotes
+Blockquotes                                             *markdown-blockquotes*
 
 > Blockquotes are very handy in email to emulate reply text.
 > This line is part of the same quote.
 
 Quote break.
 
-> This is a very long line that will still be quoted properly when it wraps. Oh boy let's keep writing to make sure this is long enough to actually wrap for everyone. Oh, you can *put* **Markdown** into a blockquote.
+> This is a very long line that will still be quoted properly when it wraps. Oh boy let's keep writing to make sure this is long enough to actually wrap for everyone. Oh, you can put **Markdown** into a blockquote.
 
 ==============================================================================
-Inline HTML
+Inline HTML                                                    *markdown-html*
 
 <dl>
   <dt>Definition list</dt>
   <dd>Is something people use sometimes.</dd>
 
   <dt>Markdown in HTML</dt>
-  <dd>Does *not* work **very** well. Use HTML <em>tags</em>.</dd>
+  <dd>Does not work **very** well. Use HTML <em>tags</em>.</dd>
 </dl>
 
 ==============================================================================
-Horizontal Rule
+Horizontal Rule                                                  *markdown-hr*
 
 Three or more...
 
@@ -166,7 +166,7 @@ ___
 Underscores
 
 ==============================================================================
-Line Breaks
+Line Breaks                                                      *markdown-br*
 
 Here's a line for us to start with.
 
@@ -176,7 +176,7 @@ This line is also a separate paragraph, but...
 This line is only separated by a single newline, so it's a separate line in the *same paragraph*.
 
 ==============================================================================
-Youtube Videos
+Youtube Videos                                              *markdown-youtube*
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=YOUTUBE_VIDEO_ID_HERE
 " target="_blank"><img src="http://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg" 
@@ -185,6 +185,9 @@ alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
 [![IMAGE ALT TEXT HERE](http://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg)](http://www.youtube.com/watch?v=YOUTUBE_VIDEO_ID_HERE)
 
 ==============================================================================
-Comments
+Comments                                                   *markdown-comments*
 
 [//]: # (Here's a comment)
+
+
+vim:tw=78:ts=8:ft=help

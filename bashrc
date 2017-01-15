@@ -47,6 +47,7 @@ pathappend () {
 # ==================================================================================================
 
 sourcefile '/etc/bashrc'
+sourcefile "$HOME/.secure/nas_info"
 
 
 
@@ -296,10 +297,11 @@ alias grep='grep -n --color=auto'
 alias offenders='uptime;ps aux | perl -ane"print if \$F[2] > 0.9"'
 alias path='echo -e ${PATH//:/"\n"}'
 alias topmem='ps -eo pmem,pcpu,pid,user,args | sort -k 1 -r | head -20 | cut -d- -f1';
-alias topcpu='ps -eo pmem,pcpu,pid,user,args | sort -k 2 -r | head -20 | cut -d- -f1';
+alias topcpu='ps -eo pcpu,pmem,pid,user,args | sort -k 2 -r | head -20 | cut -d- -f1';
 alias which='type -a'
-alias x='extract'
+alias x='extract.sh'
 alias tm='tm.sh'
+alias mnas="sudo mount -t cifs -o username=$NAS_USER,password=$NAS_PW,port=$NAS_PORT //$NAS_IP/NAS /mnt/NAS"
 
 # ls
 if [[ "$OSTYPE" =~ 'darwin' ]]; then
@@ -626,20 +628,20 @@ prompt_on() {
 
   echo -ne "\n"
   if [[ ! $TERM =~ screen ]]; then
-    echo -ne "$FGbgreen[$FGwhite$(date +'%F %R')$FGbgreen] "
+    echo -ne "$FGgray[$FGyellow$(date +'%F %R')$FGgray] "
   fi
   if [[ $(declare -f bg_jobs) && $(bg_jobs) ]]; then
-    echo -ne "$FGbgreen[$FGyellow$(bg_jobs)$FGbgreen] "
+    echo -ne "$FGgray[$FGyellow$(bg_jobs)$FGgray] "
   fi
   if [[ $(declare -f st_jobs) && $(st_jobs) ]]; then
-    echo -ne "$FGbgreen[$FGred$(st_jobs)$FGbgreen] "
+    echo -ne "$FGgray[$FGred$(st_jobs)$FGgray] "
   fi
   if [[ $PS1_HOST ]]; then
-    echo -ne "$FGbgreen{$FGblue$PS1_HOST$FGbgreen} "
+    echo -ne "$FGgray{$FGcyan$USER$FGgray@$FGwhite$PS1_HOST$FGgray} "
   fi
 
   if [[ $(declare -f parse_git_branch) && $(parse_git_branch) ]]; then
-    echo -ne "$FGbgreen($FGblue$(parse_git_branch)$FGbgreen) "
+    echo -ne "$FGgray($FGblue$(parse_git_branch)$FGgray) "
   fi
   echo -e "$FGcyan$(prompt_pwd)$RCLR"
 }
@@ -678,4 +680,4 @@ fi
 # vim:foldmethod=marker:foldlevel=0
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
-alias mountsilver='sudo mkdir /Volumes/Silver && sudo mount -o rw,auto,nobrowse -t ntfs /dev/disk2s3 /Volumes/Silver'
+eval $(dircolors ~/.dircolors) > /dev/null

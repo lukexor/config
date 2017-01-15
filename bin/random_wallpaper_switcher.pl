@@ -21,6 +21,12 @@ chomp(@photos);
 while(1)
 {
 	my $photo = $photos[rand($#photos)];
-	`gsettings set org.gnome.desktop.background picture-uri "file:///$photo"`;
-	sleep($interval);
+	if (-f $photo) {
+		print "Switching to $photo\n";
+		`gsettings set org.gnome.desktop.background picture-uri "file:///$photo"`;
+		sleep($interval);
+	}
+	else {
+		print "$photo does not exist\n";
+	}
 }

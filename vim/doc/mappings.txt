@@ -1,31 +1,33 @@
-*mappings.txt*
+mappings.txt
 
 ==============================================================================
-*CONTENTS*                                                         *lp-contents*
+CONTENTS                                                   *mappings-contents*
 
-    1.  Intro...............................|lp-help|
-    2.  Glossary............................|lp-glossary|
-    3.  Verbs/Commands......................|lp-verbs|
-    4.  Motions/Text Objects................|lp-motions|
-    5.  Movement............................|lp-movement|
-    6.  File Management.....................|lp-file-management|
-    7.  Code Management.....................|lp-code-management|
-    8.  Editing.............................|lp-editing|
-    9.  Functions...........................|lp-functions|
-    10. Folding.............................|lp-folding|
-    11. Git.................................|lp-git|
-    12. Quick File Editing..................|lp-quick-file-editing|
-    13. Sessings............................|lp-sessions|
-    14. Spelling............................|lp-spelling|
+    1.  Intro...............................|mappings-help|
+    2.  Glossary............................|mappings-glossary|
+    3.  Verbs/Commands......................|mappings-verbs|
+    4.  Motions/Text Objects................|mappings-motions|
+    5.  Movement............................|mappings-movement|
+    6.  File Management.....................|mappings-files|
+    7.  Code Management.....................|mappings-code|
+    8.  Editing.............................|mappings-editing|
+    9.  Functions...........................|mappings-functions|
+    10. Folding.............................|mappings-folding|
+    11. Git.................................|mappings-git|
+    12. Quick File Editing..................|mappings-file-editing|
+    13. Sessings............................|mappings-sessions|
+    14. Spelling............................|mappings-spelling|
+    15. Readline/Editline...................|mappings-readline| |mappings-editline|
+    16. Linux...............................|mappings-linux|
 
 ==============================================================================
-1. Intro                                                            *lp-help*
+1. Intro                                                       *mappings-help*
 
 This is a general help/reference file for often used Vim commands and
 customizations.
 
 ==============================================================================
-Glossary                                                         *lp-glossary*
+2. Glossary                                                *mappings-glossary*
 
 * "a" includes surrounding whitespace
 * "inner" does NOT include surrounding whitespace
@@ -35,7 +37,7 @@ Glossary                                                         *lp-glossary*
 * "paragraphs" will be surrounded by empty lines above and below 
 
 ==============================================================================
-Verbs/Commands                                          *lp-verbs* *lp-commands*
+3. Verbs/Commands                           *mappings-verbs* *mappings-commands*
 
 All verbs are in the form [count]{cmd}{motion}
 
@@ -57,7 +59,7 @@ gt,gT         "Go Title Case", gT converts the whole line
 gu            "Go Lowercase"
 gU            "Go Uppercase"
 m,mm          "Move" (Yanks and Deletes), mm yanks and deletes current line
-o,O           Begin a new line below/above current line and enter INSERT mode           
+o,O           Begin a new line below/above current line and enter INSERT mode
 p,P           "Paste" below/above current line
 S             "Surround" Visual Mode
 v             "Visually" Select
@@ -65,7 +67,7 @@ y,yy,Y        "Yank", yy yanks current line, Y yanks until end of line
 ys,yss        "You Surround", yss surrounds current line
 
 ==============================================================================
-Motions/Text-Objects                                  *lp-motions* *lp-text-obj*
+4. Motions/Text-Objects                   *mappings-motions* *mappings-text-obj*
 
 /             Search next match
 `             Go to Mark
@@ -93,7 +95,7 @@ t,T           'til
 w,W           word/WORD
 
 ==============================================================================
-Movement                                                         *lp-movement*
+5. Movement                                                *mappings-movement*
 
 Most movements can be in the form [count]{cmd}
 
@@ -129,7 +131,7 @@ G             Bottom of file
 gm            Add Mark
 
 ==============================================================================
-File Management                                           *lp-file-management*
+6. File Management                                            *mappings-files*
 
 :BCommits     Search Commits for current buffer
 :BTags        Search Tags for current buffer
@@ -153,13 +155,13 @@ CTRL-T        Search All Tags
 
 
 ==============================================================================
-Code Management                                           *lp-code-management*
+7. Code Management                                             *mappings-code*
 
 <leader>m     Make
 <leader>t     Run Tests
 
 ==============================================================================
-Editing                                                           *lp-editing*
+8. Editing                                                  *mappings-editing*
 
 <leader>rs    Strip trailing space
 <leader>rt    Retab spaces w/ tabs
@@ -172,7 +174,7 @@ q{register}   Record macro in {register}, press q again to stop
 @{register}   Play macro in {register}
 
 ==============================================================================
-Functions                                                       *lp-functions*
+9. Functions                                              *mappings-functions*
 
 <F1>          Help
 <F2>          File Tree
@@ -180,18 +182,19 @@ Functions                                                       *lp-functions*
 <F12>         Map QuickRef
 
 ==============================================================================
-Folding                                                           *lp-folding*
+10. Folding                                                 *mappings-folding*
 
 zo            Open one fold
 zO            Open fold recursive
 zR            Open all folds
+
 zc            Close one fold
 zC            Close fold recursive
 zM            Close all folds
 zi            Enable/Disable folds
 
 ==============================================================================
-Git                                                                   *lp-git*
+11. Git                                                         *mappings-git*
 
 :GBrowse              Open current file in GitHub
 :Git [args]           Execute any git command
@@ -199,7 +202,8 @@ Git                                                                   *lp-git*
 :Gremove              Git removes and deletes buffer
 <leader>gm [args]     Merge a branch or tag
 <leader>gb            Bring up a git blame panel
-<leader>gc            Commits currently staged changes, prompts for commit message
+<leader>gc            Commits currently staged changes, prompts for commit
+                      message
 <leader>gd            Compared staged version of file with working
 <leader>glg           Open the git log in a split window
 <leader>gpl           Update the current branch
@@ -212,21 +216,21 @@ Git                                                                   *lp-git*
 <leader>hu            Undo Git hunk
 
 ==============================================================================
-Quick File Editing                                     *lp-quick-file-editing*
+12. Quick File Editing                                 *mappings-file-editing*
 
 <leader>ev    Edit vimrc
 <leader>ep    Edit snippets
 <leader>sv    Source vimrc
 
 ==============================================================================
-Sessions                                                         *lp-sessions*
+13. Sessions                                               *mappings-sessions*
 
 DeleteSession {name}   Delete a vim session
 OpenSession {name}     Open a vim session
 SaveSession {name}     Save a vim session
 
 ==============================================================================
-Spelling                                                         *lp-spelling*
+14. Spelling                                               *mappings-spelling*
 
 <leader>ss    Toggle Spellcheck
 ]s            Next mispelled word
@@ -235,4 +239,70 @@ zg            Add word to dictionary
 zw            Remove word from dictionary
 z=            List spelling corrections
 
-vim:tw=78:ts=8:ft=help:norl:
+==============================================================================
+15. Readline/Editline (emacs)            *mappings-readline* *mappings-editline*
+
+Movement~
+
+CTRL-B        Move one character to the left
+CTRL-F        Move one character to the right
+ALT-B         Move one word to the left
+ALT-F         Move one word to the right
+CTRL-A        Move to the start of the line
+CTRL-E        Move to the end of the line
+
+Cut, copy and paste~
+
+CTRL-U        Delete from cursor to start of line
+CTRL-K        Delete from cursor to end of line
+ALT-D         Delete word until before the next word boundary
+CTRL-W        Delete word until after the previous word boundary
+CTRL-Y        Yank/Paste the previous killed text
+ALT-Y         Yank/Paste the previous previous killed text
+
+History~
+
+CTRL-P        Back one line
+CTRL-N        Forward one line
+ALT->         Forward to the current line being entered
+CTRL-R        Search backward
+CTRL-G        Abort search and restore original line
+
+Undo~
+
+CTRL-_        Undo last editing command
+CTRL-L        Clear the screen, reprinting the current line at the top
+
+Completion~
+
+<TAB>         Auto-complete a name
+CTRL-X CTRL-E Edit current line in $EDITOR
+ALT-/         Auto-complete without smart completion
+ALT-?         List possible completions of preceeding text
+ALT-*         Insert all possible completions of preceeding text
+
+Transpose~
+
+CTRL-T        Swap character before cursor with character under cursor
+              Note: Conflicts with FZF
+ALT-T         Swap word before cursor with word under cursor
+
+==============================================================================
+16. Linux                                                     *mappings-linux*
+
+Windows~
+
+CTRL-1        Switch to workspace 1
+CTRL-2        Switch to workspace 2
+CTRL-3        Switch to workspace 3
+CTRL-4        Switch to workspace 4
+C-A-<Arrow>   Switch to alternate workspace
+S-C-A-<Arrow> Move application to alternate workspace
+ALT-<TAB>     Switch application
+ALT-~         Switch windows
+CTRL-<Enter>  Toggle maximized
+F11           Toggle fullscreen
+Cmd-<Enter>   Search applications
+
+
+vim:tw=78:ts=8:ft=help

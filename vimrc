@@ -133,7 +133,6 @@ if has('spell')
 endif
 set splitbelow                     " New horizontal splits should be below
 set splitright                     " New vertical splits should be to the right
-" set softtabstop=2                  " Spaces a tab counts for when backspacing or inserting tabs
 set statusline=%n:\                " Buffer number
 set statusline+=%.30F\             " Full filename truncated to 20 chars
 set statusline+=%m                 " Modified
@@ -148,7 +147,6 @@ set statusline+=\ %p%%             " Percent through file
 if has('syntax') && !exists('g:syntax_on')
   syntax enable
 endif
-" set tabstop=2
 if has('path_extra')
   setglobal tags-=./tags tags-=./tags; tags^=./tags;
 endif
