@@ -1,6 +1,9 @@
 --closing-side-comments
 --cuddled-else
+--default-tabsize=4
+--entab-leading-whitespace=4
 --format-skipping
+--ignore-side-comment-lengths
 --noblanks-before-comments
 --nospace-for-semicolon # e.g. for (i = 0; i < $value; i++) { ... }
 --opening-sub-brace-on-new-line
@@ -8,5 +11,3 @@
 --paren-tightness=2
 --standard-error-output
 --tabs
---entab-leading-whitespace=4
---default-tabsize=4

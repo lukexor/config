@@ -17,7 +17,7 @@
 [core]
   excludesfile = ~/.gitignore
   editor = vim
-	pager = less -x1,5
+  pager = less -+F -+X -x1,5
 [color]
   ui = true
 [color "branch"]
@@ -40,4 +40,4 @@
   hotfix = hotfixes/
   versiontag = v
 [credential]
-  helper = osxkeychain
+  ; helper = osxkeychain

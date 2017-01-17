@@ -61,16 +61,16 @@ HISTFILESIZE=100000 # Number of lines saved in HISTFILE
 HISTSIZE=10000 # Number of commands saved in command history
 HISTTIMEFORMAT='[%F %a %T] ' # YYYY-MM-DD DAY HH:MM:SS
 
-if [ -f $HOME/fcs ]; then
-	export FON_DIR="$HOME/fcs"
+if [ -d $HOME/lib/fcs ]; then
+	export FON_DIR="$HOME/lib/fcs"
 	export FCS_DEVEL=1
 	export NO_MYSQL_AUTOCONNECT=1
 	export FCS_APP_URL='http://dev-app.lotsofclouds.fonality.com/'
 	export FCS_CP_URL='http://dev-cp.lotsofclouds.fonality.com/'
 	# export NF_API_URL='https://swagger-arch.fonality.com:10113/'
 	export NF_API_URL='http://sandbox-nf.lax01.fonality.com:10113/'
-	pathprepend "$HOME/fcs/bin"
-	pathprepend "$HOME/fcs/lib" PERL5LIB
+	pathprepend "$FON_DIR/bin"
+	pathprepend "$FON_DIR/lib" PERL5LIB
 fi
 
 if [[ -d "$HOME/dev/tools/android-sdk-macosx/" ]]; then
@@ -86,10 +86,16 @@ export WALLPAPER_INTERVAL=300
 
 pathprepend "$HOME/.rvm/bin"
 pathprepend "$HOME/bin"
-pathprepend "$HOME/perl5/lib/perl5/" PERL5LIB
-pathprepend "$HOME/perl5/lib" PERL5LIB
 pathprepend "$HOME/lib" PERL5LIB
-pathappend "$HOME/perl5/lib/perl5/" GITPERLLIB
+
+# local::lib
+pathprepend "$HOME/perl5/bin"; export PATH;
+pathprepend "$HOME/perl5/lib/perl5/" PERL5LIB; export PERL5LIB;
+pathprepend "$HOME/perl5" PERL_LOCAL_LIB_ROOT; export PERL_LOCAL_LIB_ROOT;
+pathprepend "$HOME/perl5/lib/perl5/" GITPERLLIB; export GITPERLLIB;
+
+PERL_MB_OPT="--install_base \"$HOME/perl5\""; export PERL_MB_OPT;
+PERL_MM_OPT="INSTALL_BASE=$HOME/perl5"; export PERL_MM_OPT;
 
 # VI style line editing
 EDITOR="vim"
@@ -108,8 +114,8 @@ esac
 # == Source {{{1
 # ==================================================================================================
 
-[ $SHLVL -eq 1 ] && [ `perl -l local::lib > /dev/null 2>&1` ] && eval "$(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib)"
-sourcefile "$HOME/perl5/perlbrew/etc/bashrc"
+# [ $SHLVL -eq 1 ] && [ `perl -l local::lib > /dev/null 2>&1` ] && eval "$(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib)"
+# sourcefile "$HOME/perl5/perlbrew/etc/bashrc"
 # sourcefile "$HOME/.rvm/scripts/rvm"
 # sourcefile '/usr/local/bin/virtualenvwrapper.sh'
 
@@ -215,10 +221,10 @@ alias p='pwd'
 alias cdc='cd ~/Dropbox/classes/'
 
 # Various CD shortcuts
-if [[ -d "$HOME/fcs/" ]]; then
-  alias wa="cd $HOME/fcs/lib/Fap/WebApp/Action/"
-  alias f="cd $HOME/fcs/lib/Fap/"
-  alias dbregen="perl -I$HOME/fcs/lib $HOME/fcs/bin/tools/database/regenerate_DBIx"
+if [[ -d "$FON_DIR" ]]; then
+  alias wa="cd $FON_DIR/lib/Fap/WebApp/Action/"
+  alias f="cd $FON_DIR/lib/Fap/"
+  alias dbregen="perl -I$FON_DIR/lib $FON_DIR/bin/tools/database/regenerate_DBIx"
 fi
 if [[ -d "$HOME/Dropbox/dev" ]]; then
   export DEVHOME="$HOME/Dropbox/dev"
@@ -296,8 +302,7 @@ alias g='grep -n --color=auto'
 alias grep='grep -n --color=auto'
 alias offenders='uptime;ps aux | perl -ane"print if \$F[2] > 0.9"'
 alias path='echo -e ${PATH//:/"\n"}'
-alias topmem='ps -eo pmem,pcpu,pid,user,args | sort -k 1 -r | head -20 | cut -d- -f1';
-alias topcpu='ps -eo pcpu,pmem,pid,user,args | sort -k 2 -r | head -20 | cut -d- -f1';
+alias topm='ps -eo pcpu,pmem,pid,user,args | sort -k 1 -r | head -10 | cut -d- -f1;ps -eo pmem,pcpu,pid,user,args | sort -k 1 -r | head -10 | cut -d- -f1';
 alias which='type -a'
 alias x='extract.sh'
 alias tm='tm.sh'
