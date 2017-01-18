@@ -1,11 +1,8 @@
 # == Start Profiling {{{1
 # ==================================================================================================
 
-
-startn=$(date +%s.%N)
+startn=$(date +%s)
 starts=$(date +%s)
-
-
 
 # == Functions {{{1
 # ==================================================================================================
@@ -15,41 +12,31 @@ sourcefile() { [[ -r "$1" ]] && source $1; }
 # Functions to help us manage paths.
 # Arguments: $path, $ENV_VAR (default: $PATH)
 pathremove () {
-  local IFS=':'
-  local NEWPATH
-  local DIR
-  local PATHVARIABLE=${2:-PATH}
-  for DIR in ${!PATHVARIABLE} ; do
-    if [ "$DIR" != "$1" ] ; then
-      NEWPATH=${NEWPATH:+$NEWPATH:}$DIR
-    fi
-  done
-  export $PATHVARIABLE="$NEWPATH"
+	local IFS=':'
+	local NEWPATH
+	local DIR
+	local PATHVARIABLE=${2:-PATH}
+	for DIR in ${!PATHVARIABLE} ; do
+		if [ "$DIR" != "$1" ] ; then
+			NEWPATH=${NEWPATH:+$NEWPATH:}$DIR
+		fi
+	done
+	export $PATHVARIABLE="$NEWPATH"
 }
 pathprepend () {
-  pathremove $1 $2
-  if [[ -d $1 ]] ; then
-    local PATHVARIABLE=${2:-PATH}
-    export $PATHVARIABLE="$1${!PATHVARIABLE:+:${!PATHVARIABLE}}"
-  fi
+	pathremove $1 $2
+	if [[ -d $1 ]] ; then
+		local PATHVARIABLE=${2:-PATH}
+		export $PATHVARIABLE="$1${!PATHVARIABLE:+:${!PATHVARIABLE}}"
+	fi
 }
 pathappend () {
-  pathremove $1 $2
-  if [[ -d $1 ]] ; then
-    local PATHVARIABLE=${2:-PATH}
-    export $PATHVARIABLE="${!PATHVARIABLE:+${!PATHVARIABLE}:}$1"
-  fi
+	pathremove $1 $2
+	if [[ -d $1 ]] ; then
+		local PATHVARIABLE=${2:-PATH}
+		export $PATHVARIABLE="${!PATHVARIABLE:+${!PATHVARIABLE}:}$1"
+	fi
 }
-
-
-
-# == Global Bashrc {{{1
-# ==================================================================================================
-
-sourcefile '/etc/bashrc'
-sourcefile "$HOME/.secure/nas_info"
-
-
 
 # == Environment {{{1
 # ==================================================================================================
@@ -60,6 +47,14 @@ HISTIGNORE='h:history:&:[bf]g:exit'
 HISTFILESIZE=100000 # Number of lines saved in HISTFILE
 HISTSIZE=10000 # Number of commands saved in command history
 HISTTIMEFORMAT='[%F %a %T] ' # YYYY-MM-DD DAY HH:MM:SS
+
+pathprepend "/usr/local/bin"
+
+# local::lib
+pathprepend "$HOME/perl5/bin"; export PATH;
+pathprepend "$HOME/perl5/lib/perl5/" PERL5LIB; export PERL5LIB;
+pathprepend "$HOME/perl5" PERL_LOCAL_LIB_ROOT; export PERL_LOCAL_LIB_ROOT;
+pathprepend "$HOME/perl5/lib/perl5/" GITPERLLIB; export GITPERLLIB;
 
 if [ -d $HOME/lib/fcs ]; then
 	export FON_DIR="$HOME/lib/fcs"
@@ -74,113 +69,95 @@ if [ -d $HOME/lib/fcs ]; then
 fi
 
 if [[ -d "$HOME/dev/tools/android-sdk-macosx/" ]]; then
-  export ANDROID_HOME="$HOME/dev/tools/android-sdk-macosx/"
-  pathappend "${ANDROID_HOME}/tools"
-  pathappend "${ANDROID_HOME}/platform-tools"
+	export ANDROID_HOME="$HOME/dev/tools/android-sdk-macosx/"
+	pathappend "${ANDROID_HOME}/tools"
+	pathappend "${ANDROID_HOME}/platform-tools"
 fi
 
-export HOSTNAME
-export WORKON_HOME="$HOME/.virtualenvs"
-export WALLPAPER_PATH="$HOME/Pictures/girls/wallpaper/"
-export WALLPAPER_INTERVAL=300
-
+# Home directory
 pathprepend "$HOME/.rvm/bin"
 pathprepend "$HOME/bin"
 pathprepend "$HOME/lib" PERL5LIB
 
-# local::lib
-pathprepend "$HOME/perl5/bin"; export PATH;
-pathprepend "$HOME/perl5/lib/perl5/" PERL5LIB; export PERL5LIB;
-pathprepend "$HOME/perl5" PERL_LOCAL_LIB_ROOT; export PERL_LOCAL_LIB_ROOT;
-pathprepend "$HOME/perl5/lib/perl5/" GITPERLLIB; export GITPERLLIB;
+export PERL_MB_OPT="--install_base \"$HOME/perl5\""
+export PERL_MM_OPT="INSTALL_BASE=$HOME/perl5"
 
-PERL_MB_OPT="--install_base \"$HOME/perl5\""; export PERL_MB_OPT;
-PERL_MM_OPT="INSTALL_BASE=$HOME/perl5"; export PERL_MM_OPT;
-
-# VI style line editing
-EDITOR="vim"
+export HOSTNAME
+export EDITOR="vim"
+export WORKON_HOME="$HOME/.virtualenvs"
+export WALLPAPER_PATH="$HOME/Pictures/girls/wallpaper/"
+export WALLPAPER_INTERVAL=300
+export LS_COLORS='no=00:fi=00:di=01;34:ln=01;36:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arj=01;31:*.taz=01;31:*.lzh=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.gz=01;31:*.bz2=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.avi=01;35:*.fli=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.ogg=01;35:*.mp3=01;35:*.wav=01;35:'
 
 # Exit if not interactive
 case "$-" in
-  *i* )
-    ;;
-  * )
-    return
-    ;;
+	*i* )
+		;;
+	* )
+		return
+		;;
 esac
 
 
 
-# == Source {{{1
+# == Sources {{{1
 # ==================================================================================================
 
-# [ $SHLVL -eq 1 ] && [ `perl -l local::lib > /dev/null 2>&1` ] && eval "$(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib)"
-# sourcefile "$HOME/perl5/perlbrew/etc/bashrc"
-# sourcefile "$HOME/.rvm/scripts/rvm"
-# sourcefile '/usr/local/bin/virtualenvwrapper.sh'
-
-
+sourcefile "$HOME/.secure/nas_info"
+sourcefile "$HOME/.fzf.bash"
+[[ `which dircolors >/dev/null 2>&1` ]] && eval $(dircolors ~/.dircolors) > /dev/null
 
 # == Colors {{{1
 # ==================================================================================================
 
-function setfg() { tput sgr0; tput setaf $1; }
-function setbfg() { tput sgr0; tput bold; tput setaf $1; }
-function setbg() { tput sgr0; tput setab $1; }
+if tput setaf 1 &> /dev/null; then
+  tput sgr0
+  if [[ $(tput colors) -ge 256 ]] 2>/dev/null; then
+    # Changed these colors to fit Solarized theme
+    RED=$(tput setaf 125)
+    GREEN=$(tput setaf 64)
+    ORANGE=$(tput setaf 166)
+    BLUE=$(tput setaf 33)
+    PURPLE=$(tput setaf 61)
+    CYAN=$(tput setaf 87)
+    WHITE=$(tput setaf 244)
+  else
+    RED=$(tput setaf 1)
+    GREEN=$(tput setaf 2)
+    ORANGE=$(tput setaf 3)
+    BLUE=$(tput setaf 4)
+    PURPLE=$(tput setaf 5)
+    CYAN=$(tput setaf 6)
+    WHITE=$(tput setaf 7)
+  fi
+  BOLD=$(tput bold)
+  RESET=$(tput sgr0)
+else
+  MAGENTA="\033[1;31m"
+  ORANGE="\033[1;33m"
+  GREEN="\033[1;32m"
+  PURPLE="\033[1;35m"
+  WHITE="\033[1;37m"
+  BOLD=""
+  RESET="\033[m"
+fi
 
-FGblack=$(setfg 0)
-FGred=$(setfg 1)
-FGgreen=$(setfg 2)
-FGyellow=$(setfg 3)
-FGblue=$(setfg 4)
-FGmagenta=$(setfg 5)
-FGcyan=$(setfg 6)
-FGwhite=$(setfg 7)
-
-# Bold Foreground
-FGgray=$(setbfg 0)
-FGbred=$(setbfg 1)
-FGbgreen=$(setbfg 2)
-FGbyellow=$(setbfg 3)
-FGbblue=$(setbfg 4)
-FGbmagenta=$(setbfg 5)
-FGbcyan=$(setbfg 6)
-FGbwhite=$(setbfg 7)
-
-# Background
-BGblack=$(setbg 0)
-BGred=$(setbg 1)
-BGgreen=$(setbg 2)
-BGyellow=$(setbg 3)
-BGblue=$(setbg 4)
-BGmagenta=$(setbg 5)
-BGcyan=$(setbg 6)
-BGwhite=$(setbg 7)
-RCLR=$(tput sgr0)
-
-GRY='\[\033[1;33m\]'
-WHI='\[\033[0;37m\]'
-BLU='\[\033[0;34m\]'
-YEL='\[\033[0;33m\]'
-MAG='\[\033[0;35m\]'
-GRE='\[\033[0;32m\]'
-CYA='\[\033[0;36m\]'
-RED='\[\033[0;31m\]'
-BRED='\[\033[0;41m\]'
-NC='\[\033[0m\]'
-
-
+export MAGENTA
+export ORANGE
+export GREEN
+export PURPLE
+export WHITE
+export BOLD
+export RESET
 
 # == Shell Options {{{1
 # ==================================================================================================
 
-# [ -f /usr/local/etc/bash_completion  ] && . /usr/local/etc/bash_completion
-
 # Bash 4.00 specific options
 if [[ $BASH_VERSINFO > 3 ]]; then
-  shopt -s autocd # Allow cding to directories by typing the directory name
-  shopt -s checkjobs # Defer exiting shell if any stopped or running jobs
-  shopt -s dirspell # Attempts spell correction on directory names
+	shopt -s autocd # Allow cding to directories by typing the directory name
+	shopt -s checkjobs # Defer exiting shell if any stopped or running jobs
+	shopt -s dirspell # Attempts spell correction on directory names
 fi
 
 shopt -s cdable_vars # Allow passing directory vars to cd
@@ -198,8 +175,6 @@ shopt -s promptvars # Expansion in prompt strings
 
 # Prevent clobbering of files with redirects
 set -o noclobber
-
-
 
 # == Aliases {{{1
 # ==================================================================================================
@@ -222,19 +197,19 @@ alias cdc='cd ~/Dropbox/classes/'
 
 # Various CD shortcuts
 if [[ -d "$FON_DIR" ]]; then
-  alias wa="cd $FON_DIR/lib/Fap/WebApp/Action/"
-  alias f="cd $FON_DIR/lib/Fap/"
-  alias dbregen="perl -I$FON_DIR/lib $FON_DIR/bin/tools/database/regenerate_DBIx"
+	alias wa="cd $FON_DIR/lib/Fap/WebApp/Action/"
+	alias f="cd $FON_DIR/lib/Fap/"
+	alias dbregen="perl -I$FON_DIR/lib $FON_DIR/bin/tools/database/regenerate_DBIx"
 fi
 if [[ -d "$HOME/Dropbox/dev" ]]; then
-  export DEVHOME="$HOME/Dropbox/dev"
-  alias s="cd $DEVHOME/websites/"
-  alias d="cd $DEVHOME"
-  alias ios="cd $DEVHOME/ios"
+	export DEVHOME="$HOME/Dropbox/dev"
+	alias s="cd $DEVHOME/websites/"
+	alias d="cd $DEVHOME"
+	alias ios="cd $DEVHOME/ios"
 fi
 
 # System
-alias u='history -n'  # Sync history from other terminals
+alias u='history -n'	# Sync history from other terminals
 alias _='sudo'
 alias du='du -kh' # Human readable in 1K block sizes
 alias df='df -kh' # Human readable in 1K block sizes with file system type
@@ -277,9 +252,9 @@ alias sqz="ssh luc6@quizor2.cs.pdx.edu"
 alias sshl='ssh-add -L' # List ssh-agent identities
 alias st='ssh -A lpetherbridge@tech.fonality.com'
 sw2() {
-  TERM=${TERM/"screen-256color"/"xterm-256color"}
-  ssh -A lpetherbridge@web-dev2.fonality.com
-  TERM=${TERM/"xterm-256color"/"screen-256color"}
+	TERM=${TERM/"screen-256color"/"xterm-256color"}
+	ssh -A lpetherbridge@web-dev2.fonality.com
+	TERM=${TERM/"xterm-256color"/"screen-256color"}
 }
 alias sp='ssh -A lpetherbridge@fcs-app1.fonality.com'
 alias sf='ssh -A lpetherbridge@devbox5.lotsofclouds.fonality.com'
@@ -308,21 +283,25 @@ alias x='extract.sh'
 alias tm='tm.sh'
 alias mnas="sudo mount -t cifs -o username=$NAS_USER,password=$NAS_PW,port=$NAS_PORT //$NAS_IP/NAS /mnt/NAS"
 
-# ls
-if [[ "$OSTYPE" =~ 'darwin' ]]; then
-  alias ls='ls -NhFG --color' # Add colors for filetype recognition
-else
-  alias ls='ls -NhF --color=tty'
+# Detect which `ls` flavor is in use
+if ls --color > /dev/null 2>&1; then # GNU `ls`
+  colorflag="--color"
+else # OS X `ls`
+  colorflag="-G"
 fi
-alias ll='ls -Nl' # Long listing
-alias la='ls -NAl' # Show hidden files
-alias lx='ls -NlXB' # Sort by extension
-alias lk='ls -NlSr' # Sort by size, biggest last
-alias lc='ls -Nltcr' # Sort by and show change time, most recent last
-alias lu='ls -Nltur' # Sort by and show access time, most recent last
-alias lt='ls -Nltr' # Sort by date, most recent last
-alias lle='ls -Nal | less' # Pipe through 'less'
-alias lr='ls -NlR' # Recursive ls
+
+alias ls="command ls -hF $colorflag" # Add colors for filetype recognition
+alias ll='ls -lh' # Long listing
+alias la='ls -lhA' # Show hidden files (minus . and ..)
+alias lsd='ls -l | grep "^d"' # List only directories
+
+alias lx='ls -lXB' # Sort by extension
+alias lk='ls -lSr' # Sort by size, biggest last
+alias lc='ls -ltcr' # Sort by and show change time, most recent last
+alias lu='ls -ltur' # Sort by and show access time, most recent last
+alias lt='ls -ltr' # Sort by date, most recent last
+alias lle='ls -lhA | less' # Pipe through 'less'
+alias lr='ls -lR' # Recursive ls
 
 
 
@@ -371,35 +350,35 @@ cb() {
 	nb
 }
 myip() {
-  wget http://ipecho.net/plain -O - -q; echo
+	wget http://ipecho.net/plain -O - -q; echo
 }
 ssh() {
-  TERM=${TERM/tmux/screen}
-  command ssh $*
+	TERM=${TERM/tmux/screen}
+	command ssh $*
 }
 vf() {
-  vim scp://lpetherbridge@devbox5.lotsofclouds.fonality.com/~/fcs/$*
+	vim scp://lpetherbridge@devbox5.lotsofclouds.fonality.com/~/fcs/$*
 }
 vs() {
-  vim scp://lpetherbridge@fcs-stg-app1.lax01.fonality.com/~/fcs/$*
+	vim scp://lpetherbridge@fcs-stg-app1.lax01.fonality.com/~/fcs/$*
 }
 vs2() {
-  vim scp://lpetherbridge@fcs-stg2-app1.lax01.fonality.com/~/fcs/$*
+	vim scp://lpetherbridge@fcs-stg2-app1.lax01.fonality.com/~/fcs/$*
 }
 pprofile() {
-  perl -d:NYTProf $*;
-  nytprofhtml --open;
+	perl -d:NYTProf $*;
+	nytprofhtml --open;
 }
 _ask_yes_no() {
-  echo -en "${FGred}$@ [y/n] ${RCLR}" ; read ans
-  case "$ans" in
-    y*|Y*)
-      return 0
-      ;;
-    *)
-      return 1
-      ;;
-  esac
+	echo -en "${MAGENTA}$@ [y/n] ${RESET}" ; read ans
+	case "$ans" in
+		y*|Y*)
+			return 0
+			;;
+		*)
+			return 1
+			;;
+	esac
 }
 
 # Converts SQL output to CSV formatting
@@ -407,55 +386,55 @@ sqlcsv() { cat | sed "s/'/\'/;s/\t/\",\"/g;s/^/\"/;s/$/\"/;s/\n//g"; }
 
 # Syntax checks all new or modified perl files
 schk() {
-  for file in $(git status|egrep 'new file|modified'|egrep '(.pm|.pl)$' |cut -d: -f2|cut -d' ' -f4); do
-    perl -c $file
-  done
+	for file in $(git status|egrep 'new file|modified'|egrep '(.pm|.pl)$' |cut -d: -f2|cut -d' ' -f4); do
+		perl -c $file
+	done
 }
 
 gmf() {
-  local branch_file='.gmf_branches'
-  if [[ -f ${branch_file} ]]; then
-    local current_branch=$(current_branch)
-    local branches=()
-    local i=0
-    while read line; do
-      branches[$i]=$line
-      i=$(($i + 1))
-    done < ${branch_file}
-    local main_branch=${branches[0]}
+	local branch_file='.gmf_branches'
+	if [[ -f ${branch_file} ]]; then
+		local current_branch=$(current_branch)
+		local branches=()
+		local i=0
+		while read line; do
+			branches[$i]=$line
+			i=$(($i + 1))
+		done < ${branch_file}
+		local main_branch=${branches[0]}
 
-    command="GIT_MERGE_AUTOEDIT=no;echo 'Merging ${current_branch} into ${main_branch}' &&"
-    command="$command git checkout ${main_branch} && "
-    command="$command git pull && "
-    command="$command git merge ${current_branch} && "
-    command="$command git push origin ${main_branch} "
-    for this_branch in "${branches[@]}"; do
-      if [ "${this_branch}" = "${main_branch}" ]; then
-        continue
-      fi
-      command="$command && echo 'Merging ${main_branch} into ${this_branch}' &&"
-      command="$command git checkout ${this_branch} && "
-      command="$command git pull && "
-      command="$command git merge ${main_branch} && "
-      command="$command git push origin ${this_branch}"
-    done
-    command="$command && git checkout ${main_branch}"
-    echo $command
-    if _ask_yes_no "Proceed?"; then
-      eval $command
-    fi
-  fi
+		command="GIT_MERGE_AUTOEDIT=no;echo 'Merging ${current_branch} into ${main_branch}' &&"
+		command="$command git checkout ${main_branch} && "
+		command="$command git pull && "
+		command="$command git merge ${current_branch} && "
+		command="$command git push origin ${main_branch} "
+		for this_branch in "${branches[@]}"; do
+			if [ "${this_branch}" = "${main_branch}" ]; then
+	continue
+			fi
+			command="$command && echo 'Merging ${main_branch} into ${this_branch}' &&"
+			command="$command git checkout ${this_branch} && "
+			command="$command git pull && "
+			command="$command git merge ${main_branch} && "
+			command="$command git push origin ${this_branch}"
+		done
+		command="$command && git checkout ${main_branch}"
+		echo $command
+		if _ask_yes_no "Proceed?"; then
+			eval $command
+		fi
+	fi
 }
 
 updatedb() {
-  case "$OSTYPE" in
-    darwin*)
-      sudo /usr/libexec/locate.updatedb
-      ;;
-    *)
-      updatedb
-      ;;
-  esac
+	case "$OSTYPE" in
+		darwin*)
+			sudo /usr/libexec/locate.updatedb
+			;;
+		*)
+			updatedb
+			;;
+	esac
 }
 
 # mkdir & cd to it
@@ -469,18 +448,18 @@ sn() { echo -n -e "\033k$*\033\\"; SCREEN_TITLE=$*; }
 # Grep commands
 h() { if [ -z "$*" ]; then history; else history | egrep "$@"; fi; }
 pg() {
-  CMD=''
-  case "$OSTYPE" in
-    darwin*) CMD='ps aux'
-      ;;
-    *) CMD='ps auxf'
-      ;;
-  esac
-  if [ -z $1 ]; then
-    $CMD
-  else
-    $CMD | grep $*
-  fi
+	CMD=''
+	case "$OSTYPE" in
+		darwin*) CMD='ps aux'
+			;;
+		*) CMD='ps auxf'
+			;;
+	esac
+	if [ -z $1 ]; then
+		$CMD
+	else
+		$CMD | grep $*
+	fi
 }
 
 # Convert unix epoc to current timezone
@@ -489,67 +468,67 @@ unixtime() { date --date="1970-01-01 $* sec GMT"; }
 myps() { ps -f $@ -u $USER -o pid,%cpu,%mem,bsdtime,command ; }
 
 sa() {
-  sourcefile /tmp/ssh-agent-$HOSTNAME-info
+	sourcefile /tmp/ssh-agent-$HOSTNAME-info
 }
 ra() {
-  if [ $1 ] || [ _ask_yes_no "Restart ssh-agent?" ]; then
-    rm -f /tmp/ssh-agent-$HOSTNAME
-    pkill -f ssh-agent
-    echo `ssh-agent -s -a /tmp/ssh-agent-$HOSTNAME` >| /tmp/ssh-agent-$HOSTNAME-info
-    source /tmp/ssh-agent-$HOSTNAME-info
-  fi
+	if [ $1 ] || [ _ask_yes_no "Restart ssh-agent?" ]; then
+		rm -f /tmp/ssh-agent-$HOSTNAME
+		pkill -f ssh-agent
+		echo `ssh-agent -s -a /tmp/ssh-agent-$HOSTNAME` >| /tmp/ssh-agent-$HOSTNAME-info
+		source /tmp/ssh-agent-$HOSTNAME-info
+	fi
 }
 aweb() { [[ -f "$HOME/.ssh/webhost_key" ]] && ssh-add "$HOME/.ssh/webhost_key"; }
 als() { [[ -f "$HOME/.ssh/id_rsa_psu" ]] && ssh-add "$HOME/.ssh/id_rsa_psu"; }
 akey() {
-  ra "1"
-  # If Aladdin etoken connected
-  if [ $(system_profiler SPUSBDataType 2> /dev/null| grep OMNIKEY -c) -gt 0 ]; then
-    ssh-add -s '/usr/local/lib/libaetpkss.dylib'
-  fi
+	ra "1"
+	# If Aladdin etoken connected
+	if [ $(system_profiler SPUSBDataType 2> /dev/null| grep OMNIKEY -c) -gt 0 ]; then
+		ssh-add -s '/usr/local/lib/libaetpkss.dylib'
+	fi
 }
 
 # Get current host related info
 ii() {
-  echo -e "\nYou are logged on ${BLU}${HOSTNAME}${RCLR}";
-  echo -e "\n${RED}Additionnal information:${RCLR} " ; uname -a
-  echo -e "\n${RED}Users logged on:${RCLR} " ; w -h
-  echo -e "\n${RED}Current date :${RCLR} " ; date
-  echo -e "\n${RED}Machine stats :${RCLR} " ; uptime
-  if [ $(which free 2> /dev/null) ]; then
-    echo -e "\n${RED}Memory stats :${RCLR} " ; free
-  fi
-  echo
+	echo -e "\nYou are logged on ${BLU}${HOSTNAME}${RESET}";
+	echo -e "\n${RED}Additionnal information:${RESET} " ; uname -a
+	echo -e "\n${RED}Users logged on:${RESET} " ; w -h
+	echo -e "\n${RED}Current date :${RESET} " ; date
+	echo -e "\n${RED}Machine stats :${RESET} " ; uptime
+	if [ $(which free 2> /dev/null) ]; then
+		echo -e "\n${RED}Memory stats :${RESET} " ; free
+	fi
+	echo
 }
 
 if [[ "$OSTYPE" =~ 'darwin' ]]; then
-  hide() {
-    echo "Hiding hidden files..."
-    defaults write com.apple.finder AppleShowAllFiles TRUE
-    defaults write com.apple.finder AppleShowAllFiles FALSE
-    # force changes by restarting Finder
-    killall Finder
-  }
-  show() {
-    echo "Showing hidden files...";
-    defaults write com.apple.finder AppleShowAllFiles TRUE
-    # force changes by restarting Finder
-    killall Finder
-  }
+	hide() {
+		echo "Hiding hidden files..."
+		defaults write com.apple.finder AppleShowAllFiles TRUE
+		defaults write com.apple.finder AppleShowAllFiles FALSE
+		# force changes by restarting Finder
+		killall Finder
+	}
+	show() {
+		echo "Showing hidden files...";
+		defaults write com.apple.finder AppleShowAllFiles TRUE
+		# force changes by restarting Finder
+		killall Finder
+	}
 fi
 
 # Prompt functions
 bg_jobs() {
-  jobs=$(jobs -r | wc -l | tr -d '[[:space:]]')
-  if [[ $jobs > 0 ]]; then
-    echo $jobs
-  fi
+	jobs=$(jobs -r | wc -l | tr -d '[[:space:]]')
+	if [[ $jobs > 0 ]]; then
+		echo $jobs
+	fi
 }
 st_jobs() {
-  jobs=$(jobs -s | wc -l | tr -d '[[:space:]]')
-  if [[ $jobs -gt 0 ]]; then
-    echo $jobs
-  fi
+	jobs=$(jobs -s | wc -l | tr -d '[[:space:]]')
+	if [[ $jobs -gt 0 ]]; then
+		echo $jobs
+	fi
 }
 
 
@@ -566,43 +545,43 @@ export SSH_AGENT_FWD="yes"
 # Load all of the plugins
 for plugin in ${plugins[@]}
 do
-  if [ "${plugin}" == "host" ]
-  then
-    pfile="$PLUGIN_DIR/$plugin/${HOSTNAME}.plugin.sh"
-    sfile="$PLUGIN_DIR/$plugin/secure/${HOSTNAME}.plugin.sh"
-  else
-    pfile="$PLUGIN_DIR/$plugin/$plugin.plugin.sh"
-  fi
-  sourcefile $pfile
-  sourcefile $sfile
-  unset pfile
+	if [ "${plugin}" == "host" ]
+	then
+		pfile="$PLUGIN_DIR/$plugin/${HOSTNAME}.plugin.sh"
+		sfile="$PLUGIN_DIR/$plugin/secure/${HOSTNAME}.plugin.sh"
+	else
+		pfile="$PLUGIN_DIR/$plugin/$plugin.plugin.sh"
+	fi
+	sourcefile $pfile
+	sourcefile $sfile
+	unset pfile
 done
 unset plugin
 
 # GIT
-BASH_THEME_GIT_PROMPT_PREFIX=" ${FGcyan}["
-BASH_THEME_GIT_PROMPT_SUFFIX="${FGcyan}]${RCLR}"
-BASH_THEME_GIT_PROMPT_CLEAN="${FGgreen}=${RCLR}"
+BASH_THEME_GIT_PROMPT_PREFIX=" ${ORANGE}["
+BASH_THEME_GIT_PROMPT_SUFFIX="${ORANGE}]${RESET}"
+BASH_THEME_GIT_PROMPT_CLEAN="${GREEN}=${RESET}"
 
-BASH_THEME_GIT_PROMPT_AHEAD="${FGred}!${RCLR}"
-BASH_THEME_GIT_PROMPT_DIRTY="${FGred} *${RCLR}"
+BASH_THEME_GIT_PROMPT_AHEAD="${RED}!${RESET}"
+BASH_THEME_GIT_PROMPT_DIRTY="${RED} *${RESET}"
 BASH_THEME_GIT_PROMPT_DIRTY="" # Commented since we have other flags to indicate dirty below
-BASH_THEME_GIT_PROMPT_ADDED="${FGgreen}+${RCLR}"
-BASH_THEME_GIT_PROMPT_MODIFIED="${FGblue}x${RCLR}"
-BASH_THEME_GIT_PROMPT_DELETED="${FGred}-${RCLR}"
-BASH_THEME_GIT_PROMPT_RENAMED="${FGmagenta}>${RCLR}"
-BASH_THEME_GIT_PROMPT_UNMERGED="${FGyellow}^${RCLR}"
-BASH_THEME_GIT_PROMPT_UNTRACKED="${FGcyan}.${RCLR}"
+BASH_THEME_GIT_PROMPT_ADDED="${GREEN}+${RESET}"
+BASH_THEME_GIT_PROMPT_MODIFIED="${BLUE}x${RESET}"
+BASH_THEME_GIT_PROMPT_DELETED="${RED}-${RESET}"
+BASH_THEME_GIT_PROMPT_RENAMED="${MAGENTA}>${RESET}"
+BASH_THEME_GIT_PROMPT_UNMERGED="${ORANGE}^${RESET}"
+BASH_THEME_GIT_PROMPT_UNTRACKED="${ORANGE}.${RESET}"
 
 # Format for git_prompt_long_sha() and git_prompt_short_sha()
-BASH_THEME_GIT_PROMPT_SHA_BEFORE="${FGyellow}"
-BASH_THEME_GIT_PROMPT_SHA_AFTER="${RCLR}"
+BASH_THEME_GIT_PROMPT_SHA_BEFORE="${ORANGE}"
+BASH_THEME_GIT_PROMPT_SHA_AFTER="${RESET}"
 
 # Colors vary depending on time lapsed.
-BASH_THEME_GIT_TIME_SINCE_COMMIT_SHORT="${FGgreen}"
-BASH_THEME_GIT_TIME_SHORT_COMMIT_MEDIUM="${FGyellow}"
-BASH_THEME_GIT_TIME_SINCE_COMMIT_LONG="${FGred}"
-BASH_THEME_GIT_TIME_SINCE_COMMIT_NEUTRAL="${FGcyan}"
+BASH_THEME_GIT_TIME_SINCE_COMMIT_SHORT="${GREEN}"
+BASH_THEME_GIT_TIME_SHORT_COMMIT_MEDIUM="${ORANGE}"
+BASH_THEME_GIT_TIME_SINCE_COMMIT_LONG="${RED}"
+BASH_THEME_GIT_TIME_SINCE_COMMIT_NEUTRAL="${ORANGE}"
 
 # Git time since commit
 BASH_THEME_GIT_TIME_SINCE_COMMIT_BEFORE=""
@@ -610,52 +589,52 @@ BASH_THEME_GIT_TIME_SINCE_COMMIT_AFTER=""
 
 # Trim working path to 1/2 of screen width
 prompt_pwd() {
-  local pwd_max_len=$(($(tput cols) / 2))
-  local trunc_symbol="..."
-  PWD=${PWD/$HOME/"~"}
-  if [ ${#PWD} -gt ${pwd_max_len} ]
-  then
-    local pwd_offset=$(( ${#PWD} - ${pwd_max_len} + 3 ))
-    PWD="${trunc_symbol}${PWD[${pwd_offset},${#PWD}]}"
-  fi
-  echo -e "${PWD}"
+	local pwd_max_len=$(($(tput cols) / 2))
+	local trunc_symbol="..."
+	PWD=${PWD/$HOME/"~"}
+	if [ ${#PWD} -gt ${pwd_max_len} ]
+	then
+		local pwd_offset=$(( ${#PWD} - ${pwd_max_len} + 3 ))
+		PWD="${trunc_symbol}${PWD[${pwd_offset},${#PWD}]}"
+	fi
+	echo -e "${PWD}"
 }
 
 prompt_on() {
-  case ${OSTYPE} in
-    darwin*)
-      PS1_HOST="mac"
-      ;;
-    *)
-      PS1_HOST="${HOSTNAME}"
-      ;;
-  esac
+	case ${OSTYPE} in
+		darwin*)
+			PS1_HOST="mac"
+			;;
+		*)
+			PS1_HOST="${HOSTNAME}"
+			;;
+	esac
 
-  echo -ne "\n"
-  if [[ ! $TERM =~ screen ]]; then
-    echo -ne "$FGgray[$FGyellow$(date +'%F %R')$FGgray] "
-  fi
-  if [[ $(declare -f bg_jobs) && $(bg_jobs) ]]; then
-    echo -ne "$FGgray[$FGyellow$(bg_jobs)$FGgray] "
-  fi
-  if [[ $(declare -f st_jobs) && $(st_jobs) ]]; then
-    echo -ne "$FGgray[$FGred$(st_jobs)$FGgray] "
-  fi
-  if [[ $PS1_HOST ]]; then
-    echo -ne "$FGgray{$FGcyan$USER$FGgray@$FGwhite$PS1_HOST$FGgray} "
-  fi
+	echo -e "$BOLD"
+	if [[ ! $TERM =~ screen ]]; then
+		echo -ne "$WHITE$(date +'%F %R')$WHITE "
+	fi
+	if [[ $PS1_HOST ]]; then
+		echo -ne "$GREEN$USER$WHITE @ $RED$PS1_HOST "
+	fi
+	echo -e "$ORANGE$(prompt_pwd)$RESET"
 
-  if [[ $(declare -f parse_git_branch) && $(parse_git_branch) ]]; then
-    echo -ne "$FGgray($FGblue$(parse_git_branch)$FGgray) "
-  fi
-  echo -e "$FGcyan$(prompt_pwd)$RCLR"
+	if [[ $(declare -f bg_jobs) && $(bg_jobs) ]]; then
+		echo -ne "$WHITE[$ORANGE$(bg_jobs)$WHITE] "
+	fi
+	if [[ $(declare -f st_jobs) && $(st_jobs) ]]; then
+		echo -ne "$WHITE{$RED$(st_jobs)$WHITE} "
+	fi
+	if [[ $(declare -f parse_git_branch) && $(parse_git_branch) ]]; then
+		echo -e "$WHITE($BLUE$(parse_git_branch)$WHITE) "
+	fi
 }
-PS1="> "
+PS1="\$ "
 PS2=">> "
 
 prompt_off() {
-  PROMPT_COMMAND=""
-  PS1='$(prompt_pwd) > '
+	PROMPT_COMMAND=""
+	PS1='$(prompt_pwd) > '
 }
 
 PROMPT_COMMAND="history -a; prompt_on"
@@ -664,25 +643,20 @@ PROMPT_COMMAND="history -a; prompt_on"
 # == End Profiling {{{1
 # ==================================================================================================
 
-endn=$(date +%s.%N)
+endn=$(date +%s)
 ends=$(date +%s)
 if [[ $(which bc 2>/dev/null) ]]; then
-  dt=$(echo "$endn - $startn" | bc)
-  dd=$(echo "$dt/86400" | bc)
-  dt2=$(echo "$dt-86400*$dd" | bc)
-  dh=$(echo "$dt2/3600" | bc)
-  dt3=$(echo "$dt2-3600*$dh" | bc)
-  dm=$(echo "$dt3/60" | bc)
-  ds=$(echo "$dt3-60*$dm" | bc)
-  printf "\033[0;33mTotal runtime: %d:%02d:%02d:%02.4f\033[0m\n" $dd $dh $dm $ds
+	dt=$(echo "$endn - $startn" | bc)
+	dd=$(echo "$dt/86400" | bc)
+	dt2=$(echo "$dt-86400*$dd" | bc)
+	dh=$(echo "$dt2/3600" | bc)
+	dt3=$(echo "$dt2-3600*$dh" | bc)
+	dm=$(echo "$dt3/60" | bc)
+	ds=$(echo "$dt3-60*$dm" | bc)
+	printf "${GREEN}Total runtime: %d:%02d:%02d:%02.4f$RESET" $dd $dh $dm $ds
 else
-  dt=$(($ends - $starts))
-  printf "\033[0;33mTotal runtime: %ds\033[0m\n" $dt
+	dt=$(($ends - $starts))
+	printf "${GREEN}Total runtime: %ds$RESET" $dt
 fi
 
 # }}}
-
-# vim:foldmethod=marker:foldlevel=0
-
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash
-eval $(dircolors ~/.dircolors) > /dev/null

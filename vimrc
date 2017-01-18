@@ -12,13 +12,14 @@ endif
 
 " Any plugins should come after colorscheme if they override highlighting
 let g:solarized_termtrans=1
-silent! colorscheme zhayedan
+let g:solarized_termcolors=16
+colorscheme solarized
 
 set nocompatible                 " Disable VI backwards compatible settings. Must be first
 set autoindent                   " Copy indent from current line when adding a new line
 set autoread
 set autowriteall                 " Automatically :write before running commands
-set background=dark
+set background=light
 set backspace=indent,eol,start
 " Set directory to store backup files in.
 " These are created when saving, and deleted after successfully written
@@ -80,7 +81,7 @@ set laststatus=2
 set lazyredraw                   " Don't redraw screen during macros or commands
 set linebreak                    " Wrap long lines at a character in breakat
 set list                         " Enable visibility of unprintable chars
-set listchars=tab:\|\ ,trail:-,extends:»,precedes:«,nbsp:~
+set listchars=tab:\ \ ,trail:-,extends:»,precedes:«,nbsp:~
 
 " Set < and > as brackets for jumping with %
 set matchpairs+=<:>
