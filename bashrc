@@ -471,18 +471,23 @@ sa() {
 	sourcefile /tmp/ssh-agent-$HOSTNAME-info
 }
 ra() {
-	if [ $1 ] || [ _ask_yes_no "Restart ssh-agent?" ]; then
-		rm -f /tmp/ssh-agent-$HOSTNAME
-		pkill -f ssh-agent
-		echo `ssh-agent -s -a /tmp/ssh-agent-$HOSTNAME` >| /tmp/ssh-agent-$HOSTNAME-info
-		source /tmp/ssh-agent-$HOSTNAME-info
+	if [ ! -z $SSH_AGENT_PID ]; then
+		if [ ! -z $1 ] || _ask_yes_no "Restart ssh-agent?"; then
+			rm -f /tmp/ssh-agent-$HOSTNAME
+			unset SSH_AUTH_SOCK
+			unset SSH_AGENT_PID
+			pkill -f ssh-agent
+		fi
 	fi
+	echo `ssh-agent -s -a /tmp/ssh-agent-$HOSTNAME` >| /tmp/ssh-agent-$HOSTNAME-info
+	source /tmp/ssh-agent-$HOSTNAME-info
 }
-aweb() { [[ -f "$HOME/.ssh/webhost_key" ]] && ssh-add "$HOME/.ssh/webhost_key"; }
-als() { [[ -f "$HOME/.ssh/id_rsa_psu" ]] && ssh-add "$HOME/.ssh/id_rsa_psu"; }
+arsa() {
+	ra
+	[[ -f "$HOME/.ssh/id_rsa" ]] && ssh-add "$HOME/.ssh/id_rsa"
+}
 akey() {
-	ra "1"
-	# If Aladdin etoken connected
+	ra 1
 	if [ $(system_profiler SPUSBDataType 2> /dev/null| grep OMNIKEY -c) -gt 0 ]; then
 		ssh-add -s '/usr/local/lib/libaetpkss.dylib'
 	fi
