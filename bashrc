@@ -103,7 +103,8 @@ esac
 # == Sources {{{1
 # ==================================================================================================
 
-sourcefile "$HOME/.secure/nas_info"
+sourcefile "$HOME/.secure/nas_info.sh"
+sourcefile "$HOME/.secure/secure.sh"
 sourcefile "$HOME/.fzf.bash"
 [[ `which dircolors >/dev/null 2>&1` ]] && eval $(dircolors ~/.dircolors) > /dev/null
 
@@ -251,6 +252,7 @@ alias sls="ssh luc6@linux.cs.pdx.edu"
 alias sqz="ssh luc6@quizor2.cs.pdx.edu"
 alias sshl='ssh-add -L' # List ssh-agent identities
 alias st='ssh -A lpetherbridge@tech.fonality.com'
+alias sv='cd ~/lib && vagrant ssh -- -A'
 sw2() {
 	TERM=${TERM/"screen-256color"/"xterm-256color"}
 	ssh -A lpetherbridge@web-dev2.fonality.com
@@ -290,6 +292,10 @@ else # OS X `ls`
   colorflag="-G"
 fi
 
+if [[ "$OSTYPE" =~ 'darwin' ]]; then
+	alias lsusb='system_profiler SPUSBDataType'
+fi
+
 alias ls="command ls -hF $colorflag" # Add colors for filetype recognition
 alias ll='ls -lh' # Long listing
 alias la='ls -lhA' # Show hidden files (minus . and ..)
@@ -303,7 +309,33 @@ alias lt='ls -ltr' # Sort by date, most recent last
 alias lle='ls -lhA | less' # Pipe through 'less'
 alias lr='ls -lR' # Recursive ls
 
-
+# Git
+alias g='git'
+alias ga='git add'
+alias gb='git branch'
+alias gba='git branch -a'
+alias gbv='git branch -v'
+alias gcam='git commit --amend'
+alias gcb='git checkout -b'
+alias gcp='git cherry-pick'
+alias gd='git diff'
+alias gdt='git difftool'
+alias gf='git fetch origin'
+alias gi='echo $(git_prompt_info)'
+alias glg='git log --graph --pretty=format:"%C(yellow)%h (%p) %ai%Cred%d %Creset%Cblue[%ae]%Creset %s (%ar). %b %N"'
+alias gls='git --no-pager log --pretty=format:"%C(yellow)%h (%p) %ai%Cred%d %Creset%Cblue[%ae]%Creset %s (%ar). %b %N" -20'
+alias gll='git --no-pager log --pretty=format:"%C(yellow)%h (%p) %ai%Cred%d %Creset%Cblue[%ae]%Creset %s (%ar). %b %N" --numstat -10'
+alias gm='git merge --no-ff'
+alias gpl='echo "use gfr"'
+alias gps='git push'
+alias grhh='git reset HEAD --hard'
+alias grm='git rm'
+alias gss='git status -s'
+alias gst='git status'
+alias gsl='git --no-pager stash list'
+alias gt=git_time_since_commit
+alias gtoday='git --no-pager log --graph --pretty=format:"%C(yellow)%h %ad%Cred%d %Creset%Cblue[%cn]%Creset  %s (%ar)" --date=iso --all --branches=* --remotes=* --since="23 hours ago" --author="$(git config user.name)"'
+alias gun='git reset HEAD --'
 
 # == Functions {{{1
 # ==================================================================================================
@@ -488,8 +520,8 @@ arsa() {
 }
 akey() {
 	ra 1
-	if [ $(system_profiler SPUSBDataType 2> /dev/null| grep OMNIKEY -c) -gt 0 ]; then
-		ssh-add -s '/usr/local/lib/libaetpkss.dylib'
+	if [ $(system_profiler SPUSBDataType 2> /dev/null| grep "SafeNet" -c) -gt 0 ]; then
+		ssh-add -s '/usr/local/lib/libeTPkcs11.dylib'
 	fi
 }
 
@@ -536,32 +568,151 @@ st_jobs() {
 	fi
 }
 
+# Git
+git() {
+  if [ $1 = "merge" ] && [ $2 != "--no-ff" ]; then
+    echo "Use gm which uses --no-ff"
+  else
+    command git "$@"
+  fi
+}
+gfr() {
+  branch=$(current_branch)
+  echo "git fetch origin && git rebase -p origin/$branch"
+  git fetch origin
+  git rebase -p origin/$branch
+}
+gh() {
+    echo "Git Help:"
+    echo "  Git Status Symbols:"
+    echo "    x : Local modifications"
+    echo "    + : Files added"
+    echo "    - : Files deleted"
+    echo "    > : Files renamed"
+    echo "    . : Untracked files"
+    echo "    ! : Ahead of origin"
+    echo "    ^ : Unmerged changes"
+    echo "    * : Dirty"
+    echo "    = : Clean"
+}
+# Checkout a ticket branch
+gbt() { git checkout tickets/$@; }
+gbtn() { git checkout -b tickets/$@; }
+# Will return the current branch name
+# Usage example: git pull origin $(current_branch)
+#
+current_branch() {
+  ref=$(git symbolic-ref HEAD 2> /dev/null) || return
+  echo "${ref#refs/heads/}"
+}
+gco() {
+    git checkout $@
+    ctags > /dev/null 2>&1 &
+}
+gops() {
+    git push origin $(current_branch) $@ -u
+}
+git_prompt_info() {
+    ref=$(git symbolic-ref HEAD 2> /dev/null) || return
+    echo "$BASH_THEME_GIT_PROMPT_PREFIX$(current_branch) $(parse_git_dirty) $(git_prompt_short_sha) $(git_time_since_commit)$BASH_THEME_GIT_PROMPT_SUFFIX"
+}
+# Determine the time since last commit. If branch is clean,
+# use a neutral color, otherwise colors will vary according to time.
+git_time_since_commit() {
+    if git rev-parse --git-dir > /dev/null 2>&1; then
+        # Only proceed if there is actually a commit.
+        if [[ $(git log 2>&1 > /dev/null | grep -c "^fatal: bad default revision") == 0 ]]; then
+            # Get the last commit.
+            last_commit=`git log --pretty=format:'%at' -1 2> /dev/null`
+            now=`date +%s`
+            seconds_since_last_commit=$((now-last_commit))
 
+            # Totals
+            MINUTES=$((seconds_since_last_commit / 60))
+            HOURS=$((seconds_since_last_commit/3600))
 
-# == Theme/Plugins {{{1
+            # Sub-hours and sub-minutes
+            DAYS=$((seconds_since_last_commit / 86400))
+            SUB_HOURS=$((HOURS % 24))
+            SUB_MINUTES=$((MINUTES % 60))
+
+            if [ "$HOURS" -gt 24 ]; then
+                echo "${BASH_THEME_GIT_TIME_SINCE_COMMIT_LONG}${BASH_THEME_GIT_TIME_SINCE_COMMIT_BEFORE}${DAYS}d${SUB_HOURS}h${SUB_MINUTES}m${BASH_THEME_GIT_TIME_SINCE_COMMIT_AFTER}${RCLR}"
+            elif [ "$MINUTES" -gt 60 ]; then
+                echo "${BASH_THEME_GIT_TIME_SHORT_COMMIT_MEDIUM}${BASH_THEME_GIT_TIME_SINCE_COMMIT_BEFORE}${HOURS}h${SUB_MINUTES}m${BASH_THEME_GIT_TIME_SINCE_COMMIT_AFTER}${RCLR}"
+            else
+                echo "${BASH_THEME_GIT_TIME_SINCE_COMMIT_SHORT}${BASH_THEME_GIT_TIME_SINCE_COMMIT_BEFORE}${MINUTES}m${BASH_THEME_GIT_TIME_SINCE_COMMIT_AFTER}${RCLR}"
+            fi
+        else
+            echo "${BASH_THEME_GIT_TIME_SINCE_COMMIT_BEFORE}~${BASH_THEME_GIT_TIME_SINCE_COMMIT_AFTER}"
+        fi
+    fi
+}
+# Checks if working tree is dirty
+parse_git_dirty() {
+  local SUBMODULE_SYNTAX=''
+  if [[ $POST_1_7_2_GIT -gt 0 ]]; then
+        SUBMODULE_SYNTAX="--ignore-submodules=dirty"
+  fi
+  if [[ -n $(git status -s ${SUBMODULE_SYNTAX}  2> /dev/null) ]]; then
+    echo "$BASH_THEME_GIT_PROMPT_DIRTY"
+  else
+    echo "$BASH_THEME_GIT_PROMPT_CLEAN"
+  fi
+}
+# Checks if there are commits ahead from remote
+git_prompt_ahead() {
+  if $(echo "$(git log origin/$(current_branch)..HEAD 2> /dev/null)" | grep '^commit' &> /dev/null); then
+    echo "$BASH_THEME_GIT_PROMPT_AHEAD"
+  fi
+}
+# Formats prompt string for current git commit short SHA
+git_prompt_short_sha() {
+  SHA=$(git rev-parse --short HEAD 2> /dev/null) && echo "$BASH_THEME_GIT_PROMPT_SHA_BEFORE$SHA$BASH_THEME_GIT_PROMPT_SHA_AFTER"
+}
+# Formats prompt string for current git commit long SHA
+git_prompt_long_sha() {
+  SHA=$(git rev-parse HEAD 2> /dev/null) && echo "$BASH_THEME_GIT_PROMPT_SHA_BEFORE$SHA$BASH_THEME_GIT_PROMPT_SHA_AFTER"
+}
+parse_git_branch() {
+  branch=$(git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/' )
+  echo $branch
+}
+# Get the status of the working tree
+git_prompt_status() {
+  INDEX=$(git status --porcelain 2> /dev/null)
+  STATUS=""
+  if $(echo "$INDEX" | grep '^?? ' &> /dev/null); then
+    STATUS="$BASH_THEME_GIT_PROMPT_UNTRACKED$STATUS"
+  fi
+  if $(echo "$INDEX" | grep '^A  ' &> /dev/null); then
+    STATUS="$BASH_THEME_GIT_PROMPT_ADDED$STATUS"
+  elif $(echo "$INDEX" | grep '^M  ' &> /dev/null); then
+    STATUS="$BASH_THEME_GIT_PROMPT_ADDED$STATUS"
+  fi
+  if $(echo "$INDEX" | grep '^ M ' &> /dev/null); then
+    STATUS="$BASH_THEME_GIT_PROMPT_MODIFIED$STATUS"
+  elif $(echo "$INDEX" | grep '^AM ' &> /dev/null); then
+    STATUS="$BASH_THEME_GIT_PROMPT_MODIFIED$STATUS"
+  elif $(echo "$INDEX" | grep '^ T ' &> /dev/null); then
+    STATUS="$BASH_THEME_GIT_PROMPT_MODIFIED$STATUS"
+  fi
+  if $(echo "$INDEX" | grep '^R  ' &> /dev/null); then
+    STATUS="$BASH_THEME_GIT_PROMPT_RENAMED$STATUS"
+  fi
+  if $(echo "$INDEX" | grep '^ D ' &> /dev/null); then
+    STATUS="$BASH_THEME_GIT_PROMPT_DELETED$STATUS"
+  elif $(echo "$INDEX" | grep '^AD ' &> /dev/null); then
+    STATUS="$BASH_THEME_GIT_PROMPT_DELETED$STATUS"
+  fi
+  if $(echo "$INDEX" | grep '^UU ' &> /dev/null); then
+    STATUS="$BASH_THEME_GIT_PROMPT_UNMERGED$STATUS"
+  fi
+  echo $STATUS
+}
+
+# == Prompt {{{1
 # ==================================================================================================
-
-export PLUGIN_DIR="${HOME}/.plugins"
-export BASH_THEME="${HOME}/.themes/zhayedan.sh"
-
-plugins=(host git)
-export SSH_AGENT_FWD="yes"
-
-# Load all of the plugins
-for plugin in ${plugins[@]}
-do
-	if [ "${plugin}" == "host" ]
-	then
-		pfile="$PLUGIN_DIR/$plugin/${HOSTNAME}.plugin.sh"
-		sfile="$PLUGIN_DIR/$plugin/secure/${HOSTNAME}.plugin.sh"
-	else
-		pfile="$PLUGIN_DIR/$plugin/$plugin.plugin.sh"
-	fi
-	sourcefile $pfile
-	sourcefile $sfile
-	unset pfile
-done
-unset plugin
 
 # GIT
 BASH_THEME_GIT_PROMPT_PREFIX=" ${ORANGE}["
