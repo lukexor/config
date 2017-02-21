@@ -20,6 +20,7 @@ let s:DEFFOLDMETHOD = &foldmethod
 let s:DEFFOLDEXPR   = &foldexpr
 let s:DEFFOLDTEXT   = &foldtext
 let s:DEFFOLDLEVEL  = 1000
+let s:DEFFOLDENABLE = &foldenable
 
 " This is what the options are changed to...
 let s:FOLDEXPR = 'FS_FoldSearchLevel()'
@@ -50,6 +51,7 @@ function! FS_ToggleFoldAroundSearch (opts)
         let &foldtext   = get(b:foldsearch, 'prevfoldtext',   s:DEFFOLDTEXT)
         let &foldlevel  = get(b:foldsearch, 'prevfoldlevel',  s:DEFFOLDLEVEL)
         let &foldexpr   = get(b:foldsearch, 'prevfoldexpr',   s:DEFFOLDEXPR)
+        let &foldenable = get(b:foldsearch, 'prevfoldenable', s:DEFFOLDENABLE)
 
         " Remove autocommands for refolding for each new search...
         augroup FoldSearch
@@ -65,7 +67,7 @@ function! FS_ToggleFoldAroundSearch (opts)
         if &foldmethod == "marker" || &foldmethod == "manual"
           return 'zE'
         else
-          return ''
+          return '<C-c>'
         endif
 
     " Turn on, if it's off...
@@ -76,12 +78,14 @@ function! FS_ToggleFoldAroundSearch (opts)
         let b:foldsearch.prevfoldexpr   = &foldexpr
         let b:foldsearch.prevfoldtext   = &foldtext
         let b:foldsearch.prevfoldlevel  = &foldlevel
+        let b:foldsearch.prevfoldenable = &foldenable
 
         " Set up new behaviour...
         let &foldtext   = s:FOLDTEXT[folds_visible]
         let &foldexpr   = s:FOLDEXPR
         let &foldmethod = 'expr'
         let &foldlevel  = 0
+        let &foldenable = 1
 
         " Recalculate folding for each new search...
         augroup FoldSearch
@@ -92,7 +96,7 @@ function! FS_ToggleFoldAroundSearch (opts)
             autocmd CursorMoved  *  call ReopenFold()
             function! ReopenFold ()
                 if b:inopenfold
-                    normal zo
+                    exec 'normal zo'
                 endif
             endfunction
         augroup END
@@ -118,20 +122,20 @@ function! FS_FoldAroundTarget (target, opts)
             " If already folding this pattern...
             if @/ == a:target
                 " Toggle off...
-                return ":nohlsearch\<CR>:exec 'normal ' . FS_ToggleFoldAroundSearch({'context':1})\<CR>"
+                return ":nohlsearch\<CR>:exec 'normal ' . FS_ToggleFoldAroundSearch({'context':" . context . "})\<CR>"
 
             " Otherwise stay in foldsearch and switch to target...
             else
                 let b:FOLDCONTEXT = get(a:opts, 'context', 1)
                 let &foldtext     = s:FOLDTEXT[folds_visible]
                 let &foldminlines = 1
-                return '/' . a:target . "\<CR>"
+                return '/' . a:target . "\<CR>:nohlsearch\<CR>"
             endif
         endif
     endif
 
     " If not already in a foldsearch, search for target then toggle on...
-    return '/' . a:target . "\<CR>:exec 'normal ' . FS_ToggleFoldAroundSearch(".string(a:opts).")\<CR>"
+    return '/' . a:target . "\<CR>:nohlsearch\<CR>:exec 'normal ' . FS_ToggleFoldAroundSearch(".string(a:opts).")\<CR>"
 endfunction
 
 " Utility function implements folding expression...
@@ -149,7 +153,6 @@ function! FS_FoldSearchLevel ()
 
     " Line is folded if surrounding context doesn't match last search pattern...
     return match(context, matchpattern) == -1
-
 endfunction
 
 " Restore previous external compatibility options

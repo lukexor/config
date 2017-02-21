@@ -42,17 +42,20 @@ function! TPV__setup ()
 
         " Remember how * was set up (if it was) and change it...
         let b:old_star_map = maparg('*')
-        " nmap <special> <buffer><silent> *   :let @/ = TPV_locate_perl_var()<CR>
+        let b:old_hash_map = maparg('#')
+        " nmap <special> <buffer><silent> *   :let @/ = TPV_locate_perl_var('s')<CR>
+        " nmap <special> <buffer><silent> #   :let @/ = TPV_locate_perl_var('b')<CR>
 
         " cv --> change variable...
-        " nmap <special> <buffer>         cv  :call TPV_rename_perl_var('normal')<CR>
-        " vmap <special> <buffer>         cv  :call TPV_rename_perl_var('visual')<CR>gv
+        nmap <special> <buffer>         <Plug>TPVRenameNormalGlobal  :call TPV_rename_perl_var('normal')<CR>
+        " TODO: Add TPVRenameNormalLocal
+        vmap <special> <buffer>         <Plug>TPVRenameVisual  :call TPV_rename_perl_var('visual')<CR>gv
 
         " gd --> goto definition...
-        " nmap <special> <buffer><silent> gd  :let @/ = TPV_locate_perl_var_decl()<CR>
+        nmap <special> <buffer><silent> <Plug>TPVLocateDeclaration  :let @/ = TPV_locate_perl_var_decl()<CR>
 
         " tt --> toggle tracking...
-        " nmap <special> <buffer><silent> tt  :let b:track_perl_var_locked = ! b:track_perl_var_locked<CR>:call TPV_track_perl_var()<CR>
+        nmap <special> <buffer><silent> <Plug>TPVToggleTracking  :let b:track_perl_var_locked = ! b:track_perl_var_locked<CR>:call TPV_track_perl_var()<CR>
 
         " Adjust keywords to cover sigils and qualifiers...
         setlocal iskeyword+=$
@@ -366,7 +369,7 @@ endfunction
 
 " Implement "locate next use of a variable" (i.e. * command)
 
-function! TPV_locate_perl_var ()
+function! TPV_locate_perl_var (direction)
     " Locate a var under cursor...
     let cursline = getline('.')
     let curscol  = col('.')
@@ -377,6 +380,7 @@ function! TPV_locate_perl_var ()
     " Revert to generic behaviour if not on a variable
     if empty(varparts)
         exec b:old_star_map ? b:old_star_map : 'normal! *'
+        exec b:old_hash_map ? b:old_hash_map : 'normal! #'
         return @/
     endif
 
@@ -409,7 +413,7 @@ function! TPV_locate_perl_var ()
     endif
 
     " Finally, search forwards for the declaration and report the outcome...
-    call search('\<'.curs_var, 's')
+    call search('\<'.curs_var, a:direction)
     return curs_var
 
 endfunction

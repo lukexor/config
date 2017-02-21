@@ -49,8 +49,7 @@ command! -nargs=+ Doc call <SID>Define('Map', <q-args>, 0)
 let s:MapDoc_Description = {}
 
 " Parse Nmap specifications...
-" let s:mapdoc_syntax = '\C\(\%(\s*<\[buffer\|nowait\|silent\|special\|script\|expr\|unique\]>\s*\)*\)\s*\(\S\+\)\s\+\%(\[\(.\{-}\)\]\)\?\(.*\)'
-let s:mapdoc_syntax = '\C\(\%(\s*<\(silent\|buffer\)>\s\+\)*\)\s*\(\S\+\)\s\+\%(\[\(.\{-}\)\]\)\?\(.*\)'
+let s:mapdoc_syntax = '\C\(\%(\s*<\(buffer\|nowait\|silent\|special\|script\|expr\|unique\)>\s\+\)*\)\s*\(\S\+\)\s\+\%(\[\(.\{-}\)\]\)\?\(.*\)'
 
 " Build the corresponding nmap and record the documentation...
 function! s:Define (type, args, map)

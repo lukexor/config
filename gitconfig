@@ -1,15 +1,16 @@
 [user]
+
   name = Luke Petherbridge
   email = lukexor@gmail.com
 [github]
   user = lukexor
   token = ad713daa071e284256dfde40ad14b65e
 [merge]
-  tool = vimdiff
+	tool = vimdiff
 [diff]
-  tool = vimdiff
+	tool = vimdiff
 [difftool]
-  prompt = false
+	prompt = false
 [alias]
   # Show verbose output about tags, branches or remotes
   tags = tags -l
@@ -47,8 +48,6 @@
   release = releases/
   hotfix = hotfixes/
   versiontag = v
-[credential]
-  helper = osxkeychain
 # Use `origin` as the default remote on the `master` branch in all cases
 [branch "master"]
   remote = origin

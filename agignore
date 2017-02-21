@@ -36,3 +36,5 @@ bin/*.exe
 *.pdf
 *.db
 tags
+*tags
+.*tags

@@ -1,0 +1,29 @@
+#! /usr/bin/env perl
+
+use strict;
+use warnings;
+
+use Cwd;
+
+# We'll build up our command since every command has to succeed
+my $cmd = "";
+# See if we can find an existing editor window
+if (!`tmux list-windows | grep "1: editor"`) {
+	# If not, create one and swap to make it first
+	$cmd .= "tmux new-window -n editor -d -a -t:1 vim && ";
+	$cmd .= "tmux swap-window -s2 -t1 && ";
+}
+# Find the absolute path to our desired files
+for my $filename (@ARGV) {
+	my $file = Cwd::abs_path($filename) || $filename;
+	chomp $file;
+	if (length $file > 0) {
+		my $cwd = Cwd::getcwd;
+		$cmd .= "tmux send-keys -t editor Escape ':cd $cwd' Enter ':e $file' Enter && ";
+	}
+}
+# Finally, switch to the editor window
+$cmd .= "tmux find-window -N editor 2>/dev/null";
+# Print and execute
+print $cmd . "\n";
+system($cmd)

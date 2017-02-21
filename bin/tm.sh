@@ -16,11 +16,10 @@ do
   case $opt in
     "New Dev Session")
       SESSION=dev-$RANDOM
-      tmux new-session -s $SESSION -n editor -d
-      tmux send-keys -t $SESSION 'vim' C-m
+      tmux new-session -s $SESSION -n editor -d vim
       tmux new-window -n shell -t $SESSION
       tmux select-window -t editor
-      tmux attach -t $SESSION
+      tmux attach-session -t $SESSION
       break
       ;;
     "New Session")

@@ -63,9 +63,24 @@ if [ -d $HOME/lib/fcs ]; then
 	export FCS_APP_URL='http://dev-app.lotsofclouds.fonality.com/'
 	export FCS_CP_URL='http://dev-cp.lotsofclouds.fonality.com/'
 	# export NF_API_URL='https://swagger-arch.fonality.com:10113/'
-	export NF_API_URL='http://sandbox-nf.lax01.fonality.com:10113/'
+	export NF_API_URL='http://localhost:8090/'
+	for dir in $(find "$FON_DIR/bin" -type d); do
+		pathprepend $dir
+	done
 	pathprepend "$FON_DIR/bin"
 	pathprepend "$FON_DIR/lib" PERL5LIB
+	export GOPATH="$HOME/lib/go"
+	export GOBIN="$GOPATH/bin"
+	pathprepend $GOBIN
+	export context="local"
+	function bees() {
+		cd $HOME/lib/go/src/dataService/
+		$GOPATH/bin/bee run
+	}
+	NF_DB_URL=luke-data.arch.fonality.com
+	export MYSQL_URL=$NF_DB_URL
+	export CB_URL=$NF_DB_URL
+	export NF_REDIS_URL=$NF_DB_URL:6379
 fi
 
 if [[ -d "$HOME/dev/tools/android-sdk-macosx/" ]]; then
@@ -78,6 +93,7 @@ fi
 pathprepend "$HOME/.rvm/bin"
 pathprepend "$HOME/bin"
 pathprepend "$HOME/lib" PERL5LIB
+# pathprepend "$HOME/lib/ssh/bin"
 
 export PERL_MB_OPT="--install_base \"$HOME/perl5\""
 export PERL_MM_OPT="INSTALL_BASE=$HOME/perl5"
@@ -88,6 +104,9 @@ export WORKON_HOME="$HOME/.virtualenvs"
 export WALLPAPER_PATH="$HOME/Pictures/girls/wallpaper/"
 export WALLPAPER_INTERVAL=300
 export LS_COLORS='no=00:fi=00:di=01;34:ln=01;36:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arj=01;31:*.taz=01;31:*.lzh=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.gz=01;31:*.bz2=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.avi=01;35:*.fli=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.ogg=01;35:*.mp3=01;35:*.wav=01;35:'
+
+export FZF_DEFAULT_COMMAND='(git ls-tree -r --name-only HEAD || ag --hidden -g "") 2> /dev/null'
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 
 # Exit if not interactive
 case "$-" in
@@ -219,12 +238,35 @@ alias info='info --vi-keys'
 
 # Editing - All roads lead to $EDITOR
 alias vi="$EDITOR"
+function vim() {
+	# Only run if we're inside tmux
+	if [[ $TMUX != "" ]]; then
+		$HOME/bin/vim_tmux $*
+	else
+		command vim $*
+	fi
+}
 alias svi="sudo $EDITOR"
 alias nano=$EDITOR
 alias emacs=$EDITOR
 
 # Git
 alias sg='for file in $(git status|egrep "modified|new file"|cut -d: -f2|tr -d " "|sort|uniq); do scp $file lpetherbridge@devbox5.lotsofclouds.fonality.com:~/fcs/$file; done'
+function fsync() {
+	user=lpetherbridge
+	host=devbox5.lotsofclouds.fonality.com
+	case $1 in
+	stg) host=fcs-stg-app1.lax01.fonality.com;;
+	stg2) host=fcs-stg2-app1.lax01.fonality.com;;
+	stg3) host=fcs-app1.stage3.arch.fonality.com;;
+	stg4) host=fcs-app1.stage4.arch.fonality.com;;
+	stg5) host=fcs-app1.stage5.arch.fonality.com;;
+	stg6) host=fcs-app1.stage6.arch.fonality.com;;
+	esac
+	if _ask_yes_no "Sync $PWD to $host?"; then
+		rsync --verbose --recursive --links --perms --times --executability --compress --cvs-exclude --human-readable --progress --itemize-changes -rsh=ssh . $user@$host:~/lib/
+	fi
+}
 
 # Python
 alias py='python'
@@ -240,6 +282,11 @@ alias rpminfo='rpm -qip' # list rpm info
 
 # Edit configurations
 alias vrc="pushd $HOME/.dotfiles/ >> /dev/null; vi $HOME/.dotfiles/vimrc; popd >> /dev/null"
+function vfrc() {
+	pushd /home/vagrant/.dotfiles/ >> /dev/null;
+	vi /home/vagrant/.dotfiles/vim/after/ftplugin/$1.vim;
+	popd >> /dev/null
+}
 alias vp="pushd $HOME/.dotfiles/ >> /dev/null; vi $HOME/.dotfiles/vim/plugins.vim; popd >> /dev/null"
 alias vbp="pushd $HOME/.dotfiles/ >> /dev/null; vi $HOME/.dotfiles/bash_profile; popd >> /dev/null"
 alias vb="pushd $HOME/.dotfiles/ >> /dev/null; vi $HOME/.dotfiles/bashrc; popd >> /dev/null"
@@ -268,6 +315,8 @@ alias ss4='ssh -A lpetherbridge@fcs-app1.stage4.arch.fonality.com'
 alias ss5='ssh -A lpetherbridge@fcs-app1.stage5.arch.fonality.com'
 alias ss6='ssh -A lpetherbridge@fcs-app1.stage6.arch.fonality.com'
 alias ssb='ssh -A lpetherbridge@fcs-stg-bastion.lax01.fonality.com'
+alias fv='sudo /usr/local/bin/juniper/juniper_vpn stop && sudo /usr/local/bin/juniper/juniper_vpn start'
+alias fvs='sudo /usr/local/bin/juniper/juniper_vpn status'
 
 # Sourcing
 alias b="source $HOME/.bashrc"
@@ -275,8 +324,8 @@ alias bp="source $HOME/.bash_profile"
 
 # Misc
 alias da='date "+%Y-%m-%d %H:%M:%S"'
-alias g='grep -n --color=auto'
-alias grep='grep -n --color=auto'
+alias g='grep --color=auto'
+alias grep='grep --color=auto'
 alias offenders='uptime;ps aux | perl -ane"print if \$F[2] > 0.9"'
 alias path='echo -e ${PATH//:/"\n"}'
 alias topm='ps -eo pcpu,pmem,pid,user,args | sort -k 1 -r | head -10 | cut -d- -f1;ps -eo pmem,pcpu,pid,user,args | sort -k 1 -r | head -10 | cut -d- -f1';
@@ -816,3 +865,5 @@ else
 fi
 
 # }}}
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash

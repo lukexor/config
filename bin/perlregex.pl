@@ -3,6 +3,7 @@
 my $regex = shift;
 my $string = shift;
 
+print "Regex: $regex\n";
 if ($string =~ m/$regex/xms) {
     print "Matched: ";
     print $` if defined $`;

@@ -1,13 +1,10 @@
+-pbp
+--blank-lines-before-subs=1
 --closing-side-comments
 --cuddled-else
---default-tabsize=4
---entab-leading-whitespace=4
---format-skipping
---ignore-side-comment-lengths
 --noblanks-before-comments
---nospace-for-semicolon # e.g. for (i = 0; i < $value; i++) { ... }
+--nooutdent-labels
 --opening-sub-brace-on-new-line
---output-line-ending=unix
 --paren-tightness=2
---standard-error-output
---tabs
+--nooutdent-long-lines
+--vertical-tightness=0
