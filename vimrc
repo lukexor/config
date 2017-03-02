@@ -52,7 +52,7 @@ set diffopt+=vertical
 set directory=$HOME/.vim/tmp//
 set display+=lastline
 set encoding=utf-8
-set noexpandtab                  " Replace the tab key with spaces
+set expandtab                  " Replace the tab key with spaces
 filetype plugin indent on
 set fileencoding=utf-8
 set fileformat=unix
@@ -125,8 +125,9 @@ set scrolloff=15                 " Start scrolling when we're # lines away from 
 if &shell =~# 'fish$' && (v:version < 704 || v:version == 704 && !has('patch276'))
 	set shell=/bin/bash
 endif
+
 set shiftround                   " Round to nearest multiple of shiftwidth
-" set shiftwidth=2                 " The amount of space to shift when using >>, << or <tab>
+set shiftwidth=4                 " The amount of space to shift when using >>, << or <tab>
 set showcmd                      " Display incomplete command
 set showmatch                    " Blink to a matching bracket if on screen
 set showmode                     " Show current mode (INSERT, VISUAL)

@@ -50,6 +50,9 @@ HISTTIMEFORMAT='[%F %a %T] ' # YYYY-MM-DD DAY HH:MM:SS
 
 pathprepend "/usr/local/bin"
 
+# Rust
+pathprepend "$HOME/.cargo/bin"
+
 # local::lib
 pathprepend "$HOME/perl5/bin"; export PATH;
 pathprepend "$HOME/perl5/lib/perl5/" PERL5LIB; export PERL5LIB;
@@ -93,7 +96,6 @@ fi
 pathprepend "$HOME/.rvm/bin"
 pathprepend "$HOME/bin"
 pathprepend "$HOME/lib" PERL5LIB
-# pathprepend "$HOME/lib/ssh/bin"
 
 export PERL_MB_OPT="--install_base \"$HOME/perl5\""
 export PERL_MM_OPT="INSTALL_BASE=$HOME/perl5"

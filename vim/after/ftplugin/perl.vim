@@ -3,8 +3,6 @@ runtime after/ftplugin/global/shiftfour.vim
 runtime after/ftplugin/global/indent.vim
 runtime custom_plugins/trackperlvars.vim
 
-set expandtab
-
 augroup Perl_Setup
 	autocmd!
 	autocmd BufNewFile *.pl :0r $HOME/.vim/templates/perl/pl_script
