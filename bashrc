@@ -301,7 +301,7 @@ alias sls="ssh luc6@linux.cs.pdx.edu"
 alias sqz="ssh luc6@quizor2.cs.pdx.edu"
 alias sshl='ssh-add -L' # List ssh-agent identities
 alias st='ssh -A lpetherbridge@tech.fonality.com'
-alias sv='cd ~/lib && vagrant ssh -- -A'
+alias sv='pushd ~/lib && vagrant ssh -- -A && popd'
 sw2() {
 	TERM=${TERM/"screen-256color"/"xterm-256color"}
 	ssh -A lpetherbridge@web-dev2.fonality.com
@@ -330,7 +330,12 @@ alias g='grep --color=auto'
 alias grep='grep --color=auto'
 alias offenders='uptime;ps aux | perl -ane"print if \$F[2] > 0.9"'
 alias path='echo -e ${PATH//:/"\n"}'
-alias topm='ps -eo pcpu,pmem,pid,user,args | sort -k 1 -r | head -10 | cut -d- -f1;ps -eo pmem,pcpu,pid,user,args | sort -k 1 -r | head -10 | cut -d- -f1';
+function topm() {
+	echo " %CPU %MEM   PID USER             ARGS";
+	ps -eo pcpu,pmem,pid,user,args | sort -k 1 -r -n | head -10 | cut -d- -f1;
+	echo " %CPU %MEM   PID USER             ARGS";
+	ps -eo pmem,pcpu,pid,user,args | sort -k 1 -r -n | head -10 | cut -d- -f1;
+}
 alias which='type -a'
 alias x='extract.sh'
 alias tm='tm.sh'
@@ -556,12 +561,12 @@ sa() {
 ra() {
 	if [ ! -z $SSH_AGENT_PID ]; then
 		if [ ! -z $1 ] || _ask_yes_no "Restart ssh-agent?"; then
-			rm -f /tmp/ssh-agent-$HOSTNAME
 			unset SSH_AUTH_SOCK
 			unset SSH_AGENT_PID
 			pkill -f ssh-agent
 		fi
 	fi
+	rm -f /tmp/ssh-agent-$HOSTNAME
 	echo `ssh-agent -s -a /tmp/ssh-agent-$HOSTNAME` >| /tmp/ssh-agent-$HOSTNAME-info
 	source /tmp/ssh-agent-$HOSTNAME-info
 }
