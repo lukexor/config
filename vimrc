@@ -28,7 +28,7 @@ set autoread
 set autowrite
 set autowriteall                 " Automatically :write before running commands
 syntax enable
-set background=light
+set background=dark
 colorscheme solarized
 set backspace=indent,eol,start
 " Set directory to store backup files in.
@@ -267,7 +267,7 @@ augroup vimrcEx
 	autocmd InsertEnter * highlight CursorLine ctermbg=black ctermfg=None
 
 	" Revert Color to default when leaving Insert Mode
-	autocmd InsertLeave * highlight CursorLine ctermbg=blue ctermfg=None
+	autocmd InsertLeave * highlight CursorLine ctermbg=grey ctermfg=black
 augroup END
 
 augroup AutoMkdir
@@ -639,7 +639,7 @@ augroup END
 " -- Syntax Highlighting   {{{1
 " --------------------------------------------------------------------------------------------------
 
-highlight      CursorLine ctermbg=blue ctermfg=None
+highlight      CursorLine ctermbg=grey ctermfg=black
 highlight link SyntasticErrorSign SignColumn
 highlight link SyntasticStyleErrorSign SignColumn
 highlight link SyntasticStyleWarningSign SignColumn

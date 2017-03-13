@@ -66,6 +66,7 @@ if [ -d $HOME/lib/fcs ]; then
 	export FCS_APP_URL='http://dev-app.lotsofclouds.fonality.com/'
 	export FCS_CP_URL='http://dev-cp.lotsofclouds.fonality.com/'
 	# export NF_API_URL='https://swagger-arch.fonality.com:10113/'
+	export SYS_API_URL='http://dev-sysapi.lotsofclouds.fonality.com/'
 	export NF_API_URL='http://localhost:8090/'
 	for dir in $(find "$FON_DIR/bin" -type d); do
 		pathprepend $dir
@@ -371,6 +372,8 @@ alias ga='git add'
 alias gb='git branch'
 alias gba='git branch -a'
 alias gbv='git branch -v'
+alias gc='git commit'
+alias gca='git commit -a'
 alias gcam='git commit --amend'
 alias gcb='git checkout -b'
 alias gcp='git cherry-pick'
