@@ -18,8 +18,6 @@ runtime custom_plugins/goto_file.vim
 runtime custom_plugins/schlepp.vim
 
 " Any plugins should come after colorscheme if they override highlighting
-let g:solarized_termtrans=1
-let g:solarized_termcolors=16
 
 set nocompatible                 " Disable VI backwards compatible settings. Must be first
 set autochdir
@@ -29,7 +27,7 @@ set autowrite
 set autowriteall                 " Automatically :write before running commands
 syntax enable
 set background=dark
-colorscheme solarized
+colorscheme zhayedan
 set backspace=indent,eol,start
 " Set directory to store backup files in.
 " These are created when saving, and deleted after successfully written
@@ -40,7 +38,7 @@ set completeopt+=longest,menu,preview
 set copyindent
 if b:fsize <= 1000000
 	set cursorline  " Highlight the cursorline - slows redraw
-	highlight! ColorColumn ctermbg=magenta
+	highlight! ColorColumn ctermbg=208 ctermfg=black
 	if v:version >= 704
 		call matchadd('ColorColumn', '\%81v', 100)
 	endif
@@ -90,7 +88,7 @@ set laststatus=2
 set lazyredraw                   " Don't redraw screen during macros or commands
 set linebreak                    " Wrap long lines at a character in breakat
 set list                         " Enable visibility of unprintable chars
-exec "set listchars=tab:\\ \\ ,trail:\uB7,extends:\uBB,precedes:\uAB,nbsp:~"
+exec "set listchars=tab:\\|\\ ,trail:\uB7,extends:\uBB,precedes:\uAB,nbsp:~"
 
 " Set < and > as brackets for jumping with %
 set matchpairs+=<:>
@@ -157,7 +155,9 @@ set statusline+=%l/%L          " Current/Total lines
 set statusline+=\:%c           " Cursor position
 set statusline+=\ %p%%         " Percent through file
 set tags=./tags,tags,$HOME/lib/tags
-set tagcase=match
+if v:version >= 704
+    set tagcase=match
+endif
 set nocst  " Disable cscope - it messes with local tag lookups, might be useful
            " if I ever do a lot of C programming
 set term=xterm-256color
@@ -264,10 +264,10 @@ augroup vimrcEx
 	autocmd FocusLost,WinLeave * :silent! wa
 
 	" Change Color when entering Insert Mode
-	autocmd InsertEnter * highlight CursorLine ctermbg=black ctermfg=None
+	" autocmd InsertEnter * highlight CursorLine ctermbg=black ctermfg=white
 
 	" Revert Color to default when leaving Insert Mode
-	autocmd InsertLeave * highlight CursorLine ctermbg=grey ctermfg=black
+	" autocmd InsertLeave * highlight CursorLine ctermbg=yellow ctermfg=black
 augroup END
 
 augroup AutoMkdir
@@ -639,7 +639,7 @@ augroup END
 " -- Syntax Highlighting   {{{1
 " --------------------------------------------------------------------------------------------------
 
-highlight      CursorLine ctermbg=grey ctermfg=black
+" highlight      CursorLine ctermbg=yellow ctermfg=black
 highlight link SyntasticErrorSign SignColumn
 highlight link SyntasticStyleErrorSign SignColumn
 highlight link SyntasticStyleWarningSign SignColumn
