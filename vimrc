@@ -38,7 +38,6 @@ set completeopt+=longest,menu,preview
 set copyindent
 if b:fsize <= 1000000
 	set cursorline  " Highlight the cursorline - slows redraw
-	highlight! ColorColumn ctermbg=208 ctermfg=black
 	if v:version >= 704
 		call matchadd('ColorColumn', '\%81v', 100)
 	endif
@@ -84,7 +83,7 @@ set hlsearch                     " Highlight all search matches
 set incsearch                    " Highlight incrementally
 set ignorecase                   " Case insensitive searching (unless specified)
 set infercase
-set laststatus=2
+set laststatus=1
 set lazyredraw                   " Don't redraw screen during macros or commands
 set linebreak                    " Wrap long lines at a character in breakat
 set list                         " Enable visibility of unprintable chars
@@ -148,8 +147,6 @@ set statusline+=%m             " Modified
 set statusline+=%r             " Readonly
 set statusline+=%{tagbar#currenttag('[%s]\ ','','')}
 set statusline+=%=             " Left/Right seperator
-set statusline+=[%{&formatoptions}]\  " Display keyword settings
-set statusline+=%{&iskeyword}\ " Display keyword settings
 set statusline+=%y\            " Filetype
 set statusline+=%l/%L          " Current/Total lines
 set statusline+=\:%c           " Cursor position
@@ -167,7 +164,19 @@ set textwidth=80                 " Max width for text on the screen
 set ttimeout                     " Timeout on :mappings and key codes
 set ttimeoutlen=300              " Change timeout length
 set ttyfast                      " Smoother redraw
-set undolevels=5000              " How many undos
+if has('persistent_undo')
+    set undolevels=5000              " How many undos
+    set undodir=$HOME/.vim/undodir
+    set undofile
+    if !isdirectory(&undodir)
+        if exists("*mkdir")
+            call mkdir(&undodir, 'p')
+            echom "Created directory: " . &undodir
+        else
+            echom "Please create directory: " . &undodir
+        endif
+    endif
+endif
 set updatetime=1000              " How often to write to the swap file when nothing is pressed
 set updatecount=10               " Save every 10 characters typed
 
@@ -184,12 +193,6 @@ set viminfo=h,'500,f1,<10000,s1000,/1000,:1000,%,n$HOME/.viminfo
 set visualbell                   " stop that ANNOYING beeping
 set virtualedit=block            " Allow virtual block to put cursor where there's no actual text
 
-" Keep undo history across sessions by storing in a file
-if exists('&undofile')
-	silent !mkdir $HOME/.vim/undodir > /dev/null 2>&1
-	set undodir=$HOME/.vim/undodir
-	set undofile
-endif
 " The below allows horizontal and vertical splits to be small and out of the way, giving the active
 " window as much room as possible
 set winheight=10                 " This has to be set to winminheight first in order to work

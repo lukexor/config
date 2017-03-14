@@ -825,24 +825,25 @@ prompt_on() {
 			;;
 	esac
 
-	echo -e "$BOLD"
+	echo -e "$BOLD$GREEN"
 	if [[ ! $TERM =~ screen ]]; then
-		echo -ne "$WHITE$(date +'%F %R')$WHITE "
+		echo -ne "$(date +'%F %R') "
 	fi
 	if [[ $PS1_HOST ]]; then
-		echo -ne "$GREEN$USER$WHITE @ $RED$PS1_HOST "
+		echo -ne "$USER @ $PS1_HOST "
 	fi
-	echo -e "$ORANGE$(prompt_pwd)$RESET"
+	echo -e "$(prompt_pwd)"
 
 	if [[ $(declare -f bg_jobs) && $(bg_jobs) ]]; then
-		echo -ne "$WHITE[$ORANGE$(bg_jobs)$WHITE] "
+		echo -ne "[$(bg_jobs)] "
 	fi
 	if [[ $(declare -f st_jobs) && $(st_jobs) ]]; then
-		echo -ne "$WHITE{$RED$(st_jobs)$WHITE} "
+		echo -ne "{$(st_jobs)} "
 	fi
 	if [[ $(declare -f parse_git_branch) && $(parse_git_branch) ]]; then
-		echo -e "$WHITE($BLUE$(parse_git_branch)$WHITE) "
+		echo -e "($(parse_git_branch)) "
 	fi
+	echo -ne "$RESET"
 }
 PS1="\$ "
 PS2=">> "

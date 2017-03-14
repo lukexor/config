@@ -61,7 +61,7 @@ hi Error        ctermfg=167    ctermbg=236       cterm=none
 hi Todo         ctermfg=186    ctermbg=NONE      cterm=none
 hi MatchParen   cterm=bold
 hi NonText      ctermfg=245    ctermbg=NONE      cterm=none
-hi SpecialKey   ctermfg=245    ctermbg=NONE      cterm=none
+hi SpecialKey   ctermfg=grey    ctermbg=NONE     cterm=none
 hi Title        ctermfg=074    ctermbg=NONE      cterm=bold
 
 " == Text Selection ==
