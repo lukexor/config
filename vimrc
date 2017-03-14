@@ -31,7 +31,9 @@ colorscheme zhayedan
 set backspace=indent,eol,start
 " Set directory to store backup files in.
 " These are created when saving, and deleted after successfully written
+
 set backupdir=$HOME/.vim/tmp//
+set directory=$HOME/.vim/tmp//
 set clipboard=unnamed
 set complete+=kspell
 set completeopt+=longest,menu,preview
@@ -46,7 +48,6 @@ set cpoptions+=W                 " Don't overwrite readonly files with :w!
 set diffopt+=vertical
 
 " Set directory to store swap files in
-set directory=$HOME/.vim/tmp//
 set display+=lastline
 set encoding=utf-8
 set expandtab                  " Replace the tab key with spaces
@@ -152,7 +153,7 @@ set statusline+=%l/%L          " Current/Total lines
 set statusline+=\:%c           " Cursor position
 set statusline+=\ %p%%         " Percent through file
 set tags=./tags,tags,$HOME/lib/tags
-if v:version >= 704
+if v:version > 704
     set tagcase=match
 endif
 set nocst  " Disable cscope - it messes with local tag lookups, might be useful
@@ -168,14 +169,6 @@ if has('persistent_undo')
     set undolevels=5000              " How many undos
     set undodir=$HOME/.vim/undodir
     set undofile
-    if !isdirectory(&undodir)
-        if exists("*mkdir")
-            call mkdir(&undodir, 'p')
-            echom "Created directory: " . &undodir
-        else
-            echom "Please create directory: " . &undodir
-        endif
-    endif
 endif
 set updatetime=1000              " How often to write to the swap file when nothing is pressed
 set updatecount=10               " Save every 10 characters typed
@@ -273,11 +266,6 @@ augroup vimrcEx
 	" autocmd InsertLeave * highlight CursorLine ctermbg=yellow ctermfg=black
 augroup END
 
-augroup AutoMkdir
-	autocmd!
-	autocmd  BufNewFile  *  :call EnsureDirExists()
-augroup END
-
 " }}}
 " == Functions   {{{1
 " ==================================================================================================
@@ -354,19 +342,21 @@ function! AskQuit (msg, options, quit_option)
 	endif
 endfunction
 
-function! EnsureDirExists()
-	let required_dir = expand("%:h")
-	if !isdirectory(required_dir)
-		call AskQuit("Parent directory '" . required_dir . "' doesn't exist.",
-			 \       "&Create it\nor &Quit?", 2)
+function! EnsureDirExists(dir, prompt)
+    let required_dir = a:dir
+    if !isdirectory(required_dir)
+        if a:prompt
+            call AskQuit("Parent directory '" . required_dir . "' doesn't exist.",
+                        \       "&Create it\nor &Quit?", 2)
+        endif
 
-		try
-			call mkdir( required_dir, 'p' )
-		catch
-			call AskQuit("Can't create '" . required_dir . "'",
-			\            "&Quit\nor &Continue anyway?", 1)
-		endtry
-	endif
+        try
+                call mkdir( required_dir, 'p' )
+        catch
+                call AskQuit("Can't create '" . required_dir . "'",
+                \            "&Quit\nor &Continue anyway?", 1)
+        endtry
+    endif
 endfunction
 
 " After an alignable, align...
@@ -397,6 +387,13 @@ function! HLNext(blinktime)
 		exec 'sleep ' . float2nr(a:blinktime / (2*blinks) * 1000) . 'm'
 	endfor
 endfunction
+
+augroup AutoMkdir
+	autocmd!
+	autocmd BufNewFile * :call EnsureDirExists(expand("%:h"), 1)
+        call EnsureDirExists(&undodir, 0)
+        call EnsureDirExists(&backupdir, 0)
+augroup END
 
 " == Plugins    {{{1
 " ==================================================================================================
