@@ -19,41 +19,41 @@ let colors_name="zhayedan"
 
 set background=dark
 
-hi Normal       ctermfg=070    ctermbg=NONE      cterm=none
+hi Normal       ctermfg=230   ctermbg=NONE      cterm=none
 
-hi Comment      ctermfg=white ctermbg=NONE      cterm=none
+hi Comment      ctermfg=45     ctermbg=NONE      cterm=none
 
-hi Constant     ctermfg=070    ctermbg=NONE      cterm=none
-hi BConstant    ctermfg=070    ctermbg=NONE      cterm=bold
+hi Constant     ctermfg=230    ctermbg=NONE      cterm=none
+hi BConstant    ctermfg=230    ctermbg=NONE      cterm=bold
 
 hi Function     ctermfg=036    ctermbg=NONE      cterm=NONE
 hi Class        ctermfg=036    ctermbg=NONE      cterm=none
 hi Structure    ctermfg=036    ctermbg=NONE      cterm=none
 
-hi Identifier           ctermfg=070    ctermbg=NONE      cterm=none
-hi BIdentifier          ctermfg=070    ctermbg=NONE      cterm=bold
-hi DefinedName          ctermfg=070    ctermbg=NONE      cterm=none
-hi Enumerator           ctermfg=070    ctermbg=NONE      cterm=none
-hi EnumerationName      ctermfg=070    ctermbg=NONE      cterm=none
-hi Member               ctermfg=070    ctermbg=NONE      cterm=none
-hi Type                 ctermfg=070    ctermbg=NONE      cterm=none
-hi Union                ctermfg=070    ctermbg=NONE      cterm=none
-hi GlobalConstant       ctermfg=070    ctermbg=NONE      cterm=none
-hi GlobalVariable       ctermfg=070    ctermbg=NONE      cterm=none
-hi LocalVariable        ctermfg=070    ctermbg=NONE      cterm=none
+hi Identifier           ctermfg=230    ctermbg=NONE      cterm=none
+hi BIdentifier          ctermfg=230    ctermbg=NONE      cterm=bold
+hi DefinedName          ctermfg=230    ctermbg=NONE      cterm=none
+hi Enumerator           ctermfg=230    ctermbg=NONE      cterm=none
+hi EnumerationName      ctermfg=230    ctermbg=NONE      cterm=none
+hi Member               ctermfg=230    ctermbg=NONE      cterm=none
+hi Type                 ctermfg=230    ctermbg=NONE      cterm=none
+hi Union                ctermfg=230    ctermbg=NONE      cterm=none
+hi GlobalConstant       ctermfg=230    ctermbg=NONE      cterm=none
+hi GlobalVariable       ctermfg=230    ctermbg=NONE      cterm=none
+hi LocalVariable        ctermfg=230    ctermbg=NONE      cterm=none
 
-hi Statement    ctermfg=070    ctermbg=NONE      cterm=none
-hi BStatement   ctermfg=070    ctermbg=NONE      cterm=bold
+hi Statement    ctermfg=230    ctermbg=NONE      cterm=none
+hi BStatement   ctermfg=230    ctermbg=NONE      cterm=bold
 
-hi PreProc      ctermfg=070    ctermbg=NONE      cterm=none
-hi BPreProc     ctermfg=070    ctermbg=NONE      cterm=bold
+hi PreProc      ctermfg=230    ctermbg=NONE      cterm=none
+hi BPreProc     ctermfg=230    ctermbg=NONE      cterm=bold
 
-hi Type         ctermfg=070    ctermbg=NONE      cterm=none
-hi BType        ctermfg=070    ctermbg=NONE      cterm=bold
+hi Type         ctermfg=230    ctermbg=NONE      cterm=none
+hi BType        ctermfg=230    ctermbg=NONE      cterm=bold
 
-hi Special      ctermfg=070    ctermbg=NONE      cterm=none
-hi Delimiter    ctermfg=070    ctermbg=NONE      cterm=none
-hi BSpecial     ctermfg=070    ctermbg=NONE      cterm=bold
+hi Special      ctermfg=230    ctermbg=NONE      cterm=none
+hi Delimiter    ctermfg=230    ctermbg=NONE      cterm=none
+hi BSpecial     ctermfg=230    ctermbg=NONE      cterm=bold
 
 " == Text Markup ==
 hi Underlined   ctermfg=fg     ctermbg=NONE      cterm=underline
@@ -67,8 +67,8 @@ hi Title        ctermfg=074    ctermbg=NONE      cterm=bold
 " == Text Selection ==
 hi Cursor       cterm=none
 hi CursorIM     cterm=none
-hi CursorColumn ctermfg=NONE   ctermbg=237       cterm=none
-hi CursorLine   ctermfg=036   ctermbg=black     cterm=none
+hi CursorColumn ctermfg=NONE   ctermbg=234       cterm=none
+hi CursorLine   ctermfg=NONE    ctermbg=234     cterm=none
 hi Visual       ctermfg=NONE   ctermbg=024       cterm=none
 hi VisualNOS    ctermfg=fg     ctermbg=NONE      cterm=underline
 hi IncSearch    cterm=none

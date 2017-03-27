@@ -260,10 +260,10 @@ augroup vimrcEx
 	autocmd FocusLost,WinLeave * :silent! wa
 
 	" Change Color when entering Insert Mode
-	" autocmd InsertEnter * highlight CursorLine ctermbg=black ctermfg=white
+	autocmd InsertEnter * highlight CursorLine ctermfg=035
 
 	" Revert Color to default when leaving Insert Mode
-	" autocmd InsertLeave * highlight CursorLine ctermbg=yellow ctermfg=black
+	autocmd InsertLeave * highlight CursorLine ctermbg=234
 augroup END
 
 " }}}
@@ -639,7 +639,6 @@ augroup END
 " -- Syntax Highlighting   {{{1
 " --------------------------------------------------------------------------------------------------
 
-" highlight      CursorLine ctermbg=yellow ctermfg=black
 highlight link SyntasticErrorSign SignColumn
 highlight link SyntasticStyleErrorSign SignColumn
 highlight link SyntasticStyleWarningSign SignColumn

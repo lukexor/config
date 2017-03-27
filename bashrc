@@ -869,10 +869,10 @@ if [[ $(which bc 2>/dev/null) ]]; then
 	dt3=$(echo "$dt2-3600*$dh" | bc)
 	dm=$(echo "$dt3/60" | bc)
 	ds=$(echo "$dt3-60*$dm" | bc)
-	printf "${GREEN}Total runtime: %d:%02d:%02d:%02.4f$RESET" $dd $dh $dm $ds
+	printf "Total runtime: %d:%02d:%02d:%02.4f" $dd $dh $dm $ds
 else
 	dt=$(($ends - $starts))
-	printf "${GREEN}Total runtime: %ds$RESET" $dt
+	printf "Total runtime: %ds" $dt
 fi
 
 # }}}
