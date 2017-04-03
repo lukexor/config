@@ -15,6 +15,6 @@ setlocal formatoptions-=t
 setlocal formatoptions-=c
 setlocal formatoptions-=r
 setlocal formatoptions-=o
-setlocal smartindent
+setlocal nosmartindent
 setlocal autoindent
 setlocal copyindent

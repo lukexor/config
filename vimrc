@@ -84,7 +84,7 @@ set hlsearch                     " Highlight all search matches
 set incsearch                    " Highlight incrementally
 set ignorecase                   " Case insensitive searching (unless specified)
 set infercase
-set laststatus=1
+set laststatus=2
 set lazyredraw                   " Don't redraw screen during macros or commands
 set linebreak                    " Wrap long lines at a character in breakat
 set list                         " Enable visibility of unprintable chars
@@ -132,7 +132,7 @@ set showmode                     " Show current mode (INSERT, VISUAL)
 set sidescrolloff=15             " Start side-scrolling when # characters away
 set sidescroll=5                 " Scroll # column at a time
 set smartcase                    " Ignores ignorecase when searching for upercase characters
-set smartindent
+set nosmartindent
 set smarttab
 " Set spellfile to location that is guaranteed to exist, can be symlinked to
 " Dropbox or kept in Git and managed outside of thoughtbot/dotfiles using rcm.
@@ -143,7 +143,7 @@ endif
 set splitbelow                 " New horizontal splits should be below
 set splitright                 " New vertical splits should be to the right
 set statusline=%n:\            " Buffer number
-set statusline+=%.30F\         " Full filename truncated to 20 chars
+set statusline+=%.40F\         " Full filename truncated
 set statusline+=%m             " Modified
 set statusline+=%r             " Readonly
 set statusline+=%{tagbar#currenttag('[%s]\ ','','')}
@@ -391,8 +391,10 @@ endfunction
 augroup AutoMkdir
 	autocmd!
 	autocmd BufNewFile * :call EnsureDirExists(expand("%:h"), 1)
-        call EnsureDirExists(&undodir, 0)
-        call EnsureDirExists(&backupdir, 0)
+        if has('persistent_undo')
+            call EnsureDirExists(&undodir, 0)
+            call EnsureDirExists(&backupdir, 0)
+        endif
 augroup END
 
 " == Plugins    {{{1

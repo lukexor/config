@@ -1,3 +1,3 @@
-setlocal smartindent
+setlocal nosmartindent
 setlocal autoindent
 setlocal copyindent
