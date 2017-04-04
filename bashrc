@@ -825,7 +825,7 @@ prompt_on() {
 			;;
 	esac
 
-	echo -e "$BOLD"
+	echo -e "$BOLD$GREEN"
 	if [[ ! $TERM =~ screen ]]; then
 		echo -ne "$(date +'%F %R') "
 	fi
