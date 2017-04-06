@@ -826,24 +826,22 @@ prompt_on() {
 	esac
 
 	echo -e "$BOLD$GREEN"
-	if [[ ! $TERM =~ screen ]]; then
-		echo -ne "$(date +'%F %R') "
-	fi
-	if [[ $PS1_HOST ]]; then
-		echo -ne "$USER @ $PS1_HOST "
-	fi
-	echo -e "$(prompt_pwd)"
-
 	if [[ $(declare -f bg_jobs) && $(bg_jobs) ]]; then
 		echo -ne "[$(bg_jobs)] "
 	fi
 	if [[ $(declare -f st_jobs) && $(st_jobs) ]]; then
 		echo -ne "{$(st_jobs)} "
 	fi
-	if [[ $(declare -f parse_git_branch) && $(parse_git_branch) ]]; then
-		echo -e "($(parse_git_branch)) "
+	if [[ ! $TERM =~ screen ]]; then
+		echo -ne "$(date +'%F %R') "
 	fi
-	echo -ne "$RESET"
+	if [[ $PS1_HOST ]]; then
+		echo -ne "$USER @ $PS1_HOST "
+	fi
+	if [[ $(declare -f parse_git_branch) && $(parse_git_branch) ]]; then
+		echo -ne "($(parse_git_branch)) "
+	fi
+	echo -e "$(prompt_pwd)$RESET"
 }
 PS1="\$ "
 PS2=">> "

@@ -470,6 +470,7 @@ let g:tagbar_type_go = {
 		\ 'type' : 't',
 	\ },
 \ }
+let g:UltiSnipsEnableSnipMate = 0
 
 
 " == Mappings   {{{1
@@ -562,7 +563,7 @@ Nnoremap  <leader>z             [Background vim and return to shell] <C-Z>
 Nnoremap  <localleader>1        [Toggle NERDTree window] :NERDTreeToggle<CR>
 Nnoremap  <localleader>2        [Toggle Tagbar window] :TagbarToggle<CR>
 Nnoremap  <localleader>Q        [Quit all windows without saving] :qall!<CR>
-Nnoremap  <localleader>ep       [Edit snippets in a horizontal split] :SnipMateOpenSnippetFiles<CR>
+Nnoremap  <localleader>ep       [Edit snippets in a horizontal split] :UltiSnipsEdit<CR>
 Nnoremap  <localleader>q        [Quit all windows] :qall<CR>
 Nnoremap  J                     [Move current line down one] ddp
 Nnoremap  K                     [Move current line up one] dd<up>P
