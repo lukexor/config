@@ -7,7 +7,7 @@ let maplocalleader=','
 
 " Load up all of our plugins using vim-plug
 if filereadable(expand("$HOME/.vim/plugins.vim"))
-	source $HOME/.vim/plugins.vim
+    source $HOME/.vim/plugins.vim
 endif
 
 " Custom plugins
@@ -25,7 +25,6 @@ set autoindent                   " Copy indent from current line when adding a n
 set autoread
 set autowrite
 set autowriteall                 " Automatically :write before running commands
-syntax enable
 set background=dark
 colorscheme zhayedan
 set backspace=indent,eol,start
@@ -39,10 +38,10 @@ set complete+=kspell
 set completeopt+=longest,menu,preview
 set copyindent
 if b:fsize <= 1000000
-	set cursorline  " Highlight the cursorline - slows redraw
-	if v:version >= 704
-		call matchadd('ColorColumn', '\%81v', 100)
-	endif
+    set cursorline  " Highlight the cursorline - slows redraw
+    if v:version >= 704
+            call matchadd('ColorColumn', '\%81v', 100)
+    endif
 endif
 set cpoptions+=W                 " Don't overwrite readonly files with :w!
 set diffopt+=vertical
@@ -51,7 +50,6 @@ set diffopt+=vertical
 set display+=lastline
 set encoding=utf-8
 set expandtab                  " Replace the tab key with spaces
-filetype plugin indent on
 set fileencoding=utf-8
 set fileformat=unix
 set fileformats=unix,dos,mac     " Default file types
@@ -115,13 +113,13 @@ set wildignore+=*.png,*.jpg,*.gif
 set wildignore+=*.swp,*.bak,*.pyc,*.class
 set wildignore+=*/build/**
 if v:version >= 704
-	set relativenumber             " Toggle relative line numbering
+    set relativenumber             " Toggle relative line numbering
 endif
 set ruler
 set sessionoptions-=help,options " Don't save help windows
 set scrolloff=15                 " Start scrolling when we're # lines away from margins
 if &shell =~# 'fish$' && (v:version < 704 || v:version == 704 && !has('patch276'))
-	set shell=/bin/bash
+    set shell=/bin/bash
 endif
 
 set shiftround                   " Round to nearest multiple of shiftwidth
@@ -132,13 +130,18 @@ set showmode                     " Show current mode (INSERT, VISUAL)
 set sidescrolloff=15             " Start side-scrolling when # characters away
 set sidescroll=5                 " Scroll # column at a time
 set smartcase                    " Ignores ignorecase when searching for upercase characters
+if !exists("g:syntax_on")
+    filetype plugin indent on
+    syntax enable
+endif
 set nosmartindent
 set smarttab
 " Set spellfile to location that is guaranteed to exist, can be symlinked to
 " Dropbox or kept in Git and managed outside of thoughtbot/dotfiles using rcm.
 if has('spell')
-	set spellfile=$HOME/vim/spell/vim-spell.utf-8.add
-	set spelllang=en
+    set dictionary=$HOME/.vim/spell/en-basic.latin1.spl
+    set spellfile=$HOME/.vim/spell/vim-spell.utf-8.add
+    set spelllang=en
 endif
 set splitbelow                 " New horizontal splits should be below
 set splitright                 " New vertical splits should be to the right
@@ -216,54 +219,52 @@ iabbrev waht what
 " ==================================================================================================
 
 if v:version >= 800
-	augroup Undouble_Completions
-	  autocmd!
-	  autocmd CompleteDone *  call Undouble_Completions()
-	augroup None
+    augroup Undouble_Completions
+        autocmd!
+        autocmd CompleteDone *  call Undouble_Completions()
+    augroup None
 endif
 augroup NoSimultaneousEdits
-	autocmd!
-	autocmd SwapExists * let v:swapchoice = 'o'
-	autocmd SwapExists * echom 'Duplicate edit session (readonly)'
-	autocmd SwapExists * sleep 2
+    autocmd!
+    autocmd SwapExists * let v:swapchoice = 'o'
+    autocmd SwapExists * echom 'Duplicate edit session (readonly)'
+    autocmd SwapExists * sleep 2
 augroup END
 augroup filetype_formats
-	autocmd!
-	" Make sure the syntax is always right, even when in the middle of
-	" a huge javascript inside an html file.
-	autocmd BufNewFile,BufRead *.conf set filetype=yaml
-	autocmd BufNewFile,BufRead *.md   set filetype=markdown.help.text
-	autocmd BufNewFile,BufRead *.t    set filetype=perl
-	autocmd BufNewFile,BufRead *.tt   set filetype=tt2html.html.javascript.css
-	autocmd BufNewFile,BufRead *.txt  set filetype=text
-	autocmd BufNewFile,BufRead * if !&modifiable | setlocal nolist nospell | endif
-	autocmd BufNewFile,BufRead * call camelcasemotion#CreateMotionMappings('<localleader>')
+    autocmd!
+    " Make sure the syntax is always right, even when in the middle of
+    " a huge javascript inside an html file.
+    autocmd BufNewFile,BufRead *.conf set filetype=yaml
+    autocmd BufNewFile,BufRead *.md   set filetype=markdown.help.text
+    autocmd BufNewFile,BufRead *.t    set filetype=perl
+    autocmd BufNewFile,BufRead *.tt   set filetype=tt2html.html.javascript.css
+    autocmd BufNewFile,BufRead *.txt  set filetype=text
+    autocmd BufNewFile,BufRead * if !&modifiable | setlocal nolist nospell | endif
+    autocmd BufNewFile,BufRead * call camelcasemotion#CreateMotionMappings('<localleader>')
 augroup END
 augroup vimrcEx
-	autocmd!
+    autocmd!
 
-	" Automatically rebalance windows on vim resize
-	autocmd VimResized * :wincmd =
+    " Automatically rebalance windows on vim resize
+    autocmd VimResized * :wincmd =
 
-	" Don't do it for commit messages, when the position is invalid, or when
-	" When editing a file, always jump to the last known cursor position.
-	" inside an event handler (happens when dropping a file on gvim).
-	autocmd BufReadPost * if &ft != 'gitcommit' && line("'\"") > 0 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
+    " Don't do it for commit messages, when the position is invalid, or when
+    " When editing a file, always jump to the last known cursor position.
+    " inside an event handler (happens when dropping a file on gvim).
+    autocmd BufReadPost * if &ft != 'gitcommit' && line("'\"") > 0 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
 
-"       " Trigger autoread when changing buffers or coming back to vim in terminal.
-"       autocmd FocusGained,BufEnter * :silent! e!
-"       " Closes if NERDTree is the only open window
-	autocmd BufEnter * if winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary" | qall! | endif
+    " Closes if NERDTree is the only open window
+    autocmd BufEnter * if winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary" | qall! | endif
 
-	" Save whenever switching windows or leaving vim. This is useful when running
-	" the tests inside vim without having to save all files first.
-	autocmd FocusLost,WinLeave * :silent! wa
+    " Save whenever switching windows or leaving vim. This is useful when running
+    " the tests inside vim without having to save all files first.
+    autocmd FocusLost,WinLeave * :silent! wa
 
-	" Change Color when entering Insert Mode
-	autocmd InsertEnter * highlight CursorLine ctermfg=035
+    " Change Color when entering Insert Mode
+    autocmd InsertEnter * highlight CursorLine ctermfg=035
 
-	" Revert Color to default when leaving Insert Mode
-	autocmd InsertLeave * highlight CursorLine ctermbg=234
+    " Revert Color to default when leaving Insert Mode
+    autocmd InsertLeave * highlight CursorLine ctermbg=234
 augroup END
 
 " }}}
@@ -272,74 +273,74 @@ augroup END
 
 let b:test_method=""
 function! RunTests(...)
-	if &filetype == 'perl'
-		let filename = expand('%:p:s?.*lib/??:r:gs?/?::?')
-		let cmd = 'Make'
-		if !empty(a:1) && a:1 == 'background'
-			let cmd = 'Make!'
-		endif
-		let test_method = get(b:, 'test_method', "")
-		if !empty(test_method)
-			echom 'Testing ' . filename . '::' . b:test_method
-			execute ':' . cmd . ' testm TEST=' . filename . ' METHOD=' . b:test_method
-		else
-			echom 'Testing ' . filename
-			execute ':' . cmd . ' testf TEST=' . filename
-		endif
-	else
-		echom 'Tests not set up for ' . &filetype 'files'
-	endif
+    if &filetype == 'perl'
+        let filename = expand('%:p:s?.*lib/??:r:gs?/?::?')
+        let cmd = 'Make'
+        if !empty(a:1) && a:1 == 'background'
+            let cmd = 'Make!'
+        endif
+        let test_method = get(b:, 'test_method', "")
+        if !empty(test_method)
+            echom 'Testing ' . filename . '::' . b:test_method
+            execute ':' . cmd . ' testm TEST=' . filename . ' METHOD=' . b:test_method
+        else
+            echom 'Testing ' . filename
+            execute ':' . cmd . ' testf TEST=' . filename
+        endif
+    else
+        echom 'Tests not set up for ' . &filetype 'files'
+    endif
 endfunction
 
 command! RetabIndents call RetabIndents()
 func! RetabIndents()
-	let saved_view = winsaveview()
-	execute '%s@^\(\ \{'.&ts.'\}\)\+@\=repeat("\t", len(submatch(0))/'.&ts.')@e'
-	call winrestview(saved_view)
+    let saved_view = winsaveview()
+    execute '%s@^\(\ \{'.&ts.'\}\)\+@\=repeat("\t", len(submatch(0))/'.&ts.')@e'
+    call winrestview(saved_view)
 endfunc
 
 function! Undouble_Completions ()
-	let col  = getpos('.')[2]
-	let line = getline('.')
-	call setline('.', substitute(line, '\(\k\+\)\%'.col.'c\zs\1', '', ''))
+    let col  = getpos('.')[2]
+    let line = getline('.')
+    call setline('.', substitute(line, '\(\k\+\)\%'.col.'c\zs\1', '', ''))
 endfunction
 
 function! RunCover()
-	if &filetype == 'perl'
-	execute 'let $HARNESS_PERL_SWITCHES="-MDevel::Cover"'
-	call RunTests('background')
-	else
-	echom 'Coverage not set up for ' . &filetype 'files'
-	endif
+    if &filetype == 'perl'
+    execute 'let $HARNESS_PERL_SWITCHES="-MDevel::Cover"'
+    call RunTests('background')
+    else
+    echom 'Coverage not set up for ' . &filetype 'files'
+    endif
 endfunction
 
 function! SetTestMethod()
-	let b:test_method=tagbar#currenttag("%s","")
-	if !empty(b:test_method)
-	echom 'Test Method set to ' . b:test_method
-	else
-	echom 'Test Method cleared'
-	endif
+    let b:test_method=tagbar#currenttag("%s","")
+    if !empty(b:test_method)
+    echom 'Test Method set to ' . b:test_method
+    else
+    echom 'Test Method cleared'
+    endif
 endfunction
 
 function! ClearTestMethod()
-	let b:test_method=""
-	echom 'Test Method cleared'
+    let b:test_method=""
+    echom 'Test Method cleared'
 endfunction
 
 function! ToggleIskeyword(char)
-	if !empty(matchstr(&iskeyword, ',\' . a:char))
-	echom "Removed " . a:char
-	execute "setlocal iskeyword-=" . a:char
-	else
-	echom "Added " . a:char
-	execute "setlocal iskeyword+=" . a:char
-	endif
+    if !empty(matchstr(&iskeyword, ',\' . a:char))
+    echom "Removed " . a:char
+    execute "setlocal iskeyword-=" . a:char
+    else
+    echom "Added " . a:char
+    execute "setlocal iskeyword+=" . a:char
+    endif
 endfunction
 function! AskQuit (msg, options, quit_option)
-	if confirm(a:msg, a:options) == a:quit_option
-		exit
-	endif
+    if confirm(a:msg, a:options) == a:quit_option
+        exit
+    endif
 endfunction
 
 function! EnsureDirExists(dir, prompt)
@@ -347,26 +348,26 @@ function! EnsureDirExists(dir, prompt)
     if !isdirectory(required_dir)
         if a:prompt
             call AskQuit("Parent directory '" . required_dir . "' doesn't exist.",
-                        \       "&Create it\nor &Quit?", 2)
+            \            "&Create it\nor &Quit?", 2)
         endif
 
         try
-                call mkdir( required_dir, 'p' )
+            call mkdir( required_dir, 'p' )
         catch
-                call AskQuit("Can't create '" . required_dir . "'",
-                \            "&Quit\nor &Continue anyway?", 1)
+            call AskQuit("Can't create '" . required_dir . "'",
+            \            "&Quit\nor &Continue anyway?", 1)
         endtry
     endif
 endfunction
 
 " After an alignable, align...
 function! AlignOnPat(pat)
-	return "\<ESC>:call EQAS_Align('nmap',{'pattern':'" . a:pat . "'})\<CR>A"
+    return "\<ESC>:call EQAS_Align('nmap',{'pattern':'" . a:pat . "'})\<CR>A"
 endfunction
 
 function! GenerateCtags()
-	let path = expand('%:p:h')
-	execute ":Dispatch! cd " . expand('%:p:h') . "; ctags *"
+    let path = expand('%:p:h')
+    execute ":Dispatch! cd " . expand('%:p:h') . "; ctags *"
 endfunction
 
 nnoremap <silent> n n:call HLNext(0.3)<CR>
@@ -374,27 +375,27 @@ nnoremap <silent> N N:call HLNext(0.3)<CR>
 
 highlight! WhiteOnRed ctermbg=red ctermfg=white
 function! HLNext(blinktime)
-	let [bufname, lnum, col, off] = getpos('.')
-	let matchlen = strlen(matchstr(strpart(getline('.'),col-1),@/))
-	let target_pat = '\c\%#'.@/
-	let blinks = 2
-	for n in range(1,blinks)
-		let red = matchadd('WhiteOnRed', target_pat, 101)
-		redraw
-		exec 'sleep ' . float2nr(a:blinktime / (2*blinks) * 1000) . 'm'
-		call matchdelete(red)
-		redraw
-		exec 'sleep ' . float2nr(a:blinktime / (2*blinks) * 1000) . 'm'
-	endfor
+    let [bufname, lnum, col, off] = getpos('.')
+    let matchlen = strlen(matchstr(strpart(getline('.'),col-1),@/))
+    let target_pat = '\c\%#'.@/
+    let blinks = 2
+    for n in range(1,blinks)
+        let red = matchadd('WhiteOnRed', target_pat, 101)
+        redraw
+        exec 'sleep ' . float2nr(a:blinktime / (2*blinks) * 1000) . 'm'
+        call matchdelete(red)
+        redraw
+        exec 'sleep ' . float2nr(a:blinktime / (2*blinks) * 1000) . 'm'
+    endfor
 endfunction
 
 augroup AutoMkdir
-	autocmd!
-	autocmd BufNewFile * :call EnsureDirExists(expand("%:h"), 1)
-        if has('persistent_undo')
-            call EnsureDirExists(&undodir, 0)
-            call EnsureDirExists(&backupdir, 0)
-        endif
+    autocmd!
+    autocmd BufNewFile * :call EnsureDirExists(expand("%:h"), 1)
+    if has('persistent_undo')
+        call EnsureDirExists(&undodir, 0)
+        call EnsureDirExists(&backupdir, 0)
+    endif
 augroup END
 
 " == Plugins    {{{1
@@ -432,45 +433,46 @@ let g:tagbar_compact=1
 let g:tagbar_hide_nonpublic=1
 let g:tagbar_width=40
 let g:tagbar_type_perl = {
-	\ 'kinds' : [
-		\ 'i:includes:1:0',
-		\ 'c:constants:0:0',
-		\ 'o:ours:0:0',
-		\ 'R:readonly:0:0',
-		\ 'f:formats:0:0',
-		\ 'a:attributes:0:1',
-		\ 'x:attribute modifiers:0:1',
-		\ 's:subroutines:0:1',
-		\ 'p:packages:0:0',
-	\ ],
+    \ 'kinds' : [
+        \ 'i:includes:1:0',
+        \ 'c:constants:0:0',
+        \ 'o:ours:0:0',
+        \ 'R:readonly:0:0',
+        \ 'f:formats:0:0',
+        \ 'a:attributes:0:1',
+        \ 'x:attribute modifiers:0:1',
+        \ 's:subroutines:0:1',
+        \ 'p:packages:0:0',
+    \ ],
 \ }
 " TODO: extend if needed
 let g:tagbar_type_go = {
-	\ 'ctagstype' : 'go',
-	\ 'kinds' : [
-		\ 'p:package:0:1',
-		\ 'f:function:0:1',
-		\ 'v:variable:0:1',
-		\ 'c:constant:0:0',
-		\ 't:type:0:1',
-	\ ],
-	\ 'sro' : '.',
-	\ 'kind2scope' : {
-		\ 'p' : 'package',
-		\ 'f' : 'function',
-		\ 'v' : 'variable',
-		\ 'c' : 'constant',
-		\ 't' : 'type',
-	\ },
-	\ 'scope2kind' : {
-		\ 'package' : 'p',
-		\ 'function' : 'f',
-		\ 'variable' : 'v',
-		\ 'constant' : 'c',
-		\ 'type' : 't',
-	\ },
+    \ 'ctagstype' : 'go',
+    \ 'kinds' : [
+        \ 'p:package:0:1',
+        \ 'f:function:0:1',
+        \ 'v:variable:0:1',
+        \ 'c:constant:0:0',
+        \ 't:type:0:1',
+    \ ],
+    \ 'sro' : '.',
+    \ 'kind2scope' : {
+        \ 'p' : 'package',
+        \ 'f' : 'function',
+        \ 'v' : 'variable',
+        \ 'c' : 'constant',
+        \ 't' : 'type',
+    \ },
+    \ 'scope2kind' : {
+        \ 'package' : 'p',
+        \ 'function' : 'f',
+        \ 'variable' : 'v',
+        \ 'constant' : 'c',
+        \ 'type' : 't',
+    \ },
 \ }
 let g:UltiSnipsEnableSnipMate = 0
+let g:UltiSnipsSnippetsDir = '~/.vim/UltiSnips'
 
 
 " == Mappings   {{{1
@@ -562,6 +564,7 @@ Nnoremap  <leader>x             [Write and quit current window] :x<CR>
 Nnoremap  <leader>z             [Background vim and return to shell] <C-Z>
 Nnoremap  <localleader>1        [Toggle NERDTree window] :NERDTreeToggle<CR>
 Nnoremap  <localleader>2        [Toggle Tagbar window] :TagbarToggle<CR>
+Nnoremap  <localleader>3        [Toggle Line Numbers] :set rnu! nu! list!<CR>
 Nnoremap  <localleader>Q        [Quit all windows without saving] :qall!<CR>
 Nnoremap  <localleader>ep       [Edit snippets in a horizontal split] :UltiSnipsEdit<CR>
 Nnoremap  <localleader>q        [Quit all windows] :qall<CR>
@@ -634,9 +637,9 @@ xnoremap <silent> x "_x
 
 " Below is to fix issues with the <CR> mapping to o<Esc> in quickfix window
 augroup enter
-	autocmd!
-	autocmd CmdwinEnter * nnoremap <CR> <CR>
-	autocmd BufReadPost quickfix nnoremap <CR> <CR>
+    autocmd!
+    autocmd CmdwinEnter * nnoremap <CR> <CR>
+    autocmd BufReadPost quickfix nnoremap <CR> <CR>
 augroup END
 
 " -- Syntax Highlighting   {{{1

@@ -102,6 +102,7 @@ export PERL_MB_OPT="--install_base \"$HOME/perl5\""
 export PERL_MM_OPT="INSTALL_BASE=$HOME/perl5"
 
 export HOSTNAME
+export ECLIPSE_HOME="$HOME/Applications/eclipse/Eclipse.app/Contents/Eclipse/"
 export EDITOR="vim"
 export WORKON_HOME="$HOME/.virtualenvs"
 export WALLPAPER_PATH="$HOME/Pictures/girls/wallpaper/"
@@ -217,6 +218,7 @@ alias md='mkdir -p'  # Make sub-directories as needed
 alias rd='rmdir'
 alias p='pwd'
 alias cdc='cd ~/Dropbox/classes/'
+alias findbroken='find . -maxdepth 1 -type l ! -exec test -e {} \; -print'
 
 # Various CD shortcuts
 if [[ -d "$FON_DIR" ]]; then
@@ -244,9 +246,9 @@ alias vi="$EDITOR"
 function vim() {
 	# Only run if we're inside tmux
 	if [[ $TMUX != "" ]]; then
-		$HOME/bin/vim_tmux $*
+		$HOME/bin/vim_tmux "$@"
 	else
-		command vim $*
+		command vim "$@"
 	fi
 }
 alias svi="sudo $EDITOR"
@@ -580,7 +582,7 @@ arsa() {
 akey() {
 	ra 1
 	if [ $(system_profiler SPUSBDataType 2> /dev/null| grep "SafeNet" -c) -gt 0 ]; then
-		ssh-add -s '/usr/local/lib/libeTPkcs11.dylib'
+		ssh-add -s '/usr/local/lib/libeTPkcs11.dylib.1'
 	fi
 }
 
