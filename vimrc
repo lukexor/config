@@ -86,7 +86,7 @@ set laststatus=2
 set lazyredraw                   " Don't redraw screen during macros or commands
 set linebreak                    " Wrap long lines at a character in breakat
 set list                         " Enable visibility of unprintable chars
-exec "set listchars=tab:\\|\\ ,trail:\uB7,extends:\uBB,precedes:\uAB,nbsp:~"
+exec "set listchars=tab:\\|\\ ,trail:-,extends:>,precedes:<,nbsp:~"
 
 " Set < and > as brackets for jumping with %
 set matchpairs+=<:>
@@ -224,12 +224,12 @@ if v:version >= 800
         autocmd CompleteDone *  call Undouble_Completions()
     augroup None
 endif
-augroup NoSimultaneousEdits
-    autocmd!
-    autocmd SwapExists * let v:swapchoice = 'o'
-    autocmd SwapExists * echom 'Duplicate edit session (readonly)'
-    autocmd SwapExists * sleep 2
-augroup END
+" augroup NoSimultaneousEdits
+"     autocmd!
+"     autocmd SwapExists * let v:swapchoice = 'o'
+"     autocmd SwapExists * echom 'Duplicate edit session (readonly)'
+"     autocmd SwapExists * sleep 2
+" augroup END
 augroup filetype_formats
     autocmd!
     " Make sure the syntax is always right, even when in the middle of
@@ -512,7 +512,7 @@ Nnoremap  <leader>H             [Open previous tab] :tabp<CR>
 Nnoremap  <leader>L             [Open next tab] :tabn<CR>
 Nnoremap  <leader>M             [Fuzzy search vim Marks] :History<CR>
 Nnoremap  <leader>P             [Interactively paste by choosing from recent yanks] :IPaste<CR>
-Nnoremap  <leader>Q             [Quit without saving] :qall!<CR>
+Nnoremap  <leader>Q             [Quit without saving] :confirm qall<CR>
 Nnoremap  <leader>R             [Fuzzy search Recent files] :History<CR>
 Nnoremap  <leader>S             [Shortcut for :%s///g] :%s///g<LEFT><LEFT><LEFT>
 Nnoremap  <leader>W             [Fuzzy search vim windows] :Windows<CR>
@@ -520,7 +520,7 @@ Nnoremap  <leader>b             [Fuzzy search buffer list] :Buffers<CR>
 Nnoremap  <leader>C             [Regenerate ctags] :call GenerateCtags()<CR>:echom "Tags Generated"<CR>
 Nnoremap  <leader>cm            [Clear currently set test method] :call ClearTestMethod()<CR>
 Nnoremap  <leader>cw            [Count number of words in the current file] :!wc -w %<CR>
-Nnoremap  <leader>d             [Close and delete the current buffer] :bp\|bd#<CR>
+Nnoremap  <leader>d             [Close and delete the current buffer] :bd<CR>
 Nnoremap  <leader>ep            [Edit vim plugins] :vsplit $HOME/.vim/plugins.vim<CR>
 Nnoremap  <leader>ev            [Edit vimrc in a vertical split] :vsplit $MYVIMRC<CR>
 Nnoremap  <leader>f             [Fuzzy search files in cwd] :Files<CR>
@@ -546,7 +546,8 @@ Nnoremap  <leader>m             [Fuzy search marks] :Marks<CR>
 Nnoremap  <localleader>m        [Run make asynchronously] :Make!<CR>
 Nnoremap  <leader>n             [Edit a new, unnamed buffer] :enew<CR>
 Nnoremap  <leader>g             [Fuzzy search git files] :GFiles<CR>
-Nnoremap  <leader>q             [Quit the current window] :quit<CR>
+Nnoremap  <leader>q             [Close the current window] :close<CR>
+Nnoremap  ZZ                    [Close the current window] :close<CR>
 Nnoremap  <leader>rc            [Run code coverage] :call RunCover()<CR>
 Nnoremap  <leader>ri            [Reindent the entire file] mzgg=G`z
 Nnoremap  <leader>rs            [Remove trailing spaces in the entire file] mz:silent! %s/\s\+$//<CR>:noh<CR>`z
@@ -565,7 +566,7 @@ Nnoremap  <leader>z             [Background vim and return to shell] <C-Z>
 Nnoremap  <localleader>1        [Toggle NERDTree window] :NERDTreeToggle<CR>
 Nnoremap  <localleader>2        [Toggle Tagbar window] :TagbarToggle<CR>
 Nnoremap  <localleader>3        [Toggle Line Numbers] :set rnu! nu! list!<CR>
-Nnoremap  <localleader>Q        [Quit all windows without saving] :qall!<CR>
+Nnoremap  <localleader>Q        [Quit all windows without qall!<CR>
 Nnoremap  <localleader>ep       [Edit snippets in a horizontal split] :UltiSnipsEdit<CR>
 Nnoremap  <localleader>q        [Quit all windows] :qall<CR>
 Nnoremap  J                     [Move current line down one] ddp
