@@ -54,7 +54,7 @@ set fileencoding=utf-8
 set fileformat=unix
 set fileformats=unix,dos,mac     " Default file types
 set nofoldenable
-set foldmethod=indent
+set foldmethod=marker
 set foldlevel=0
 set foldlevelstart=0
 " Set formatting options
