@@ -318,7 +318,9 @@ sw2() {
 alias sp='ssh -A lpetherbridge@fcs-app1.fonality.com'
 alias sf='ssh -A lpetherbridge@devbox5.lotsofclouds.fonality.com'
 alias sq='ssh -A lpetherbridge@qa-app.lotsofclouds.fonality.com'
-alias ss='ssh -A lpetherbridge@fcs-stg-app1.lax01.fonality.com'
+alias ss1='ssh -A lpetherbridge@fcs-stg-app1.lax01.fonality.com'
+alias ss1b='ssh -A lpetherbridge@fcs-stg-batch1.fonality.com'
+alias ss1cp='ssh -A lpetherbridge@fcs-stg-cp1.fonality.com'
 alias ss2='ssh -A lpetherbridge@fcs-stg2-app1.lax01.fonality.com'
 alias ss3='ssh -A lpetherbridge@fcs-app1.stage3.arch.fonality.com'
 alias ss3cp='ssh -A lpetherbridge@fcs-cp1.stage3.arch.fonality.com'
@@ -593,7 +595,7 @@ arsa() {
 }
 akey() {
 	if [ $(system_profiler SPUSBDataType 2> /dev/null| grep "SafeNet" -c) -gt 0 ]; then
-                ra 1
+                ra
                 if [ $1 ]; then
                     echo $1 | ssh-add -s '/usr/local/lib/libeTPkcs11.dylib.1'
                 else
