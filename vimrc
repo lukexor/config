@@ -362,6 +362,45 @@ function! HLNext(blinktime)
     endfor
 endfunction
 
+Inoremap <tab> [Close bracket] <C-R>=ClosePair()<CR>
+function! ClosePair()
+    let line = getline('.')
+    let col = col('.')
+    let nchar = line[col]
+    let nchar1 = line[col-1]
+    let nchar2 = line[col-2]
+    let pchar = line[col-2]
+    let pchar2 = line[col-3]
+    let match = { '(':')', '{':'}', '[':']', '<':'>', '`':'`' }
+    let str = ""
+    let mov = ""
+    if has_key(match, pchar) && nchar1 == match[pchar]
+        if !has_key(match, pchar2) || nchar != match[pchar2]
+            return "  \<left>"
+        endif
+    endif
+    if has_key(match, pchar2) && nchar2 == match[pchar2] && pchar == " "
+        return "\<CR>" . match[pchar2] . "\<up>"
+    endif
+    if pchar =~ "[({\[<`]" && has_key(match, pchar)
+        let str = str . match[pchar]
+        let mov = mov . "\<left>"
+    endif
+    if pchar2 =~ "[({\[<`]" && has_key(match, pchar2)
+        if pchar == " "
+            let str = str . " "
+            let mov = mov . "\<left>"
+        endif
+        let str = str . match[pchar2]
+        let mov = mov . "\<left>"
+    endif
+    if !empty(str)
+        return str . mov
+    else
+        return UltiSnips#ExpandSnippet()
+    endif
+endfunction
+
 
 " == Autocommands   {{{1
 " ==================================================================================================
@@ -468,7 +507,7 @@ let g:tagbar_autofocus=1
 let g:tagbar_autoshowtag=1
 let g:tagbar_compact=1
 let g:tagbar_hide_nonpublic=1
-let g:tagbar_width=40
+let g:tagbar_width=30
 let g:tagbar_type_perl = {
     \ 'kinds' : [
         \ 'i:includes:1:0',
@@ -512,7 +551,7 @@ let g:UltiSnipsEnableSnipMate = 0
 let g:UltiSnipsSnippetsDir = '~/.vim/UltiSnips'
 
 
-" == Mappings   {{1
+" == Mappings   {{{1
 " ==================================================================================================
 
 Doc <localleader>w [{count} CamelCase words forward]
@@ -560,7 +599,7 @@ Nnoremap  <leader>b             [Fuzzy search buffer list] :Buffers<CR>
 Nnoremap  <leader>C             [Regenerate ctags] :call GenerateCtags()<CR>:echom "Tags Generated"<CR>
 Nnoremap  <leader>cm            [Clear currently set test method] :call ClearTestMethod()<CR>
 Nnoremap  <leader>cw            [Count number of words in the current file] :!wc -w %<CR>
-Nnoremap  <leader>d             [Close and delete the current buffer] :bd<CR>
+Nnoremap  <leader>d             [Close and delete the current buffer] :bp<CR>:bd #<CR>
 Nnoremap  <leader>ep            [Edit vim plugins] :vsplit $HOME/.vim/plugins.vim<CR>
 Nnoremap  <leader>ev            [Edit vimrc in a vertical split] :vsplit $MYVIMRC<CR>
 Nnoremap  <leader>f             [Fuzzy search files in project directory] :exe "Files " . g:project_dir<CR>
