@@ -44,6 +44,7 @@ set copyindent
 " Disable vertical color column for large files
 if b:fsize <= 1000000
     set cursorline  " Highlight the cursorline - slows redraw
+    set signcolumn=yes
     if v:version >= 704
             call matchadd('ColorColumn', '\%81v', 100)
     endif
@@ -481,7 +482,6 @@ let g:EasyClipUseCutDefaults=0  " Don't add move shortcuts - conflicts with mark
 let g:EasyClipEnableBlackHoleRedirectForDeleteOperator=0  " Keep delete functionality unchanged
 let g:fzf_buffers_jump=1          " Jump to existing window if possible
 let g:fzf_commits_log_options='--graph --pretty=format:"%C(yellow)%h (%p) %ai%Cred%d %Creset%Cblue[%ae]%Creset %s (%ar). %b %N"'
-let g:gitgutter_sign_column_always=1
 let g:jsx_ext_required=1
 let g:session_autoload='no'       " Loads 'default' session when vim is opened without files
 let g:session_autosave='yes'

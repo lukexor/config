@@ -13,4 +13,3 @@ vim/.netrwhist
 vim/plugins/*
 vim/sessions/
 vim/undodir/*
-plug.vim*
