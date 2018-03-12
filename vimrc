@@ -274,7 +274,8 @@ augroup END
 let b:test_method=""
 function! RunTests(...)
     if &filetype == 'perl'
-        let filename = expand('%:p:s?.*lib/??:r:gs?/?::?')
+        let filename = expand('%:p:s')
+        let module = expand('%:p:s?.*lib/??:r:gs?/?::?')
         let cmd = 'Make'
         if !empty(a:1) && a:1 == 'background'
             let cmd = 'Make!'
@@ -282,10 +283,12 @@ function! RunTests(...)
         let test_method = get(b:, 'test_method', "")
         if !empty(test_method)
             echom 'Testing ' . filename . '::' . b:test_method
-            execute ':' . cmd . ' testm TEST=' . filename . ' METHOD=' . b:test_method
+            " execute ':' . cmd . ' testm TEST=' . filename . ' METHOD=' . b:test_method
         else
             echom 'Testing ' . filename
-            execute ':' . cmd . ' testf TEST=' . filename
+            " execute ':' . cmd . ' testf TEST=' . filename
+             let b:dispatch = 'prove ' . filename
+            execute ':Dispatch'
         endif
     else
         echom 'Tests not set up for ' . &filetype 'files'
@@ -498,6 +501,9 @@ Nmap      <leader>{             [Surround current word with curly braces with sp
 Nmap      <leader>}             [Surround current word with curly braces] ysiw}
 Nmap      <localleader>=        [Align paragraph with = sign] gaip=
 Nmap      <localleader>H        [Surround current word with {''}] ysiw}lysiw'
+Nmap      <localleader>L        [Identify highlight group under cursor] :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
+            \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
+            \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
 Nmap      <localleader>[        [Surround current paragraph with square brackets and indent] ysip[
 Nmap      <localleader>]        [Surround current paragraph with square brackets and indent] ysip]
 Nmap      <localleader>h        [Remove surrounding {''}] ds'ds}
@@ -565,7 +571,7 @@ Nnoremap  <leader>x             [Write and quit current window] :x<CR>
 Nnoremap  <leader>z             [Background vim and return to shell] <C-Z>
 Nnoremap  <localleader>1        [Toggle NERDTree window] :NERDTreeToggle<CR>
 Nnoremap  <localleader>2        [Toggle Tagbar window] :TagbarToggle<CR>
-Nnoremap  <localleader>3        [Toggle Line Numbers] :set rnu! nu! list!<CR>
+Nnoremap  <localleader>3        [Toggle Line Numbers] :set rnu! nu! list!<CR>:GitGutterToggle<CR>
 Nnoremap  <localleader>Q        [Quit all windows without qall!<CR>
 Nnoremap  <localleader>ep       [Edit snippets in a horizontal split] :UltiSnipsEdit<CR>
 Nnoremap  <localleader>q        [Quit all windows] :qall<CR>

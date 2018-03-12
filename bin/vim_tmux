@@ -10,7 +10,7 @@ my $cmd = "";
 # See if we can find an existing editor window
 if (!`tmux list-windows | grep "1: editor"`) {
 	# If not, create one and swap to make it first
-	$cmd .= "tmux new-window -n editor -k -d -t1 vim @ARGV && ";
+	$cmd .= "tmux new-window -kd -n editor -t 1 'vim @ARGV' && ";
 } else {
     # tmux switch -t $(tmux list-panes -a -F '#{session_name}:#{window_index}.#{pane_index} #{pane_tty}'|grep $(ps -o tty= -p $(pgrep -f '^vim')) | awk '{ print $1 }')
     # Find the absolute path to our desired files

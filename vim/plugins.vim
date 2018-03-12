@@ -7,7 +7,7 @@ call plug#begin('~/.vim/plugins')
 
 
 Plug 'christoomey/vim-sort-motion'   " Easier sorting
-" Plug 'christoomey/vim-system-copy'   " Better OS clipboard integration
+Plug 'christoomey/vim-system-copy'   " Better OS clipboard integration
 Plug 'junegunn/vim-easy-align'       " Makes aligning chunks of code super easy
 Plug 'svermeulen/vim-easyclip'       " Easy clipboard management
 Plug 'justinmk/vim-ipmotion'         " Improves { and } motions
@@ -72,7 +72,7 @@ Plug 'zenbro/mirror.vim'    " Easily edit mirror files across systems using SCP
 
 Plug 'sheerun/vim-polyglot'          " Syntax support for a variety of languages
 Plug 'vim-perl/vim-perl'             " vim Perl support
-" Plug 'vim-scripts/HTML-AutoCloseTag' " Auto-closes HTML tags e.g. </body>
+Plug 'vim-scripts/HTML-AutoCloseTag' " Auto-closes HTML tags e.g. </body>
 
 " == Window Control   {{{1
 " ==================================================================================================

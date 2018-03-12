@@ -21,26 +21,28 @@ set background=dark
 
 hi Normal       ctermfg=230   ctermbg=NONE      cterm=none
 
-hi Comment      ctermfg=45     ctermbg=NONE      cterm=none
+hi Comment      ctermfg=215     ctermbg=NONE      cterm=none
 
-hi Constant     ctermfg=230    ctermbg=NONE      cterm=none
-hi BConstant    ctermfg=230    ctermbg=NONE      cterm=bold
+hi Constant     ctermfg=035    ctermbg=NONE      cterm=none
+hi BConstant    ctermfg=035    ctermbg=NONE      cterm=bold
 
-hi Function     ctermfg=036    ctermbg=NONE      cterm=NONE
-hi Class        ctermfg=036    ctermbg=NONE      cterm=none
-hi Structure    ctermfg=036    ctermbg=NONE      cterm=none
+hi Function     ctermfg=178    ctermbg=NONE      cterm=NONE
+hi Class        ctermfg=178    ctermbg=NONE      cterm=none
+hi Structure    ctermfg=178    ctermbg=NONE      cterm=none
 
 hi Identifier           ctermfg=230    ctermbg=NONE      cterm=none
 hi BIdentifier          ctermfg=230    ctermbg=NONE      cterm=bold
 hi DefinedName          ctermfg=230    ctermbg=NONE      cterm=none
 hi Enumerator           ctermfg=230    ctermbg=NONE      cterm=none
 hi EnumerationName      ctermfg=230    ctermbg=NONE      cterm=none
-hi Member               ctermfg=230    ctermbg=NONE      cterm=none
+hi Member               ctermfg=220    ctermbg=NONE      cterm=none
 hi Type                 ctermfg=230    ctermbg=NONE      cterm=none
 hi Union                ctermfg=230    ctermbg=NONE      cterm=none
 hi GlobalConstant       ctermfg=230    ctermbg=NONE      cterm=none
 hi GlobalVariable       ctermfg=230    ctermbg=NONE      cterm=none
 hi LocalVariable        ctermfg=230    ctermbg=NONE      cterm=none
+hi perlVarPlain         ctermfg=80    ctermbg=NONE      cterm=none
+hi jsVariableDef        ctermfg=80    ctermbg=NONE      cterm=none
 
 hi Statement    ctermfg=230    ctermbg=NONE      cterm=none
 hi BStatement   ctermfg=230    ctermbg=NONE      cterm=bold

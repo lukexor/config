@@ -62,17 +62,19 @@ pathprepend "$HOME/perl5/lib/perl5/" GITPERLLIB; export GITPERLLIB;
 if [ -d $HOME/lib/fcs ]; then
 	export FON_DIR="$HOME/lib/fcs"
 	export FCS_DEVEL=1
+	export FON_DEVEL=1
 	export NO_MYSQL_AUTOCONNECT=1
-	export FCS_APP_URL='http://dev-app.lotsofclouds.fonality.com/'
-	export FCS_CP_URL='http://dev-cp.lotsofclouds.fonality.com/'
+	export FCS_APP_URL='http://portlandia-stg6.fonality.com'
+	# export FCS_CP_URL='http://dev-cp.lotsofclouds.fonality.com/'
 	# export NF_API_URL='https://swagger-arch.fonality.com:10113/'
-	export SYS_API_URL='http://dev-sysapi.lotsofclouds.fonality.com/'
-	export NF_API_URL='http://localhost:8090/'
+	export SYS_API_URL='http://portlandia-stg6-sysapi.arch.fonality.com/'
+	# export NF_API_URL='http://localhost:8090/'
 	for dir in $(find "$FON_DIR/bin" -type d); do
 		pathprepend $dir
 	done
 	pathprepend "$FON_DIR/bin"
 	pathprepend "$FON_DIR/lib" PERL5LIB
+	pathprepend "$HOME/lib/sysapi/lib" PERL5LIB
 	export GOPATH="$HOME/lib/go"
 	export GOBIN="$GOPATH/bin"
 	pathprepend $GOBIN
@@ -251,6 +253,7 @@ function vim() {
 		command vim "$@"
 	fi
 }
+alias cvim="command vim"
 alias svi="sudo $EDITOR"
 alias nano=$EDITOR
 alias emacs=$EDITOR
