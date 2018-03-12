@@ -1,9 +1,15 @@
 " == Vim Settings   {{{1
 " ==================================================================================================
 
+" TODO
+" Update Maps to show other modes
+
+" Global variables
 let b:fsize=getfsize(@%)
 let mapleader=' '
 let maplocalleader=','
+let g:project_dir = getcwd()
+let b:test_method=""
 
 " Load up all of our plugins using vim-plug
 if filereadable(expand("$HOME/.vim/plugins.vim"))
@@ -17,8 +23,6 @@ runtime custom_plugins/foldsearches.vim
 runtime custom_plugins/goto_file.vim
 runtime custom_plugins/schlepp.vim
 
-" Any plugins should come after colorscheme if they override highlighting
-
 set nocompatible                 " Disable VI backwards compatible settings. Must be first
 set autochdir
 set autoindent                   " Copy indent from current line when adding a new line
@@ -30,30 +34,31 @@ colorscheme zhayedan
 set backspace=indent,eol,start
 " Set directory to store backup files in.
 " These are created when saving, and deleted after successfully written
-
 set backupdir=$HOME/.vim/tmp//
 set directory=$HOME/.vim/tmp//
 set clipboard=unnamed
-set complete+=kspell
+set complete+=kspell             " Use the active spell checking
+set complete+=k                  " Add dictionary to ins-complete
 set completeopt+=longest,menu,preview
 set copyindent
+" Disable vertical color column for large files
 if b:fsize <= 1000000
     set cursorline  " Highlight the cursorline - slows redraw
+    set signcolumn=yes
     if v:version >= 704
             call matchadd('ColorColumn', '\%81v', 100)
     endif
 endif
 set cpoptions+=W                 " Don't overwrite readonly files with :w!
+set cpoptions-=aA                " Don't set alternate file # on :read or :write
 set diffopt+=vertical
-
-" Set directory to store swap files in
 set display+=lastline
 set encoding=utf-8
-set expandtab                  " Replace the tab key with spaces
+set expandtab                    " Replace the tab key with spaces
 set fileencoding=utf-8
 set fileformat=unix
 set fileformats=unix,dos,mac     " Default file types
-set nofoldenable
+set foldenable
 set foldmethod=indent
 set foldlevel=0
 set foldlevelstart=0
@@ -95,6 +100,9 @@ set noequalalways                " Don't make windows equal size
 set nomore
 set nowrap                       " Default line wrap
 set number
+if v:version >= 704
+    set relativenumber           " Toggle relative line numbering
+endif
 set nrformats-=octal             " Ignore octal when incrementing/decrementing numbers with CTRL-A and CTRl-X
 
 " Search recursively
@@ -112,9 +120,6 @@ set wildignore+=tmp/**
 set wildignore+=*.png,*.jpg,*.gif
 set wildignore+=*.swp,*.bak,*.pyc,*.class
 set wildignore+=*/build/**
-if v:version >= 704
-    set relativenumber             " Toggle relative line numbering
-endif
 set ruler
 set sessionoptions-=help,options " Don't save help windows
 set scrolloff=15                 " Start scrolling when we're # lines away from margins
@@ -145,7 +150,7 @@ if has('spell')
 endif
 set splitbelow                 " New horizontal splits should be below
 set splitright                 " New vertical splits should be to the right
-set statusline=%n:\            " Buffer number
+set statusline=%n:\            " uffer number
 set statusline+=%.40F\         " Full filename truncated
 set statusline+=%m             " Modified
 set statusline+=%r             " Readonly
@@ -159,8 +164,8 @@ set tags=./tags,tags,$HOME/lib/tags
 if v:version > 704
     set tagcase=match
 endif
-set nocst  " Disable cscope - it messes with local tag lookups, might be useful
-           " if I ever do a lot of C programming
+set nocst                      " Disable cscope - it messes with local tag lookups, might be useful
+                               " if I ever do a lot of C programming
 set term=xterm-256color
 set title
 set titleold=''
@@ -197,15 +202,16 @@ set winheight=9999               " Then set win height to maximum possible
 set winwidth=110                 " Keepjust  current window wide enough to see numbers textwidth=100
 set wrapmargin=2                 " Number of chars from the right before wrapping
 
+
 " == Abbreviations   {{{1
 " ==================================================================================================
 
 iabbrev ,, =>
-iabbrev @@ lukexor@gmail.com
+iabbrev eml lukexor@gmail.com
 iabbrev Pelr Perl
 iabbrev pelr perl
 iabbrev adn and
-iabbrev cright Copyright Lucas Petherbridge, All Rights Reserved.
+iabbrev cpy Copyright Lucas Petherbridge, All Rights Reserved.
 iabbrev liek like
 iabbrev liekwise likewise
 iabbrev pritn print
@@ -215,63 +221,20 @@ iabbrev tehn then
 iabbrev waht what
 
 
-" == Autocommands   {{{1
-" ==================================================================================================
-
-if v:version >= 800
-    augroup Undouble_Completions
-        autocmd!
-        autocmd CompleteDone *  call Undouble_Completions()
-    augroup None
-endif
-" augroup NoSimultaneousEdits
-"     autocmd!
-"     autocmd SwapExists * let v:swapchoice = 'o'
-"     autocmd SwapExists * echom 'Duplicate edit session (readonly)'
-"     autocmd SwapExists * sleep 2
-" augroup END
-augroup filetype_formats
-    autocmd!
-    " Make sure the syntax is always right, even when in the middle of
-    " a huge javascript inside an html file.
-    autocmd BufNewFile,BufRead *.conf set filetype=yaml
-    autocmd BufNewFile,BufRead *.md   set filetype=markdown.help.text
-    autocmd BufNewFile,BufRead *.t    set filetype=perl
-    autocmd BufNewFile,BufRead *.tt   set filetype=tt2html.html.javascript.css
-    autocmd BufNewFile,BufRead *.txt  set filetype=text
-    autocmd BufNewFile,BufRead * if !&modifiable | setlocal nolist nospell | endif
-    autocmd BufNewFile,BufRead * call camelcasemotion#CreateMotionMappings('<localleader>')
-augroup END
-augroup vimrcEx
-    autocmd!
-
-    " Automatically rebalance windows on vim resize
-    autocmd VimResized * :wincmd =
-
-    " Don't do it for commit messages, when the position is invalid, or when
-    " When editing a file, always jump to the last known cursor position.
-    " inside an event handler (happens when dropping a file on gvim).
-    autocmd BufReadPost * if &ft != 'gitcommit' && line("'\"") > 0 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
-
-    " Closes if NERDTree is the only open window
-    autocmd BufEnter * if winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary" | qall! | endif
-
-    " Save whenever switching windows or leaving vim. This is useful when running
-    " the tests inside vim without having to save all files first.
-    autocmd FocusLost,WinLeave * :silent! wa
-
-    " Change Color when entering Insert Mode
-    autocmd InsertEnter * highlight CursorLine ctermfg=035
-
-    " Revert Color to default when leaving Insert Mode
-    autocmd InsertLeave * highlight CursorLine ctermbg=234
-augroup END
-
-" }}}
 " == Functions   {{{1
 " ==================================================================================================
 
-let b:test_method=""
+" Sets g:project_dir to the cwd on vim startup. The function will only set it
+" if not already defined and then changes the local cwd to the current file
+" location
+function! SetProjectDir()
+    if empty("g:project_dir")
+        let g:project_dir = getcwd()
+    endif
+    exe 'lcd ' . fnamemodify(resolve(expand('%')), ':h')
+endfunction
+
+" Limited to perl unit tests for now...
 function! RunTests(...)
     if &filetype == 'perl'
         let filename = expand('%:p:s')
@@ -295,6 +258,8 @@ function! RunTests(...)
     endif
 endfunction
 
+" Not the same as :retab
+" This replaces spaces for the current tabstop with literal tabs
 command! RetabIndents call RetabIndents()
 func! RetabIndents()
     let saved_view = winsaveview()
@@ -302,35 +267,42 @@ func! RetabIndents()
     call winrestview(saved_view)
 endfunc
 
-function! Undouble_Completions ()
+" When autocompleting within an identifier, prevent duplications...
+" Only available in vim >= 800
+function! Undouble_Completions()
     let col  = getpos('.')[2]
     let line = getline('.')
     call setline('.', substitute(line, '\(\k\+\)\%'.col.'c\zs\1', '', ''))
 endfunction
 
+" Run perl Devel::Cover
 function! RunCover()
     if &filetype == 'perl'
-    execute 'let $HARNESS_PERL_SWITCHES="-MDevel::Cover"'
-    call RunTests('background')
+        execute 'let $HARNESS_PERL_SWITCHES="-MDevel::Cover"'
+        call RunTests('background')
     else
-    echom 'Coverage not set up for ' . &filetype 'files'
+        echom 'Coverage not set up for ' . &filetype 'files'
     endif
 endfunction
 
+" Set the current method for unit testing - mostly useful for perl currently
 function! SetTestMethod()
     let b:test_method=tagbar#currenttag("%s","")
     if !empty(b:test_method)
-    echom 'Test Method set to ' . b:test_method
+        echom 'Test Method set to ' . b:test_method
     else
-    echom 'Test Method cleared'
+        echom 'Test Method cleared'
     endif
 endfunction
 
+" Clear the current test method
 function! ClearTestMethod()
     let b:test_method=""
     echom 'Test Method cleared'
 endfunction
 
+" Ability to toggle certain characters as keywords for operations like
+" ciw, diw, etc
 function! ToggleIskeyword(char)
     if !empty(matchstr(&iskeyword, ',\' . a:char))
     echom "Removed " . a:char
@@ -340,12 +312,16 @@ function! ToggleIskeyword(char)
     execute "setlocal iskeyword+=" . a:char
     endif
 endfunction
+
+" Simple confirmation helper
 function! AskQuit (msg, options, quit_option)
     if confirm(a:msg, a:options) == a:quit_option
         exit
     endif
 endfunction
 
+" Used by the AutoMkdir autocmd when creating a new file to prompt to
+" auto-create recursive directories as needed
 function! EnsureDirExists(dir, prompt)
     let required_dir = a:dir
     if !isdirectory(required_dir)
@@ -368,15 +344,13 @@ function! AlignOnPat(pat)
     return "\<ESC>:call EQAS_Align('nmap',{'pattern':'" . a:pat . "'})\<CR>A"
 endfunction
 
+" Helper to generate tag files in the background
 function! GenerateCtags()
     let path = expand('%:p:h')
     execute ":Dispatch! cd " . expand('%:p:h') . "; ctags *"
 endfunction
 
-nnoremap <silent> n n:call HLNext(0.3)<CR>
-nnoremap <silent> N N:call HLNext(0.3)<CR>
-
-highlight! WhiteOnRed ctermbg=red ctermfg=white
+" Highlights search matches and flashes
 function! HLNext(blinktime)
     let [bufname, lnum, col, off] = getpos('.')
     let matchlen = strlen(matchstr(strpart(getline('.'),col-1),@/))
@@ -392,6 +366,101 @@ function! HLNext(blinktime)
     endfor
 endfunction
 
+Inoremap <tab> [Close bracket] <C-R>=ClosePair()<CR>
+function! ClosePair()
+    let line = getline('.')
+    let col = col('.')
+    let nchar = line[col]
+    let nchar1 = line[col-1]
+    let nchar2 = line[col-2]
+    let pchar = line[col-2]
+    let pchar2 = line[col-3]
+    let match = { '(':')', '{':'}', '[':']', '<':'>', '`':'`' }
+    let str = ""
+    let mov = ""
+    if has_key(match, pchar) && nchar1 == match[pchar]
+        if !has_key(match, pchar2) || nchar != match[pchar2]
+            return "  \<left>"
+        endif
+    endif
+    if has_key(match, pchar2) && nchar2 == match[pchar2] && pchar == " "
+        return "\<CR>" . match[pchar2] . "\<up>"
+    endif
+    if pchar =~ "[({\[<`]" && has_key(match, pchar)
+        let str = str . match[pchar]
+        let mov = mov . "\<left>"
+    endif
+    if pchar2 =~ "[({\[<`]" && has_key(match, pchar2)
+        if pchar == " "
+            let str = str . " "
+            let mov = mov . "\<left>"
+        endif
+        let str = str . match[pchar2]
+        let mov = mov . "\<left>"
+    endif
+    if !empty(str)
+        return str . mov
+    else
+        return UltiSnips#ExpandSnippet()
+    endif
+endfunction
+
+
+" == Autocommands   {{{1
+" ==================================================================================================
+
+if v:version >= 800
+    augroup Undouble_Completions
+        autocmd!
+        autocmd CompleteDone *  call Undouble_Completions()
+    augroup None
+endif
+augroup NoSimultaneousEdits
+    autocmd!
+    autocmd SwapExists * let v:swapchoice = 'o'
+    autocmd SwapExists * echom 'Duplicate edit session (readonly)'
+    autocmd SwapExists * sleep 1
+augroup END
+augroup filetype_formats
+    autocmd!
+    autocmd BufNewFile,BufRead *.conf set filetype=yaml
+    autocmd BufNewFile,BufRead *.md   set filetype=markdown.help.text
+    autocmd BufNewFile,BufRead *.t    set filetype=perl
+    " Default headers to C files since it's more likely
+    autocmd BufNewFile,BufRead *.h    set filetype=c
+    autocmd BufNewFile,BufRead *.tt   set filetype=tt2html.html.javascript.css
+    autocmd BufNewFile,BufRead *.txt  set filetype=text
+    autocmd BufNewFile,BufRead * if !&modifiable | setlocal nolist nospell | endif
+    autocmd BufNewFile,BufRead * call camelcasemotion#CreateMotionMappings('<localleader>')
+augroup END
+augroup vimrcEx
+    autocmd!
+
+    " Automatically rebalance windows on vim resize
+    autocmd VimResized * :wincmd =
+
+    " Set the project directory to wherever vim was opened
+    autocmd VimEnter * call SetProjectDir()
+
+    " Don't do it for commit messages, when the position is invalid, or when
+    " When editing a file, always jump to the last known cursor position.
+    " inside an event handler (happens when dropping a file on gvim).
+    autocmd BufReadPost * if &ft != 'gitcommit' && line("'\"") > 0 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
+
+    " Closes if NERDTree is the only open window
+    autocmd BufEnter * if winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary" | qall! | endif
+
+    " Save whenever switching windows or leaving vim. This is useful when running
+    " the tests inside vim without having to save all files first.
+    autocmd FocusLost,WinLeave * :silent! wa
+
+    " Change Color when entering Insert Mode
+    autocmd InsertEnter * highlight CursorLine ctermfg=035
+
+    " Revert Color to default when leaving Insert Mode
+    autocmd InsertLeave * highlight CursorLine ctermbg=234
+augroup END
+
 augroup AutoMkdir
     autocmd!
     autocmd BufNewFile * :call EnsureDirExists(expand("%:h"), 1)
@@ -401,6 +470,14 @@ augroup AutoMkdir
     endif
 augroup END
 
+" Below is to fix issues with the <CR> mapping to o<Esc> in quickfix window
+augroup enter
+    autocmd!
+    autocmd CmdwinEnter * nnoremap <CR> <CR>
+    autocmd BufReadPost quickfix nnoremap <CR> <CR>
+augroup END
+
+
 " == Plugins    {{{1
 " ==================================================================================================
 
@@ -408,7 +485,6 @@ let g:EasyClipUseCutDefaults=0  " Don't add move shortcuts - conflicts with mark
 let g:EasyClipEnableBlackHoleRedirectForDeleteOperator=0  " Keep delete functionality unchanged
 let g:fzf_buffers_jump=1          " Jump to existing window if possible
 let g:fzf_commits_log_options='--graph --pretty=format:"%C(yellow)%h (%p) %ai%Cred%d %Creset%Cblue[%ae]%Creset %s (%ar). %b %N"'
-let g:gitgutter_sign_column_always=1
 let g:jsx_ext_required=1
 let g:session_autoload='no'       " Loads 'default' session when vim is opened without files
 let g:session_autosave='yes'
@@ -434,7 +510,7 @@ let g:tagbar_autofocus=1
 let g:tagbar_autoshowtag=1
 let g:tagbar_compact=1
 let g:tagbar_hide_nonpublic=1
-let g:tagbar_width=40
+let g:tagbar_width=30
 let g:tagbar_type_perl = {
     \ 'kinds' : [
         \ 'i:includes:1:0',
@@ -481,12 +557,14 @@ let g:UltiSnipsSnippetsDir = '~/.vim/UltiSnips'
 " == Mappings   {{{1
 " ==================================================================================================
 
-let g:AutoPairsShortcutToggle='<C-\>'
-
-Doc <C-\> [Toggle AutoPairs]
 Doc <localleader>w [{count} CamelCase words forward]
 Doc <localleader>b [{count} CamelCase words backward]
 Doc <localleader>e [Forward to the end of CamelCase word {count}]
+Doc <C-^> [Go to alternate file]
+
+" Highlight search matches forward and backward
+nnoremap <silent> n n:call HLNext(0.3)<CR>
+nnoremap <silent> N N:call HLNext(0.3)<CR>
 
 Nmap      <leader>"             [Surround current word with double quotes] ysiw"
 Nmap      <leader>'             [Surround current word with single quotes] ysiw'
@@ -501,14 +579,12 @@ Nmap      <leader>{             [Surround current word with curly braces with sp
 Nmap      <leader>}             [Surround current word with curly braces] ysiw}
 Nmap      <localleader>=        [Align paragraph with = sign] gaip=
 Nmap      <localleader>H        [Surround current word with {''}] ysiw}lysiw'
-Nmap      <localleader>L        [Identify highlight group under cursor] :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
-            \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
-            \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
 Nmap      <localleader>[        [Surround current paragraph with square brackets and indent] ysip[
 Nmap      <localleader>]        [Surround current paragraph with square brackets and indent] ysip]
 Nmap      <localleader>h        [Remove surrounding {''}] ds'ds}
 Nmap      <localleader>{        [Surround current paragraph with curly braces and indent] ysip{
 Nmap      <localleader>}        [Surround current paragraph with curly braces and indent] ysip{
+" Fix for syntax highlighting from above line } } }
 Nmap      cP                    [Copy line to System clipboard] <Plug>SystemCopyLine
 Nmap      ga                    [Align columns in normal mode with ga{motion}] <Plug>(EasyAlign)
 Nnoremap  <CR>                  [Create new empty lines with Enter] o<Esc>
@@ -516,8 +592,8 @@ Nnoremap  <leader>-             [Maximize current window when in a vertial split
 Nnoremap  <leader>=             [Equalize vertical split window widths] :wincmd =<CR>
 Nnoremap  <leader>H             [Open previous tab] :tabp<CR>
 Nnoremap  <leader>L             [Open next tab] :tabn<CR>
-Nnoremap  <leader>M             [Fuzzy search vim Marks] :History<CR>
-Nnoremap  <leader>P             [Interactively paste by choosing from recent yanks] :IPaste<CR>
+Nnoremap  <leader>M             [Fuzzy search vim History] :History<CR>
+Nnoremap  <localleader>P        [Interactively paste by choosing from recent yanks] :IPaste<CR>
 Nnoremap  <leader>Q             [Quit without saving] :confirm qall<CR>
 Nnoremap  <leader>R             [Fuzzy search Recent files] :History<CR>
 Nnoremap  <leader>S             [Shortcut for :%s///g] :%s///g<LEFT><LEFT><LEFT>
@@ -526,11 +602,13 @@ Nnoremap  <leader>b             [Fuzzy search buffer list] :Buffers<CR>
 Nnoremap  <leader>C             [Regenerate ctags] :call GenerateCtags()<CR>:echom "Tags Generated"<CR>
 Nnoremap  <leader>cm            [Clear currently set test method] :call ClearTestMethod()<CR>
 Nnoremap  <leader>cw            [Count number of words in the current file] :!wc -w %<CR>
-Nnoremap  <leader>d             [Close and delete the current buffer] :bd<CR>
+Nnoremap  <leader>d             [Close and delete the current buffer] :bp<CR>:bd #<CR>
 Nnoremap  <leader>ep            [Edit vim plugins] :vsplit $HOME/.vim/plugins.vim<CR>
 Nnoremap  <leader>ev            [Edit vimrc in a vertical split] :vsplit $MYVIMRC<CR>
-Nnoremap  <leader>f             [Fuzzy search files in cwd] :Files<CR>
+Nnoremap  <leader>f             [Fuzzy search files in project directory] :exe "Files " . g:project_dir<CR>
+Nnoremap  <leader>F             [Fuzzy search files in cwd] :Files<CR>
 Nnoremap  <leader>ga            [Stage Git Hunk] :GitGutterStageHunk<CR>
+Nnoremap  <leader>gt            [Toggle Git Gutter] :GitGutterToggle<CR>
 Nnoremap  <leader>gb            [Fugitive git blame] :Gblame<CR>
 Nnoremap  <leader>gc            [Fugitive git commit] :Gcommit<CR>
 Nnoremap  <leader>gd            [Fugitive git diff] :Gdiff<CR>
@@ -569,16 +647,22 @@ Nnoremap  <leader>tp            [Previous Tag] :tprevious<CR>
 Nnoremap  <leader>w             [Save file changes] :write<CR>
 Nnoremap  <leader>x             [Write and quit current window] :x<CR>
 Nnoremap  <leader>z             [Background vim and return to shell] <C-Z>
+Nnoremap  <localleader>p        [Display current project directory] :echo g:project_dir<CR>
 Nnoremap  <localleader>1        [Toggle NERDTree window] :NERDTreeToggle<CR>
 Nnoremap  <localleader>2        [Toggle Tagbar window] :TagbarToggle<CR>
+<<<<<<< HEAD
 Nnoremap  <localleader>3        [Toggle Line Numbers] :set rnu! nu! list!<CR>:GitGutterToggle<CR>
+=======
+Nnoremap  <localleader>3        [Toggle Line Numbers and Git Gutter] :set rnu! nu! list!<CR>:GitGutterToggle<CR>
+>>>>>>> 5df1c0f8e0dc197f66acfd708b00511162e6504a
 Nnoremap  <localleader>Q        [Quit all windows without qall!<CR>
 Nnoremap  <localleader>ep       [Edit snippets in a horizontal split] :UltiSnipsEdit<CR>
 Nnoremap  <localleader>q        [Quit all windows] :qall<CR>
 Nnoremap  J                     [Move current line down one] ddp
 Nnoremap  K                     [Move current line up one] dd<up>P
 Nnoremap  Q                     [Disable EX mode] <NOP>
-Nnoremap  cd                    [Change local cwd to current file location] :exe 'lcd ' . fnamemodify(resolve(expand('%')), ':h')<CR>:echo 'cd ' . fnamemodify(resolve(expand('%')), ':h')<CR>
+Nnoremap  cd                    [Change project directory to cwd] :let g:project_dir = fnamemodify(resolve(expand('%')), ':h')<CR>:echo 'project_dir=' . fnamemodify(resolve(expand('%')), ':h')<CR>
+Nnoremap  <leader>ga            [Stage Git Hunk] :GitGutterStageHunk<CR>
 Vmap      <C-D>                 [Move visual block left] <Plug>SchleppDupLeft
 Vmap      <down>                [Move visual block down] <Plug>SchleppDown
 Vmap      <leader>"             [Surround current word with double quotes] gS"
@@ -642,18 +726,18 @@ xnoremap <silent> <localleader>D "_D
 nnoremap <silent> x "_x
 xnoremap <silent> x "_x
 
-" Below is to fix issues with the <CR> mapping to o<Esc> in quickfix window
-augroup enter
-    autocmd!
-    autocmd CmdwinEnter * nnoremap <CR> <CR>
-    autocmd BufReadPost quickfix nnoremap <CR> <CR>
-augroup END
 
 " -- Syntax Highlighting   {{{1
 " --------------------------------------------------------------------------------------------------
 
+" Define a highlight for use in HLNext
+highlight! WhiteOnRed ctermbg=red ctermfg=white
 highlight link SyntasticErrorSign SignColumn
 highlight link SyntasticStyleErrorSign SignColumn
 highlight link SyntasticStyleWarningSign SignColumn
 highlight link SyntasticWarningSign SignColumn
+
+
+" }}}
+
 " vim:foldmethod=marker:foldlevel=0

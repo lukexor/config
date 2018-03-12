@@ -321,12 +321,22 @@ sw2() {
 alias sp='ssh -A lpetherbridge@fcs-app1.fonality.com'
 alias sf='ssh -A lpetherbridge@devbox5.lotsofclouds.fonality.com'
 alias sq='ssh -A lpetherbridge@qa-app.lotsofclouds.fonality.com'
-alias ss='ssh -A lpetherbridge@fcs-stg-app1.lax01.fonality.com'
+alias ss1='ssh -A lpetherbridge@fcs-stg-app1.lax01.fonality.com'
+alias ss1b='ssh -A lpetherbridge@fcs-stg-batch1.fonality.com'
+alias ss1cp='ssh -A lpetherbridge@fcs-stg-cp1.fonality.com'
 alias ss2='ssh -A lpetherbridge@fcs-stg2-app1.lax01.fonality.com'
 alias ss3='ssh -A lpetherbridge@fcs-app1.stage3.arch.fonality.com'
+alias ss3cp='ssh -A lpetherbridge@fcs-cp1.stage3.arch.fonality.com'
+alias ss3b='ssh -A lpetherbridge@fcs-batch1.stage3.arch.fonality.com'
 alias ss4='ssh -A lpetherbridge@fcs-app1.stage4.arch.fonality.com'
+alias ss4cp='ssh -A lpetherbridge@fcs-cp1.stage4.arch.fonality.com'
+alias ss4b='ssh -A lpetherbridge@fcs-batch1.stage4.arch.fonality.com'
 alias ss5='ssh -A lpetherbridge@fcs-app1.stage5.arch.fonality.com'
+alias ss5cp='ssh -A lpetherbridge@fcs-cp1.stage5.arch.fonality.com'
+alias ss5b='ssh -A lpetherbridge@fcs-batch1.stage5.arch.fonality.com'
 alias ss6='ssh -A lpetherbridge@fcs-app1.stage6.arch.fonality.com'
+alias ss6cp='ssh -A lpetherbridge@fcs-cp1.stage6.arch.fonality.com'
+alias ss6b='ssh -A lpetherbridge@fcs-batch1.stage6.arch.fonality.com'
 alias ssb='ssh -A lpetherbridge@fcs-stg-bastion.lax01.fonality.com'
 alias fv='sudo /usr/local/bin/juniper/juniper_vpn stop && sudo /usr/local/bin/juniper/juniper_vpn start'
 alias fvs='sudo /usr/local/bin/juniper/juniper_vpn status'
@@ -584,13 +594,16 @@ ra() {
 	source /tmp/ssh-agent-$HOSTNAME-info
 }
 arsa() {
-	ra
-	[[ -f "$HOME/.ssh/id_rsa" ]] && ssh-add "$HOME/.ssh/id_rsa"
+	[[ -f "$HOME/.ssh/id_rsa" ]] && ra && ssh-add "$HOME/.ssh/id_rsa"
 }
 akey() {
-	ra 1
 	if [ $(system_profiler SPUSBDataType 2> /dev/null| grep "SafeNet" -c) -gt 0 ]; then
-		ssh-add -s '/usr/local/lib/libeTPkcs11.dylib.1'
+                ra
+                if [ $1 ]; then
+                    echo $1 | ssh-add -s '/usr/local/lib/libeTPkcs11.dylib.1'
+                else
+                    ssh-add -s '/usr/local/lib/libeTPkcs11.dylib.1'
+                fi
 	fi
 }
 
