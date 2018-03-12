@@ -44,9 +44,11 @@ set copyindent
 " Disable vertical color column for large files
 if b:fsize <= 1000000
     set cursorline  " Highlight the cursorline - slows redraw
-    set signcolumn=yes
+    if v:version >= 800
+        set signcolumn=yes
+    endif
     if v:version >= 704
-            call matchadd('ColorColumn', '\%81v', 100)
+        call matchadd('ColorColumn', '\%81v', 100)
     endif
 endif
 set cpoptions+=W                 " Don't overwrite readonly files with :w!
@@ -650,11 +652,7 @@ Nnoremap  <leader>z             [Background vim and return to shell] <C-Z>
 Nnoremap  <localleader>p        [Display current project directory] :echo g:project_dir<CR>
 Nnoremap  <localleader>1        [Toggle NERDTree window] :NERDTreeToggle<CR>
 Nnoremap  <localleader>2        [Toggle Tagbar window] :TagbarToggle<CR>
-<<<<<<< HEAD
-Nnoremap  <localleader>3        [Toggle Line Numbers] :set rnu! nu! list!<CR>:GitGutterToggle<CR>
-=======
 Nnoremap  <localleader>3        [Toggle Line Numbers and Git Gutter] :set rnu! nu! list!<CR>:GitGutterToggle<CR>
->>>>>>> 5df1c0f8e0dc197f66acfd708b00511162e6504a
 Nnoremap  <localleader>Q        [Quit all windows without qall!<CR>
 Nnoremap  <localleader>ep       [Edit snippets in a horizontal split] :UltiSnipsEdit<CR>
 Nnoremap  <localleader>q        [Quit all windows] :qall<CR>
