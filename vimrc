@@ -8,7 +8,7 @@
 let b:fsize=getfsize(@%)
 let mapleader=' '
 let maplocalleader=','
-let g:project_dir = getcwd()
+let g:project_dir=getcwd()
 let b:test_method=""
 
 " Load up all of our plugins using vim-plug
@@ -24,31 +24,33 @@ runtime custom_plugins/goto_file.vim
 runtime custom_plugins/schlepp.vim
 
 set nocompatible                 " Disable VI backwards compatible settings. Must be first
-set autochdir
+if exists('+antialias')
+    set antialias                " Mac OS X: antialiased fonts
+endif
 set autoindent                   " Copy indent from current line when adding a new line
-set autoread
-set autowrite
-set autowriteall                 " Automatically :write before running commands
+set autoread                     " Read file when changed outside vim
+set autowriteall                 " Automatically write file changes
 set background=dark
 colorscheme zhayedan
 set backspace=indent,eol,start
 " Set directory to store backup files in.
 " These are created when saving, and deleted after successfully written
 set backupdir=$HOME/.vim/tmp//
+set breakindent                  " Wrapped line repeats indent
 set directory=$HOME/.vim/tmp//
-set clipboard=unnamed
 set complete+=kspell             " Use the active spell checking
 set complete+=k                  " Add dictionary to ins-complete
 set completeopt+=longest,menu,preview
+set confirm                      " Ask about unsaved/read-only files
 set copyindent
 " Disable vertical color column for large files
 if b:fsize <= 1000000
     set cursorline  " Highlight the cursorline - slows redraw
-    if v:version >= 800
-        set signcolumn=yes
+    if exists('+signcolumn')
+        set signcolumn=auto
     endif
-    if v:version >= 704
-        call matchadd('ColorColumn', '\%81v', 100)
+    if exists('*matchadd')
+        call matchadd('ErrorMsg', '\%>80v.\+', 100)
     endif
 endif
 set cpoptions+=W                 " Don't overwrite readonly files with :w!
@@ -102,7 +104,7 @@ set noequalalways                " Don't make windows equal size
 set nomore
 set nowrap                       " Default line wrap
 set number
-if v:version >= 704
+if exists('+relativenumber')
     set relativenumber           " Toggle relative line numbering
 endif
 set nrformats-=octal             " Ignore octal when incrementing/decrementing numbers with CTRL-A and CTRl-X
@@ -225,6 +227,14 @@ iabbrev waht what
 
 " == Functions   {{{1
 " ==================================================================================================
+
+function! CloseBuffer()
+    if len(getbufinfo({'buflisted':1})) > 1
+        execute ':bp|bd #'
+    else
+        execute ':e ' . getcwd() . '|bd #'
+    endif
+endfunction
 
 " Sets g:project_dir to the cwd on vim startup. The function will only set it
 " if not already defined and then changes the local cwd to the current file
@@ -596,7 +606,7 @@ Nnoremap  <leader>H             [Open previous tab] :tabp<CR>
 Nnoremap  <leader>L             [Open next tab] :tabn<CR>
 Nnoremap  <leader>M             [Fuzzy search vim History] :History<CR>
 Nnoremap  <localleader>P        [Interactively paste by choosing from recent yanks] :IPaste<CR>
-Nnoremap  <leader>Q             [Quit without saving] :confirm qall<CR>
+Nnoremap  <leader>Q             [Quit without saving] :qall!<CR>
 Nnoremap  <leader>R             [Fuzzy search Recent files] :History<CR>
 Nnoremap  <leader>S             [Shortcut for :%s///g] :%s///g<LEFT><LEFT><LEFT>
 Nnoremap  <leader>W             [Fuzzy search vim windows] :Windows<CR>
@@ -604,7 +614,7 @@ Nnoremap  <leader>b             [Fuzzy search buffer list] :Buffers<CR>
 Nnoremap  <leader>C             [Regenerate ctags] :call GenerateCtags()<CR>:echom "Tags Generated"<CR>
 Nnoremap  <leader>cm            [Clear currently set test method] :call ClearTestMethod()<CR>
 Nnoremap  <leader>cw            [Count number of words in the current file] :!wc -w %<CR>
-Nnoremap  <leader>d             [Close and delete the current buffer] :bp<CR>:bd #<CR>
+Nnoremap  <leader>d             [Close and delete the current buffer] :call CloseBuffer()<CR>
 Nnoremap  <leader>ep            [Edit vim plugins] :vsplit $HOME/.vim/plugins.vim<CR>
 Nnoremap  <leader>ev            [Edit vimrc in a vertical split] :vsplit $MYVIMRC<CR>
 Nnoremap  <leader>f             [Fuzzy search files in project directory] :exe "Files " . g:project_dir<CR>
@@ -632,8 +642,7 @@ Nnoremap  <leader>m             [Fuzy search marks] :Marks<CR>
 Nnoremap  <localleader>m        [Run make asynchronously] :Make!<CR>
 Nnoremap  <leader>n             [Edit a new, unnamed buffer] :enew<CR>
 Nnoremap  <leader>g             [Fuzzy search git files] :GFiles<CR>
-Nnoremap  <leader>q             [Close the current window] :close<CR>
-Nnoremap  ZZ                    [Close the current window] :close<CR>
+Nnoremap  <leader>q             [Close the current window] :q<CR>
 Nnoremap  <leader>rc            [Run code coverage] :call RunCover()<CR>
 Nnoremap  <leader>ri            [Reindent the entire file] mzgg=G`z
 Nnoremap  <leader>rs            [Remove trailing spaces in the entire file] mz:silent! %s/\s\+$//<CR>:noh<CR>`z

@@ -6,9 +6,8 @@ call plug#begin('~/.vim/plugins')
 " ==================================================================================================
 
 Plug 'christoomey/vim-sort-motion'   " Easier sorting
-Plug 'christoomey/vim-system-copy'   " Better OS clipboard integration
 Plug 'junegunn/vim-easy-align'       " Makes aligning chunks of code super easy
-Plug 'svermeulen/vim-easyclip'       " Easy clipboard management
+Plug 'vim-scripts/YankRing.vim'          " Makes pasting previous yanks easier
 Plug 'justinmk/vim-ipmotion'         " Improves { and } motions
 Plug 'reedes/vim-pencil'             " Makes vim like a writing editor
 Plug 'tmhedberg/matchit'             " Advanced % matching
