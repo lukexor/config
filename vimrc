@@ -49,9 +49,6 @@ if b:fsize <= 1000000
     if exists('+signcolumn')
         set signcolumn=auto
     endif
-    if exists('*matchadd')
-        call matchadd('ErrorMsg', '\%>80v.\+', 100)
-    endif
 endif
 set cpoptions+=W                 " Don't overwrite readonly files with :w!
 set cpoptions-=aA                " Don't set alternate file # on :read or :write
@@ -229,11 +226,18 @@ iabbrev waht what
 " ==================================================================================================
 
 function! CloseBuffer()
-    if len(getbufinfo({'buflisted':1})) > 1
+    if len(filter(range(1, bufnr('$')), 'buflisted(v:val)')) > 1
         execute ':bp|bd #'
     else
         execute ':e ' . getcwd() . '|bd #'
     endif
+endfunction
+function! CloseAllBuffersButCurrent()
+  let curr = bufnr("%")
+  let last = bufnr("$")
+
+  if curr > 1    | silent! execute "1,".(curr-1)."bd"     | endif
+  if curr < last | silent! execute (curr+1).",".last."bd" | endif
 endfunction
 
 " Sets g:project_dir to the cwd on vim startup. The function will only set it
@@ -421,11 +425,18 @@ endfunction
 " == Autocommands   {{{1
 " ==================================================================================================
 
+augroup highlight_long_lines
+    autocmd!
+    if exists('*matchadd') && b:fsize <= 1000000
+        autocmd BufWinEnter * let w:m2=matchadd('ErrorMsg', '\%>80v.\+', -1)
+    endif
+augroup END
+
 if v:version >= 800
     augroup Undouble_Completions
         autocmd!
         autocmd CompleteDone *  call Undouble_Completions()
-    augroup None
+    augroup END
 endif
 augroup NoSimultaneousEdits
     autocmd!
@@ -566,6 +577,7 @@ let g:UltiSnipsEnableSnipMate = 0
 let g:UltiSnipsSnippetsDir = '~/.vim/UltiSnips'
 
 
+"
 " == Mappings   {{{1
 " ==================================================================================================
 
@@ -611,10 +623,12 @@ Nnoremap  <leader>R             [Fuzzy search Recent files] :History<CR>
 Nnoremap  <leader>S             [Shortcut for :%s///g] :%s///g<LEFT><LEFT><LEFT>
 Nnoremap  <leader>W             [Fuzzy search vim windows] :Windows<CR>
 Nnoremap  <leader>b             [Fuzzy search buffer list] :Buffers<CR>
+Nnoremap  <leader>cc            [Close Quickfix] :ccl<CR>
 Nnoremap  <leader>C             [Regenerate ctags] :call GenerateCtags()<CR>:echom "Tags Generated"<CR>
 Nnoremap  <leader>cm            [Clear currently set test method] :call ClearTestMethod()<CR>
 Nnoremap  <leader>cw            [Count number of words in the current file] :!wc -w %<CR>
 Nnoremap  <leader>d             [Close and delete the current buffer] :call CloseBuffer()<CR>
+Nnoremap  <leader>D             [Close and delete the all but the current buffer] :call CloseAllBuffersButCurrent()<CR>
 Nnoremap  <leader>ep            [Edit vim plugins] :vsplit $HOME/.vim/plugins.vim<CR>
 Nnoremap  <leader>ev            [Edit vimrc in a vertical split] :vsplit $MYVIMRC<CR>
 Nnoremap  <leader>f             [Fuzzy search files in project directory] :exe "Files " . g:project_dir<CR>

@@ -497,9 +497,10 @@ sqlcsv() { cat | sed "s/'/\'/;s/\t/\",\"/g;s/^/\"/;s/$/\"/;s/\n//g"; }
 
 # Syntax checks all new or modified perl files
 schk() {
-	for file in $(git status|egrep 'new file|modified'|egrep '(.pm|.pl)$' |cut -d: -f2|cut -d' ' -f4); do
-		perl -c $file
-	done
+    for file in $(git status|egrep 'new file|modified'|egrep '(.pm|.pl)$' |cut -d: -f2|cut -d' ' -f4|sed 's/\//::/g'|sed 's/lib:://'|sed 's/.pm//'); do
+        echo $file
+        perl -ce"use $file"
+    done
 }
 
 gmf() {
