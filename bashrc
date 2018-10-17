@@ -58,6 +58,11 @@ pathprepend "$HOME/perl5/bin"; export PATH;
 pathprepend "$HOME/perl5/lib/perl5/" PERL5LIB; export PERL5LIB;
 pathprepend "$HOME/perl5" PERL_LOCAL_LIB_ROOT; export PERL_LOCAL_LIB_ROOT;
 pathprepend "$HOME/perl5/lib/perl5/" GITPERLLIB; export GITPERLLIB;
+pathprepend "/usr/local/go/bin"; export PATH;
+GOPATH="$HOME/dev/"; export GOPATH;
+GOROOT="/usr/local/go/"; export GOROOT;
+pathprepend "$GOPATH/bin"; export PATH;
+NF_API_URL="http://localhost:8090/";
 
 if [ -d $HOME/lib/fcs ]; then
 	export FON_DIR="$HOME/lib/fcs"
@@ -283,6 +288,7 @@ function fsync() {
 
 # Python
 alias py='python'
+alias py3='python3'
 alias dja='django-admin.py'
 alias pym='python manage.py'
 alias pyr='python manage.py runserver 0.0.0.0:10128'
@@ -337,6 +343,7 @@ alias ss5b='ssh -A lpetherbridge@fcs-batch1.stage5.arch.fonality.com'
 alias ss6='ssh -A lpetherbridge@fcs-app1.stage6.arch.fonality.com'
 alias ss6cp='ssh -A lpetherbridge@fcs-cp1.stage6.arch.fonality.com'
 alias ss6b='ssh -A lpetherbridge@fcs-batch1.stage6.arch.fonality.com'
+alias ss7='ssh -A lpetherbridge@fcs-app.stage7.arch.fonality.com'
 alias ssb='ssh -A lpetherbridge@fcs-stg-bastion.lax01.fonality.com'
 alias fv='sudo /usr/local/bin/juniper/juniper_vpn stop && sudo /usr/local/bin/juniper/juniper_vpn start'
 alias fvs='sudo /usr/local/bin/juniper/juniper_vpn status'
@@ -413,7 +420,7 @@ alias gss='git status -s'
 alias gst='git status'
 alias gsl='git --no-pager stash list'
 alias gt=git_time_since_commit
-alias gtoday='git --no-pager log --graph --pretty=format:"%C(yellow)%h %ad%Cred%d %Creset%Cblue[%cn]%Creset  %s (%ar)" --date=iso --all --branches=* --remotes=* --since="23 hours ago" --author="$(git config user.name)"'
+    alias gtoday='git --no-pager log --graph --pretty=format:"%C(yellow)%h %ad%Cred%d %Creset%Cblue[%cn]%Creset  %s (%ar)" --date=iso --all --branches=* --remotes=* --since="23 hours ago" --author="$(git config user.name)"'
 alias gun='git reset HEAD --'
 
 # == Functions {{{1
