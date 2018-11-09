@@ -54,14 +54,14 @@ pathprepend "/usr/local/bin"
 pathprepend "$HOME/.cargo/bin"
 
 # local::lib
-pathprepend "$HOME/perl5/bin"; export PATH;
-pathprepend "$HOME/perl5/lib/perl5/" PERL5LIB; export PERL5LIB;
-pathprepend "$HOME/perl5" PERL_LOCAL_LIB_ROOT; export PERL_LOCAL_LIB_ROOT;
-pathprepend "$HOME/perl5/lib/perl5/" GITPERLLIB; export GITPERLLIB;
-pathprepend "/usr/local/go/bin"; export PATH;
-GOPATH="$HOME/dev/"; export GOPATH;
-GOROOT="/usr/local/go/"; export GOROOT;
-pathprepend "$GOPATH/bin"; export PATH;
+pathprepend "$HOME/perl5/bin"
+pathprepend "$HOME/perl5/lib/perl5/" PERL5LIB
+pathprepend "$HOME/perl5" PERL_LOCAL_LIB_ROOT
+pathprepend "$HOME/perl5/lib/perl5/" GITPERLLIB
+pathprepend "/usr/local/go/bin"
+pathprepend "$HOME/dev/" GOPATH
+pathprepend "/usr/local/go/" GOROOT
+pathprepend "$GOPATH/bin"
 NF_API_URL="http://localhost:8090/";
 
 if [ -d $HOME/lib/fcs ]; then
