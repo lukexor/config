@@ -1,10 +1,10 @@
 # == Start Profiling {{{1
 # ==================================================================================================
 
-startn=$(date +%s)
-starts=$(date +%s)
+PROFILE=0
+(( $PROFILE )) && start=$(gdate +%s.%N 2>/dev/null || date +%s.%N)
 
-# == Functions {{{1
+# == Source & Path Management {{{1
 # ==================================================================================================
 
 sourcefile() { [[ -r "$1" ]] && source $1; }
@@ -12,30 +12,30 @@ sourcefile() { [[ -r "$1" ]] && source $1; }
 # Functions to help us manage paths.
 # Arguments: $path, $ENV_VAR (default: $PATH)
 pathremove () {
-	local IFS=':'
-	local NEWPATH
-	local DIR
-	local PATHVARIABLE=${2:-PATH}
-	for DIR in ${!PATHVARIABLE} ; do
-		if [ "$DIR" != "$1" ] ; then
-			NEWPATH=${NEWPATH:+$NEWPATH:}$DIR
-		fi
-	done
-	export $PATHVARIABLE="$NEWPATH"
+    local IFS=':'
+    local NEWPATH
+    local DIR
+    local PATHVARIABLE=${2:-PATH}
+    for DIR in ${!PATHVARIABLE} ; do
+    if [ "$DIR" != "$1" ] ; then
+        NEWPATH=${NEWPATH:+$NEWPATH:}$DIR
+    fi
+    done
+    export $PATHVARIABLE="$NEWPATH"
 }
 pathprepend () {
-	pathremove $1 $2
-	if [[ -d $1 ]] ; then
-		local PATHVARIABLE=${2:-PATH}
-		export $PATHVARIABLE="$1${!PATHVARIABLE:+:${!PATHVARIABLE}}"
-	fi
+    pathremove $1 $2
+    if [[ -d $1 ]] ; then
+    local PATHVARIABLE=${2:-PATH}
+    export $PATHVARIABLE="$1${!PATHVARIABLE:+:${!PATHVARIABLE}}"
+    fi
 }
 pathappend () {
-	pathremove $1 $2
-	if [[ -d $1 ]] ; then
-		local PATHVARIABLE=${2:-PATH}
-		export $PATHVARIABLE="${!PATHVARIABLE:+${!PATHVARIABLE}:}$1"
-	fi
+    pathremove $1 $2
+    if [[ -d $1 ]] ; then
+    local PATHVARIABLE=${2:-PATH}
+    export $PATHVARIABLE="${!PATHVARIABLE:+${!PATHVARIABLE}:}$1"
+    fi
 }
 
 # == Environment {{{1
@@ -65,59 +65,58 @@ pathprepend "$GOPATH/bin"
 NF_API_URL="http://localhost:8090/";
 
 if [ -d $HOME/lib/fcs ]; then
-	export FON_DIR="$HOME/lib/fcs"
-	export FCS_DEVEL=1
-	export FON_DEVEL=1
-	export NO_MYSQL_AUTOCONNECT=1
-	export FCS_APP_URL='http://portlandia-stg6.fonality.com'
-	# export FCS_CP_URL='http://dev-cp.lotsofclouds.fonality.com/'
-	export SYS_API_URL='http://portlandia-stg6-sysapi.arch.fonality.com/'
-	for dir in $(find "$FON_DIR/bin" -type d); do
-		pathprepend $dir
-	done
-	pathprepend "$FON_DIR/bin"
-	pathprepend "$FON_DIR/lib" PERL5LIB
-	pathprepend "$HOME/lib/sysapi/lib" PERL5LIB
-	export GOPATH="$HOME/lib/go"
-	export GOBIN="$GOPATH/bin"
-	pathprepend $GOBIN
-	export context="local"
-	function bees() {
-		cd $HOME/lib/go/src/dataService/
-		$GOPATH/bin/bee run
-	}
-	NF_DB_URL=luke-data.arch.fonality.com
-	export MYSQL_URL=$NF_DB_URL
-	export CB_URL=$NF_DB_URL
-	export NF_REDIS_URL=$NF_DB_URL:6379
-fi
-
-if [[ -d "$HOME/dev/tools/android-sdk-macosx/" ]]; then
-	export ANDROID_HOME="$HOME/dev/tools/android-sdk-macosx/"
-	pathappend "${ANDROID_HOME}/tools"
-	pathappend "${ANDROID_HOME}/platform-tools"
-fi
-
-function cm {
+    export FON_DIR="$HOME/lib/fcs"
+    export FCS_DEVEL=1
+    export FON_DEVEL=1
+    export NO_MYSQL_AUTOCONNECT=1
+    export FCS_APP_URL='http://portlandia-stg6.fonality.com'
+    # export FCS_CP_URL='http://dev-cp.lotsofclouds.fonality.com/'
+    export SYS_API_URL='http://portlandia-stg6-sysapi.arch.fonality.com/'
+    for dir in $(find "$FON_DIR/bin" -type d); do
+        pathprepend $dir
+    done
+    pathprepend "$FON_DIR/bin"
+    pathprepend "$FON_DIR/lib" PERL5LIB
+    pathprepend "$HOME/lib/sysapi/lib" PERL5LIB
+    export GOPATH="$HOME/lib/go"
+    export GOBIN="$GOPATH/bin"
+    pathprepend $GOBIN
+    export context="local"
+    function bees() {
+    cd $HOME/lib/go/src/dataService/
+    $GOPATH/bin/bee run
+    }
+    function cm {
     nf
     export NF_API_URL=https://nf-lb-la.arch.fonality.com:10106/rest?Url=
     echo "Set NF_API_URL to" $NF_API_URL
-}
-function ds {
+    }
+    function ds {
     nf
     export NF_API_URL=http://nf-lb-la.arch.fonality.com:10109/
     echo "Set NF_API_URL to" $NF_API_URL
-}
-function nf {
+    }
+    function nf {
     export NF_AUTH_URL=https://nf-lb-la.arch.fonality.com:10102/
     export NF_CONTENT_URL=https://sandbox-content.nxf-test.fonality.com/
     echo "Set NF_AUTH_URL to" $NF_AUTH_URL
     echo "Set NF_CONTENT_URL to" $NF_CONTENT_URL
-}
-function wnf {
+    }
+    function wnf {
     echo "NF_API_URL is" $NF_API_URL
     echo "NF_CONTENT_URL is" $NF_CONTENT_URL
-}
+    }
+    NF_DB_URL=luke-data.arch.fonality.com
+    export MYSQL_URL=$NF_DB_URL
+    export CB_URL=$NF_DB_URL
+    export NF_REDIS_URL=$NF_DB_URL:6379
+fi
+
+if [[ -d "$HOME/dev/tools/android-sdk-macosx/" ]]; then
+    export ANDROID_HOME="$HOME/dev/tools/android-sdk-macosx/"
+    pathappend "${ANDROID_HOME}/tools"
+    pathappend "${ANDROID_HOME}/platform-tools"
+fi
 
 # Home directory
 pathprepend "$HOME/.rvm/bin"
@@ -140,13 +139,19 @@ export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 
 # Exit if not interactive
 case "$-" in
-	*i* )
-		;;
-	* )
-		return
-		;;
+    *i* )
+        ;;
+    * )
+        return
+        ;;
 esac
 
+# Detect which `ls` flavor is in use
+if ls --color > /dev/null 2>&1; then # GNU `ls`
+  colorflag="--color"
+else # OS X `ls`
+  colorflag="-G"
+fi
 
 
 # == Sources {{{1
@@ -166,7 +171,7 @@ if tput colors &> /dev/null; then
     export BLACK=$(tput setaf 0)
     export RED=$(tput setaf 1)
     export GREEN=$(tput setaf 34)
-    export ORANGE=$(tput setaf 202)
+    export ORANGE=$(tput setaf 11)
     export BLUE=$(tput setaf 12)
     export PURPLE=$(tput setaf 5)
     export CYAN=$(tput setaf 14)
@@ -198,9 +203,9 @@ fi
 
 # Bash 4.00 specific options
 if [[ $BASH_VERSINFO > 3 ]]; then
-	shopt -s autocd # Allow cding to directories by typing the directory name
-	shopt -s checkjobs # Defer exiting shell if any stopped or running jobs
-	shopt -s dirspell # Attempts spell correction on directory names
+    shopt -s autocd # Allow cding to directories by typing the directory name
+    shopt -s checkjobs # Defer exiting shell if any stopped or running jobs
+    shopt -s dirspell # Attempts spell correction on directory names
 fi
 
 shopt -s cdable_vars # Allow passing directory vars to cd
@@ -241,19 +246,19 @@ alias findbroken='find . -maxdepth 1 -type l ! -exec test -e {} \; -print'
 
 # Various CD shortcuts
 if [[ -d "$FON_DIR" ]]; then
-	alias wa="cd $FON_DIR/lib/Fap/WebApp/Action/"
-	alias f="cd $FON_DIR/lib/Fap/"
-	alias dbregen="perl -I$FON_DIR/lib $FON_DIR/bin/tools/database/regenerate_DBIx"
+    alias wa="cd $FON_DIR/lib/Fap/WebApp/Action/"
+    alias f="cd $FON_DIR/lib/Fap/"
+    alias dbregen="perl -I$FON_DIR/lib $FON_DIR/bin/tools/database/regenerate_DBIx"
 fi
 if [[ -d "$HOME/Dropbox/dev" ]]; then
-	export DEVHOME="$HOME/Dropbox/dev"
-	alias s="cd $DEVHOME/websites/"
-	alias d="cd $DEVHOME"
-	alias ios="cd $DEVHOME/ios"
+    export DEVHOME="$HOME/Dropbox/dev"
+    alias s="cd $DEVHOME/websites/"
+    alias d="cd $DEVHOME"
+    alias ios="cd $DEVHOME/ios"
 fi
 
 # System
-alias u='history -n'	# Sync history from other terminals
+alias u='history -n'    # Sync history from other terminals
 alias _='sudo'
 alias du='du -kh' # Human readable in 1K block sizes
 alias df='df -kh' # Human readable in 1K block sizes with file system type
@@ -262,14 +267,6 @@ alias info='info --vi-keys'
 
 # Editing - All roads lead to $EDITOR
 alias vi="$EDITOR"
-function vim() {
-	# Only run if we're inside tmux
-	if [[ $TMUX != "" ]]; then
-		$HOME/bin/vim_tmux "$@"
-	else
-		command vim "$@"
-	fi
-}
 alias cvim="command vim"
 alias svi="sudo $EDITOR"
 alias nano=$EDITOR
@@ -277,26 +274,6 @@ alias emacs=$EDITOR
 
 # Git
 alias sg='for file in $(git status|egrep "modified|new file"|cut -d: -f2|tr -d " "|sort|uniq); do scp $file lpetherbridge@devbox5.lotsofclouds.fonality.com:~/fcs/$file; done'
-function purge_git() {
-    if _ask_yes_no "Fully purge $1 from repo?"; then
-        git filter-branch --force --index-filter "git rm --cached --ignore-unmatch $1" --prune-empty --tag-name-filter cat -- --all
-    fi
-}
-function fsync() {
-	user=lpetherbridge
-	host=devbox5.lotsofclouds.fonality.com
-	case $1 in
-	stg) host=fcs-stg-app1.lax01.fonality.com;;
-	stg2) host=fcs-stg2-app1.lax01.fonality.com;;
-	stg3) host=fcs-app1.stage3.arch.fonality.com;;
-	stg4) host=fcs-app1.stage4.arch.fonality.com;;
-	stg5) host=fcs-app1.stage5.arch.fonality.com;;
-	stg6) host=fcs-app1.stage6.arch.fonality.com;;
-	esac
-	if _ask_yes_no "Sync $PWD to $host?"; then
-		rsync --verbose --recursive --links --perms --times --executability --compress --cvs-exclude --human-readable --progress --itemize-changes -rsh=ssh . $user@$host:~/lib/
-	fi
-}
 
 # Python
 alias py='python'
@@ -313,11 +290,6 @@ alias rpminfo='rpm -qip' # list rpm info
 
 # Edit configurations
 alias vrc="pushd $HOME/.dotfiles/ >> /dev/null; vi $HOME/.dotfiles/vimrc; popd >> /dev/null"
-function vfrc() {
-	pushd /home/vagrant/.dotfiles/ >> /dev/null;
-	vi /home/vagrant/.dotfiles/vim/after/ftplugin/$1.vim;
-	popd >> /dev/null
-}
 alias vp="pushd $HOME/.dotfiles/ >> /dev/null; vi $HOME/.dotfiles/vim/plugins.vim; popd >> /dev/null"
 alias vbp="pushd $HOME/.dotfiles/ >> /dev/null; vi $HOME/.dotfiles/bash_profile; popd >> /dev/null"
 alias vb="pushd $HOME/.dotfiles/ >> /dev/null; vi $HOME/.dotfiles/bashrc; popd >> /dev/null"
@@ -331,11 +303,6 @@ alias sqz="ssh luc6@quizor2.cs.pdx.edu"
 alias sshl='ssh-add -L' # List ssh-agent identities
 alias st='ssh -A lpetherbridge@tech.fonality.com'
 alias sv='pushd ~/lib && vagrant ssh -- -A && popd'
-sw2() {
-	TERM=${TERM/"screen-256color"/"xterm-256color"}
-	ssh -A lpetherbridge@web-dev2.fonality.com
-	TERM=${TERM/"xterm-256color"/"screen-256color"}
-}
 alias sp='ssh -A lpetherbridge@fcs-app1.fonality.com'
 alias sf='ssh -A lpetherbridge@devbox5.lotsofclouds.fonality.com'
 alias sq='ssh -A lpetherbridge@qa-app.lotsofclouds.fonality.com'
@@ -370,26 +337,13 @@ alias g='grep --color=auto'
 alias grep='grep --color=auto'
 alias offenders='uptime;ps aux | perl -ane"print if \$F[2] > 0.9"'
 alias path='echo -e ${PATH//:/"\n"}'
-function topm() {
-	echo " %CPU %MEM   PID USER             ARGS";
-	ps -eo pcpu,pmem,pid,user,args | sort -k 1 -r -n | head -10 | cut -d- -f1;
-	echo " %CPU %MEM   PID USER             ARGS";
-	ps -eo pmem,pcpu,pid,user,args | sort -k 1 -r -n | head -10 | cut -d- -f1;
-}
 alias which='type -a'
 alias x='extract.sh'
 alias tm='tm.sh'
 alias mnas="sudo mount -t cifs -o username=$NAS_USER,password=$NAS_PW,port=$NAS_PORT //$NAS_IP/NAS /mnt/NAS"
 
-# Detect which `ls` flavor is in use
-if ls --color > /dev/null 2>&1; then # GNU `ls`
-  colorflag="--color"
-else # OS X `ls`
-  colorflag="-G"
-fi
-
 if [[ "$OSTYPE" =~ 'darwin' ]]; then
-	alias lsusb='system_profiler SPUSBDataType'
+    alias lsusb='system_profiler SPUSBDataType'
 fi
 
 alias ls="command ls -hF $colorflag" # Add colors for filetype recognition
@@ -438,77 +392,121 @@ alias gun='git reset HEAD --'
 # == Functions {{{1
 # ==================================================================================================
 
+function topm() {
+    echo " %CPU %MEM   PID USER     ARGS";
+    ps -eo pcpu,pmem,pid,user,args | sort -k 1 -r -n | head -10 | cut -d- -f1;
+    echo " %CPU %MEM   PID USER     ARGS";
+    ps -eo pmem,pcpu,pid,user,args | sort -k 1 -r -n | head -10 | cut -d- -f1;
+}
+sw2() {
+    TERM=${TERM/"screen-256color"/"xterm-256color"}
+    ssh -A lpetherbridge@web-dev2.fonality.com
+    TERM=${TERM/"xterm-256color"/"screen-256color"}
+}
+function vfrc() {
+    pushd /home/vagrant/.dotfiles/ >> /dev/null;
+    vi /home/vagrant/.dotfiles/vim/after/ftplugin/$1.vim;
+    popd >> /dev/null
+}
+function purge_git() {
+    if _ask_yes_no "Fully purge $1 from repo?"; then
+    git filter-branch --force --index-filter "git rm --cached --ignore-unmatch $1" --prune-empty --tag-name-filter cat -- --all
+    fi
+}
+function fsync() {
+    user=lpetherbridge
+    host=devbox5.lotsofclouds.fonality.com
+    case $1 in
+    stg) host=fcs-stg-app1.lax01.fonality.com;;
+    stg2) host=fcs-stg2-app1.lax01.fonality.com;;
+    stg3) host=fcs-app1.stage3.arch.fonality.com;;
+    stg4) host=fcs-app1.stage4.arch.fonality.com;;
+    stg5) host=fcs-app1.stage5.arch.fonality.com;;
+    stg6) host=fcs-app1.stage6.arch.fonality.com;;
+    esac
+    if _ask_yes_no "Sync $PWD to $host?"; then
+        rsync --verbose --recursive --links --perms --times --executability --compress --cvs-exclude --human-readable --progress --itemize-changes -rsh=ssh . $user@$host:~/lib/
+    fi
+}
+function vim() {
+    # Only run if we're inside tmux
+    if [[ $TMUX != "" ]]; then
+        $HOME/bin/vim_tmux "$@"
+    else
+        command vim "$@"
+    fi
+}
 nb() {
-	pkill -f random_wallpaper_switcher > /dev/null 2>&1
-	(nohup /usr/bin/env perl $HOME/bin/random_wallpaper_switcher.pl >> /tmp/random_wallpaper_switcher.log 2>&1 &)
+    pkill -f random_wallpaper_switcher > /dev/null 2>&1
+    (nohup /usr/bin/env perl $HOME/bin/random_wallpaper_switcher.pl >> /tmp/random_wallpaper_switcher.log 2>&1 &)
 }
 cb() {
-	PS3="Please choose your wallpaper set: "
-	options=("Girls" "Erotic" "Geek" "Nature" "All SFW" "All Girls")
-	select opt in "${options[@]}"
-	do
-		case $opt in
-		"Girls")
-			WALLPAPER_PATH=$HOME/Pictures/girls/wallpaper
-			break
-			;;
-		"Erotic")
-			WALLPAPER_PATH=$HOME/Pictures/girls/nude
-			break
-			;;
-		"Geek")
-			WALLPAPER_PATH=$HOME/Pictures/images/desktop_wallpapers/geek
-			break
-			;;
-		"Nature")
-			WALLPAPER_PATH=$HOME/Pictures/images/desktop_wallpapers/nature
-			break
-			;;
-		"All SFW")
-			WALLPAPER_PATH=$HOME/Pictures/images/desktop_wallpapers/
-			break
-			;;
-		"All Girls")
-			WALLPAPER_PATH=$HOME/Pictures/girls/wallpaper:$HOME/Pictures/girls/nude
-			break
-			;;
-		*)
-			echo "Not a valid option"
-			;;
-		esac
-	done
-	nb
+    PS3="Please choose your wallpaper set: "
+    options=("Girls" "Erotic" "Geek" "Nature" "All SFW" "All Girls")
+    select opt in "${options[@]}"
+    do
+        case $opt in
+        "Girls")
+            WALLPAPER_PATH=$HOME/Pictures/girls/wallpaper
+            break
+            ;;
+        "Erotic")
+            WALLPAPER_PATH=$HOME/Pictures/girls/nude
+            break
+            ;;
+        "Geek")
+            WALLPAPER_PATH=$HOME/Pictures/images/desktop_wallpapers/geek
+            break
+            ;;
+        "Nature")
+            WALLPAPER_PATH=$HOME/Pictures/images/desktop_wallpapers/nature
+            break
+            ;;
+        "All SFW")
+            WALLPAPER_PATH=$HOME/Pictures/images/desktop_wallpapers/
+            break
+            ;;
+        "All Girls")
+            WALLPAPER_PATH=$HOME/Pictures/girls/wallpaper:$HOME/Pictures/girls/nude
+            break
+            ;;
+        *)
+            echo "Not a valid option"
+            ;;
+        esac
+    done
+    nb
 }
 myip() {
-	wget http://ipecho.net/plain -O - -q; echo
+    wget http://ipecho.net/plain -O - -q; echo
 }
 ssh() {
-	TERM=${TERM/tmux/screen}
-	command ssh $*
+    TERM=${TERM/tmux/screen}
+    command ssh $*
 }
 vf() {
-	vim scp://lpetherbridge@devbox5.lotsofclouds.fonality.com/~/fcs/$*
+    vim scp://lpetherbridge@devbox5.lotsofclouds.fonality.com/~/fcs/$*
 }
 vs() {
-	vim scp://lpetherbridge@fcs-stg-app1.lax01.fonality.com/~/fcs/$*
+    vim scp://lpetherbridge@fcs-stg-app1.lax01.fonality.com/~/fcs/$*
 }
 vs2() {
-	vim scp://lpetherbridge@fcs-stg2-app1.lax01.fonality.com/~/fcs/$*
+    vim scp://lpetherbridge@fcs-stg2-app1.lax01.fonality.com/~/fcs/$*
 }
 pprofile() {
-	perl -d:NYTProf $*;
-	nytprofhtml --open;
+    perl -d:NYTProf $*;
+    nytprofhtml --open;
 }
 _ask_yes_no() {
-	echo -en "${MAGENTA}$@ [y/n] ${RESET}" ; read ans
-	case "$ans" in
-		y*|Y*)
-			return 0
-			;;
-		*)
-			return 1
-			;;
-	esac
+    echo -en "${MAGENTA}$@ [y/n] ${RESET}" ; read ans
+    case "$ans" in
+        y*|Y*)
+            return 0
+            ;;
+        *)
+            return 1
+            ;;
+    esac
 }
 
 # Converts SQL output to CSV formatting
@@ -517,55 +515,55 @@ sqlcsv() { cat | sed "s/'/\'/;s/\t/\",\"/g;s/^/\"/;s/$/\"/;s/\n//g"; }
 # Syntax checks all new or modified perl files
 schk() {
     for file in $(git status|egrep 'new file|modified'|egrep '(.pm|.pl)$' |cut -d: -f2|cut -d' ' -f4|sed 's/\//::/g'|sed 's/lib:://'|sed 's/.pm//'); do
-        echo $file
-        perl -ce"use $file"
+    echo $file
+    perl -ce"use $file"
     done
 }
 
 gmf() {
-	local branch_file='.gmf_branches'
-	if [[ -f ${branch_file} ]]; then
-		local current_branch=$(current_branch)
-		local branches=()
-		local i=0
-		while read line; do
-			branches[$i]=$line
-			i=$(($i + 1))
-		done < ${branch_file}
-		local main_branch=${branches[0]}
+    local branch_file='.gmf_branches'
+    if [[ -f ${branch_file} ]]; then
+        local current_branch=$(current_branch)
+        local branches=()
+        local i=0
+        while read line; do
+            branches[$i]=$line
+            i=$(($i + 1))
+        done < ${branch_file}
+        local main_branch=${branches[0]}
 
-		command="GIT_MERGE_AUTOEDIT=no;echo 'Merging ${current_branch} into ${main_branch}' &&"
-		command="$command git checkout ${main_branch} && "
-		command="$command git pull && "
-		command="$command git merge ${current_branch} && "
-		command="$command git push origin ${main_branch} "
-		for this_branch in "${branches[@]}"; do
-			if [ "${this_branch}" = "${main_branch}" ]; then
-	continue
-			fi
-			command="$command && echo 'Merging ${main_branch} into ${this_branch}' &&"
-			command="$command git checkout ${this_branch} && "
-			command="$command git pull && "
-			command="$command git merge ${main_branch} && "
-			command="$command git push origin ${this_branch}"
-		done
-		command="$command && git checkout ${main_branch}"
-		echo $command
-		if _ask_yes_no "Proceed?"; then
-			eval $command
-		fi
-	fi
+        command="GIT_MERGE_AUTOEDIT=no;echo 'Merging ${current_branch} into ${main_branch}' &&"
+        command="$command git checkout ${main_branch} && "
+        command="$command git pull && "
+        command="$command git merge ${current_branch} && "
+        command="$command git push origin ${main_branch} "
+        for this_branch in "${branches[@]}"; do
+            if [ "${this_branch}" = "${main_branch}" ]; then
+    continue
+            fi
+            command="$command && echo 'Merging ${main_branch} into ${this_branch}' &&"
+            command="$command git checkout ${this_branch} && "
+            command="$command git pull && "
+            command="$command git merge ${main_branch} && "
+            command="$command git push origin ${this_branch}"
+        done
+        command="$command && git checkout ${main_branch}"
+        echo $command
+        if _ask_yes_no "Proceed?"; then
+            eval $command
+        fi
+    fi
 }
 
 updatedb() {
-	case "$OSTYPE" in
-		darwin*)
-			sudo /usr/libexec/locate.updatedb
-			;;
-		*)
-			updatedb
-			;;
-	esac
+    case "$OSTYPE" in
+        darwin*)
+            sudo /usr/libexec/locate.updatedb
+            ;;
+        *)
+            updatedb
+            ;;
+    esac
 }
 
 # mkdir & cd to it
@@ -579,18 +577,18 @@ sn() { echo -n -e "\033k$*\033\\"; SCREEN_TITLE=$*; }
 # Grep commands
 h() { if [ -z "$*" ]; then history; else history | egrep "$@"; fi; }
 pg() {
-	CMD=''
-	case "$OSTYPE" in
-		darwin*) CMD='ps aux'
-			;;
-		*) CMD='ps auxf'
-			;;
-	esac
-	if [ -z $1 ]; then
-		$CMD
-	else
-		$CMD | grep $*
-	fi
+    CMD=''
+    case "$OSTYPE" in
+        darwin*) CMD='ps aux'
+            ;;
+        *) CMD='ps auxf'
+            ;;
+    esac
+    if [ -z $1 ]; then
+        $CMD
+    else
+        $CMD | grep $*
+    fi
 }
 
 # Convert unix epoc to current timezone
@@ -599,75 +597,75 @@ unixtime() { date --date="1970-01-01 $* sec GMT"; }
 myps() { ps -f $@ -u $USER -o pid,%cpu,%mem,bsdtime,command ; }
 
 sa() {
-	sourcefile /tmp/ssh-agent-$HOSTNAME-info
+    sourcefile /tmp/ssh-agent-$HOSTNAME-info
 }
 ra() {
-	if [ ! -z $SSH_AGENT_PID ]; then
-		if [ ! -z $1 ] || _ask_yes_no "Restart ssh-agent?"; then
-			unset SSH_AUTH_SOCK
-			unset SSH_AGENT_PID
-			pkill -f ssh-agent
-		fi
-	fi
-	rm -f /tmp/ssh-agent-$HOSTNAME
-	echo `ssh-agent -s -a /tmp/ssh-agent-$HOSTNAME` >| /tmp/ssh-agent-$HOSTNAME-info
-	source /tmp/ssh-agent-$HOSTNAME-info
+    if [ ! -z $SSH_AGENT_PID ]; then
+        if [ ! -z $1 ] || _ask_yes_no "Restart ssh-agent?"; then
+            unset SSH_AUTH_SOCK
+            unset SSH_AGENT_PID
+            pkill -f ssh-agent
+        fi
+    fi
+    rm -f /tmp/ssh-agent-$HOSTNAME
+    echo `ssh-agent -s -a /tmp/ssh-agent-$HOSTNAME` >| /tmp/ssh-agent-$HOSTNAME-info
+    source /tmp/ssh-agent-$HOSTNAME-info
 }
 arsa() {
-	[[ -f "$HOME/.ssh/id_rsa" ]] && ra && ssh-add "$HOME/.ssh/id_rsa"
+    [[ -f "$HOME/.ssh/id_rsa" ]] && ra && ssh-add "$HOME/.ssh/id_rsa"
 }
 akey() {
-	if [ $(system_profiler SPUSBDataType 2> /dev/null| grep "SafeNet" -c) -gt 0 ]; then
-                ra
-                if [ $1 ]; then
-                    echo $1 | ssh-add -s '/usr/local/lib/libeTPkcs11.dylib.1'
-                else
-                    ssh-add -s '/usr/local/lib/libeTPkcs11.dylib.1'
-                fi
-	fi
+    if [ $(system_profiler SPUSBDataType 2> /dev/null| grep "SafeNet" -c) -gt 0 ]; then
+        ra
+        if [ $1 ]; then
+            echo $1 | ssh-add -s '/usr/local/lib/libeTPkcs11.dylib.1'
+        else
+            ssh-add -s '/usr/local/lib/libeTPkcs11.dylib.1'
+        fi
+    fi
 }
 
 # Get current host related info
 ii() {
-	echo -e "\nYou are logged on ${BLU}${HOSTNAME}${RESET}";
-	echo -e "\n${RED}Additionnal information:${RESET} " ; uname -a
-	echo -e "\n${RED}Users logged on:${RESET} " ; w -h
-	echo -e "\n${RED}Current date :${RESET} " ; date
-	echo -e "\n${RED}Machine stats :${RESET} " ; uptime
-	if [ $(which free 2> /dev/null) ]; then
-		echo -e "\n${RED}Memory stats :${RESET} " ; free
-	fi
-	echo
+    echo -e "\nYou are logged on ${BLU}${HOSTNAME}${RESET}";
+    echo -e "\n${RED}Additionnal information:${RESET} " ; uname -a
+    echo -e "\n${RED}Users logged on:${RESET} " ; w -h
+    echo -e "\n${RED}Current date :${RESET} " ; date
+    echo -e "\n${RED}Machine stats :${RESET} " ; uptime
+    if [ $(which free 2> /dev/null) ]; then
+        echo -e "\n${RED}Memory stats :${RESET} " ; free
+    fi
+    echo
 }
 
 if [[ "$OSTYPE" =~ 'darwin' ]]; then
-	hide() {
-		echo "Hiding hidden files..."
-		defaults write com.apple.finder AppleShowAllFiles TRUE
-		defaults write com.apple.finder AppleShowAllFiles FALSE
-		# force changes by restarting Finder
-		killall Finder
-	}
-	show() {
-		echo "Showing hidden files...";
-		defaults write com.apple.finder AppleShowAllFiles TRUE
-		# force changes by restarting Finder
-		killall Finder
-	}
+    hide() {
+        echo "Hiding hidden files..."
+        defaults write com.apple.finder AppleShowAllFiles TRUE
+        defaults write com.apple.finder AppleShowAllFiles FALSE
+        # force changes by restarting Finder
+        killall Finder
+    }
+    show() {
+        echo "Showing hidden files...";
+        defaults write com.apple.finder AppleShowAllFiles TRUE
+        # force changes by restarting Finder
+        killall Finder
+    }
 fi
 
 # Prompt functions
 bg_jobs() {
-	jobs=$(jobs -r | wc -l | tr -d '[[:space:]]')
-	if [[ $jobs > 0 ]]; then
-		echo $jobs
-	fi
+    jobs=$(jobs -r | wc -l | tr -d '[[:space:]]')
+    if [[ $jobs > 0 ]]; then
+        echo $jobs
+    fi
 }
 st_jobs() {
-	jobs=$(jobs -s | wc -l | tr -d '[[:space:]]')
-	if [[ $jobs -gt 0 ]]; then
-		echo $jobs
-	fi
+    jobs=$(jobs -s | wc -l | tr -d '[[:space:]]')
+    if [[ $jobs -gt 0 ]]; then
+        echo $jobs
+    fi
 }
 
 # Git
@@ -722,39 +720,39 @@ git_prompt_info() {
 # use a neutral color, otherwise colors will vary according to time.
 git_time_since_commit() {
     if git rev-parse --git-dir > /dev/null 2>&1; then
-        # Only proceed if there is actually a commit.
-        if [[ $(git log 2>&1 > /dev/null | grep -c "^fatal: bad default revision") == 0 ]]; then
-            # Get the last commit.
-            last_commit=`git log --pretty=format:'%at' -1 2> /dev/null`
-            now=`date +%s`
-            seconds_since_last_commit=$((now-last_commit))
+    # Only proceed if there is actually a commit.
+    if [[ $(git log 2>&1 > /dev/null | grep -c "^fatal: bad default revision") == 0 ]]; then
+        # Get the last commit.
+        last_commit=`git log --pretty=format:'%at' -1 2> /dev/null`
+        now=`date +%s`
+        seconds_since_last_commit=$((now-last_commit))
 
-            # Totals
-            MINUTES=$((seconds_since_last_commit / 60))
-            HOURS=$((seconds_since_last_commit/3600))
+        # Totals
+        MINUTES=$((seconds_since_last_commit / 60))
+        HOURS=$((seconds_since_last_commit/3600))
 
-            # Sub-hours and sub-minutes
-            DAYS=$((seconds_since_last_commit / 86400))
-            SUB_HOURS=$((HOURS % 24))
-            SUB_MINUTES=$((MINUTES % 60))
+        # Sub-hours and sub-minutes
+        DAYS=$((seconds_since_last_commit / 86400))
+        SUB_HOURS=$((HOURS % 24))
+        SUB_MINUTES=$((MINUTES % 60))
 
-            if [ "$HOURS" -gt 24 ]; then
-                echo "${BASH_THEME_GIT_TIME_SINCE_COMMIT_LONG}${BASH_THEME_GIT_TIME_SINCE_COMMIT_BEFORE}${DAYS}d${SUB_HOURS}h${SUB_MINUTES}m${BASH_THEME_GIT_TIME_SINCE_COMMIT_AFTER}${RCLR}"
-            elif [ "$MINUTES" -gt 60 ]; then
-                echo "${BASH_THEME_GIT_TIME_SHORT_COMMIT_MEDIUM}${BASH_THEME_GIT_TIME_SINCE_COMMIT_BEFORE}${HOURS}h${SUB_MINUTES}m${BASH_THEME_GIT_TIME_SINCE_COMMIT_AFTER}${RCLR}"
-            else
-                echo "${BASH_THEME_GIT_TIME_SINCE_COMMIT_SHORT}${BASH_THEME_GIT_TIME_SINCE_COMMIT_BEFORE}${MINUTES}m${BASH_THEME_GIT_TIME_SINCE_COMMIT_AFTER}${RCLR}"
-            fi
+        if [ "$HOURS" -gt 24 ]; then
+        echo "${BASH_THEME_GIT_TIME_SINCE_COMMIT_LONG}${BASH_THEME_GIT_TIME_SINCE_COMMIT_BEFORE}${DAYS}d${SUB_HOURS}h${SUB_MINUTES}m${BASH_THEME_GIT_TIME_SINCE_COMMIT_AFTER}${RCLR}"
+        elif [ "$MINUTES" -gt 60 ]; then
+        echo "${BASH_THEME_GIT_TIME_SHORT_COMMIT_MEDIUM}${BASH_THEME_GIT_TIME_SINCE_COMMIT_BEFORE}${HOURS}h${SUB_MINUTES}m${BASH_THEME_GIT_TIME_SINCE_COMMIT_AFTER}${RCLR}"
         else
-            echo "${BASH_THEME_GIT_TIME_SINCE_COMMIT_BEFORE}~${BASH_THEME_GIT_TIME_SINCE_COMMIT_AFTER}"
+        echo "${BASH_THEME_GIT_TIME_SINCE_COMMIT_SHORT}${BASH_THEME_GIT_TIME_SINCE_COMMIT_BEFORE}${MINUTES}m${BASH_THEME_GIT_TIME_SINCE_COMMIT_AFTER}${RCLR}"
         fi
+    else
+        echo "${BASH_THEME_GIT_TIME_SINCE_COMMIT_BEFORE}~${BASH_THEME_GIT_TIME_SINCE_COMMIT_AFTER}"
+    fi
     fi
 }
 # Checks if working tree is dirty
 parse_git_dirty() {
   local SUBMODULE_SYNTAX=''
   if [[ $POST_1_7_2_GIT -gt 0 ]]; then
-        SUBMODULE_SYNTAX="--ignore-submodules=dirty"
+    SUBMODULE_SYNTAX="--ignore-submodules=dirty"
   fi
   if [[ -n $(git status -s ${SUBMODULE_SYNTAX}  2> /dev/null) ]]; then
     echo "$BASH_THEME_GIT_PROMPT_DIRTY"
@@ -847,51 +845,51 @@ BASH_THEME_GIT_TIME_SINCE_COMMIT_AFTER=""
 
 # Trim working path to 1/2 of screen width
 prompt_pwd() {
-	local pwd_max_len=$(($(tput cols) / 2))
-	local trunc_symbol="..."
-	PWD=${PWD/$HOME/"~"}
-	if [ ${#PWD} -gt ${pwd_max_len} ]
-	then
-		local pwd_offset=$(( ${#PWD} - ${pwd_max_len} + 3 ))
-		PWD="${trunc_symbol}${PWD[${pwd_offset},${#PWD}]}"
-	fi
-	echo -e "${PWD}"
+    local pwd_max_len=$(($(tput cols) / 2))
+    local trunc_symbol="..."
+    PWD=${PWD/$HOME/"~"}
+    if [ ${#PWD} -gt ${pwd_max_len} ]
+    then
+        local pwd_offset=$(( ${#PWD} - ${pwd_max_len} + 3 ))
+        PWD="${trunc_symbol}${PWD[${pwd_offset},${#PWD}]}"
+    fi
+    echo -e "${PWD}"
 }
 
 prompt_on() {
-	case ${OSTYPE} in
-		darwin*)
-			PS1_HOST="mac"
-			;;
-		*)
-			PS1_HOST="${HOSTNAME}"
-			;;
-	esac
+    case ${OSTYPE} in
+        darwin*)
+            PS1_HOST="mac"
+            ;;
+        *)
+            PS1_HOST="${HOSTNAME}"
+            ;;
+    esac
 
-	echo -e "$CYAN"
-	if [[ $(declare -f bg_jobs) && $(bg_jobs) ]]; then
-		echo -ne "[$(bg_jobs)] "
-	fi
-	if [[ $(declare -f st_jobs) && $(st_jobs) ]]; then
-		echo -ne "{$(st_jobs)} "
-	fi
-	if [[ ! $TERM =~ screen ]]; then
-		echo -ne "$(date +'%F %R') "
-	fi
-	if [[ $PS1_HOST ]]; then
-		echo -ne "$USER @ $PS1_HOST "
-	fi
-	if [[ $(declare -f parse_git_branch) && $(parse_git_branch) ]]; then
-		echo -ne "($(parse_git_branch)) "
-	fi
-	echo -e "$(prompt_pwd)$RESET"
+    echo -ne "$ORANGE"
+    if [[ $(declare -f bg_jobs) && $(bg_jobs) ]]; then
+        echo -ne "[$(bg_jobs)] "
+    fi
+    if [[ $(declare -f st_jobs) && $(st_jobs) ]]; then
+        echo -ne "{$(st_jobs)} "
+    fi
+    if [[ ! $TERM =~ screen ]]; then
+        echo -ne "$(date +'%F %R') "
+    fi
+    if [[ $PS1_HOST ]]; then
+        echo -ne "$USER @ $PS1_HOST "
+    fi
+    if [[ $(declare -f parse_git_branch) && $(parse_git_branch) ]]; then
+        echo -ne "($(parse_git_branch)) "
+    fi
+    echo -e "$(prompt_pwd)$RESET"
 }
 PS1="> "
 PS2=">> "
 
 prompt_off() {
-	PROMPT_COMMAND=""
-	PS1='$(prompt_pwd) > '
+    PROMPT_COMMAND=""
+    PS1='$(prompt_pwd) > '
 }
 
 PROMPT_COMMAND="history -a; history -n; prompt_on"
@@ -902,9 +900,9 @@ ascii_art() {
     cat << 'EOF'
              .,-:;//;:=,
          . :H@@@MM@M#H/.,+%;,
-      ,/X+ +M@@M@MM%=,-%HMMM@X/,
-     -+@MM; $M@@MH+-,;XMMMM@MMMM@+-
-    ;@M@@M- XM@X;. -+XXXXXHHH@M@M#@/.
+       ,/X+ +M@@M@MM%=,-%HMMM@X/,
+      -+@MM; $M@@MH+-,;XMMMM@MMMM@+-
+     ;@M@@M- XM@X;. -+XXXXXHHH@M@M#@/.
   ,%MM@@MH ,@%=            .---=-=:=,.
   -@#@@@MX .,              -%HX$$%%%+;
  =-./@M@M$                  .;@MMMM@MM:
@@ -915,9 +913,9 @@ ascii_art() {
  /MMMM@MMH/.                  XM@MH; -;
   /%+%$XHH@$=              , .H@@@@MX,
    .=--------.           -%H.,@@@@@MX,
-   .%MM@@@HHHXX$$$%+- .:$MMX -M@@MM%.
-     =XMMM@MM@MM#H;,-+HMM@M+ /MMMX=
-       =%@M@M#@$-.=$@MM@@@M; %M%=
+    .%MM@@@HHHXX$$$%+- .:$MMX -M@@MM%.
+      =XMMM@MM@MM#H;,-+HMM@M+ /MMMX=
+        =%@M@M#@$-.=$@MM@@@M; %M%=
          ,:+$+-,/H#MMMMMMM@- -,
                =++%%%%+/:-.
 
@@ -926,23 +924,25 @@ EOF
 }
 
 profile() {
-    endn=$(date +%s)
-    ends=$(date +%s)
+    (( $PROFILE )) || return
+    end=$(gdate +%s.%N 2>/dev/null || date +%s.%N)
     echo -n $ORANGE
     if [[ $(which bc 2>/dev/null) ]]; then
-        dt=$(echo "$endn - $startn" | bc)
-        dd=$(echo "$dt/86400" | bc)
-        dt2=$(echo "$dt-86400*$dd" | bc)
-        dh=$(echo "$dt2/3600" | bc)
-        dt3=$(echo "$dt2-3600*$dh" | bc)
-        dm=$(echo "$dt3/60" | bc)
-        ds=$(echo "$dt3-60*$dm" | bc)
-        printf "\nTotal runtime: %d:%02d:%02d:%02.4f" $dd $dh $dm $ds
+    dt=$(echo "$end - $start" | bc)
+    dd=$(echo "$dt/86400" | bc)
+    dt2=$(echo "$dt-86400*$dd" | bc)
+    dh=$(echo "$dt2/3600" | bc)
+    dt3=$(echo "$dt2-3600*$dh" | bc)
+    dm=$(echo "$dt3/60" | bc)
+    ds=$(echo "$dt3-60*$dm" | bc)
+    printf "\nTotal runtime: %d:%02d:%02d:%02.4f" $dd $dh $dm $ds
     else
-        dt=$(($ends - $starts))
-        printf "Total runtime: %ds" $dt
+    start=${start%.*}
+    end=${end%.*}
+    dt=$(($end - $start))
+    printf "Total runtime: %ds" $dt
     fi
-    echo -n $RESET
+    echo -e $RESET
 }
 
 
@@ -951,7 +951,9 @@ profile() {
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 ascii_art
-# profile
-cm
+profile
+[ -d ~/fcs/ ] && cm
 
 # }}}
+
+# vim: foldmethod=marker foldlevel=0

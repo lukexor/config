@@ -29,6 +29,7 @@ runtime custom_plugins/goto_file.vim
 runtime custom_plugins/schlepp.vim
 
 set nocompatible                 " Disable VI backwards compatible settings. Must be first
+set modelines=1
 if exists('+antialias')
     set antialias                " Mac OS X: antialiased fonts
 endif
@@ -283,9 +284,10 @@ endfunction
 " This replaces spaces for the current tabstop with literal tabs
 command! RetabIndents call RetabIndents()
 func! RetabIndents()
-    let saved_view = winsaveview()
-    execute '%s@^\(\ \{'.&ts.'\}\)\+@\=repeat("\t", len(submatch(0))/'.&ts.')@e'
-    call winrestview(saved_view)
+    " let saved_view = winsaveview()
+    " execute '%s@^\(\ \{'.&ts.'\}\)\+@\=repeat("\t", len(submatch(0))/'.&ts.')@e'
+    " call winrestview(saved_view)
+    :set ts=8 noet | retab! | set et ts=4 | retab
 endfunc
 
 " When autocompleting within an identifier, prevent duplications...
@@ -777,4 +779,4 @@ highlight link SyntasticWarningSign SignColumn
 
 " }}}
 
-" vim:foldmethod=marker:foldlevel=0
+" vim: foldmethod=marker foldlevel=0
