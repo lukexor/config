@@ -731,23 +731,25 @@ Nnoremap <silent> <localleader>: [Toggle : being considered part of a word] :cal
 Nnoremap <silent> <localleader>$ [Toggle $ being considered part of a word] :call ToggleIskeyword('$')<CR>
 
 " These don't need to be documented
-nmap <silent> <expr>  zu  FS_FoldAroundTarget('^\s*use\s\+\S.*;',{'context':1})
-nmap <silent> <expr>  zz  FS_ToggleFoldAroundSearch({'context':1})
+nnoremap <silent> <expr>  zu  FS_FoldAroundTarget('^\s*use\s\+\S.*;',{'context':1})
+nnoremap <silent> <expr>  zz  FS_ToggleFoldAroundSearch({'context':1})
 noremap  j gj
 noremap  k gk
 vnoremap <C-V> v
 vnoremap v <C-V>
 
 " Mapping selecting mappings
-nmap <leader><tab> <plug>(fzf-maps-n)
-xmap <leader><tab> <plug>(fzf-maps-x)
-omap <leader><tab> <plug>(fzf-maps-o)
+nnoremap <leader><tab> <plug>(fzf-maps-n)
+xnoremap <leader><tab> <plug>(fzf-maps-x)
+onoremap <leader><tab> <plug>(fzf-maps-o)
 
 " Insert mode completion
-imap <c-x><c-k> <plug>(fzf-complete-word)
-imap <c-x><c-f> <plug>(fzf-complete-path)
-imap <c-x><c-j> <plug>(fzf-complete-file-ag)
-imap <c-x><c-l> <plug>(fzf-complete-line)
+inoremap <c-x><c-k> <plug>(fzf-complete-word)
+inoremap <c-x><c-f> <plug>(fzf-complete-path)
+inoremap <c-x><c-j> <plug>(fzf-complete-file-ag)
+inoremap <c-x><c-l> <plug>(fzf-complete-line)
+
+inoremap jj <ESC>
 
 " Advanced customization using autoload functions
 inoremap <expr> <c-x><c-k> fzf#vim#complete#word({'left': '15%'})

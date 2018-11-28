@@ -71,9 +71,7 @@ if [ -d $HOME/lib/fcs ]; then
 	export NO_MYSQL_AUTOCONNECT=1
 	export FCS_APP_URL='http://portlandia-stg6.fonality.com'
 	# export FCS_CP_URL='http://dev-cp.lotsofclouds.fonality.com/'
-	# export NF_API_URL='https://swagger-arch.fonality.com:10113/'
 	export SYS_API_URL='http://portlandia-stg6-sysapi.arch.fonality.com/'
-	# export NF_API_URL='http://localhost:8090/'
 	for dir in $(find "$FON_DIR/bin" -type d); do
 		pathprepend $dir
 	done
@@ -99,6 +97,27 @@ if [[ -d "$HOME/dev/tools/android-sdk-macosx/" ]]; then
 	pathappend "${ANDROID_HOME}/tools"
 	pathappend "${ANDROID_HOME}/platform-tools"
 fi
+
+function cm {
+    nf
+    export NF_API_URL=https://nf-lb-la.arch.fonality.com:10106/rest?Url=
+    echo "Set NF_API_URL to" $NF_API_URL
+}
+function ds {
+    nf
+    export NF_API_URL=http://nf-lb-la.arch.fonality.com:10109/
+    echo "Set NF_API_URL to" $NF_API_URL
+}
+function nf {
+    export NF_AUTH_URL=https://nf-lb-la.arch.fonality.com:10102/
+    export NF_CONTENT_URL=https://sandbox-content.nxf-test.fonality.com/
+    echo "Set NF_AUTH_URL to" $NF_AUTH_URL
+    echo "Set NF_CONTENT_URL to" $NF_CONTENT_URL
+}
+function wnf {
+    echo "NF_API_URL is" $NF_API_URL
+    echo "NF_CONTENT_URL is" $NF_CONTENT_URL
+}
 
 # Home directory
 pathprepend "$HOME/.rvm/bin"
@@ -901,6 +920,7 @@ ascii_art() {
        =%@M@M#@$-.=$@MM@@@M; %M%=
          ,:+$+-,/H#MMMMMMM@- -,
                =++%%%%+/:-.
+
 EOF
     echo -n $RESET
 }
@@ -932,6 +952,6 @@ profile() {
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 ascii_art
 # profile
+cm
 
 # }}}
-
