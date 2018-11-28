@@ -23,3 +23,4 @@ silent! nunmap <leader>hp
 silent! nunmap <leader>hr
 silent! nunmap <leader>hu
 silent! nunmap <leader>hs
+Inoremap <tab> [Close bracket] <C-R>=ClosePair()<CR>

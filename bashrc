@@ -141,45 +141,38 @@ sourcefile "$HOME/.fzf.bash"
 # == Colors {{{1
 # ==================================================================================================
 
-if tput setaf 1 &> /dev/null; then
+if tput colors &> /dev/null; then
   tput sgr0
   if [[ $(tput colors) -ge 256 ]] 2>/dev/null; then
-    # Changed these colors to fit Solarized theme
-    RED=$(tput setaf 125)
-    GREEN=$(tput setaf 64)
-    ORANGE=$(tput setaf 166)
-    BLUE=$(tput setaf 33)
-    PURPLE=$(tput setaf 61)
-    CYAN=$(tput setaf 87)
-    WHITE=$(tput setaf 244)
+    export BLACK=$(tput setaf 0)
+    export RED=$(tput setaf 1)
+    export GREEN=$(tput setaf 34)
+    export ORANGE=$(tput setaf 202)
+    export BLUE=$(tput setaf 12)
+    export PURPLE=$(tput setaf 5)
+    export CYAN=$(tput setaf 14)
+    export WHITE=$(tput setaf 15)
   else
-    RED=$(tput setaf 1)
-    GREEN=$(tput setaf 2)
-    ORANGE=$(tput setaf 3)
-    BLUE=$(tput setaf 4)
-    PURPLE=$(tput setaf 5)
-    CYAN=$(tput setaf 6)
-    WHITE=$(tput setaf 7)
+    export BLACK=$(tput setaf 0)
+    export RED=$(tput setaf 1)
+    export GREEN=$(tput setaf 2)
+    export ORANGE=$(tput setaf 3)
+    export BLUE=$(tput setaf 4)
+    export PURPLE=$(tput setaf 5)
+    export CYAN=$(tput setaf 6)
+    export WHITE=$(tput setaf 7)
   fi
-  BOLD=$(tput bold)
-  RESET=$(tput sgr0)
+  export BOLD=$(tput bold)
+  export RESET=$(tput sgr0)
 else
-  MAGENTA="\033[1;31m"
-  ORANGE="\033[1;33m"
-  GREEN="\033[1;32m"
-  PURPLE="\033[1;35m"
-  WHITE="\033[1;37m"
-  BOLD=""
-  RESET="\033[m"
+  export MAGENTA="\033[1;31m"
+  export ORANGE="\033[1;33m"
+  export GREEN="\033[1;32m"
+  export PURPLE="\033[1;35m"
+  export WHITE="\033[1;37m"
+  export BOLD=""
+  export RESET="\033[m"
 fi
-
-export MAGENTA
-export ORANGE
-export GREEN
-export PURPLE
-export WHITE
-export BOLD
-export RESET
 
 # == Shell Options {{{1
 # ==================================================================================================
@@ -856,7 +849,7 @@ prompt_on() {
 			;;
 	esac
 
-	echo -e "$BOLD$GREEN"
+	echo -e "$CYAN"
 	if [[ $(declare -f bg_jobs) && $(bg_jobs) ]]; then
 		echo -ne "[$(bg_jobs)] "
 	fi
@@ -874,7 +867,7 @@ prompt_on() {
 	fi
 	echo -e "$(prompt_pwd)$RESET"
 }
-PS1="\$ "
+PS1="> "
 PS2=">> "
 
 prompt_off() {
@@ -882,28 +875,63 @@ prompt_off() {
 	PS1='$(prompt_pwd) > '
 }
 
-PROMPT_COMMAND="history -a; prompt_on"
+PROMPT_COMMAND="history -a; history -n; prompt_on"
+
+ascii_art() {
+    clear
+    echo -n $BLUE
+    cat << 'EOF'
+             .,-:;//;:=,
+         . :H@@@MM@M#H/.,+%;,
+      ,/X+ +M@@M@MM%=,-%HMMM@X/,
+     -+@MM; $M@@MH+-,;XMMMM@MMMM@+-
+    ;@M@@M- XM@X;. -+XXXXXHHH@M@M#@/.
+  ,%MM@@MH ,@%=            .---=-=:=,.
+  -@#@@@MX .,              -%HX$$%%%+;
+ =-./@M@M$                  .;@MMMM@MM:
+ X@/ -$MM/                    .+MM@@@M$
+,@M@H: :@:                    . -X#@@@@-
+,@@@MMX, .                    /H- ;@M@M=
+.H@@@@M@+,                    %MM+..%#$.
+ /MMMM@MMH/.                  XM@MH; -;
+  /%+%$XHH@$=              , .H@@@@MX,
+   .=--------.           -%H.,@@@@@MX,
+   .%MM@@@HHHXX$$$%+- .:$MMX -M@@MM%.
+     =XMMM@MM@MM#H;,-+HMM@M+ /MMMX=
+       =%@M@M#@$-.=$@MM@@@M; %M%=
+         ,:+$+-,/H#MMMMMMM@- -,
+               =++%%%%+/:-.
+EOF
+    echo -n $RESET
+}
+
+profile() {
+    endn=$(date +%s)
+    ends=$(date +%s)
+    echo -n $ORANGE
+    if [[ $(which bc 2>/dev/null) ]]; then
+        dt=$(echo "$endn - $startn" | bc)
+        dd=$(echo "$dt/86400" | bc)
+        dt2=$(echo "$dt-86400*$dd" | bc)
+        dh=$(echo "$dt2/3600" | bc)
+        dt3=$(echo "$dt2-3600*$dh" | bc)
+        dm=$(echo "$dt3/60" | bc)
+        ds=$(echo "$dt3-60*$dm" | bc)
+        printf "\nTotal runtime: %d:%02d:%02d:%02.4f" $dd $dh $dm $ds
+    else
+        dt=$(($ends - $starts))
+        printf "Total runtime: %ds" $dt
+    fi
+    echo -n $RESET
+}
 
 
 # == End Profiling {{{1
 # ==================================================================================================
 
-endn=$(date +%s)
-ends=$(date +%s)
-if [[ $(which bc 2>/dev/null) ]]; then
-	dt=$(echo "$endn - $startn" | bc)
-	dd=$(echo "$dt/86400" | bc)
-	dt2=$(echo "$dt-86400*$dd" | bc)
-	dh=$(echo "$dt2/3600" | bc)
-	dt3=$(echo "$dt2-3600*$dh" | bc)
-	dm=$(echo "$dt3/60" | bc)
-	ds=$(echo "$dt3-60*$dm" | bc)
-	printf "Total runtime: %d:%02d:%02d:%02.4f" $dd $dh $dm $ds
-else
-	dt=$(($ends - $starts))
-	printf "Total runtime: %ds" $dt
-fi
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+ascii_art
+# profile
 
 # }}}
 
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash

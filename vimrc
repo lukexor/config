@@ -4,6 +4,11 @@
 " TODO
 " Update Maps to show other modes
 
+" quickfix tips
+" :make to check/compile error list
+" :vimgrep /{pattern}/ {files} - useful for finding TODOs vimgrep /TODO/ **/
+" :copen :cclose - quickfix window
+
 " Global variables
 let b:fsize=getfsize(@%)
 let mapleader=' '
@@ -382,37 +387,44 @@ function! HLNext(blinktime)
     endfor
 endfunction
 
-Inoremap <tab> [Close bracket] <C-R>=ClosePair()<CR>
 function! ClosePair()
     let line = getline('.')
     let col = col('.')
-    let nchar = line[col]
-    let nchar1 = line[col-1]
-    let nchar2 = line[col-2]
-    let pchar = line[col-2]
-    let pchar2 = line[col-3]
+    let nextc3 = line[col+1]
+    let nextc2 = line[col]
+    let nextc1 = line[col-1]
+    let prevc1 = line[col-2]
+    let prevc2 = line[col-3]
+    let prevc3 = line[col-4]
     let match = { '(':')', '{':'}', '[':']', '<':'>', '`':'`' }
     let str = ""
     let mov = ""
-    if has_key(match, pchar) && nchar1 == match[pchar]
-        if !has_key(match, pchar2) || nchar != match[pchar2]
-            return "  \<left>"
+    if has_key(match, prevc1) && nextc1 == match[prevc1]
+        return "  \<left>"
+    endif
+    if has_key(match, prevc2) && nextc2 == match[prevc2] && prevc1 == " "
+        if has_key(match, prevc3) && nextc3 == match[prevc3]
+            return "\<backspace>\<CR>\<Esc>0dt" . nextc2 . "i\<CR>\<Esc>0dt" . nextc2 . "i\<up>\<tab>"
+        else
+            return "\<backspace>\<CR>\<CR>\<up>\<tab>"
         endif
     endif
-    if has_key(match, pchar2) && nchar2 == match[pchar2] && pchar == " "
-        return "\<CR>" . match[pchar2] . "\<up>"
-    endif
-    if pchar =~ "[({\[<`]" && has_key(match, pchar)
-        let str = str . match[pchar]
+    if prevc1 =~ "[({\[<`]" && has_key(match, prevc1) && nextc1 != match[prevc1]
+        let str = str . match[prevc1]
         let mov = mov . "\<left>"
     endif
-    if pchar2 =~ "[({\[<`]" && has_key(match, pchar2)
-        if pchar == " "
+    if prevc2 =~ "[({\[<`]" && has_key(match, prevc2) && nextc2 != match[prevc2]
+        if prevc1 == " "
             let str = str . " "
             let mov = mov . "\<left>"
         endif
-        let str = str . match[pchar2]
-        let mov = mov . "\<left>"
+        if prevc3 =~ "[({\[<`]"
+            let str = str . match[prevc2] . match[prevc3]
+            let mov = mov . "\<left>\<left>"
+        else
+            let str = str . match[prevc2]
+            let mov = mov . "\<left>"
+        endif
     endif
     if !empty(str)
         return str . mov
@@ -611,6 +623,8 @@ Nmap      <localleader>}        [Surround current paragraph with curly braces an
 " Fix for syntax highlighting from above line } } }
 Nmap      cP                    [Copy line to System clipboard] <Plug>SystemCopyLine
 Nmap      ga                    [Align columns in normal mode with ga{motion}] <Plug>(EasyAlign)
+Nnoremap  <localleader>n        [Go to next error]:cn<CR>
+Nnoremap  <localleader>p        [Go to previous error]:cp<CR>
 Nnoremap  <CR>                  [Create new empty lines with Enter] o<Esc>
 Nnoremap  <leader>-             [Maximize current window when in a vertial split] :wincmd _<CR>:wincmd \|<CR>
 Nnoremap  <leader>=             [Equalize vertical split window widths] :wincmd =<CR>
@@ -672,7 +686,7 @@ Nnoremap  <leader>tp            [Previous Tag] :tprevious<CR>
 Nnoremap  <leader>w             [Save file changes] :write<CR>
 Nnoremap  <leader>x             [Write and quit current window] :x<CR>
 Nnoremap  <leader>z             [Background vim and return to shell] <C-Z>
-Nnoremap  <localleader>p        [Display current project directory] :echo g:project_dir<CR>
+Nnoremap  <leader>p             [Display current project directory] :echo g:project_dir<CR>
 Nnoremap  <localleader>1        [Toggle NERDTree window] :NERDTreeToggle<CR>
 Nnoremap  <localleader>2        [Toggle Tagbar window] :TagbarToggle<CR>
 Nnoremap  <localleader>3        [Toggle Line Numbers and Git Gutter] :set rnu! nu! list!<CR>:GitGutterToggle<CR>
