@@ -42,7 +42,9 @@ set backspace=indent,eol,start
 " Set directory to store backup files in.
 " These are created when saving, and deleted after successfully written
 set backupdir=$HOME/.vim/tmp//
-set breakindent                  " Wrapped line repeats indent
+if v:version >= 704
+    set breakindent                  " Wrapped line repeats indent
+endif
 set directory=$HOME/.vim/tmp//
 set complete+=kspell             " Use the active spell checking
 set complete+=k                  " Add dictionary to ins-complete
