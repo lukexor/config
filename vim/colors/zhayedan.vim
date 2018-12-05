@@ -21,7 +21,7 @@ set background=dark
 
 hi Normal       ctermfg=230   ctermbg=NONE      cterm=none
 
-hi Comment      ctermfg=215     ctermbg=NONE      cterm=none
+hi Comment      ctermfg=016     ctermbg=NONE      cterm=none
 
 hi Constant     ctermfg=035    ctermbg=NONE      cterm=none
 hi BConstant    ctermfg=035    ctermbg=NONE      cterm=bold
@@ -40,7 +40,7 @@ hi Type                 ctermfg=230    ctermbg=NONE      cterm=none
 hi Union                ctermfg=230    ctermbg=NONE      cterm=none
 hi GlobalConstant       ctermfg=230    ctermbg=NONE      cterm=none
 hi GlobalVariable       ctermfg=230    ctermbg=NONE      cterm=none
-hi LocalVariable        ctermfg=230    ctermbg=NONE      cterm=none
+hi LocalVariable        ctermfg=80    ctermbg=NONE      cterm=none
 hi perlVarPlain         ctermfg=80    ctermbg=NONE      cterm=none
 hi jsVariableDef        ctermfg=80    ctermbg=NONE      cterm=none
 

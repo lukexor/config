@@ -1,9 +1,9 @@
 [user]
 
-  name = Kyla Constantine
-email = kylaconstantine13@gmail.com
+  name = Luke Petherbridge
+  email = lukexor@gmail.com
 [github]
-  user = kylaconstantine13
+  user = lukexor
   token = ad713daa071e284256dfde40ad14b65e
 [merge]
 	tool = vimdiff
