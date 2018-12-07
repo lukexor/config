@@ -358,6 +358,7 @@ alias lu='ls -ltur' # Sort by and show access time, most recent last
 alias lt='ls -ltr' # Sort by date, most recent last
 alias lle='ls -lhA | less' # Pipe through 'less'
 alias lr='ls -lR' # Recursive ls
+alias less='less -R'
 
 # Git
 alias g='git'
@@ -392,10 +393,12 @@ alias gun='git reset HEAD --'
 # == Functions {{{1
 # ==================================================================================================
 
-function topm() {
+function topc() {
     echo " %CPU %MEM   PID USER     ARGS";
     ps -eo pcpu,pmem,pid,user,args | sort -k 1 -r -n | head -10 | cut -d- -f1;
-    echo " %CPU %MEM   PID USER     ARGS";
+}
+function topm() {
+    echo " %MEM %CPU   PID USER     ARGS";
     ps -eo pmem,pcpu,pid,user,args | sort -k 1 -r -n | head -10 | cut -d- -f1;
 }
 sw2() {
