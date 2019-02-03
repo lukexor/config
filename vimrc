@@ -4,6 +4,11 @@
 " TODO
 " Update Maps to show other modes
 
+" quickfix tips
+" :make to check/compile error list
+" :vimgrep /{pattern}/ {files} - useful for finding TODOs vimgrep /TODO/ **/
+" :copen :cclose - quickfix window
+
 " Global variables
 let b:fsize=getfsize(@%)
 let mapleader=' '
@@ -24,6 +29,7 @@ runtime custom_plugins/goto_file.vim
 runtime custom_plugins/schlepp.vim
 
 set nocompatible                 " Disable VI backwards compatible settings. Must be first
+set modelines=1
 if exists('+antialias')
     set antialias                " Mac OS X: antialiased fonts
 endif
@@ -36,7 +42,9 @@ set backspace=indent,eol,start
 " Set directory to store backup files in.
 " These are created when saving, and deleted after successfully written
 set backupdir=$HOME/.vim/tmp//
-set breakindent                  " Wrapped line repeats indent
+if v:version >= 704
+    set breakindent                  " Wrapped line repeats indent
+endif
 set directory=$HOME/.vim/tmp//
 set complete+=kspell             " Use the active spell checking
 set complete+=k                  " Add dictionary to ins-complete
@@ -48,9 +56,6 @@ if b:fsize <= 1000000
     set cursorline  " Highlight the cursorline - slows redraw
     if exists('+signcolumn')
         set signcolumn=auto
-    endif
-    if exists('*matchadd')
-        call matchadd('ErrorMsg', '\%>80v.\+', 100)
     endif
 endif
 set cpoptions+=W                 " Don't overwrite readonly files with :w!
@@ -229,11 +234,18 @@ iabbrev waht what
 " ==================================================================================================
 
 function! CloseBuffer()
-    if len(getbufinfo({'buflisted':1})) > 1
+    if len(filter(range(1, bufnr('$')), 'buflisted(v:val)')) > 1
         execute ':bp|bd #'
     else
         execute ':e ' . getcwd() . '|bd #'
     endif
+endfunction
+function! CloseAllBuffersButCurrent()
+  let curr = bufnr("%")
+  let last = bufnr("$")
+
+  if curr > 1    | silent! execute "1,".(curr-1)."bd"     | endif
+  if curr < last | silent! execute (curr+1).",".last."bd" | endif
 endfunction
 
 " Sets g:project_dir to the cwd on vim startup. The function will only set it
@@ -274,9 +286,10 @@ endfunction
 " This replaces spaces for the current tabstop with literal tabs
 command! RetabIndents call RetabIndents()
 func! RetabIndents()
-    let saved_view = winsaveview()
-    execute '%s@^\(\ \{'.&ts.'\}\)\+@\=repeat("\t", len(submatch(0))/'.&ts.')@e'
-    call winrestview(saved_view)
+    " let saved_view = winsaveview()
+    " execute '%s@^\(\ \{'.&ts.'\}\)\+@\=repeat("\t", len(submatch(0))/'.&ts.')@e'
+    " call winrestview(saved_view)
+    :set ts=8 noet | retab! | set et ts=4 | retab
 endfunc
 
 " When autocompleting within an identifier, prevent duplications...
@@ -378,37 +391,44 @@ function! HLNext(blinktime)
     endfor
 endfunction
 
-Inoremap <tab> [Close bracket] <C-R>=ClosePair()<CR>
 function! ClosePair()
     let line = getline('.')
     let col = col('.')
-    let nchar = line[col]
-    let nchar1 = line[col-1]
-    let nchar2 = line[col-2]
-    let pchar = line[col-2]
-    let pchar2 = line[col-3]
+    let nextc3 = line[col+1]
+    let nextc2 = line[col]
+    let nextc1 = line[col-1]
+    let prevc1 = line[col-2]
+    let prevc2 = line[col-3]
+    let prevc3 = line[col-4]
     let match = { '(':')', '{':'}', '[':']', '<':'>', '`':'`' }
     let str = ""
     let mov = ""
-    if has_key(match, pchar) && nchar1 == match[pchar]
-        if !has_key(match, pchar2) || nchar != match[pchar2]
-            return "  \<left>"
+    if has_key(match, prevc1) && nextc1 == match[prevc1]
+        return "  \<left>"
+    endif
+    if has_key(match, prevc2) && nextc2 == match[prevc2] && prevc1 == " "
+        if has_key(match, prevc3) && nextc3 == match[prevc3]
+            return "\<backspace>\<CR>\<Esc>0dt" . nextc2 . "i\<CR>\<Esc>0dt" . nextc2 . "i\<up>\<tab>"
+        else
+            return "\<backspace>\<CR>\<CR>\<up>\<tab>"
         endif
     endif
-    if has_key(match, pchar2) && nchar2 == match[pchar2] && pchar == " "
-        return "\<CR>" . match[pchar2] . "\<up>"
-    endif
-    if pchar =~ "[({\[<`]" && has_key(match, pchar)
-        let str = str . match[pchar]
+    if prevc1 =~ "[({\[<`]" && has_key(match, prevc1) && nextc1 != match[prevc1]
+        let str = str . match[prevc1]
         let mov = mov . "\<left>"
     endif
-    if pchar2 =~ "[({\[<`]" && has_key(match, pchar2)
-        if pchar == " "
+    if prevc2 =~ "[({\[<`]" && has_key(match, prevc2) && nextc2 != match[prevc2]
+        if prevc1 == " "
             let str = str . " "
             let mov = mov . "\<left>"
         endif
-        let str = str . match[pchar2]
-        let mov = mov . "\<left>"
+        if prevc3 =~ "[({\[<`]"
+            let str = str . match[prevc2] . match[prevc3]
+            let mov = mov . "\<left>\<left>"
+        else
+            let str = str . match[prevc2]
+            let mov = mov . "\<left>"
+        endif
     endif
     if !empty(str)
         return str . mov
@@ -421,11 +441,18 @@ endfunction
 " == Autocommands   {{{1
 " ==================================================================================================
 
+augroup highlight_long_lines
+    autocmd!
+    if exists('*matchadd') && b:fsize <= 1000000
+        autocmd BufWinEnter * let w:m2=matchadd('ErrorMsg', '\%>80v.\+', -1)
+    endif
+augroup END
+
 if v:version >= 800
     augroup Undouble_Completions
         autocmd!
         autocmd CompleteDone *  call Undouble_Completions()
-    augroup None
+    augroup END
 endif
 augroup NoSimultaneousEdits
     autocmd!
@@ -566,6 +593,7 @@ let g:UltiSnipsEnableSnipMate = 0
 let g:UltiSnipsSnippetsDir = '~/.vim/UltiSnips'
 
 
+"
 " == Mappings   {{{1
 " ==================================================================================================
 
@@ -599,6 +627,8 @@ Nmap      <localleader>}        [Surround current paragraph with curly braces an
 " Fix for syntax highlighting from above line } } }
 Nmap      cP                    [Copy line to System clipboard] <Plug>SystemCopyLine
 Nmap      ga                    [Align columns in normal mode with ga{motion}] <Plug>(EasyAlign)
+Nnoremap  <localleader>n        [Go to next error]:cn<CR>
+Nnoremap  <localleader>p        [Go to previous error]:cp<CR>
 Nnoremap  <CR>                  [Create new empty lines with Enter] o<Esc>
 Nnoremap  <leader>-             [Maximize current window when in a vertial split] :wincmd _<CR>:wincmd \|<CR>
 Nnoremap  <leader>=             [Equalize vertical split window widths] :wincmd =<CR>
@@ -611,10 +641,12 @@ Nnoremap  <leader>R             [Fuzzy search Recent files] :History<CR>
 Nnoremap  <leader>S             [Shortcut for :%s///g] :%s///g<LEFT><LEFT><LEFT>
 Nnoremap  <leader>W             [Fuzzy search vim windows] :Windows<CR>
 Nnoremap  <leader>b             [Fuzzy search buffer list] :Buffers<CR>
+Nnoremap  <leader>cc            [Close Quickfix] :ccl<CR>
 Nnoremap  <leader>C             [Regenerate ctags] :call GenerateCtags()<CR>:echom "Tags Generated"<CR>
 Nnoremap  <leader>cm            [Clear currently set test method] :call ClearTestMethod()<CR>
 Nnoremap  <leader>cw            [Count number of words in the current file] :!wc -w %<CR>
 Nnoremap  <leader>d             [Close and delete the current buffer] :call CloseBuffer()<CR>
+Nnoremap  <leader>D             [Close and delete the all but the current buffer] :call CloseAllBuffersButCurrent()<CR>
 Nnoremap  <leader>ep            [Edit vim plugins] :vsplit $HOME/.vim/plugins.vim<CR>
 Nnoremap  <leader>ev            [Edit vimrc in a vertical split] :vsplit $MYVIMRC<CR>
 Nnoremap  <leader>f             [Fuzzy search files in project directory] :exe "Files " . g:project_dir<CR>
@@ -658,7 +690,7 @@ Nnoremap  <leader>tp            [Previous Tag] :tprevious<CR>
 Nnoremap  <leader>w             [Save file changes] :write<CR>
 Nnoremap  <leader>x             [Write and quit current window] :x<CR>
 Nnoremap  <leader>z             [Background vim and return to shell] <C-Z>
-Nnoremap  <localleader>p        [Display current project directory] :echo g:project_dir<CR>
+Nnoremap  <leader>p             [Display current project directory] :echo g:project_dir<CR>
 Nnoremap  <localleader>1        [Toggle NERDTree window] :NERDTreeToggle<CR>
 Nnoremap  <localleader>2        [Toggle Tagbar window] :TagbarToggle<CR>
 Nnoremap  <localleader>3        [Toggle Line Numbers and Git Gutter] :set rnu! nu! list!<CR>:GitGutterToggle<CR>
@@ -703,23 +735,25 @@ Nnoremap <silent> <localleader>: [Toggle : being considered part of a word] :cal
 Nnoremap <silent> <localleader>$ [Toggle $ being considered part of a word] :call ToggleIskeyword('$')<CR>
 
 " These don't need to be documented
-nmap <silent> <expr>  zu  FS_FoldAroundTarget('^\s*use\s\+\S.*;',{'context':1})
-nmap <silent> <expr>  zz  FS_ToggleFoldAroundSearch({'context':1})
+nnoremap <silent> <expr>  zu  FS_FoldAroundTarget('^\s*use\s\+\S.*;',{'context':1})
+nnoremap <silent> <expr>  zz  FS_ToggleFoldAroundSearch({'context':1})
 noremap  j gj
 noremap  k gk
 vnoremap <C-V> v
 vnoremap v <C-V>
 
 " Mapping selecting mappings
-nmap <leader><tab> <plug>(fzf-maps-n)
-xmap <leader><tab> <plug>(fzf-maps-x)
-omap <leader><tab> <plug>(fzf-maps-o)
+nnoremap <leader><tab> <plug>(fzf-maps-n)
+xnoremap <leader><tab> <plug>(fzf-maps-x)
+onoremap <leader><tab> <plug>(fzf-maps-o)
 
 " Insert mode completion
-imap <c-x><c-k> <plug>(fzf-complete-word)
-imap <c-x><c-f> <plug>(fzf-complete-path)
-imap <c-x><c-j> <plug>(fzf-complete-file-ag)
-imap <c-x><c-l> <plug>(fzf-complete-line)
+inoremap <c-x><c-k> <plug>(fzf-complete-word)
+inoremap <c-x><c-f> <plug>(fzf-complete-path)
+inoremap <c-x><c-j> <plug>(fzf-complete-file-ag)
+inoremap <c-x><c-l> <plug>(fzf-complete-line)
+
+inoremap jj <ESC>
 
 " Advanced customization using autoload functions
 inoremap <expr> <c-x><c-k> fzf#vim#complete#word({'left': '15%'})
@@ -747,4 +781,4 @@ highlight link SyntasticWarningSign SignColumn
 
 " }}}
 
-" vim:foldmethod=marker:foldlevel=0
+" vim: foldmethod=marker foldlevel=0

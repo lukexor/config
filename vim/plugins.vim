@@ -14,7 +14,7 @@ Plug 'tmhedberg/matchit'             " Advanced % matching
 Plug 'tommcdo/vim-exchange'          " Allows easy exchanging of text
 Plug 'tpope/vim-commentary'          " Commenting quality of life improvements
 Plug 'tpope/vim-endwise'             " Adds ending structures to blocks e.g. endif
-Plug 'kshenoy/vim-signature'         " Adds vim marks to gutter
+" Plug 'kshenoy/vim-signature'         " Adds vim marks to gutter
 Plug 'tpope/vim-surround'            " Enables surrounding text with quotes or brackets easier
 Plug 'tpope/vim-unimpaired'          " Adds a lot of shortcuts complimentary pairs of mappings
 Plug 'garbas/vim-snipmate' |
