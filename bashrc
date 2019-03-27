@@ -62,6 +62,7 @@ done
 
 # Rust
 pathprepend "$HOME/.cargo/bin"
+pathprepend "$HOME/www/luke_web/bin"
 
 # Golang
 pathappend "$HOME/dev/" GOPATH

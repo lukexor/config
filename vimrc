@@ -41,11 +41,11 @@ colorscheme zhayedan
 set backspace=indent,eol,start
 " Set directory to store backup files in.
 " These are created when saving, and deleted after successfully written
-" set backupdir=$HOME/.vim/tmp//
+set backupdir=/tmp//
 if v:version >= 704
     set breakindent                  " Wrapped line repeats indent
 endif
-" set directory=$HOME/.vim/tmp//
+set directory=/tmp//
 set complete+=kspell             " Use the active spell checking
 set complete+=k                  " Add dictionary to ins-complete
 set completeopt+=longest,menu,preview
@@ -67,10 +67,10 @@ set expandtab                    " Replace the tab key with spaces
 set fileencoding=utf-8
 set fileformat=unix
 set fileformats=unix,dos,mac     " Default file types
-set foldenable
+set nofoldenable
 set foldmethod=indent
-set foldlevel=0
-set foldlevelstart=0
+" set foldlevel=0
+" set foldlevelstart=0
 " Set formatting options
 " 1   Don't break after a one-letter word
 " l   Don't format long lines in insert mode if it was longer than textwidth
@@ -178,7 +178,7 @@ set nocst                      " Disable cscope - it messes with local tag looku
 set term=xterm-256color
 set title
 set titleold=''
-set textwidth=80                 " Max width for text on the screen
+set textwidth=100                 " Max width for text on the screen
 set ttimeout                     " Timeout on :mappings and key codes
 set ttimeoutlen=300              " Change timeout length
 set ttyfast                      " Smoother redraw
@@ -433,7 +433,8 @@ function! ClosePair()
     if !empty(str)
         return str . mov
     else
-        return UltiSnips#ExpandSnippet()
+        " return UltiSnips#ExpandSnippet()
+        return "        "
     endif
 endfunction
 
@@ -444,7 +445,7 @@ endfunction
 augroup highlight_long_lines
     autocmd!
     if exists('*matchadd') && b:fsize <= 1000000
-        autocmd BufWinEnter * let w:m2=matchadd('ErrorMsg', '\%>80v.\+', -1)
+        autocmd BufWinEnter * let w:m2=matchadd('ErrorMsg', '\%>'+&textwidth+'v.\+', -1)
     endif
 augroup END
 
@@ -479,7 +480,7 @@ augroup vimrcEx
     autocmd VimResized * :wincmd =
 
     " Set the project directory to wherever vim was opened
-    autocmd VimEnter * call SetProjectDir()
+    " autocmd VimEnter * call SetProjectDir()
 
     " Don't do it for commit messages, when the position is invalid, or when
     " When editing a file, always jump to the last known cursor position.
@@ -632,7 +633,7 @@ Nnoremap  <localleader>p        [Go to previous error]:cp<CR>
 Nnoremap  <CR>                  [Create new empty lines with Enter] o<Esc>
 Nnoremap  <leader>-             [Maximize current window when in a vertial split] :wincmd _<CR>:wincmd \|<CR>
 Nnoremap  <leader>=             [Equalize vertical split window widths] :wincmd =<CR>
-Nnoremap  <leader>H             [Open previous tab] :tabp<CR>
+" Nnoremap  <leader>H             [Open previous tab] :tabp<CR>
 Nnoremap  <leader>L             [Open next tab] :tabn<CR>
 Nnoremap  <leader>M             [Fuzzy search vim History] :History<CR>
 Nnoremap  <localleader>P        [Interactively paste by choosing from recent yanks] :IPaste<CR>
@@ -667,9 +668,9 @@ Nnoremap  <leader>gps           [Fugitive git push] :Gpush<CR>
 Nnoremap  <leader>gst           [Fugitive git status] :Gstatus<CR>
 Nnoremap  <leader>gu            [Undo Git Hunk] :GitGutterUndoHunk<CR>
 Nnoremap  <leader>gv            [Preview Git Hunk] :GitGutterPreviewHunk<CR>
-Nnoremap  <leader>h             [Open previous buffer] :bprevious<CR>
+Nnoremap  <leader>H             [Open previous buffer] :bprevious<CR>
 Nnoremap  <leader>k             [Open last viewed buffer] :b #<CR>
-Nnoremap  <leader>l             [Open next buffer] :bnext<CR>
+Nnoremap  <leader>L             [Open next buffer] :bnext<CR>
 Nnoremap  <leader>m             [Fuzy search marks] :Marks<CR>
 Nnoremap  <localleader>m        [Run make asynchronously] :Make!<CR>
 Nnoremap  <leader>n             [Edit a new, unnamed buffer] :enew<CR>
@@ -680,6 +681,7 @@ Nnoremap  <leader>ri            [Reindent the entire file] mzgg=G`z
 Nnoremap  <leader>rs            [Remove trailing spaces in the entire file] mz:silent! %s/\s\+$//<CR>:noh<CR>`z
 Nnoremap  <leader>rt            [Run unit tests] :call RunTests("")<CR>
 Nnoremap  <leader>rT            [Retab the entire file] :call RetabIndents()<CR>
+Nnoremap  <leader>rf            [Reformat using Rust] :RustFmt<CR>
 Nnoremap  <leader>sc            [Run syntax checker] :SyntasticCheck<CR>
 Nnoremap  <leader>sm            [Set method under cursor to the current test method] :call SetTestMethod()<CR>
 Nnoremap  <leader>ss            [Toggle spellcheck] :set spell!<CR>

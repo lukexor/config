@@ -38,3 +38,4 @@ bin/*.exe
 tags
 *tags
 .*tags
+Cargo.lock

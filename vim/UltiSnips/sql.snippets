@@ -1,21 +1,15 @@
-snippet begin "BEGIN a transaction" b
-BEGIN;
-  USE ${1:database};
-
-  $0
-
-  ${2:INSERT INTO fcs.db_update (filename) VALUES ('`!p snip.rv = snip.fn`') ON DUPLICATE KEY UPDATE applied_on = NOW();}
-COMMIT;
-endsnippet
-
 snippet create "CREATE a table" b
 CREATE TABLE ${1:table} (
-  id int(10) unsigned NOT NULL auto_increment,
+  id SERIAL PRIMARY KEY,
   $0
-  PRIMARY KEY (id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+)
+endsnippet
+
+snippet drop "DROP a table" b
+DROP TABLE ${1:table}
 endsnippet
 
 snippet fk "FOREIGN KEY" b
-FOREIGN KEY($1) REFERENCES $2 ($3) ON DELETE ${4:CASCADE} ON UPDATE ${5:CASCADE},
+${1:column} INTEGER NOT NULL REFERENCES ${2:table}(id),
 endsnippet
+
