@@ -209,6 +209,9 @@ alias pym='python manage.py'
 alias pyr='python manage.py runserver 0.0.0.0:10128'
 alias pys='python manage.py syncdb'
 
+# Perl
+alias pd='perl -MData::Dumper'
+
 # RPM
 alias rpmi='rpm -ivh' # install rpm
 alias rpmls='rpm -qlp' # list rpm contents
@@ -282,9 +285,10 @@ alias lx='ls -lXB' # Sort by extension
 # Git
 alias g='git'
 alias ga='git add'
-alias gb='git branch'
+alias gb='git branch -v'
+alias gbm='git branch -v --merged'
+alias gbnm='git branch -v --no-merged'
 alias gba='git branch -a'
-alias gbv='git branch -v'
 alias gc='git commit'
 alias gca='git commit -a'
 alias gcam='git commit --amend'
