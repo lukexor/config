@@ -169,7 +169,7 @@ set statusline+=%y\            " Filetype
 set statusline+=%l/%L          " Current/Total lines
 set statusline+=\:%c           " Cursor position
 set statusline+=\ %p%%         " Percent through file
-set tags=./tags,tags,$HOME/lib/tags
+set tags=./tags,tags
 if v:version > 704
     set tagcase=match
 endif
@@ -371,7 +371,7 @@ endfunction
 
 " Helper to generate tag files in the background
 function! GenerateCtags()
-    execute ":Dispatch! ctags -I ~/.ctags -R ."
+    execute ":Dispatch! cd " . expand('%:p:h') . "; ctags -I ~/.ctags *"
 endfunction
 
 " Highlights search matches and flashes
