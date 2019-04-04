@@ -187,6 +187,7 @@ alias mv='mv -i'
 alias md='mkdir -p'  # Make sub-directories as needed
 alias rd='rmdir'
 alias findbroken='find . -maxdepth 1 -type l ! -exec test -e {} \; -print'  # Find broken symlinks
+alias tags='find . -type d -not -path "*/\.*" -not -path "*/target*" -not -path "*/bin*" -exec dirtags {} \; && ctags -I ~/.ctags --file-scope=no -R'
 
 # System
 alias _='sudo'
@@ -289,9 +290,8 @@ alias gb='git branch -v'
 alias gbm='git branch -v --merged'
 alias gbnm='git branch -v --no-merged'
 alias gba='git branch -a'
-alias gc='git commit'
-alias gca='git commit -a'
-alias gcam='git commit --amend'
+alias gca='gc -a'
+alias gcam='gc --amend'
 alias gcb='git checkout -b'
 alias gcp='git cherry-pick'
 alias gd='git diff'
@@ -553,9 +553,13 @@ current_branch() {
   ref=$(git symbolic-ref HEAD 2> /dev/null) || return
   echo "${ref#refs/heads/}"
 }
+gc() {
+    git commit "$@"
+    tags > /dev/null 2>&1 &
+}
 gco() {
-    git checkout $@
-    ctags > /dev/null 2>&1 &
+    git checkout $*
+    tags > /dev/null 2>&1 &
 }
 gops() {
     git push origin $(current_branch) $@ -u
