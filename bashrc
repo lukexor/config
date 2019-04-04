@@ -558,7 +558,7 @@ gc() {
     tags > /dev/null 2>&1 &
 }
 gco() {
-    git checkout $*
+    git checkout "$@"
     tags > /dev/null 2>&1 &
 }
 gops() {
