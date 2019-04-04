@@ -65,14 +65,14 @@ pathprepend "$HOME/.cargo/bin"
 pathprepend "$HOME/www/luke_web/bin"
 
 # Golang
-pathappend "$HOME/dev/" GOPATH
-pathappend "/usr/local/go/" GOROOT
+pathprepend "/usr/local/go/" GOROOT
+pathprepend "$HOME/dev/" GOPATH
 
 # PATH
-pathappend "$HOME/bin"
-pathappend "/usr/local/bin"
-pathappend "/usr/local/go/bin"
-pathappend "$GOPATH/bin"
+pathprepend "/usr/local/go/bin"
+pathprepend "$GOPATH/bin"
+pathprepend "/usr/local/bin"
+pathprepend "$HOME/bin"
 
 # Perl
 pathprepend "$HOME/perl5/bin"
@@ -870,3 +870,5 @@ profile
 source_agent
 
 # vim: foldmethod=marker foldlevel=0
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash

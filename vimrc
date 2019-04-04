@@ -371,8 +371,7 @@ endfunction
 
 " Helper to generate tag files in the background
 function! GenerateCtags()
-    let path = expand('%:p:h')
-    execute ":Dispatch! cd " . expand('%:p:h') . "; ctags *"
+    execute ":Dispatch! ctags -I ~/.ctags -R ."
 endfunction
 
 " Highlights search matches and flashes
@@ -526,6 +525,8 @@ let g:EasyClipEnableBlackHoleRedirectForDeleteOperator=0  " Keep delete function
 let g:fzf_buffers_jump=1          " Jump to existing window if possible
 let g:fzf_commits_log_options='--graph --pretty=format:"%C(yellow)%h (%p) %ai%Cred%d %Creset%Cblue[%ae]%Creset %s (%ar). %b %N"'
 let g:jsx_ext_required=1
+let g:rustfmt_autosave = 1
+let g:rustfmt_command = 'rustup run stable rustfmt'
 let g:session_autoload='no'       " Loads 'default' session when vim is opened without files
 let g:session_autosave='yes'
 let g:session_autosave_periodic=3 " Automatically save the current session every 3 minutes
@@ -590,6 +591,7 @@ let g:tagbar_type_go = {
         \ 'type' : 't',
     \ },
 \ }
+let g:rust_use_custom_ctags_defs = 1
 let g:UltiSnipsEnableSnipMate = 0
 let g:UltiSnipsSnippetsDir = '~/.vim/UltiSnips'
 

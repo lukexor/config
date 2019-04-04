@@ -22,6 +22,7 @@ Plug 'garbas/vim-snipmate' |
   Plug 'tomtom/tlib_vim'
 Plug 'honza/vim-snippets'
 Plug 'SirVer/ultisnips'
+Plug 'rust-lang/rust'
 
 " == File Management   {{{1
 " ==================================================================================================
