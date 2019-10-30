@@ -38,6 +38,9 @@
 --exclude=*.swp
 --exclude=*.tar.*
 --exclude=*/undodir/*
+--exclude=target/*
+--exclude=docs/*
+--exclude=bin/*
 --exclude=.git
 --exclude=.hg
 --exclude=.svn

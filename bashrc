@@ -81,6 +81,8 @@ pathprepend "$HOME/perl5" PERL_LOCAL_LIB_ROOT
 pathprepend "$HOME/perl5/lib/perl5/" GITPERLLIB
 pathprepend "$HOME/lib" PERL5LIB
 
+pathappend "/usr/local/lib" LIBRARY_PATH
+
 # == Bash Settings {{{1
 # ==================================================================================================
 
@@ -92,8 +94,8 @@ HISTTIMEFORMAT='[%F %a %T] ' # YYYY-MM-DD DAY HH:MM:SS
 
 # Misc
 EDITOR="vim"
-FZF_DEFAULT_COMMAND='(git ls-tree -r --name-only HEAD || ag --hidden -g "") 2> /dev/null'
-FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_DEFAULT_COMMAND='(rg -l "" || ag --hidden -g "") 2> /dev/null'
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 
 # Bash 4.00 specific options
 if [[ $BASH_VERSINFO > 3 ]]; then
@@ -174,7 +176,6 @@ fi
 
 # CD
 # Don't follow symbolic links when cd'ing, e.g. go to the actual path. -L to follow if you must
-alias cd="cd -P"
 alias ~='cd ~'
 alias ..='cd ../'
 alias ...='cd ../../'
@@ -187,7 +188,7 @@ alias mv='mv -i'
 alias md='mkdir -p'  # Make sub-directories as needed
 alias rd='rmdir'
 alias findbroken='find . -maxdepth 1 -type l ! -exec test -e {} \; -print'  # Find broken symlinks
-alias tags='find . -type d -not -path "*/\.*" -not -path "*/target*" -not -path "*/bin*" -exec dirtags {} \; && ctags -I ~/.ctags --file-scope=no -R'
+alias tags='ctags -I ~/.ctags --file-scope=no -R'
 
 # System
 alias _='sudo'
@@ -199,7 +200,6 @@ alias stop='kill -STOP'
 alias info='info --vi-keys'
 
 # Editing
-alias cvim="command vim"
 alias less='less -R'
 
 # Python
@@ -316,11 +316,11 @@ alias gun='git reset HEAD --'
 # == Functions {{{1
 # ==================================================================================================
 
-function topc() {
+topc() {
     echo " %CPU %MEM   PID USER     ARGS";
     ps -eo pcpu,pmem,pid,user,args | sort -k 1 -r -n | head -10 | cut -d- -f1;
 }
-function topm() {
+topm() {
     echo " %MEM %CPU   PID USER     ARGS";
     ps -eo pmem,pcpu,pid,user,args | sort -k 1 -r -n | head -10 | cut -d- -f1;
 }
@@ -329,19 +329,19 @@ sw2() {
     ssh -A lpetherbridge@web-dev2.fonality.com
     TERM=${TERM/"xterm-256color"/"screen-256color"}
 }
-function purge_git() {
+purge_git() {
     if _ask_yes_no "Fully purge $1 from repo?"; then
         git filter-branch --force --index-filter "git rm --cached --ignore-unmatch $1" --prune-empty --tag-name-filter cat -- --all
     fi
 }
-function vim() {
-    # Only run if we're inside tmux
-    if [[ $TMUX != "" ]]; then
-        $HOME/bin/vim_tmux "$@"
-    else
-        command vim "$@"
-    fi
-}
+# function vim() {
+#     # Only run if we're inside tmux
+#     if [[ $TMUX != "" ]]; then
+#         $HOME/bin/vim_tmux "$@"
+#     else
+#         command vim "$@"
+#     fi
+# }
 myip() {
     wget http://ipecho.net/plain -O - -q; echo
 }
@@ -394,6 +394,7 @@ updatedb() {
 mcd() { mkdir -p "$1" && cd "$1"; }
 
 hist_stats() { history | cut -d] -f2 | sort | uniq -c | sort -rn | head; }
+hu() { history -n; }
 
 n() { echo -n -e "\033]0;$*\007"; TERM_TITLE=$*; }
 sn() { echo -n -e "\033k$*\033\\"; SCREEN_TITLE=$*; }
@@ -418,6 +419,16 @@ pg() {
 # Convert unix epoc to current timezone
 unixtime() { date --date="1970-01-01 $* sec GMT"; }
 
+
+btd() { perlo '%d' "0b$1"; }
+xtd() { perlo '%d' "0x$1"; }
+btx() { perlo '0x%04X' "0b$1"; }
+dtx() { perld '0x%04X' $1; }
+dtb() { perld '0b%08b' $1; }
+xtb() { perlo '0b%08b' "0x$1"; }
+perld() { perl -e'print sprintf("$ARGV[0]\n", $ARGV[1])' $1 $2; }
+perlo() { perl -e'print sprintf("$ARGV[0]\n", oct($ARGV[1]))' $1 $2; }
+
 myps() { ps -f $@ -u $USER -o pid,%cpu,%mem,bsdtime,command ; }
 
 source_agent() {
@@ -441,7 +452,7 @@ agent_running() {
     fi;
     return 1;
 }
-restart_agent() {
+ra() {
     if agent_running; then
         if [ ! -z $1 ] || _ask_yes_no "Restart ssh-agent?"; then
             kill_agent
@@ -555,11 +566,11 @@ current_branch() {
 }
 gc() {
     git commit "$@"
-    tags > /dev/null 2>&1 &
+    # tags > /dev/null 2>&1 &
 }
 gco() {
     git checkout "$@"
-    tags > /dev/null 2>&1 &
+    # tags > /dev/null 2>&1 &
 }
 gops() {
     git push origin $(current_branch) $@ -u
@@ -739,11 +750,11 @@ PS1="> "
 PS2=">> "
 
 prompt_off() {
-    PROMPT_COMMAND="history -a; history -n"
+    PROMPT_COMMAND="history -a;"
     PS1='$(prompt_pwd) > '
 }
 
-PROMPT_COMMAND="history -a; history -n; prompt_on"
+PROMPT_COMMAND="history -a; prompt_on"
 
 ascii() {
     clear

@@ -39,3 +39,4 @@ tags
 *tags
 .*tags
 Cargo.lock
+target/

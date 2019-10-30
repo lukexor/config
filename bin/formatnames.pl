@@ -148,17 +148,14 @@ sub strip
 
     $newname =~ s#^[-_\.\s+]##g; # Remove any leading dashes, underscores, spaces or periods
     $newname =~ s#[-_\.\s+]\$##g; # Removing any trailing dashes, underscores, spaces or periods
-    $newname =~ s#[-_<>:,\?\*\|\s]# #g; # Replace any dash, weird characters or spaces with space
+    $newname =~ s#[-_<>:,\?\*\|\s]#_#g; # Replace any dash, weird characters or spaces with an underscore
     $newname =~ s#[!\?&"+'{}\(\)\[\]]##g; # Remove all double quotes and extra symbols
     $newname =~ s#\.{2,}#\.#g; # Replace 2 or more periods with a single period
     $newname =~ s#_\.#\.#g; # Replace an _. with just a period
-    $newname =~ s#\_{2,}# #g; # Replace 2 or more underscores with a single space
-    $newname =~ s#\.(?=.*\.)# #g; # Replace all but the last period with space
+    $newname =~ s#\_{2,}#_#g; # Replace 2 or more underscores with a single underscore
+    $newname =~ s#\.(?=.*\.)#_#g; # Replace all but the last period with an underscore
 
-    # Titlecase
-    my @words = split(" ", $newname);
-    $_ = ucfirst $_ for @words;
-    $newname = join(" ", @words);
+    $newname = lc $newname;
 
     if ( length ($newname) > 100 && !$directories )
     {

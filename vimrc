@@ -37,7 +37,12 @@ set autoindent                   " Copy indent from current line when adding a n
 set autoread                     " Read file when changed outside vim
 set autowriteall                 " Automatically write file changes
 set background=dark
-colorscheme zhayedan
+colorscheme gruvbox
+if &term =~ '256color'
+    " Disable Background Color Erase (BCE) so that color schemes
+    " work properly when Vim is used inside tmux and GNU screen.
+    set t_ut=
+endif
 set backspace=indent,eol,start
 " Set directory to store backup files in.
 " These are created when saving, and deleted after successfully written
@@ -106,7 +111,6 @@ exec "set listchars=tab:\\|\\ ,trail:-,extends:>,precedes:<,nbsp:~"
 set matchpairs+=<:>
 set noerrorbells                 " No sound on errors
 set noequalalways                " Don't make windows equal size
-set nomore
 set nowrap                       " Default line wrap
 set number
 if exists('+relativenumber')
@@ -235,7 +239,7 @@ iabbrev waht what
 
 function! CloseBuffer()
     if len(filter(range(1, bufnr('$')), 'buflisted(v:val)')) > 1
-        execute ':bp|bd #'
+        execute ':bn|bd #'
     else
         execute ':e ' . getcwd() . '|bd #'
     endif
@@ -248,15 +252,30 @@ function! CloseAllBuffersButCurrent()
   if curr < last | silent! execute (curr+1).",".last."bd" | endif
 endfunction
 
-" Sets g:project_dir to the cwd on vim startup. The function will only set it
+function! FormatFile()
+    let ft = &filetype
+    if ft == 'rust'
+        execute ':RustFmt'
+    elseif ft == 'javascript'
+        execute ':call JsBeautify()'
+    elseif ft == 'html'
+        execute ':call HtmlBeautify()'
+    elseif ft == 'css'
+        execute ':call CSSBeautify()'
+    elseif ft == 'json'
+        execute ':call JsonBeautify()'
+    endif
+endfunction
+
+" Sets g:pUnable to determine the projectroject_dir to the cwd on vim startup. The function will only set it
 " if not already defined and then changes the local cwd to the current file
 " location
-function! SetProjectDir()
-    if empty("g:project_dir")
-        let g:project_dir = getcwd()
-    endif
-    exe 'lcd ' . fnamemodify(resolve(expand('%')), ':h')
-endfunction
+" function! SetProjectDir()
+"     if empty("g:project_dir")
+"         let g:project_dir = getcwd()
+"     endif
+"     exe 'lcd ' . fnamemodify(resolve(expand('%')), ':h')
+" endfunction
 
 " Limited to perl unit tests for now...
 function! RunTests(...)
@@ -277,8 +296,20 @@ function! RunTests(...)
              let b:dispatch = 'prove ' . filename
             execute ':Dispatch'
         endif
+    elseif &filetype == 'rust'
+        execute ':Make test'
     else
         echom 'Tests not set up for ' . &filetype 'files'
+    endif
+endfunction
+
+function! RunMake()
+    if &filetype == 'rust'
+        execute ':Start cargo check'
+    elseif getcwd() == '/Users/caeledh/dev/nf-sf-adapter'
+        execute ':Start! grunt build'
+    else
+        execute ':Make'
     endif
 endfunction
 
@@ -371,7 +402,7 @@ endfunction
 
 " Helper to generate tag files in the background
 function! GenerateCtags()
-    execute ":Dispatch! cd " . expand('%:p:h') . "; ctags -I ~/.ctags *"
+    execute ":Dispatch! tags"
 endfunction
 
 " Highlights search matches and flashes
@@ -432,8 +463,7 @@ function! ClosePair()
     if !empty(str)
         return str . mov
     else
-        " return UltiSnips#ExpandSnippet()
-        return "        "
+        return <tab>
     endif
 endfunction
 
@@ -462,6 +492,7 @@ augroup NoSimultaneousEdits
 augroup END
 augroup filetype_formats
     autocmd!
+    autocmd BufNewFile,BufRead *.apxc set filetype=java
     autocmd BufNewFile,BufRead *.conf set filetype=yaml
     autocmd BufNewFile,BufRead *.md   set filetype=markdown.help.text
     autocmd BufNewFile,BufRead *.t    set filetype=perl
@@ -480,6 +511,8 @@ augroup vimrcEx
 
     " Set the project directory to wherever vim was opened
     " autocmd VimEnter * call SetProjectDir()
+    autocmd VimEnter * hi Normal ctermbg=none
+    autocmd VimEnter * set noautochdir
 
     " Don't do it for commit messages, when the position is invalid, or when
     " When editing a file, always jump to the last known cursor position.
@@ -592,17 +625,15 @@ let g:tagbar_type_go = {
     \ },
 \ }
 let g:rust_use_custom_ctags_defs = 1
-let g:UltiSnipsEnableSnipMate = 0
-let g:UltiSnipsSnippetsDir = '~/.vim/UltiSnips'
 
 
 "
 " == Mappings   {{{1
 " ==================================================================================================
 
-Doc <localleader>w [{count} CamelCase words forward]
-Doc <localleader>b [{count} CamelCase words backward]
-Doc <localleader>e [Forward to the end of CamelCase word {count}]
+" Doc <localleader>w [{count} CamelCase words forward]
+" Doc <localleader>b [{count} CamelCase words backward]
+" Doc <localleader>e [Forward to the end of CamelCase word {count}]
 Doc <C-^> [Go to alternate file]
 
 " Highlight search matches forward and backward
@@ -652,8 +683,8 @@ Nnoremap  <leader>d             [Close and delete the current buffer] :call Clos
 Nnoremap  <leader>D             [Close and delete the all but the current buffer] :call CloseAllBuffersButCurrent()<CR>
 Nnoremap  <leader>ep            [Edit vim plugins] :vsplit $HOME/.vim/plugins.vim<CR>
 Nnoremap  <leader>ev            [Edit vimrc in a vertical split] :vsplit $MYVIMRC<CR>
-Nnoremap  <leader>f             [Fuzzy search files in project directory] :exe "Files " . g:project_dir<CR>
-Nnoremap  <leader>F             [Fuzzy search files in cwd] :Files<CR>
+Nnoremap  <leader>f             [Fuzzy search files in cwd] :Files<CR>
+Nnoremap  <leader>F             [Format file] :call FormatFile()<CR>
 Nnoremap  <leader>ga            [Stage Git Hunk] :GitGutterStageHunk<CR>
 Nnoremap  <leader>gt            [Toggle Git Gutter] :GitGutterToggle<CR>
 Nnoremap  <leader>gb            [Fugitive git blame] :Gblame<CR>
@@ -674,16 +705,16 @@ Nnoremap  <leader>H             [Open previous buffer] :bprevious<CR>
 Nnoremap  <leader>k             [Open last viewed buffer] :b #<CR>
 Nnoremap  <leader>L             [Open next buffer] :bnext<CR>
 Nnoremap  <leader>m             [Fuzy search marks] :Marks<CR>
-Nnoremap  <localleader>m        [Run make asynchronously] :Make!<CR>
 Nnoremap  <leader>n             [Edit a new, unnamed buffer] :enew<CR>
 Nnoremap  <leader>g             [Fuzzy search git files] :GFiles<CR>
 Nnoremap  <leader>q             [Close the current window] :q<CR>
 Nnoremap  <leader>rc            [Run code coverage] :call RunCover()<CR>
+Nnoremap  <leader>rr            [Run SyntasticReset] :SyntasticReset<CR>
 Nnoremap  <leader>ri            [Reindent the entire file] mzgg=G`z
+Nnoremap  <leader>rm            [Run make asynchronously] :call RunMake()<CR>
 Nnoremap  <leader>rs            [Remove trailing spaces in the entire file] mz:silent! %s/\s\+$//<CR>:noh<CR>`z
 Nnoremap  <leader>rt            [Run unit tests] :call RunTests("")<CR>
 Nnoremap  <leader>rT            [Retab the entire file] :call RetabIndents()<CR>
-Nnoremap  <leader>rf            [Reformat using Rust] :RustFmt<CR>
 Nnoremap  <leader>sc            [Run syntax checker] :SyntasticCheck<CR>
 Nnoremap  <leader>sm            [Set method under cursor to the current test method] :call SetTestMethod()<CR>
 Nnoremap  <leader>ss            [Toggle spellcheck] :set spell!<CR>
@@ -698,13 +729,13 @@ Nnoremap  <leader>p             [Display current project directory] :echo g:proj
 Nnoremap  <localleader>1        [Toggle NERDTree window] :NERDTreeToggle<CR>
 Nnoremap  <localleader>2        [Toggle Tagbar window] :TagbarToggle<CR>
 Nnoremap  <localleader>3        [Toggle Line Numbers and Git Gutter] :set rnu! nu! list!<CR>:GitGutterToggle<CR>
+Nnoremap  <localleader>4        [Toggle Paste] :set paste!<CR>
 Nnoremap  <localleader>Q        [Quit all windows without qall!<CR>
-Nnoremap  <localleader>ep       [Edit snippets in a horizontal split] :UltiSnipsEdit<CR>
 Nnoremap  <localleader>q        [Quit all windows] :qall<CR>
 Nnoremap  J                     [Move current line down one] ddp
 Nnoremap  K                     [Move current line up one] dd<up>P
 Nnoremap  Q                     [Disable EX mode] <NOP>
-Nnoremap  cd                    [Change project directory to cwd] :let g:project_dir = fnamemodify(resolve(expand('%')), ':h')<CR>:echo 'project_dir=' . fnamemodify(resolve(expand('%')), ':h')<CR>
+" Nnoremap  cd                    [Change project directory to cwd] :let g:project_dir = fnamemodify(resolve(expand('%')), ':h')<CR>:echo 'project_dir=' . fnamemodify(resolve(expand('%')), ':h')<CR>
 Nnoremap  <leader>ga            [Stage Git Hunk] :GitGutterStageHunk<CR>
 Vmap      <C-D>                 [Move visual block left] <Plug>SchleppDupLeft
 Vmap      <down>                [Move visual block down] <Plug>SchleppDown

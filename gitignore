@@ -10,6 +10,7 @@
 *.pyc
 build/
 dist/
+target/
 
 # Automake files #
 ##################
@@ -32,7 +33,8 @@ test-driver
 *.swo
 *~
 ~*
-*.bak
+**/*.bak
+**/*.bk
 *.orig
 cover_db/
 tmp/
@@ -74,5 +76,6 @@ Desktop.ini
 .settings/
 .remote-sync.json
 .gmf_branches
+Cargo.lock
 
 lib/F
