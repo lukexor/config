@@ -21,23 +21,5 @@ set skip-completed-text on
 set show-all-if-ambiguous on
 set show-all-if-unmodified on
 
-# set show-mode-in-prompt on
-# set vi-cmd-mode-string :
-# set vi-ins-mode-string +
-# set editing-mode vi
-
-"\C-a": beginning-of-line
-"\C-e": end-of-line
-"\C-f": forward-char
-"\C-b": backward-char
-"\M-f": forward-word
-"\M-b": backward-word
-"\C-l": clear-screen
-"\C-p": previous-history
-"\C-n": next-history
-"\C-d": end-of-file
-"\C-d": delete-char
-"\M-d": kill-word
-"\C-w": backward-kill-word
-"\C-k": kill-line
-"\C-u": unix-line-discard
+set show-mode-in-prompt on
+set editing-mode vi

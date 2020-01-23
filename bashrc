@@ -1,6 +1,13 @@
 # == Profiling Start {{{1
 # ==================================================================================================
 
+hqa() {
+    \cp -f ~/Library/ApplicationSupport/nfhud/nfhud_cfg.ini.qa ~/Library/ApplicationSupport/nfhud/nfhud_cfg.ini
+}
+hst() {
+    \cp -f ~/Library/ApplicationSupport/nfhud/nfhud_cfg.ini.stable ~/Library/ApplicationSupport/nfhud/nfhud_cfg.ini
+}
+
 # Turns profiling on or off
 PROFILE=0
 (( $PROFILE )) && start=$(gdate +%s.%N 2>/dev/null || date +%s.%N)
@@ -119,6 +126,8 @@ shopt -s promptvars # Expansion in prompt strings
 
 # Prevent clobbering of files with redirects
 set -o noclobber
+
+set -o vi
 
 # == Projects {{{1
 # ==================================================================================================

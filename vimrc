@@ -74,8 +74,8 @@ set fileformat=unix
 set fileformats=unix,dos,mac     " Default file types
 set nofoldenable
 set foldmethod=indent
-" set foldlevel=0
-" set foldlevelstart=0
+set foldlevel=0
+set foldlevelstart=0
 " Set formatting options
 " 1   Don't break after a one-letter word
 " l   Don't format long lines in insert mode if it was longer than textwidth
@@ -206,13 +206,6 @@ set updatecount=10               " Save every 10 characters typed
 set viminfo=h,'500,f1,<10000,s1000,/1000,:1000,%,n$HOME/.viminfo
 set visualbell                   " stop that ANNOYING beeping
 set virtualedit=block            " Allow virtual block to put cursor where there's no actual text
-
-" The below allows horizontal and vertical splits to be small and out of the way, giving the active
-" window as much room as possible
-set winheight=10                 " This has to be set to winminheight first in order to work
-set winminheight=10              " Then set min height
-set winheight=9999               " Then set win height to maximum possible
-set winwidth=110                 " Keepjust  current window wide enough to see numbers textwidth=100
 set wrapmargin=2                 " Number of chars from the right before wrapping
 
 
@@ -306,7 +299,7 @@ endfunction
 function! RunMake()
     if &filetype == 'rust'
         execute ':Start cargo check'
-    elseif getcwd() == '/Users/caeledh/dev/nf-sf-adapter'
+    elseif getcwd() == '/Users/caeledh/Dropbox/dev/nf-sf-adapter'
         execute ':Start! grunt build'
     else
         execute ':Make'
