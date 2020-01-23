@@ -60,7 +60,7 @@ Plug 'vim-scripts/argtextobj.vim'     " Select/Modify inner arguments inside par
 " == Utility/Support   {{{1
 " ==================================================================================================
 
-Plug 'scrooloose/syntastic' " Syntax checking
+" Plug 'scrooloose/syntastic' " Syntax checking
 Plug 'tpope/vim-dispatch'   " Allows building/testing to go on in the background
 Plug 'tpope/vim-repeat'     " Repeat last command using .
 " Plug 'zenbro/mirror.vim'    " Easily edit mirror files across systems using SCP

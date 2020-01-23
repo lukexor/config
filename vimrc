@@ -62,6 +62,9 @@ if b:fsize <= 1000000
     if exists('+signcolumn')
         set signcolumn=auto
     endif
+    if exists('+colorcolumn')
+        set colorcolumn=80,100
+    endif
 endif
 set cpoptions+=W                 " Don't overwrite readonly files with :w!
 set cpoptions-=aA                " Don't set alternate file # on :read or :write
@@ -464,13 +467,6 @@ endfunction
 " == Autocommands   {{{1
 " ==================================================================================================
 
-augroup highlight_long_lines
-    autocmd!
-    if exists('*matchadd') && b:fsize <= 1000000
-        autocmd BufWinEnter * let w:m2=matchadd('ErrorMsg', '\%>'+&textwidth+'v.\+', -1)
-    endif
-augroup END
-
 if v:version >= 800
     augroup Undouble_Completions
         autocmd!
@@ -632,6 +628,10 @@ Doc <C-^> [Go to alternate file]
 " Highlight search matches forward and backward
 nnoremap <silent> n n:call HLNext(0.3)<CR>
 nnoremap <silent> N N:call HLNext(0.3)<CR>
+
+map <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
+\ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
+\ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
 
 Nmap      <leader>"             [Surround current word with double quotes] ysiw"
 Nmap      <leader>'             [Surround current word with single quotes] ysiw'
