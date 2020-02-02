@@ -68,7 +68,7 @@ if b:fsize <= 1000000
 endif
 set cpoptions+=W                 " Don't overwrite readonly files with :w!
 set cpoptions-=aA                " Don't set alternate file # on :read or :write
-set diffopt+=vertical
+" set diffopt+=vertical
 set display+=lastline
 set encoding=utf-8
 set expandtab                    " Replace the tab key with spaces

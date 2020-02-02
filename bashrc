@@ -90,6 +90,13 @@ pathprepend "$HOME/lib" PERL5LIB
 
 pathappend "/usr/local/lib" LIBRARY_PATH
 
+# Android
+export ANDROID_HOME=$HOME/Library/Android/sdk
+pathappend $ANDROID_HOME/emulator
+pathappend $ANDROID_HOME/tools
+pathappend $ANDROID_HOME/tools/bin
+pathappend $ANDROID_HOME/platform-tools
+
 # == Bash Settings {{{1
 # ==================================================================================================
 
@@ -127,7 +134,7 @@ shopt -s promptvars # Expansion in prompt strings
 # Prevent clobbering of files with redirects
 set -o noclobber
 
-set -o vi
+# set -o vi
 
 # == Projects {{{1
 # ==================================================================================================
@@ -896,3 +903,5 @@ source_agent
 # vim: foldmethod=marker foldlevel=0
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
+export BASH_SILENCE_DEPRECATION_WARNING=1
