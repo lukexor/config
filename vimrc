@@ -64,7 +64,7 @@ Plug 'tpope/vim-repeat'     " Repeat last command using .
 " -- Language Support   {{{2
 " --------------------------------------------------------------------------------------------------
 
-Plug 'vim-scripts/HTML-AutoCloseTag'    " Auto-closes HTML tags e.g. </body>
+Plug 'alvan/vim-closetag'               " Auto close XML/HTML tags
 Plug 'rust-lang/rust.vim'               " Rustlang support
 Plug 'leafgarland/typescript-vim'       " Typescript support
 
@@ -678,8 +678,7 @@ Omap <leader><tab> <Plug>(fzf-maps-o)
 
 " Insert mode completion
 Imap <c-x><c-k> [FZF Complete Word] <Plug>(fzf-complete-word)
-Imap <c-x><c-f> [FZF Complete Path] <Plug>(fzf-complete-path)
-Imap <c-x><c-j> [FZF Complete File] <Plug>(fzf-complete-file-ag)
+Imap <c-x><c-f> [FZF Complete Path] <Plug>(fzf-complete-file-ag)
 Imap <c-x><c-l> [FZF Complete Line] <Plug>(fzf-complete-line)
 
 " -- Normal Mode   {{{2
@@ -715,7 +714,8 @@ Nnoremap <CR>                    [Create new empty lines with Enter] o<Esc>
 Nnoremap J                       [Move current line down one] ddp
 Nnoremap K                       [Move current line up one] dd<up>P
 Nnoremap Q                       [Disable EX mode] <NOP>
-Nnoremap cd                      [Change project directory to cwd] :let g:project_dir = fnamemodify(resolve(expand('%')), ':h')<CR>:echo 'project_dir=' . fnamemodify(resolve(expand('%')), ':h')<CR>
+Nnoremap cdP                     [Change project directory to current file] :let g:project_dir = fnamemodify(resolve(expand('%')), ':h')<CR>:echo 'project_dir=' . fnamemodify(resolve(expand('%')), ':h')<CR>
+Nnoremap cd                      [Change cwd to current file] :execute 'lcd' fnamemodify(resolve(expand('%')), ':h')<CR>:echo 'cd ' . fnamemodify(resolve(expand('%')), ':h')<CR>
 Nnoremap <leader>-               [Maximize current window when in a vertial split] :wincmd _<CR>:wincmd \|<CR>
 Nnoremap <leader>=               [Equalize vertical split window widths] :wincmd =<CR>
 Nnoremap <leader>C               [Regenerate ctags] :call GenerateCtags()<CR>:echom "Tags Generated"<CR>
@@ -734,7 +734,7 @@ Nnoremap <leader>cm              [Clear currently set test method] :call ClearTe
 Nnoremap <leader>cw              [Count number of words in the current file] :!wc -w %<CR>
 Nnoremap <leader>d               [Close and delete the current buffer] :call CloseBuffer()<CR>
 Nnoremap <leader>ev              [Edit vimrc in a vertical split] :vsplit $MYVIMRC<CR>
-Nnoremap <leader>f               [Fuzzy search files in cwd] :Files<CR>
+Nnoremap <leader>f               [Fuzzy search files in cwd] :FZF<CR>
 Nnoremap <leader>g               [Fuzzy search git files] :GFiles<CR>
 Nnoremap <leader>k               [Open last viewed buffer] :b #<CR>
 Nnoremap <leader>n               [Edit a new, unnamed buffer] :enew<CR>
@@ -783,10 +783,10 @@ Nnoremap <silent> <localleader>_ [Toggle _ being considered part of a word] :cal
 " These mappings need to be recursively defined
 Vmap cP                      [Copy selection to clipboard] "*yy
 Vmap ga                      [Align columns in normal mode with ga{motion}] <Plug>(EasyAlign)
-Vmap D                       [Duplicate block down] <Plug>SchleppDupDown
-Vmap L                       [Duplicate block left] <Plug>SchleppDupLeft
-Vmap R                       [Duplicate block right] <Plug>SchleppDupRight
-Vmap U                       [Duplicate block up] <Plug>SchleppDupUp
+Vmap <C-D>                   [Duplicate block down] <Plug>SchleppDupDown
+Vmap <C-L>                   [Duplicate block left] <Plug>SchleppDupLeft
+Vmap <C-R>                   [Duplicate block right] <Plug>SchleppDupRight
+Vmap <C-U>                   [Duplicate block up] <Plug>SchleppDupUp
 Vmap <down>                  [Move block down] <Plug>SchleppDown
 Vmap <left>                  [Move block left] <Plug>SchleppLeft
 Vmap <right>                 [Move block right] <Plug>SchleppRight

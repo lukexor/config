@@ -108,7 +108,7 @@ HISTTIMEFORMAT='[%F %a %T] ' # YYYY-MM-DD DAY HH:MM:SS
 
 # Misc
 EDITOR="vim"
-export FZF_DEFAULT_COMMAND='(rg -l "" || ag --hidden -g "") 2> /dev/null'
+export FZF_DEFAULT_COMMAND='(rg -l "" || ag --hidden -p ~/.gitignore -g "") 2> /dev/null'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 
 # Bash 4.00 specific options
@@ -217,7 +217,7 @@ alias info='info --vi-keys'
 
 # Editing
 export LESS="-RFX"
-export vi="vim"
+alias vi="vim"
 
 # Python
 alias dja='django-admin.py'

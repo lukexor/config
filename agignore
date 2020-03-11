@@ -40,3 +40,4 @@ tags
 .*tags
 Cargo.lock
 target/
+.node_modules/

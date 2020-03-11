@@ -24,6 +24,7 @@ LINKS = [
   'bin',
 ]
 PACKAGES = [
+  'ag',
   'bash',
   'ctags',
   'git',
@@ -34,6 +35,7 @@ PACKAGES = [
   'python',
   'python3',
   'readline',
+  'rg',
   'sdl2',
   'tmux',
   'vim',
