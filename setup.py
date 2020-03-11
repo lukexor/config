@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import platform, os, sys, getopt
+import platform, os, sys, getopt, subprocess
 
 # Update these files as needed
 DOTFILES = [
@@ -73,11 +73,13 @@ def install(package, opts):
       print("Installing '%s'" % package)
 
     if opts['system'] == 'Darwin':
-      notInstalled = os.popen('brew ls --versions "%s" > /dev/null' % package).read()
-      if notInstalled:
-        os.system('HOMEBREW_NO_AUTO_UPDATE=1 brew install "%s"' % package)
+      shellResult = subprocess.call('brew ls --versions "%s" > /dev/null' % package, shell=True)
+      if shellResult:
+        shellResult = subprocess.call('HOMEBREW_NO_AUTO_UPDATE=1 brew install "%s"' % package, shell=True)
       else:
-        os.system('HOMEBREW_NO_AUTO_UPDATE=1 brew upgrade "%s"' % package)
+        shellResult = subprocess.call('HOMEBREW_NO_AUTO_UPDATE=1 brew upgrade "%s"' % package, shell=True)
+      if shellResult:
+        print("Error installing '%s'" % package)
 
 def main(argv):
   try:
@@ -129,7 +131,9 @@ def main(argv):
   for c in COMMANDS:
     if options['verbose']:
       print("Running '%s'" % c)
-    os.system(c)
+    result = subprocess.call(c, shell=True)
+    if result:
+      print("Error running '%s'" %c)
 
   print("Setup Complete")
 
