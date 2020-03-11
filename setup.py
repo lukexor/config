@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import os, sys, getopt
+import platform, os, sys, getopt
 
 # Update these files as needed
 DOTFILES = [
@@ -21,6 +21,25 @@ DOTFILES = [
 ]
 LINKS = [
   'bin',
+]
+PACKAGES = [
+  'bash',
+  'ctags',
+  'git',
+  'hexedit',
+  'mysql',
+  'node',
+  'openssl',
+  'python',
+  'python3',
+  'readline',
+  'sdl2',
+  'tmux',
+  'vim',
+  'yarn',
+]
+COMMANDS = [
+  'vim +PlugUpgrade +PlugInstall +qall',
 ]
 
 
@@ -49,6 +68,17 @@ def rename(src, dst, opts):
         return
     os.symlink(src, dst)
 
+def install(package, opts):
+    if opts['verbose']:
+      print("Installing '%s'" % package)
+
+    if opts['system'] == 'Darwin':
+      notInstalled = os.popen('brew ls --versions "%s" > /dev/null' % package).read()
+      if notInstalled:
+        os.system('HOMEBREW_NO_AUTO_UPDATE=1 brew install "%s"' % package)
+      else:
+        os.system('HOMEBREW_NO_AUTO_UPDATE=1 brew upgrade "%s"' % package)
+
 def main(argv):
   try:
     opts, args = getopt.getopt(argv, "hvdf", ["help", "verbose", "dryrun", "force"])
@@ -63,6 +93,7 @@ def main(argv):
     'verbose': False,
     'dryrun': False,
     'force': False,
+    'system': platform.system()
   }
 
   for o, a in opts:
@@ -91,10 +122,16 @@ def main(argv):
     dst = "%s/%s" % (HOME, f)
     rename(src, dst, options)
 
-    # Setup Vim
-    os.system('vim +PlugUpgrade +PlugInstall +qall')
+  for p in PACKAGES:
+    install(p, options)
 
-    print("Setup Complete")
+  # Run commands
+  for c in COMMANDS:
+    if opts['verbose']:
+      print("Running '%s'" % c)
+    os.system(c)
+
+  print("Setup Complete")
 
 
 if __name__ == "__main__":

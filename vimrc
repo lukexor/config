@@ -15,7 +15,7 @@ let maplocalleader=','
 " == Plugins   {{{1
 " ==================================================================================================
 
-set nocompatible                 " Disable VI backwards compatible settings. Must be first
+set nocompatible        " Disable VI backwards compatible settings. Must be first
 
 call plug#begin('~/.vim/plugins')
 
@@ -34,6 +34,9 @@ Plug 'tpope/vim-surround'            " Enables surrounding text with quotes or b
 Plug 'tpope/vim-unimpaired'          " Adds a lot of shortcuts complimentary pairs of mappings
 Plug 'vim-scripts/YankRing.vim'      " Makes pasting previous yanks easier
 Plug 'vim-scripts/argtextobj.vim'    " Select/Modify inner arguments inside parens or quotes
+" Snippets engine + ultisnips
+Plug 'honza/vim-snippets' |
+    \ Plug 'SirVer/ultisnips'
 
 " -- File Navigation   {{{2
 " --------------------------------------------------------------------------------------------------
@@ -559,18 +562,10 @@ augroup END
 " == Plugins   {{{1
 " ==================================================================================================
 
-let g:EasyClipUseCutDefaults=0  " Don't add move shortcuts - conflicts with marks and vim-signature
-let g:EasyClipEnableBlackHoleRedirectForDeleteOperator=0  " Keep delete functionality unchanged
 let g:fzf_buffers_jump=1          " Jump to existing window if possible
 let g:fzf_commits_log_options='--graph --pretty=format:"%C(yellow)%h (%p) %ai%Cred%d %Creset%Cblue[%ae]%Creset %s (%ar). %b %N"'
-let g:jsx_ext_required=1
 let g:rustfmt_autosave = 1
 let g:rustfmt_command = 'rustup run stable rustfmt'
-let g:session_autoload='no'       " Loads 'default' session when vim is opened without files
-let g:session_autosave='yes'
-let g:session_autosave_periodic=3 " Automatically save the current session every 3 minutes
-let g:session_autosave_silent=1   " Silence any messages
-let g:session_default_to_last=1   " Default opening the last used session
 let g:snips_author='Lucas Petherbridge'
 let g:SuperTabDefaultCompletionType = "<c-x><c-n>"
 let g:SuperTabNoCompleteAfter=['^',',','\s']
@@ -604,7 +599,6 @@ let g:tagbar_type_perl = {
         \ 'p:packages:0:0',
     \ ],
 \ }
-" TODO: extend if needed
 let g:tagbar_type_go = {
     \ 'ctagstype' : 'go',
     \ 'kinds' : [
@@ -667,6 +661,9 @@ Doc <C-^> [Go to alternate file]
 Inoremap jk [Escape Insert] <ESC>
 Inoremap kj [Escape Insert] <ESC>
 
+" Helpful vim shortcuts
+Doc <C-X><C-N> [Complete Word in File]
+
 " -- Plugin Provided   {{{2
 " --------------------------------------------------------------------------------------------------
 
@@ -674,39 +671,46 @@ Doc <localleader>w [{count} CamelCase words forward]
 Doc <localleader>b [{count} CamelCase words backward]
 Doc <localleader>e [Forward to the end of CamelCase word {count}]
 
+" Search mappings
+Nmap <leader><tab> [Search Normal Mappings] <Plug>(fzf-maps-n)
+Xmap <leader><tab> [Search Visual Mappings] <Plug>(fzf-maps-x)
+Omap <leader><tab> <Plug>(fzf-maps-o)
+
 " Insert mode completion
-Inoremap <expr> <c-x><c-k> fzf#vim#complete#word({'left': '15%'})
-" Inoremap <expr> <c-x><c-f> fzf#vim#complete#path
-" Inoremap <expr> <c-x><c-j> fzf#vim#complete#file#ag
-" Inoremap <expr> <c-x><c-l> fzf#vim#complete#line
+Imap <c-x><c-k> [FZF Complete Word] <Plug>(fzf-complete-word)
+Imap <c-x><c-f> [FZF Complete Path] <Plug>(fzf-complete-path)
+Imap <c-x><c-j> [FZF Complete File] <Plug>(fzf-complete-file-ag)
+Imap <c-x><c-l> [FZF Complete Line] <Plug>(fzf-complete-line)
 
 " -- Normal Mode   {{{2
 " --------------------------------------------------------------------------------------------------
 
-Nnoremap cP                      [Copy line to System clipboard] <Plug>SystemCopyLine
-Nnoremap ga                      [Align with ga{motion}] <Plug>(EasyAlign)
+" These mappings need to be recursively defined
+Nmap ga                          [Align with ga{motion}] <Plug>(EasyAlign)
+Nmap <leader>"                   [Surround current word with double quotes] ysiw"
+Nmap <leader>'                   [Surround current word with single quotes] ysiw'
+Nmap <leader>(                   [Surround current word with parentheses with spaces] ysiw(
+Nmap <leader>)                   [Surround current word with parentheses] ysiw)
+Nmap <leader>>                   [Surround current word with angle brackets] ysiw>
+Nmap <leader>[                   [Surround current word with square brackets with spaces] ysiw[
+Nmap <leader>]                   [Surround current word with square brackets] ysiw]
+Nmap <leader>`                   [Surround current word with tick quotes] ysiw`
+Nmap <leader>{                   [Surround current word with curly braces with spaces] ysiw{
+Nmap <leader>}                   [Surround current word with curly braces] ysiw}
+Nmap <localleader>=              [Align paragraph with = sign] gaip=
+Nmap <localleader>[              [Surround current paragraph with square brackets and indent] ysip[
+Nmap <localleader>]              [Surround current paragraph with square brackets and indent] ysip]
+Nmap <localleader>rh             [Remove surrounding {''}] ds'ds}
+Nmap <localleader>sh             [Surround current word with {''}] ysiw}lysiw'
+Nmap <localleader>{              [Surround current paragraph with curly braces and indent] ysip{
+Nmap <localleader>}              [Surround current paragraph with curly braces and indent] ysip{
+" Fix for syntax highlighting from above line }}
+
+Nnoremap cP                      [Copy line to clipboard] "*yy
+Nnoremap P                       [Paste from clipboard] "*p
 Nnoremap <F10>                   [Syntax ID Debug] :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
     \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
     \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
-Nnoremap <leader>"               [Surround current word with double quotes] ysiw"
-Nnoremap <leader>'               [Surround current word with single quotes] ysiw'
-Nnoremap <leader>(               [Surround current word with parentheses with spaces] ysiw(
-Nnoremap <leader>)               [Surround current word with parentheses] ysiw)
-Nnoremap <leader><               [Surround current word with an HTML tag] ysiw<
-Nnoremap <leader>>               [Surround current word with angle brackets] ysiw>
-Nnoremap <leader>[               [Surround current word with square brackets with spaces] ysiw[
-Nnoremap <leader>]               [Surround current word with square brackets] ysiw]
-Nnoremap <leader>`               [Surround current word with tick quotes] ysiw`
-Nnoremap <leader>{               [Surround current word with curly braces with spaces] ysiw{
-Nnoremap <leader>}               [Surround current word with curly braces] ysiw}
-Nnoremap <localleader>=          [Align paragraph with = sign] gaip=
-Nnoremap <localleader>[          [Surround current paragraph with square brackets and indent] ysip[
-Nnoremap <localleader>]          [Surround current paragraph with square brackets and indent] ysip]
-Nnoremap <localleader>rh         [Remove surrounding {''}] ds'ds}
-Nnoremap <localleader>sh         [Surround current word with {''}] ysiw}lysiw'
-Nnoremap <localleader>{          [Surround current paragraph with curly braces and indent] ysip{
-Nnoremap <localleader>}          [Surround current paragraph with curly braces and indent] ysip{
-" Fix for syntax highlighting from above line } } }
 Nnoremap <CR>                    [Create new empty lines with Enter] o<Esc>
 Nnoremap J                       [Move current line down one] ddp
 Nnoremap K                       [Move current line up one] dd<up>P
@@ -733,23 +737,6 @@ Nnoremap <leader>ep              [Edit vim plugins] :vsplit $HOME/.vim/plugins.v
 Nnoremap <leader>ev              [Edit vimrc in a vertical split] :vsplit $MYVIMRC<CR>
 Nnoremap <leader>f               [Fuzzy search files in cwd] :Files<CR>
 Nnoremap <leader>g               [Fuzzy search git files] :GFiles<CR>
-Nnoremap <leader>ga              [Stage Git Hunk] :GitGutterStageHunk<CR>
-Nnoremap <leader>ga              [Stage Git Hunk] :GitGutterStageHunk<CR>
-Nnoremap <leader>gb              [Fugitive git blame] :Gblame<CR>
-Nnoremap <leader>gc              [Fugitive git commit] :Gcommit<CR>
-Nnoremap <leader>gd              [Fugitive git diff] :Gdiff<CR>
-Nnoremap <leader>gg              [Toggle GitGutter] :GitGutterToggle<CR>
-Nnoremap <leader>gh              [Toggle GitGutter Line Highlighting] :GitGutterLineHighlightsToggle<CR>
-Nnoremap <leader>glg             [Fugitive git log] :Glog<CR>
-Nnoremap <leader>gm              [Fugitive git merge] :Gmerge<space>
-Nnoremap <leader>gn              [Next Git Hunk] :GitGutterNextHunk<CR>
-Nnoremap <leader>gp              [Previous Git Hunk] :GitGutterPrevHunk<CR>
-Nnoremap <leader>gpl             [Fugitive git pull] :Gpull<CR>
-Nnoremap <leader>gps             [Fugitive git push] :Gpush<CR>
-Nnoremap <leader>gst             [Fugitive git status] :Gstatus<CR>
-Nnoremap <leader>gt              [Toggle Git Gutter] :GitGutterToggle<CR>
-Nnoremap <leader>gu              [Undo Git Hunk] :GitGutterUndoHunk<CR>
-Nnoremap <leader>gv              [Preview Git Hunk] :GitGutterPreviewHunk<CR>
 Nnoremap <leader>k               [Open last viewed buffer] :b #<CR>
 Nnoremap <leader>n               [Edit a new, unnamed buffer] :enew<CR>
 Nnoremap <leader>p               [Display current project directory] :echo g:project_dir<CR>
@@ -794,30 +781,51 @@ Nnoremap <silent> <localleader>_ [Toggle _ being considered part of a word] :cal
 " -- Visual & Select Mode   {{{2
 " --------------------------------------------------------------------------------------------------
 
-Vnoremap      <C-D>                 [Move visual block left] <Plug>SchleppDupLeft
-Vnoremap      D                     [Move visual block left] <Plug>SchleppDupLeft
-Vnoremap      ga                    [Align columns in normal mode with ga{motion}] <Plug>(EasyAlign)
-Vnoremap      <down>                [Move visual block down] <Plug>SchleppDown
-Vnoremap      <left>                [Move visual block left] <Plug>SchleppLeft
-Vnoremap      <right>               [Move visual block right] <Plug>SchleppRight
-Vnoremap      <up>                  [Move visual block up] <Plug>SchleppUp
-Vnoremap      <leader>"             [Surround current word with double quotes] gS"
-Vnoremap      <leader>'             [Surround current word with single quotes] gS'
-Vnoremap      <leader>(             [Surround current word with parentheses with spaces] gS(
-Vnoremap      <leader>)             [Surround current word with parentheses] gS)
-Vnoremap      <leader><             [Surround current word with an HTML tag] gS<
-Vnoremap      <leader>>             [Surround current word with angle brackets] gS>
-Vnoremap      <leader>[             [Surround current word with square brackets with spaces] gS[
-Vnoremap      <leader>]             [Surround current word with square brackets] gS]
-Vnoremap      <leader>`             [Surround current word with single quotes] gS'
-Vnoremap      <leader>{             [Surround current word with curly braces with spaces] gS{
-Vnoremap      <leader>}             [Surround current word with curly braces] gS}
+" These mappings need to be recursively defined
+Vmap cP                      [Copy selection to clipboard] "*yy
+Vmap ga                      [Align columns in normal mode with ga{motion}] <Plug>(EasyAlign)
+Vmap D                       [Duplicate block down] <Plug>SchleppDupDown
+Vmap L                       [Duplicate block left] <Plug>SchleppDupLeft
+Vmap R                       [Duplicate block right] <Plug>SchleppDupRight
+Vmap U                       [Duplicate block up] <Plug>SchleppDupUp
+Vmap <down>                  [Move block down] <Plug>SchleppDown
+Vmap <left>                  [Move block left] <Plug>SchleppLeft
+Vmap <right>                 [Move block right] <Plug>SchleppRight
+Vmap <up>                    [Move block up] <Plug>SchleppUp
+Vmap <leader>"               [Surround current word with double quotes] gS"
+Vmap <leader>'               [Surround current word with single quotes] gS'
+Vmap <leader>(               [Surround current word with parentheses with spaces] gS(
+Vmap <leader>)               [Surround current word with parentheses] gS)
+Vmap <leader><               [Surround current word with an HTML tag] gS<
+Vmap <leader>>               [Surround current word with angle brackets] gS>
+Vmap <leader>[               [Surround current word with square brackets with spaces] gS[
+Vmap <leader>]               [Surround current word with square brackets] gS]
+Vmap <leader>`               [Surround current word with single quotes] gS'
+Vmap <leader>{               [Surround current word with curly braces with spaces] gS{
+Vmap <leader>}               [Surround current word with curly braces] gS}
 
 " -- Visual Mode   {{{2
 " --------------------------------------------------------------------------------------------------
 
-Xnoremap      cp                    [Visual copy to System clipboard] <Plug>SystemCopy
-Xnoremap      ga                    [Align columns in visual mode with v{motion}ga] <Plug>(EasyAlign)
+" These mappings need to be recursively defined
+Xmap ga                      [Align columns in visual mode with v{motion}ga] <Plug>(EasyAlign)
+
+" -- Operating-Pending Mode   {{{2
+" --------------------------------------------------------------------------------------------------
+
+" Shortcuts for ci, di, etc
+onoremap ( i(
+onoremap [ i[
+onoremap { i{
+onoremap ' i'
+onoremap " i"
+
+" Change up to the next return
+onoremap r /return<CR>
+" Change inside next parens
+onoremap in( :<c-u>normal! f(vi(<cr>
+" Change inside last parens
+onoremap il( :<c-u>normal! F)vi(<cr>
 
 
 " == Syntax Highlighting   {{{1

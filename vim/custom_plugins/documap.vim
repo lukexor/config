@@ -39,6 +39,8 @@ command! -nargs=+ Xmap call <SID>Define('Xmap', <q-args>, 1)
 command! -nargs=+ Xnoremap call <SID>Define('Xnoremap', <q-args>, 1)
 command! -nargs=+ Vmap call <SID>Define('Vmap', <q-args>, 1)
 command! -nargs=+ Vnoremap call <SID>Define('Vnoremap', <q-args>, 1)
+command! -nargs=+ Omap call <SID>Define('Omap', <q-args>, 1)
+command! -nargs=+ Onoremap call <SID>Define('Onoremap', <q-args>, 1)
 
 command! -nargs=+ Doc call <SID>Define('Map', <q-args>, 0)
 
