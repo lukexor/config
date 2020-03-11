@@ -195,7 +195,7 @@ fi
 alias ~='cd ~'
 alias ..='cd ../'
 alias ...='cd ../../'
-alias cdot="cd $HOME/.dotfiles"
+alias cdot="cd $HOME/Dotfiles"
 
 # Filesystem improvements
 alias rm='rm -i'
@@ -235,10 +235,10 @@ alias rpmls='rpm -qlp' # list rpm contents
 alias rpminfo='rpm -qip' # list rpm info
 
 # Edit configurations
-alias vb="pushd $HOME/.dotfiles/ >> /dev/null; vi $HOME/.dotfiles/bashrc; popd >> /dev/null"
-alias vbp="pushd $HOME/.dotfiles/ >> /dev/null; vi $HOME/.dotfiles/bash_profile; popd >> /dev/null"
-alias vp="pushd $HOME/.dotfiles/ >> /dev/null; vi $HOME/.dotfiles/vim/plugins.vim; popd >> /dev/null"
-alias vrc="pushd $HOME/.dotfiles/ >> /dev/null; vi $HOME/.dotfiles/vimrc; popd >> /dev/null"
+alias vb="pushd $HOME/Dotfiles/ >> /dev/null; vi $HOME/Dotfiles/bashrc; popd >> /dev/null"
+alias vbp="pushd $HOME/Dotfiles/ >> /dev/null; vi $HOME/Dotfiles/bash_profile; popd >> /dev/null"
+alias vp="pushd $HOME/Dotfiles/ >> /dev/null; vi $HOME/Dotfiles/vim/plugins.vim; popd >> /dev/null"
+alias vrc="pushd $HOME/Dotfiles/ >> /dev/null; vi $HOME/Dotfiles/vimrc; popd >> /dev/null"
 
 # SSH
 alias slp="ssh lp"
@@ -905,3 +905,7 @@ source_agent
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
 export BASH_SILENCE_DEPRECATION_WARNING=1
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion

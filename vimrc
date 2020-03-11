@@ -16,10 +16,83 @@ let maplocalleader=','
 let g:project_dir=getcwd()
 let b:test_method=""
 
-" Load up all of our plugins using vim-plug
-if filereadable(expand("$HOME/.vim/plugins.vim"))
-    source $HOME/.vim/plugins.vim
-endif
+call plug#begin('~/.vim/plugins')
+
+" == Editing   {{{1
+" ==================================================================================================
+
+Plug 'christoomey/vim-sort-motion'   " Easier sorting
+Plug 'junegunn/vim-easy-align'       " Makes aligning chunks of code super easy
+Plug 'vim-scripts/YankRing.vim'      " Makes pasting previous yanks easier
+Plug 'justinmk/vim-ipmotion'         " Improves { and } motions
+Plug 'tmhedberg/matchit'             " Advanced % matching
+Plug 'tommcdo/vim-exchange'          " Allows easy exchanging of text
+Plug 'tpope/vim-commentary'          " Commenting quality of life improvements
+Plug 'tpope/vim-endwise'             " Adds ending structures to blocks e.g. endif
+Plug 'kshenoy/vim-signature'         " Adds vim marks to gutter
+Plug 'tpope/vim-surround'            " Enables surrounding text with quotes or brackets easier
+Plug 'tpope/vim-unimpaired'          " Adds a lot of shortcuts complimentary pairs of mappings
+Plug 'garbas/vim-snipmate' |
+  Plug 'marcweber/vim-addon-mw-utils' |
+  Plug 'tomtom/tlib_vim'
+Plug 'honza/vim-snippets'
+
+" == File Management   {{{1
+" ==================================================================================================
+
+" Fuzzy-finder written in Go
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' } |
+      \ Plug 'junegunn/fzf.vim'
+Plug 'majutsushi/tagbar'    " Displays tags in a sidebar
+Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }  " FileTree
+
+" == Formatting/Display   {{{1
+" ==================================================================================================
+
+Plug 'nelstrom/vim-markdown-folding'    " Folding for markdown by heading
+Plug 'morhetz/gruvbox'
+Plug 'maksimr/vim-jsbeautify'
+
+" == Text Objects   {{{1
+" ==================================================================================================
+
+Plug 'bkad/CamelCaseMotion'           " Text objects for working inside CamelCase words
+Plug 'christoomey/vim-titlecase'      " Easier title casing
+Plug 'kana/vim-textobj-entire'        " Provides more text objects to work with entire buffers
+Plug 'kana/vim-textobj-fold'          " Text object for folded lines
+Plug 'kana/vim-textobj-indent'        " Provides indent text objects
+Plug 'kana/vim-textobj-line'          " Provides current line text object
+Plug 'kana/vim-textobj-user'          " Core textobj dependency
+Plug 'nelstrom/vim-textobj-rubyblock' " Ruby textobj
+Plug 'vim-scripts/argtextobj.vim'     " Select/Modify inner arguments inside parens or quotes
+
+" == Utility/Support   {{{1
+" ==================================================================================================
+
+Plug 'scrooloose/syntastic' " Syntax checking
+Plug 'tpope/vim-dispatch'   " Allows building/testing to go on in the background
+Plug 'tpope/vim-repeat'     " Repeat last command using .
+Plug 'zenbro/mirror.vim'    " Easily edit mirror files across systems using SCP
+
+" == Language Support   {{{1
+" ==================================================================================================
+
+" Plug 'sheerun/vim-polyglot'          " Syntax support for a variety of languages
+Plug 'vim-perl/vim-perl'             " vim Perl support
+Plug 'vim-scripts/HTML-AutoCloseTag' " Auto-closes HTML tags e.g. </body>
+Plug 'rust-lang/rust.vim'
+Plug 'leafgarland/typescript-vim'
+
+" == Window Control   {{{1
+" ==================================================================================================
+
+Plug 'christoomey/vim-tmux-navigator' " Easily jump between splits or tmux windows
+
+" }}}
+
+call plug#end()
+
+" vim:foldmethod=marker:foldlevel=0
 
 " Custom plugins
 runtime custom_plugins/documap.vim
@@ -177,9 +250,9 @@ set statusline+=%l/%L          " Current/Total lines
 set statusline+=\:%c           " Cursor position
 set statusline+=\ %p%%         " Percent through file
 set tags=./tags,tags
-if v:version > 704
-    set tagcase=match
-endif
+" if v:version > 704
+"     set tagcase=match
+" endif
 set nocst                      " Disable cscope - it messes with local tag lookups, might be useful
                                " if I ever do a lot of C programming
 set term=xterm-256color
@@ -248,21 +321,6 @@ function! CloseAllBuffersButCurrent()
   if curr < last | silent! execute (curr+1).",".last."bd" | endif
 endfunction
 
-function! FormatFile()
-    let ft = &filetype
-    if ft == 'rust'
-        execute ':RustFmt'
-    elseif ft == 'javascript'
-        execute ':call JsBeautify()'
-    elseif ft == 'html'
-        execute ':call HtmlBeautify()'
-    elseif ft == 'css'
-        execute ':call CSSBeautify()'
-    elseif ft == 'json'
-        execute ':call JsonBeautify()'
-    endif
-endfunction
-
 " Sets g:pUnable to determine the projectroject_dir to the cwd on vim startup. The function will only set it
 " if not already defined and then changes the local cwd to the current file
 " location
@@ -272,42 +330,6 @@ endfunction
 "     endif
 "     exe 'lcd ' . fnamemodify(resolve(expand('%')), ':h')
 " endfunction
-
-" Limited to perl unit tests for now...
-function! RunTests(...)
-    if &filetype == 'perl'
-        let filename = expand('%:p:s')
-        let module = expand('%:p:s?.*lib/??:r:gs?/?::?')
-        let cmd = 'Make'
-        if !empty(a:1) && a:1 == 'background'
-            let cmd = 'Make!'
-        endif
-        let test_method = get(b:, 'test_method', "")
-        if !empty(test_method)
-            echom 'Testing ' . filename . '::' . b:test_method
-            " execute ':' . cmd . ' testm TEST=' . filename . ' METHOD=' . b:test_method
-        else
-            echom 'Testing ' . filename
-            " execute ':' . cmd . ' testf TEST=' . filename
-             let b:dispatch = 'prove ' . filename
-            execute ':Dispatch'
-        endif
-    elseif &filetype == 'rust'
-        execute ':Make test'
-    else
-        echom 'Tests not set up for ' . &filetype 'files'
-    endif
-endfunction
-
-function! RunMake()
-    if &filetype == 'rust'
-        execute ':Start cargo check'
-    elseif getcwd() == '/Users/caeledh/Dropbox/dev/nf-sf-adapter'
-        execute ':Start! grunt build'
-    else
-        execute ':Make'
-    endif
-endfunction
 
 " Not the same as :retab
 " This replaces spaces for the current tabstop with literal tabs
@@ -325,32 +347,6 @@ function! Undouble_Completions()
     let col  = getpos('.')[2]
     let line = getline('.')
     call setline('.', substitute(line, '\(\k\+\)\%'.col.'c\zs\1', '', ''))
-endfunction
-
-" Run perl Devel::Cover
-function! RunCover()
-    if &filetype == 'perl'
-        execute 'let $HARNESS_PERL_SWITCHES="-MDevel::Cover"'
-        call RunTests('background')
-    else
-        echom 'Coverage not set up for ' . &filetype 'files'
-    endif
-endfunction
-
-" Set the current method for unit testing - mostly useful for perl currently
-function! SetTestMethod()
-    let b:test_method=tagbar#currenttag("%s","")
-    if !empty(b:test_method)
-        echom 'Test Method set to ' . b:test_method
-    else
-        echom 'Test Method cleared'
-    endif
-endfunction
-
-" Clear the current test method
-function! ClearTestMethod()
-    let b:test_method=""
-    echom 'Test Method cleared'
 endfunction
 
 " Ability to toggle certain characters as keywords for operations like
@@ -468,7 +464,7 @@ endfunction
 " ==================================================================================================
 
 if v:version >= 800
-    augroup Undouble_Completions
+    augroup UndoubleCompletions
         autocmd!
         autocmd CompleteDone *  call Undouble_Completions()
     augroup END
@@ -479,7 +475,7 @@ augroup NoSimultaneousEdits
     autocmd SwapExists * echom 'Duplicate edit session (readonly)'
     autocmd SwapExists * sleep 1
 augroup END
-augroup filetype_formats
+augroup FiletypeFormats
     autocmd!
     autocmd BufNewFile,BufRead *.apxc set filetype=java
     autocmd BufNewFile,BufRead *.conf set filetype=yaml
@@ -492,7 +488,42 @@ augroup filetype_formats
     autocmd BufNewFile,BufRead * if !&modifiable | setlocal nolist nospell | endif
     autocmd BufNewFile,BufRead * call camelcasemotion#CreateMotionMappings('<localleader>')
 augroup END
-augroup vimrcEx
+augroup FiletypeShortcuts
+    autocmd!
+
+    " Formatting
+    autocmd FileType rust                  Nnoremap <leader>F [RustFmt] :RustFmt<CR>
+    autocmd FileType rust                  Vnoremap <leader>F [RustFmtRange] :RustFmtRange<CR>
+    autocmd FileType javascript,typescript Nnoremap <leader>F [JsBeautify] :call JsBeautify()<CR>
+    autocmd FileType javascript,typescript Vnoremap <leader>F [RangeJsBeautify] :call RangeJsBeautify()<CR>
+    autocmd FileType html                  Nnoremap <leader>F [HtmlBeautify] :call HtmlBeautify()<CR>
+    autocmd FileType html                  Vnoremap <leader>F [RangeHtmlBeautify] :call RangeHtmlBeautify()<CR>
+    autocmd FileType css                   Nnoremap <leader>F [CssBeautify] :call CssBeautify()<CR>
+    autocmd FileType css                   Vnoremap <leader>F [RangeCssBeautify] :call RangeCssBeautify()<CR>
+    autocmd FileType json                  Nnoremap <leader>F [JsonBeautify] :call JsonBeautify()<CR>
+    autocmd FileType json                  Vnoremap <leader>F [RangeJsonBeautify] :call RangeJsonBeautify()<CR>
+
+    " Compiling
+    if filereadable("./makefile")
+        autocmd FileType *                 Nnoremap <leader>m [Run Make] :Make<CR>
+    elseif filereadable("./package.json")
+        autocmd FileType typescript        Nnoremap <leader>m [Npm Build] :Start npm run build<CR>
+    endif
+    autocmd FileType rust                  Nnoremap <leader>m [Cargo Build] :Start cargo build<CR>
+
+    " Testing
+    autocmd FileType rust                  Nnoremap <leader>t [Cargo Test] :Start cargo test<CR>
+    if filereadable("./package.json")
+        autocmd FileType typescript        Nnoremap <leader>t [Npm Test] :Start npm test -- --browsers ChromeHeadless --watch=false<CR>
+    endif
+
+    " Linting
+    autocmd FileType rust                  Nnoremap <leader>l [Cargo Check] :Start cargo check<CR>
+    if filereadable("./package.json")
+        autocmd FileType typescript        Nnoremap <leader>l [Npm Lint] :Start npm run lint<CR>
+    endif
+augroup END
+augroup VimrcEx
     autocmd!
 
     " Automatically rebalance windows on vim resize
@@ -633,6 +664,27 @@ map <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans
 \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
 \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
 
+Nmap      cP                    [Copy line to System clipboard] <Plug>SystemCopyLine
+Nmap      ga                    [Align columns in normal mode with ga{motion}] <Plug>(EasyAlign)
+Nnoremap  <CR>                  [Create new empty lines with Enter] o<Esc>
+Nmap      <localleader>=        [Align paragraph with = sign] gaip=
+Nmap      <localleader>[        [Surround current paragraph with square brackets and indent] ysip[
+Nmap      <localleader>]        [Surround current paragraph with square brackets and indent] ysip]
+Nmap      <localleader>sh       [Surround current word with {''}] ysiw}lysiw'
+Nmap      <localleader>rh       [Remove surrounding {''}] ds'ds}
+Nmap      <localleader>{        [Surround current paragraph with curly braces and indent] ysip{
+Nmap      <localleader>}        [Surround current paragraph with curly braces and indent] ysip{
+" Fix for syntax highlighting from above line } } }
+Nnoremap  <localleader>n        [Go to next error]:cn<CR>
+Nnoremap  <localleader>p        [Go to previous error]:cp<CR>
+Nnoremap  <localleader>P        [Interactively paste by choosing from recent yanks] :IPaste<CR>
+Nnoremap  <localleader>H        [Fuzzy search vim History] :History<CR>
+Nnoremap  <localleader>1        [Toggle NERDTree window] :NERDTreeToggle<CR>
+Nnoremap  <localleader>2        [Toggle Tagbar window] :TagbarToggle<CR>
+Nnoremap  <localleader>3        [Toggle Line Numbers and Git Gutter] :set rnu! nu! list!<CR>:GitGutterToggle<CR>
+Nnoremap  <localleader>4        [Toggle Paste] :set paste!<CR>
+Nnoremap  <localleader>Q        [Quit all windows without qall!<CR>
+Nnoremap  <localleader>q        [Quit all windows] :qall<CR>
 Nmap      <leader>"             [Surround current word with double quotes] ysiw"
 Nmap      <leader>'             [Surround current word with single quotes] ysiw'
 Nmap      <leader>(             [Surround current word with parentheses with spaces] ysiw(
@@ -644,25 +696,9 @@ Nmap      <leader>]             [Surround current word with square brackets] ysi
 Nmap      <leader>`             [Surround current word with tick quotes] ysiw`
 Nmap      <leader>{             [Surround current word with curly braces with spaces] ysiw{
 Nmap      <leader>}             [Surround current word with curly braces] ysiw}
-Nmap      <localleader>=        [Align paragraph with = sign] gaip=
-Nmap      <localleader>H        [Surround current word with {''}] ysiw}lysiw'
-Nmap      <localleader>[        [Surround current paragraph with square brackets and indent] ysip[
-Nmap      <localleader>]        [Surround current paragraph with square brackets and indent] ysip]
-Nmap      <localleader>h        [Remove surrounding {''}] ds'ds}
-Nmap      <localleader>{        [Surround current paragraph with curly braces and indent] ysip{
-Nmap      <localleader>}        [Surround current paragraph with curly braces and indent] ysip{
-" Fix for syntax highlighting from above line } } }
-Nmap      cP                    [Copy line to System clipboard] <Plug>SystemCopyLine
-Nmap      ga                    [Align columns in normal mode with ga{motion}] <Plug>(EasyAlign)
-Nnoremap  <localleader>n        [Go to next error]:cn<CR>
-Nnoremap  <localleader>p        [Go to previous error]:cp<CR>
-Nnoremap  <CR>                  [Create new empty lines with Enter] o<Esc>
 Nnoremap  <leader>-             [Maximize current window when in a vertial split] :wincmd _<CR>:wincmd \|<CR>
 Nnoremap  <leader>=             [Equalize vertical split window widths] :wincmd =<CR>
-" Nnoremap  <leader>H             [Open previous tab] :tabp<CR>
 Nnoremap  <leader>L             [Open next tab] :tabn<CR>
-Nnoremap  <leader>M             [Fuzzy search vim History] :History<CR>
-Nnoremap  <localleader>P        [Interactively paste by choosing from recent yanks] :IPaste<CR>
 Nnoremap  <leader>Q             [Quit without saving] :qall!<CR>
 Nnoremap  <leader>R             [Fuzzy search Recent files] :History<CR>
 Nnoremap  <leader>S             [Shortcut for :%s///g] :%s///g<LEFT><LEFT><LEFT>
@@ -677,7 +713,6 @@ Nnoremap  <leader>D             [Close and delete the all but the current buffer
 Nnoremap  <leader>ep            [Edit vim plugins] :vsplit $HOME/.vim/plugins.vim<CR>
 Nnoremap  <leader>ev            [Edit vimrc in a vertical split] :vsplit $MYVIMRC<CR>
 Nnoremap  <leader>f             [Fuzzy search files in cwd] :Files<CR>
-Nnoremap  <leader>F             [Format file] :call FormatFile()<CR>
 Nnoremap  <leader>ga            [Stage Git Hunk] :GitGutterStageHunk<CR>
 Nnoremap  <leader>gt            [Toggle Git Gutter] :GitGutterToggle<CR>
 Nnoremap  <leader>gb            [Fugitive git blame] :Gblame<CR>
@@ -697,34 +732,26 @@ Nnoremap  <leader>gv            [Preview Git Hunk] :GitGutterPreviewHunk<CR>
 Nnoremap  <leader>H             [Open previous buffer] :bprevious<CR>
 Nnoremap  <leader>k             [Open last viewed buffer] :b #<CR>
 Nnoremap  <leader>L             [Open next buffer] :bnext<CR>
-Nnoremap  <leader>m             [Fuzy search marks] :Marks<CR>
+Nnoremap  <leader>M             [Fuzy search marks] :Marks<CR>
 Nnoremap  <leader>n             [Edit a new, unnamed buffer] :enew<CR>
 Nnoremap  <leader>g             [Fuzzy search git files] :GFiles<CR>
 Nnoremap  <leader>q             [Close the current window] :q<CR>
 Nnoremap  <leader>rc            [Run code coverage] :call RunCover()<CR>
 Nnoremap  <leader>rr            [Run SyntasticReset] :SyntasticReset<CR>
 Nnoremap  <leader>ri            [Reindent the entire file] mzgg=G`z
-Nnoremap  <leader>rm            [Run make asynchronously] :call RunMake()<CR>
 Nnoremap  <leader>rs            [Remove trailing spaces in the entire file] mz:silent! %s/\s\+$//<CR>:noh<CR>`z
-Nnoremap  <leader>rt            [Run unit tests] :call RunTests("")<CR>
 Nnoremap  <leader>rT            [Retab the entire file] :call RetabIndents()<CR>
 Nnoremap  <leader>sc            [Run syntax checker] :SyntasticCheck<CR>
 Nnoremap  <leader>sm            [Set method under cursor to the current test method] :call SetTestMethod()<CR>
 Nnoremap  <leader>ss            [Toggle spellcheck] :set spell!<CR>
 Nnoremap  <leader>sv            [Reload vimrc] :source $MYVIMRC<CR>
-Nnoremap  <leader>t             [Fuzzy search tags] :Tags<CR>
+Nnoremap  <leader>T             [Fuzzy search tags] :Tags<CR>
 Nnoremap  <leader>tn            [Next Tag] :tnext<CR>
 Nnoremap  <leader>tp            [Previous Tag] :tprevious<CR>
 Nnoremap  <leader>w             [Save file changes] :write<CR>
 Nnoremap  <leader>x             [Write and quit current window] :x<CR>
 Nnoremap  <leader>z             [Background vim and return to shell] <C-Z>
 Nnoremap  <leader>p             [Display current project directory] :echo g:project_dir<CR>
-Nnoremap  <localleader>1        [Toggle NERDTree window] :NERDTreeToggle<CR>
-Nnoremap  <localleader>2        [Toggle Tagbar window] :TagbarToggle<CR>
-Nnoremap  <localleader>3        [Toggle Line Numbers and Git Gutter] :set rnu! nu! list!<CR>:GitGutterToggle<CR>
-Nnoremap  <localleader>4        [Toggle Paste] :set paste!<CR>
-Nnoremap  <localleader>Q        [Quit all windows without qall!<CR>
-Nnoremap  <localleader>q        [Quit all windows] :qall<CR>
 Nnoremap  J                     [Move current line down one] ddp
 Nnoremap  K                     [Move current line up one] dd<up>P
 Nnoremap  Q                     [Disable EX mode] <NOP>
@@ -781,7 +808,8 @@ inoremap <c-x><c-f> <plug>(fzf-complete-path)
 inoremap <c-x><c-j> <plug>(fzf-complete-file-ag)
 inoremap <c-x><c-l> <plug>(fzf-complete-line)
 
-inoremap jj <ESC>
+inoremap jk <ESC>
+inoremap kj <ESC>
 
 " Advanced customization using autoload functions
 inoremap <expr> <c-x><c-k> fzf#vim#complete#word({'left': '15%'})
