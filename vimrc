@@ -733,7 +733,6 @@ Nnoremap <leader>cc              [Close Quickfix] :ccl<CR>
 Nnoremap <leader>cm              [Clear currently set test method] :call ClearTestMethod()<CR>
 Nnoremap <leader>cw              [Count number of words in the current file] :!wc -w %<CR>
 Nnoremap <leader>d               [Close and delete the current buffer] :call CloseBuffer()<CR>
-Nnoremap <leader>ep              [Edit vim plugins] :vsplit $HOME/.vim/plugins.vim<CR>
 Nnoremap <leader>ev              [Edit vimrc in a vertical split] :vsplit $MYVIMRC<CR>
 Nnoremap <leader>f               [Fuzzy search files in cwd] :Files<CR>
 Nnoremap <leader>g               [Fuzzy search git files] :GFiles<CR>

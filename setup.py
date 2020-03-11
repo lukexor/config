@@ -5,6 +5,7 @@ import platform, os, sys, getopt, subprocess
 # Update these files as needed
 DOTFILES = [
   'agignore',
+  'bashrc',
   'bash_profile',
   'ctags',
   'editrc',
@@ -48,7 +49,51 @@ COMMANDS = [
 
 def usage():
   print """usage: setup.py [-h | --help] [-v | --verbose]
-                [-d | --dryrun] [-f | --force]"""
+                [-d | --dryrun] [-f | --force]
+                [-s | --sync] [-i | --install] [-c | --commands]
+"""
+
+def getOptions(argv):
+  try:
+    opts, args = getopt.getopt(argv, "hvdfsic",
+        ["help", "verbose", "dryrun", "force", "sync", "install", "commands"])
+  except getopt.GetoptError as err:
+    print str(err)
+    usage()
+    sys.exit(2)
+
+  options = {
+    'verbose': False,
+    'dryrun': False,
+    'force': False,
+    'sync': False,
+    'install': False,
+    'commands': False,
+    'system': platform.system(),
+    'HOME': os.environ.get('HOME'),
+  }
+
+  for o, a in opts:
+    if o in ("-v", "--verbose"): options['verbose'] = True
+    elif o in ("-d", "--dryrun"): options['dryrun'] = True
+    elif o in ("-f", "--force"): options['force'] = True
+    elif o in ("-s", "--sync"): options['sync'] = True
+    elif o in ("-i", "--install"): options['install'] = True
+    elif o in ("-c", "--commands"): options['commands'] = True
+    elif o in ("-h", "--help"):
+      usage()
+      sys.exit()
+    else:
+      assert False, "unhandled option"
+
+  if (not options['sync']
+      and not options['install']
+      and not options['commands']):
+    options['sync'] = True
+    options['install'] = True
+    options['commands'] = True
+
+  return options
 
 def rename(src, dst, opts):
   if opts['verbose']:
@@ -68,7 +113,25 @@ def rename(src, dst, opts):
         return
     os.symlink(src, dst)
 
-def install(package, opts):
+def sync(opts):
+  if not opts['sync']: return
+
+  # Link dotfiles
+  for f in DOTFILES:
+    src = "%s/%s" % (os.getcwd(), f)
+    dst = "%s/.%s" % (opts['HOME'], f)
+    rename(src, dst, opts)
+
+  # Link regular files
+  for f in LINKS:
+    src = "%s/%s" % (os.getcwd(), f)
+    dst = "%s/%s" % (opts['HOME'], f)
+    rename(src, dst, opts)
+
+def install(opts):
+  if not opts['install']: return
+
+  for package in PACKAGES:
     if opts['verbose']:
       print("Installing '%s'" % package)
 
@@ -81,59 +144,28 @@ def install(package, opts):
       if shellResult:
         print("Error installing '%s'" % package)
 
-def main(argv):
-  try:
-    opts, args = getopt.getopt(argv, "hvdf", ["help", "verbose", "dryrun", "force"])
-  except getopt.GetoptError as err:
-    print str(err)
-    usage()
-    sys.exit(2)
-
-  HOME = os.environ.get('HOME')
-
-  options = {
-    'verbose': False,
-    'dryrun': False,
-    'force': False,
-    'system': platform.system()
-  }
-
-  for o, a in opts:
-    if o in ("-v", "--verbose"): options['verbose'] = True
-    elif o in ("-d", "--dryrun"): options['dryrun'] = True
-    elif o in ("-f", "--force"): options['force'] = True
-    elif o in ("-h", "--help"):
-      usage()
-      sys.exit()
-    else:
-      assert False, "unhandled option"
-
-  if HOME == None:
-    print("$HOME must be defined to setup symlinks.")
-    sys.exit(1)
-
-  # Link dotfiles
-  for f in DOTFILES:
-    src = "%s/%s" % (os.getcwd(), f)
-    dst = "%s/.%s" % (HOME, f)
-    rename(src, dst, options)
-
-  # Link regular files
-  for f in LINKS:
-    src = "%s/%s" % (os.getcwd(), f)
-    dst = "%s/%s" % (HOME, f)
-    rename(src, dst, options)
-
-  for p in PACKAGES:
-    install(p, options)
+def commands(opts):
+  if not opts['commands']: return
 
   # Run commands
   for c in COMMANDS:
-    if options['verbose']:
+    if opts['verbose']:
       print("Running '%s'" % c)
     result = subprocess.call(c, shell=True)
     if result:
       print("Error running '%s'" %c)
+
+
+def main(argv):
+  options = getOptions(argv)
+
+  if options['HOME'] == None:
+    print("$HOME must be defined to setup symlinks.")
+    sys.exit(1)
+
+  sync(options)
+  install(options)
+  commands(options)
 
   print("Setup Complete")
 
