@@ -216,7 +216,8 @@ alias stop='kill -STOP'
 alias info='info --vi-keys'
 
 # Editing
-alias less='less -R'
+export LESS="-RFX"
+export vi="vim"
 
 # Python
 alias dja='django-admin.py'
@@ -329,6 +330,11 @@ alias gt=git_time_since_commit
 alias gtoday='git --no-pager log --graph --pretty=format:"%C(yellow)%h %ad%Cred%d %Creset%Cblue[%cn]%Creset  %s (%ar)" --date=iso --all --branches=* --remotes=* --since="23 hours ago" --author="$(git config user.name)"'
 alias gun='git reset HEAD --'
 
+# React Native
+alias rand='npx react-native run-android --port 8088'
+alias rios='npx react-native run-ios'
+alias yupd='yarn install && pushd ios && bundle install && bundle exec pod install && popd'
+
 # == Functions {{{1
 # ==================================================================================================
 
@@ -413,7 +419,7 @@ hist_stats() { history | cut -d] -f2 | sort | uniq -c | sort -rn | head; }
 hu() { history -n; }
 
 n() { echo -n -e "\033]0;$*\007"; TERM_TITLE=$*; }
-sn() { echo -n -e "\033k$*\033\\"; SCREEN_TITLE=$*; }
+sn() { echo -n -e "\033k$*\033\\"; SCREEN_TITLE=$*; tmux rename-window $*; }
 
 # Grep commands
 h() { if [ -z "$*" ]; then history; else history | egrep "$@"; fi; }
@@ -901,8 +907,6 @@ profile
 source_agent
 
 # vim: foldmethod=marker foldlevel=0
-
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
 export BASH_SILENCE_DEPRECATION_WARNING=1
 

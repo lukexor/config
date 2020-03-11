@@ -1,8 +1,5 @@
-" == Vim Settings   {{{1
+" == Vim Globals {{{1
 " ==================================================================================================
-
-" TODO
-" Update Maps to show other modes
 
 " quickfix tips
 " :make to check/compile error list
@@ -13,96 +10,82 @@
 let b:fsize=getfsize(@%)
 let mapleader=' '
 let maplocalleader=','
-let g:project_dir=getcwd()
-let b:test_method=""
+
+
+" == Plugins   {{{1
+" ==================================================================================================
+
+set nocompatible                 " Disable VI backwards compatible settings. Must be first
 
 call plug#begin('~/.vim/plugins')
 
-" == Editing   {{{1
-" ==================================================================================================
+" -- Editing   {{{2
+" --------------------------------------------------------------------------------------------------
 
-Plug 'christoomey/vim-sort-motion'   " Easier sorting
+Plug 'bkad/CamelCaseMotion'          " Text objects for working inside CamelCase words
 Plug 'junegunn/vim-easy-align'       " Makes aligning chunks of code super easy
-Plug 'vim-scripts/YankRing.vim'      " Makes pasting previous yanks easier
-Plug 'justinmk/vim-ipmotion'         " Improves { and } motions
+Plug 'kshenoy/vim-signature'         " Adds vim marks to gutter
+Plug 'scrooloose/syntastic'          " Syntax checking
 Plug 'tmhedberg/matchit'             " Advanced % matching
 Plug 'tommcdo/vim-exchange'          " Allows easy exchanging of text
 Plug 'tpope/vim-commentary'          " Commenting quality of life improvements
 Plug 'tpope/vim-endwise'             " Adds ending structures to blocks e.g. endif
-Plug 'kshenoy/vim-signature'         " Adds vim marks to gutter
 Plug 'tpope/vim-surround'            " Enables surrounding text with quotes or brackets easier
 Plug 'tpope/vim-unimpaired'          " Adds a lot of shortcuts complimentary pairs of mappings
-Plug 'garbas/vim-snipmate' |
-  Plug 'marcweber/vim-addon-mw-utils' |
-  Plug 'tomtom/tlib_vim'
-Plug 'honza/vim-snippets'
+Plug 'vim-scripts/YankRing.vim'      " Makes pasting previous yanks easier
+Plug 'vim-scripts/argtextobj.vim'    " Select/Modify inner arguments inside parens or quotes
 
-" == File Management   {{{1
-" ==================================================================================================
+" -- File Navigation   {{{2
+" --------------------------------------------------------------------------------------------------
 
 " Fuzzy-finder written in Go
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' } |
-      \ Plug 'junegunn/fzf.vim'
-Plug 'majutsushi/tagbar'    " Displays tags in a sidebar
+    \ Plug 'junegunn/fzf.vim'
+Plug 'justinmk/vim-ipmotion'                            " Improves { and } motions
+Plug 'majutsushi/tagbar'                                " Displays tags in a sidebar
 Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }  " FileTree
 
-" == Formatting/Display   {{{1
-" ==================================================================================================
+" -- Formatting/Display   {{{2
+" --------------------------------------------------------------------------------------------------
 
+Plug 'maksimr/vim-jsbeautify'           " JS/JSON/HTML/CSS formatting
+Plug 'morhetz/gruvbox'                  " Colorscheme
 Plug 'nelstrom/vim-markdown-folding'    " Folding for markdown by heading
-Plug 'morhetz/gruvbox'
-Plug 'maksimr/vim-jsbeautify'
 
-" == Text Objects   {{{1
-" ==================================================================================================
+" -- Utility/Support   {{{2
+" --------------------------------------------------------------------------------------------------
 
-Plug 'bkad/CamelCaseMotion'           " Text objects for working inside CamelCase words
-Plug 'christoomey/vim-titlecase'      " Easier title casing
-Plug 'kana/vim-textobj-entire'        " Provides more text objects to work with entire buffers
-Plug 'kana/vim-textobj-fold'          " Text object for folded lines
-Plug 'kana/vim-textobj-indent'        " Provides indent text objects
-Plug 'kana/vim-textobj-line'          " Provides current line text object
-Plug 'kana/vim-textobj-user'          " Core textobj dependency
-Plug 'nelstrom/vim-textobj-rubyblock' " Ruby textobj
-Plug 'vim-scripts/argtextobj.vim'     " Select/Modify inner arguments inside parens or quotes
-
-" == Utility/Support   {{{1
-" ==================================================================================================
-
-Plug 'scrooloose/syntastic' " Syntax checking
 Plug 'tpope/vim-dispatch'   " Allows building/testing to go on in the background
 Plug 'tpope/vim-repeat'     " Repeat last command using .
-Plug 'zenbro/mirror.vim'    " Easily edit mirror files across systems using SCP
 
-" == Language Support   {{{1
-" ==================================================================================================
+" -- Language Support   {{{2
+" --------------------------------------------------------------------------------------------------
 
-" Plug 'sheerun/vim-polyglot'          " Syntax support for a variety of languages
-Plug 'vim-perl/vim-perl'             " vim Perl support
-Plug 'vim-scripts/HTML-AutoCloseTag' " Auto-closes HTML tags e.g. </body>
-Plug 'rust-lang/rust.vim'
-Plug 'leafgarland/typescript-vim'
+Plug 'vim-scripts/HTML-AutoCloseTag'    " Auto-closes HTML tags e.g. </body>
+Plug 'rust-lang/rust.vim'               " Rustlang support
+Plug 'leafgarland/typescript-vim'       " Typescript support
 
-" == Window Control   {{{1
-" ==================================================================================================
+" -- Window Navigation   {{{2
+" --------------------------------------------------------------------------------------------------
 
 Plug 'christoomey/vim-tmux-navigator' " Easily jump between splits or tmux windows
 
-" }}}
-
 call plug#end()
 
-" vim:foldmethod=marker:foldlevel=0
+" -- Custom plugins   {{{2
+" --------------------------------------------------------------------------------------------------
 
-" Custom plugins
 runtime custom_plugins/documap.vim
 runtime custom_plugins/eqalignsimple.vim
 runtime custom_plugins/foldsearches.vim
 runtime custom_plugins/goto_file.vim
 runtime custom_plugins/schlepp.vim
 
-set nocompatible                 " Disable VI backwards compatible settings. Must be first
-set modelines=1
+
+" == Vim Settings   {{{1
+" ==================================================================================================
+
+set modelines=1                  " Set's the number of lines to read for vim filetype mode formattinm
 if exists('+antialias')
     set antialias                " Mac OS X: antialiased fonts
 endif
@@ -250,9 +233,6 @@ set statusline+=%l/%L          " Current/Total lines
 set statusline+=\:%c           " Cursor position
 set statusline+=\ %p%%         " Percent through file
 set tags=./tags,tags
-" if v:version > 704
-"     set tagcase=match
-" endif
 set nocst                      " Disable cscope - it messes with local tag lookups, might be useful
                                " if I ever do a lot of C programming
 set term=xterm-256color
@@ -324,12 +304,12 @@ endfunction
 " Sets g:pUnable to determine the projectroject_dir to the cwd on vim startup. The function will only set it
 " if not already defined and then changes the local cwd to the current file
 " location
-" function! SetProjectDir()
-"     if empty("g:project_dir")
-"         let g:project_dir = getcwd()
-"     endif
-"     exe 'lcd ' . fnamemodify(resolve(expand('%')), ':h')
-" endfunction
+function! SetProjectDir()
+    if empty("g:project_dir")
+        let g:project_dir = getcwd()
+    endif
+    exe 'lcd ' . fnamemodify(resolve(expand('%')), ':h')
+endfunction
 
 " Not the same as :retab
 " This replaces spaces for the current tabstop with literal tabs
@@ -469,12 +449,14 @@ if v:version >= 800
         autocmd CompleteDone *  call Undouble_Completions()
     augroup END
 endif
+
 augroup NoSimultaneousEdits
     autocmd!
     autocmd SwapExists * let v:swapchoice = 'o'
     autocmd SwapExists * echom 'Duplicate edit session (readonly)'
     autocmd SwapExists * sleep 1
 augroup END
+
 augroup FiletypeFormats
     autocmd!
     autocmd BufNewFile,BufRead *.apxc set filetype=java
@@ -484,10 +466,13 @@ augroup FiletypeFormats
     " Default headers to C files since it's more likely
     autocmd BufNewFile,BufRead *.h    set filetype=c
     autocmd BufNewFile,BufRead *.tt   set filetype=tt2html.html.javascript.css
+    autocmd BufNewFile,BufRead *.tsx   set filetype=javascript.css.xml
+    autocmd BufNewFile,BufRead *.ts   set filetype=javascript.css
     autocmd BufNewFile,BufRead *.txt  set filetype=text
     autocmd BufNewFile,BufRead * if !&modifiable | setlocal nolist nospell | endif
     autocmd BufNewFile,BufRead * call camelcasemotion#CreateMotionMappings('<localleader>')
 augroup END
+
 augroup FiletypeShortcuts
     autocmd!
 
@@ -523,6 +508,7 @@ augroup FiletypeShortcuts
         autocmd FileType typescript        Nnoremap <leader>l [Npm Lint] :Start npm run lint<CR>
     endif
 augroup END
+
 augroup VimrcEx
     autocmd!
 
@@ -563,14 +549,14 @@ augroup AutoMkdir
 augroup END
 
 " Below is to fix issues with the <CR> mapping to o<Esc> in quickfix window
-augroup enter
+augroup Enter
     autocmd!
     autocmd CmdwinEnter * nnoremap <CR> <CR>
     autocmd BufReadPost quickfix nnoremap <CR> <CR>
 augroup END
 
 
-" == Plugins    {{{1
+" == Plugins   {{{1
 " ==================================================================================================
 
 let g:EasyClipUseCutDefaults=0  " Don't add move shortcuts - conflicts with marks and vim-signature
@@ -647,173 +633,25 @@ let g:tagbar_type_go = {
 let g:rust_use_custom_ctags_defs = 1
 
 
-"
 " == Mappings   {{{1
 " ==================================================================================================
 
-" Doc <localleader>w [{count} CamelCase words forward]
-" Doc <localleader>b [{count} CamelCase words backward]
-" Doc <localleader>e [Forward to the end of CamelCase word {count}]
-Doc <C-^> [Go to alternate file]
+" -- Undocumented   {{{2
+" --------------------------------------------------------------------------------------------------
+
+" Move up and down within wrapped paragraphs
+nnoremap  j gj
+nnoremap  k gk
 
 " Highlight search matches forward and backward
 nnoremap <silent> n n:call HLNext(0.3)<CR>
 nnoremap <silent> N N:call HLNext(0.3)<CR>
 
-map <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
-\ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
-\ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
-
-Nmap      cP                    [Copy line to System clipboard] <Plug>SystemCopyLine
-Nmap      ga                    [Align columns in normal mode with ga{motion}] <Plug>(EasyAlign)
-Nnoremap  <CR>                  [Create new empty lines with Enter] o<Esc>
-Nmap      <localleader>=        [Align paragraph with = sign] gaip=
-Nmap      <localleader>[        [Surround current paragraph with square brackets and indent] ysip[
-Nmap      <localleader>]        [Surround current paragraph with square brackets and indent] ysip]
-Nmap      <localleader>sh       [Surround current word with {''}] ysiw}lysiw'
-Nmap      <localleader>rh       [Remove surrounding {''}] ds'ds}
-Nmap      <localleader>{        [Surround current paragraph with curly braces and indent] ysip{
-Nmap      <localleader>}        [Surround current paragraph with curly braces and indent] ysip{
-" Fix for syntax highlighting from above line } } }
-Nnoremap  <localleader>n        [Go to next error]:cn<CR>
-Nnoremap  <localleader>p        [Go to previous error]:cp<CR>
-Nnoremap  <localleader>P        [Interactively paste by choosing from recent yanks] :IPaste<CR>
-Nnoremap  <localleader>H        [Fuzzy search vim History] :History<CR>
-Nnoremap  <localleader>1        [Toggle NERDTree window] :NERDTreeToggle<CR>
-Nnoremap  <localleader>2        [Toggle Tagbar window] :TagbarToggle<CR>
-Nnoremap  <localleader>3        [Toggle Line Numbers and Git Gutter] :set rnu! nu! list!<CR>:GitGutterToggle<CR>
-Nnoremap  <localleader>4        [Toggle Paste] :set paste!<CR>
-Nnoremap  <localleader>Q        [Quit all windows without qall!<CR>
-Nnoremap  <localleader>q        [Quit all windows] :qall<CR>
-Nmap      <leader>"             [Surround current word with double quotes] ysiw"
-Nmap      <leader>'             [Surround current word with single quotes] ysiw'
-Nmap      <leader>(             [Surround current word with parentheses with spaces] ysiw(
-Nmap      <leader>)             [Surround current word with parentheses] ysiw)
-Nmap      <leader><             [Surround current word with an HTML tag] ysiw<
-Nmap      <leader>>             [Surround current word with angle brackets] ysiw>
-Nmap      <leader>[             [Surround current word with square brackets with spaces] ysiw[
-Nmap      <leader>]             [Surround current word with square brackets] ysiw]
-Nmap      <leader>`             [Surround current word with tick quotes] ysiw`
-Nmap      <leader>{             [Surround current word with curly braces with spaces] ysiw{
-Nmap      <leader>}             [Surround current word with curly braces] ysiw}
-Nnoremap  <leader>-             [Maximize current window when in a vertial split] :wincmd _<CR>:wincmd \|<CR>
-Nnoremap  <leader>=             [Equalize vertical split window widths] :wincmd =<CR>
-Nnoremap  <leader>L             [Open next tab] :tabn<CR>
-Nnoremap  <leader>Q             [Quit without saving] :qall!<CR>
-Nnoremap  <leader>R             [Fuzzy search Recent files] :History<CR>
-Nnoremap  <leader>S             [Shortcut for :%s///g] :%s///g<LEFT><LEFT><LEFT>
-Nnoremap  <leader>W             [Fuzzy search vim windows] :Windows<CR>
-Nnoremap  <leader>b             [Fuzzy search buffer list] :Buffers<CR>
-Nnoremap  <leader>cc            [Close Quickfix] :ccl<CR>
-Nnoremap  <leader>C             [Regenerate ctags] :call GenerateCtags()<CR>:echom "Tags Generated"<CR>
-Nnoremap  <leader>cm            [Clear currently set test method] :call ClearTestMethod()<CR>
-Nnoremap  <leader>cw            [Count number of words in the current file] :!wc -w %<CR>
-Nnoremap  <leader>d             [Close and delete the current buffer] :call CloseBuffer()<CR>
-Nnoremap  <leader>D             [Close and delete the all but the current buffer] :call CloseAllBuffersButCurrent()<CR>
-Nnoremap  <leader>ep            [Edit vim plugins] :vsplit $HOME/.vim/plugins.vim<CR>
-Nnoremap  <leader>ev            [Edit vimrc in a vertical split] :vsplit $MYVIMRC<CR>
-Nnoremap  <leader>f             [Fuzzy search files in cwd] :Files<CR>
-Nnoremap  <leader>ga            [Stage Git Hunk] :GitGutterStageHunk<CR>
-Nnoremap  <leader>gt            [Toggle Git Gutter] :GitGutterToggle<CR>
-Nnoremap  <leader>gb            [Fugitive git blame] :Gblame<CR>
-Nnoremap  <leader>gc            [Fugitive git commit] :Gcommit<CR>
-Nnoremap  <leader>gd            [Fugitive git diff] :Gdiff<CR>
-Nnoremap  <leader>gg            [Toggle GitGutter] :GitGutterToggle<CR>
-Nnoremap  <leader>gh            [Toggle GitGutter Line Highlighting] :GitGutterLineHighlightsToggle<CR>
-Nnoremap  <leader>glg           [Fugitive git log] :Glog<CR>
-Nnoremap  <leader>gm            [Fugitive git merge] :Gmerge<space>
-Nnoremap  <leader>gn            [Next Git Hunk] :GitGutterNextHunk<CR>
-Nnoremap  <leader>gp            [Previous Git Hunk] :GitGutterPrevHunk<CR>
-Nnoremap  <leader>gpl           [Fugitive git pull] :Gpull<CR>
-Nnoremap  <leader>gps           [Fugitive git push] :Gpush<CR>
-Nnoremap  <leader>gst           [Fugitive git status] :Gstatus<CR>
-Nnoremap  <leader>gu            [Undo Git Hunk] :GitGutterUndoHunk<CR>
-Nnoremap  <leader>gv            [Preview Git Hunk] :GitGutterPreviewHunk<CR>
-Nnoremap  <leader>H             [Open previous buffer] :bprevious<CR>
-Nnoremap  <leader>k             [Open last viewed buffer] :b #<CR>
-Nnoremap  <leader>L             [Open next buffer] :bnext<CR>
-Nnoremap  <leader>M             [Fuzy search marks] :Marks<CR>
-Nnoremap  <leader>n             [Edit a new, unnamed buffer] :enew<CR>
-Nnoremap  <leader>g             [Fuzzy search git files] :GFiles<CR>
-Nnoremap  <leader>q             [Close the current window] :q<CR>
-Nnoremap  <leader>rc            [Run code coverage] :call RunCover()<CR>
-Nnoremap  <leader>rr            [Run SyntasticReset] :SyntasticReset<CR>
-Nnoremap  <leader>ri            [Reindent the entire file] mzgg=G`z
-Nnoremap  <leader>rs            [Remove trailing spaces in the entire file] mz:silent! %s/\s\+$//<CR>:noh<CR>`z
-Nnoremap  <leader>rT            [Retab the entire file] :call RetabIndents()<CR>
-Nnoremap  <leader>sc            [Run syntax checker] :SyntasticCheck<CR>
-Nnoremap  <leader>sm            [Set method under cursor to the current test method] :call SetTestMethod()<CR>
-Nnoremap  <leader>ss            [Toggle spellcheck] :set spell!<CR>
-Nnoremap  <leader>sv            [Reload vimrc] :source $MYVIMRC<CR>
-Nnoremap  <leader>T             [Fuzzy search tags] :Tags<CR>
-Nnoremap  <leader>tn            [Next Tag] :tnext<CR>
-Nnoremap  <leader>tp            [Previous Tag] :tprevious<CR>
-Nnoremap  <leader>w             [Save file changes] :write<CR>
-Nnoremap  <leader>x             [Write and quit current window] :x<CR>
-Nnoremap  <leader>z             [Background vim and return to shell] <C-Z>
-Nnoremap  <leader>p             [Display current project directory] :echo g:project_dir<CR>
-Nnoremap  J                     [Move current line down one] ddp
-Nnoremap  K                     [Move current line up one] dd<up>P
-Nnoremap  Q                     [Disable EX mode] <NOP>
-" Nnoremap  cd                    [Change project directory to cwd] :let g:project_dir = fnamemodify(resolve(expand('%')), ':h')<CR>:echo 'project_dir=' . fnamemodify(resolve(expand('%')), ':h')<CR>
-Nnoremap  <leader>ga            [Stage Git Hunk] :GitGutterStageHunk<CR>
-Vmap      <C-D>                 [Move visual block left] <Plug>SchleppDupLeft
-Vmap      <down>                [Move visual block down] <Plug>SchleppDown
-Vmap      <leader>"             [Surround current word with double quotes] gS"
-Vmap      <leader>'             [Surround current word with single quotes] gS'
-Vmap      <leader>(             [Surround current word with parentheses with spaces] gS(
-Vmap      <leader>)             [Surround current word with parentheses] gS)
-Vmap      <leader><             [Surround current word with an HTML tag] gS<
-Vmap      <leader>>             [Surround current word with angle brackets] gS>
-Vmap      <leader>[             [Surround current word with square brackets with spaces] gS[
-Vmap      <leader>]             [Surround current word with square brackets] gS]
-Vmap      <leader>`             [Surround current word with single quotes] gS'
-Vmap      <leader>{             [Surround current word with curly braces with spaces] gS{
-Vmap      <leader>}             [Surround current word with curly braces] gS}
-Vmap      <left>                [Move visual block left] <Plug>SchleppLeft
-Vmap      <right>               [Move visual block right] <Plug>SchleppRight
-Vmap      <up>                  [Move visual block up] <Plug>SchleppUp
-Vmap      D                     [Move visual block left] <Plug>SchleppDupLeft
-Vmap      ga                    [Align columns in normal mode with ga{motion}] <Plug>(EasyAlign)
-Xmap      cp                    [Visual copy to System clipboard] <Plug>SystemCopy
-Xmap      ga                    [Align columns in visual mode with v{motion}ga] <Plug>(EasyAlign)
-
-Nnoremap <silent> <Down>         [Decrease height of current window by 5] :resize -5<CR>
-Nnoremap <silent> <Left>         [Decrease width of current window by 5] :vertical resize -5<CR>
-Nnoremap <silent> <Right>        [Increase width of current window by 5] :vertical resize +5<CR>
-Nnoremap <silent> <Up>           [Increase height of current window by 5] :resize +5<CR>
-Nnoremap <silent> <leader><CR>   [Clear search highlighting] :nohlsearch<C-R>=has('diff')?'<Bar>diffupdate':''<CR><CR><C-L>
-Nnoremap <silent> <localleader>- [Toggle - being considered part of a word] :call ToggleIskeyword('-')<CR>
-Nnoremap <silent> <localleader>. [Toggle . being considered part of a word] :call ToggleIskeyword('.')<CR>
-Nnoremap <silent> <localleader>_ [Toggle _ being considered part of a word] :call ToggleIskeyword('_')<CR>
-Nnoremap <silent> <localleader>: [Toggle : being considered part of a word] :call ToggleIskeyword(':')<CR>
-Nnoremap <silent> <localleader>$ [Toggle $ being considered part of a word] :call ToggleIskeyword('$')<CR>
-
-" These don't need to be documented
-nnoremap <silent> <expr>  zu  FS_FoldAroundTarget('^\s*use\s\+\S.*;',{'context':1})
-nnoremap <silent> <expr>  zz  FS_ToggleFoldAroundSearch({'context':1})
-noremap  j gj
-noremap  k gk
+" Swap visual and visual linewise shortcuts
 vnoremap <C-V> v
 vnoremap v <C-V>
 
-" Mapping selecting mappings
-nnoremap <leader><tab> <plug>(fzf-maps-n)
-xnoremap <leader><tab> <plug>(fzf-maps-x)
-onoremap <leader><tab> <plug>(fzf-maps-o)
-
-" Insert mode completion
-inoremap <c-x><c-k> <plug>(fzf-complete-word)
-inoremap <c-x><c-f> <plug>(fzf-complete-path)
-inoremap <c-x><c-j> <plug>(fzf-complete-file-ag)
-inoremap <c-x><c-l> <plug>(fzf-complete-line)
-
-inoremap jk <ESC>
-inoremap kj <ESC>
-
-" Advanced customization using autoload functions
-inoremap <expr> <c-x><c-k> fzf#vim#complete#word({'left': '15%'})
-
+" Blackhole replacements for x and d
 nnoremap <silent> <localleader>d "_d
 xnoremap <silent> <localleader>d "_d
 nnoremap <silent> <localleader>dd "_dd
@@ -823,9 +661,167 @@ xnoremap <silent> <localleader>D "_D
 nnoremap <silent> x "_x
 xnoremap <silent> x "_x
 
+Doc <C-^> [Go to alternate file]
 
-" -- Syntax Highlighting   {{{1
+" Escape insert
+Inoremap jk [Escape Insert] <ESC>
+Inoremap kj [Escape Insert] <ESC>
+
+" -- Plugin Provided   {{{2
 " --------------------------------------------------------------------------------------------------
+
+Doc <localleader>w [{count} CamelCase words forward]
+Doc <localleader>b [{count} CamelCase words backward]
+Doc <localleader>e [Forward to the end of CamelCase word {count}]
+
+" Insert mode completion
+Inoremap <expr> <c-x><c-k> fzf#vim#complete#word({'left': '15%'})
+" Inoremap <expr> <c-x><c-f> fzf#vim#complete#path
+" Inoremap <expr> <c-x><c-j> fzf#vim#complete#file#ag
+" Inoremap <expr> <c-x><c-l> fzf#vim#complete#line
+
+" -- Normal Mode   {{{2
+" --------------------------------------------------------------------------------------------------
+
+Nnoremap cP                      [Copy line to System clipboard] <Plug>SystemCopyLine
+Nnoremap ga                      [Align with ga{motion}] <Plug>(EasyAlign)
+Nnoremap <F10>                   [Syntax ID Debug] :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
+    \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
+    \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
+Nnoremap <leader>"               [Surround current word with double quotes] ysiw"
+Nnoremap <leader>'               [Surround current word with single quotes] ysiw'
+Nnoremap <leader>(               [Surround current word with parentheses with spaces] ysiw(
+Nnoremap <leader>)               [Surround current word with parentheses] ysiw)
+Nnoremap <leader><               [Surround current word with an HTML tag] ysiw<
+Nnoremap <leader>>               [Surround current word with angle brackets] ysiw>
+Nnoremap <leader>[               [Surround current word with square brackets with spaces] ysiw[
+Nnoremap <leader>]               [Surround current word with square brackets] ysiw]
+Nnoremap <leader>`               [Surround current word with tick quotes] ysiw`
+Nnoremap <leader>{               [Surround current word with curly braces with spaces] ysiw{
+Nnoremap <leader>}               [Surround current word with curly braces] ysiw}
+Nnoremap <localleader>=          [Align paragraph with = sign] gaip=
+Nnoremap <localleader>[          [Surround current paragraph with square brackets and indent] ysip[
+Nnoremap <localleader>]          [Surround current paragraph with square brackets and indent] ysip]
+Nnoremap <localleader>rh         [Remove surrounding {''}] ds'ds}
+Nnoremap <localleader>sh         [Surround current word with {''}] ysiw}lysiw'
+Nnoremap <localleader>{          [Surround current paragraph with curly braces and indent] ysip{
+Nnoremap <localleader>}          [Surround current paragraph with curly braces and indent] ysip{
+" Fix for syntax highlighting from above line } } }
+Nnoremap <CR>                    [Create new empty lines with Enter] o<Esc>
+Nnoremap J                       [Move current line down one] ddp
+Nnoremap K                       [Move current line up one] dd<up>P
+Nnoremap Q                       [Disable EX mode] <NOP>
+Nnoremap cd                      [Change project directory to cwd] :let g:project_dir = fnamemodify(resolve(expand('%')), ':h')<CR>:echo 'project_dir=' . fnamemodify(resolve(expand('%')), ':h')<CR>
+Nnoremap <leader>-               [Maximize current window when in a vertial split] :wincmd _<CR>:wincmd \|<CR>
+Nnoremap <leader>=               [Equalize vertical split window widths] :wincmd =<CR>
+Nnoremap <leader>C               [Regenerate ctags] :call GenerateCtags()<CR>:echom "Tags Generated"<CR>
+Nnoremap <leader>D               [Close and delete the all but the current buffer] :call CloseAllBuffersButCurrent()<CR>
+Nnoremap <leader>H               [Open previous buffer] :bprevious<CR>
+Nnoremap <leader>L               [Open next buffer] :bnext<CR>
+Nnoremap <leader>M               [Fuzy search marks] :Marks<CR>
+Nnoremap <leader>Q               [Quit without saving] :qall!<CR>
+Nnoremap <leader>R               [Fuzzy search Recent files] :History<CR>
+Nnoremap <leader>S               [Shortcut for :%s///g] :%s///g<LEFT><LEFT><LEFT>
+Nnoremap <leader>T               [Fuzzy search tags] :Tags<CR>
+Nnoremap <leader>W               [Fuzzy search vim windows] :Windows<CR>
+Nnoremap <leader>b               [Fuzzy search buffer list] :Buffers<CR>
+Nnoremap <leader>cc              [Close Quickfix] :ccl<CR>
+Nnoremap <leader>cm              [Clear currently set test method] :call ClearTestMethod()<CR>
+Nnoremap <leader>cw              [Count number of words in the current file] :!wc -w %<CR>
+Nnoremap <leader>d               [Close and delete the current buffer] :call CloseBuffer()<CR>
+Nnoremap <leader>ep              [Edit vim plugins] :vsplit $HOME/.vim/plugins.vim<CR>
+Nnoremap <leader>ev              [Edit vimrc in a vertical split] :vsplit $MYVIMRC<CR>
+Nnoremap <leader>f               [Fuzzy search files in cwd] :Files<CR>
+Nnoremap <leader>g               [Fuzzy search git files] :GFiles<CR>
+Nnoremap <leader>ga              [Stage Git Hunk] :GitGutterStageHunk<CR>
+Nnoremap <leader>ga              [Stage Git Hunk] :GitGutterStageHunk<CR>
+Nnoremap <leader>gb              [Fugitive git blame] :Gblame<CR>
+Nnoremap <leader>gc              [Fugitive git commit] :Gcommit<CR>
+Nnoremap <leader>gd              [Fugitive git diff] :Gdiff<CR>
+Nnoremap <leader>gg              [Toggle GitGutter] :GitGutterToggle<CR>
+Nnoremap <leader>gh              [Toggle GitGutter Line Highlighting] :GitGutterLineHighlightsToggle<CR>
+Nnoremap <leader>glg             [Fugitive git log] :Glog<CR>
+Nnoremap <leader>gm              [Fugitive git merge] :Gmerge<space>
+Nnoremap <leader>gn              [Next Git Hunk] :GitGutterNextHunk<CR>
+Nnoremap <leader>gp              [Previous Git Hunk] :GitGutterPrevHunk<CR>
+Nnoremap <leader>gpl             [Fugitive git pull] :Gpull<CR>
+Nnoremap <leader>gps             [Fugitive git push] :Gpush<CR>
+Nnoremap <leader>gst             [Fugitive git status] :Gstatus<CR>
+Nnoremap <leader>gt              [Toggle Git Gutter] :GitGutterToggle<CR>
+Nnoremap <leader>gu              [Undo Git Hunk] :GitGutterUndoHunk<CR>
+Nnoremap <leader>gv              [Preview Git Hunk] :GitGutterPreviewHunk<CR>
+Nnoremap <leader>k               [Open last viewed buffer] :b #<CR>
+Nnoremap <leader>n               [Edit a new, unnamed buffer] :enew<CR>
+Nnoremap <leader>p               [Display current project directory] :echo g:project_dir<CR>
+Nnoremap <leader>q               [Close the current window] :q<CR>
+Nnoremap <leader>rT              [Retab the entire file] :call RetabIndents()<CR>
+Nnoremap <leader>rc              [Run code coverage] :call RunCover()<CR>
+Nnoremap <leader>ri              [Reindent the entire file] mzgg=G`z
+Nnoremap <leader>rr              [Run SyntasticReset] :SyntasticReset<CR>
+Nnoremap <leader>rs              [Remove trailing spaces in the entire file] mz:silent! %s/\s\+$//<CR>:noh<CR>`z
+Nnoremap <leader>sc              [Run syntax checker] :SyntasticCheck<CR>
+Nnoremap <leader>sm              [Set method under cursor to the current test method] :call SetTestMethod()<CR>
+Nnoremap <leader>ss              [Toggle spellcheck] :set spell!<CR>
+Nnoremap <leader>sv              [Reload vimrc] :source $MYVIMRC<CR>
+Nnoremap <leader>tn              [Next Tag] :tnext<CR>
+Nnoremap <leader>tp              [Previous Tag] :tprevious<CR>
+Nnoremap <leader>w               [Save file changes] :write<CR>
+Nnoremap <leader>x               [Write and quit current window] :x<CR>
+Nnoremap <leader>z               [Background vim and return to shell] <C-Z>
+Nnoremap <silent> <leader><CR>   [Clear search highlighting] :nohlsearch<C-R>=has('diff')?'<Bar>diffupdate':''<CR><CR><C-L>
+Nnoremap <localleader>1          [Toggle NERDTree window] :NERDTreeToggle<CR>
+Nnoremap <localleader>2          [Toggle Tagbar window] :TagbarToggle<CR>
+Nnoremap <localleader>3          [Toggle Line Numbers and Git Gutter] :set rnu! nu! list!<CR>:GitGutterToggle<CR>
+Nnoremap <localleader>4          [Toggle Paste] :set paste!<CR>
+Nnoremap <localleader>H          [Fuzzy search vim History] :History<CR>
+Nnoremap <localleader>P          [Interactively paste by choosing from recent yanks] :IPaste<CR>
+Nnoremap <localleader>Q          [Quit all windows without qall!<CR>
+Nnoremap <localleader>n          [Go to next error]:cn<CR>
+Nnoremap <localleader>p          [Go to previous error]:cp<CR>
+Nnoremap <localleader>q          [Quit all windows] :qall<CR>
+Nnoremap <silent> <expr> zu      [Fold Target] FS_FoldAroundTarget('^\s*use\s\+\S.*;',{'context':1})
+Nnoremap <silent> <expr> zz      [Fold Search] FS_ToggleFoldAroundSearch({'context':1})
+Nnoremap <silent> <Down>         [Decrease height of current window by 5] :resize -5<CR>
+Nnoremap <silent> <Left>         [Decrease width of current window by 5] :vertical resize -5<CR>
+Nnoremap <silent> <Right>        [Increase width of current window by 5] :vertical resize +5<CR>
+Nnoremap <silent> <Up>           [Increase height of current window by 5] :resize +5<CR>
+Nnoremap <silent> <localleader>$ [Toggle $ being considered part of a word] :call ToggleIskeyword('$')<CR>
+Nnoremap <silent> <localleader>- [Toggle - being considered part of a word] :call ToggleIskeyword('-')<CR>
+Nnoremap <silent> <localleader>. [Toggle . being considered part of a word] :call ToggleIskeyword('.')<CR>
+Nnoremap <silent> <localleader>: [Toggle : being considered part of a word] :call ToggleIskeyword(':')<CR>
+Nnoremap <silent> <localleader>_ [Toggle _ being considered part of a word] :call ToggleIskeyword('_')<CR>
+
+" -- Visual & Select Mode   {{{2
+" --------------------------------------------------------------------------------------------------
+
+Vnoremap      <C-D>                 [Move visual block left] <Plug>SchleppDupLeft
+Vnoremap      D                     [Move visual block left] <Plug>SchleppDupLeft
+Vnoremap      ga                    [Align columns in normal mode with ga{motion}] <Plug>(EasyAlign)
+Vnoremap      <down>                [Move visual block down] <Plug>SchleppDown
+Vnoremap      <left>                [Move visual block left] <Plug>SchleppLeft
+Vnoremap      <right>               [Move visual block right] <Plug>SchleppRight
+Vnoremap      <up>                  [Move visual block up] <Plug>SchleppUp
+Vnoremap      <leader>"             [Surround current word with double quotes] gS"
+Vnoremap      <leader>'             [Surround current word with single quotes] gS'
+Vnoremap      <leader>(             [Surround current word with parentheses with spaces] gS(
+Vnoremap      <leader>)             [Surround current word with parentheses] gS)
+Vnoremap      <leader><             [Surround current word with an HTML tag] gS<
+Vnoremap      <leader>>             [Surround current word with angle brackets] gS>
+Vnoremap      <leader>[             [Surround current word with square brackets with spaces] gS[
+Vnoremap      <leader>]             [Surround current word with square brackets] gS]
+Vnoremap      <leader>`             [Surround current word with single quotes] gS'
+Vnoremap      <leader>{             [Surround current word with curly braces with spaces] gS{
+Vnoremap      <leader>}             [Surround current word with curly braces] gS}
+
+" -- Visual Mode   {{{2
+" --------------------------------------------------------------------------------------------------
+
+Xnoremap      cp                    [Visual copy to System clipboard] <Plug>SystemCopy
+Xnoremap      ga                    [Align columns in visual mode with v{motion}ga] <Plug>(EasyAlign)
+
+
+" == Syntax Highlighting   {{{1
+" ==================================================================================================
 
 " Define a highlight for use in HLNext
 highlight! WhiteOnRed ctermbg=red ctermfg=white
@@ -834,7 +830,5 @@ highlight link SyntasticStyleErrorSign SignColumn
 highlight link SyntasticStyleWarningSign SignColumn
 highlight link SyntasticWarningSign SignColumn
 
-
-" }}}
 
 " vim: foldmethod=marker foldlevel=0
