@@ -127,7 +127,7 @@ def main(argv):
 
   # Run commands
   for c in COMMANDS:
-    if opts['verbose']:
+    if options['verbose']:
       print("Running '%s'" % c)
     os.system(c)
 
