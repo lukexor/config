@@ -40,9 +40,16 @@ PACKAGES = [
   'tmux',
   'vim',
   'yarn',
+  'tree',
 ]
 COMMANDS = [
   'vim +PlugUpgrade +PlugInstall +qall',
+  'curl https://sh.rustup.rs -sSf | sh',
+  'cargo install cargo-asm',
+  'cargo install cargo-count',
+  'cargo install cargo-tree',
+  'cargo install cargo-watch',
+  'rustup component add clippy-preview',
 ]
 
 
@@ -132,6 +139,11 @@ def sync(opts):
 
 def install(opts):
   if not opts['install']: return
+
+  if opts['system'] == 'Darwin':
+    shellResult = subprocess.call('brew update', shell=True)
+    if shellResult:
+        print("Error updating brew")
 
   for package in PACKAGES:
     if opts['verbose']:
