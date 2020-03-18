@@ -16,11 +16,8 @@ do
   case $opt in
     "New Dev Session")
       SESSION=dev-$RANDOM
-      tmux new-session -s $SESSION -n "shell"
-      tmux move-window -s editor -t 1
-      tmux new-window -n shell -t 1 -a
-      tmux select-window -t editor
-      tmux attach-session -t $SESSION
+      tmux new-session -s $SESSION -n "shell" \; \
+          source $HOME/.tmux.conf
       break
       ;;
     "New Session")

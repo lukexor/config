@@ -824,6 +824,7 @@ onoremap r /return<CR>
 " Change inside next parens
 onoremap in( :<c-u>normal! f(vi(<cr>
 " Change inside last parens
+" onoremap il( :<c-u>normal! F)vi(<cr>
 onoremap il( :<c-u>normal! F)vi(<cr>
 
 
