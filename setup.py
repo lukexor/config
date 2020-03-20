@@ -82,6 +82,13 @@ def getOptions(argv):
     'HOME': os.environ.get('HOME'),
   }
 
+  if options['system'] == 'Linux':
+    dist = platform.dist()
+    if dist[0].lower() == 'ubuntu':
+      options['system'] = 'Debian'
+    elif dist[0].lower() == 'centos':
+      options['system'] = 'Redhat'
+
   for o, a in opts:
     if o in ("-v", "--verbose"): options['verbose'] = True
     elif o in ("-d", "--dryrun"): options['dryrun'] = True
@@ -124,16 +131,17 @@ def rename(src, dst, opts):
 
 def sync(opts):
   if not opts['sync']: return
+  rootPath = os.path.dirname(os.path.realpath(__file__))
 
   # Link dotfiles
   for f in DOTFILES:
-    src = "%s/%s" % (os.getcwd(), f)
+    src = "%s/%s" % (rootPath, f)
     dst = "%s/.%s" % (opts['HOME'], f)
     rename(src, dst, opts)
 
   # Link regular files
   for f in LINKS:
-    src = "%s/%s" % (os.getcwd(), f)
+    src = "%s/%s" % (rootPath, f)
     dst = "%s/%s" % (opts['HOME'], f)
     rename(src, dst, opts)
 
@@ -149,14 +157,19 @@ def install(opts):
     if opts['verbose']:
       print("Installing '%s'" % package)
 
+    shellResult = 0
     if opts['system'] == 'Darwin':
       shellResult = subprocess.call('brew ls --versions "%s" > /dev/null' % package, shell=True)
       if shellResult:
         shellResult = subprocess.call('HOMEBREW_NO_AUTO_UPDATE=1 brew install "%s"' % package, shell=True)
       else:
         shellResult = subprocess.call('HOMEBREW_NO_AUTO_UPDATE=1 brew upgrade "%s"' % package, shell=True)
-      if shellResult:
-        print("Error installing '%s'" % package)
+    elif opts['system'] == 'Debian':
+      shellResult - subprocess.call('sudo apt install -y "%s"' % package, shell=True)
+    elif opts['system'] == 'Redhat':
+      shellResult - subprocess.call('sudo yum install -y "%s"' % package, shell=True)
+    if shellResult:
+      print("Error installing '%s'" % package)
 
 def commands(opts):
   if not opts['commands']: return
