@@ -25,6 +25,7 @@ LINKS = [
 ]
 PACKAGES = [
   'ag',
+  'silversearch-ag',
   'bash',
   'ctags',
   'git',
@@ -35,7 +36,6 @@ PACKAGES = [
   'python',
   'python3',
   'readline',
-  'rg',
   'sdl2',
   'tmux',
   'vim',
@@ -45,6 +45,7 @@ PACKAGES = [
 COMMANDS = [
   'vim +PlugUpgrade +PlugInstall +qall',
   'curl https://sh.rustup.rs -sSf | sh',
+  'cargo install ripgrep',
   'cargo install cargo-asm',
   'cargo install cargo-count',
   'cargo install cargo-tree',
