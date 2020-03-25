@@ -89,6 +89,7 @@ pathprepend "$HOME/perl5/lib/perl5/" GITPERLLIB
 pathprepend "$HOME/lib" PERL5LIB
 
 pathappend "/usr/local/lib" LIBRARY_PATH
+pathappend "$HOME/dev/FlameGraph/"
 
 # Android
 export ANDROID_HOME=$HOME/Library/Android/sdk
