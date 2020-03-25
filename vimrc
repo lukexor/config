@@ -203,7 +203,7 @@ if &shell =~# 'fish$' && (v:version < 704 || v:version == 704 && !has('patch276'
 endif
 
 set shiftround                   " Round to nearest multiple of shiftwidth
-set shiftwidth=4                 " The amount of space to shift when using >>, << or <tab>
+set shiftwidth=2                 " The amount of space to shift when using >>, << or <tab>
 set showcmd                      " Display incomplete command
 set showmatch                    " Blink to a matching bracket if on screen
 set showmode                     " Show current mode (INSERT, VISUAL)
@@ -705,8 +705,8 @@ Nmap <localleader>{              [Surround current paragraph with curly braces a
 Nmap <localleader>}              [Surround current paragraph with curly braces and indent] ysip{
 " Fix for syntax highlighting from above line }}
 
-Nnoremap cP                      [Copy line to clipboard] "*yy
-Nnoremap P                       [Paste from clipboard] "*p
+Nnoremap cy                      [Copy line to clipboard] "*yy
+Nnoremap cp                      [Paste from clipboard] "*p
 Nnoremap <F10>                   [Syntax ID Debug] :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
     \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
     \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
