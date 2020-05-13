@@ -241,7 +241,7 @@ set nocst                      " Disable cscope - it messes with local tag looku
 set term=xterm-256color
 set title
 set titleold=''
-set textwidth=100                 " Max width for text on the screen
+set textwidth=80                 " Max width for text on the screen
 set ttimeout                     " Timeout on :mappings and key codes
 set ttimeoutlen=300              " Change timeout length
 set ttyfast                      " Smoother redraw
@@ -482,6 +482,7 @@ augroup FiletypeShortcuts
     " Formatting
     autocmd FileType rust                  Nnoremap <leader>F [RustFmt] :RustFmt<CR>
     autocmd FileType rust                  Vnoremap <leader>F [RustFmtRange] :RustFmtRange<CR>
+    autocmd FileType rust                  Nnoremap <leader>rf [Toggle RustFmt on save] :let g:rustfmt_autosave = !g:rustfmt_autosave<CR>:echo "Set RustFmt to " . g:rustfmt_autosave<CR>
     autocmd FileType javascript,typescript Nnoremap <leader>F [JsBeautify] :call JsBeautify()<CR>
     autocmd FileType javascript,typescript Vnoremap <leader>F [RangeJsBeautify] :call RangeJsBeautify()<CR>
     autocmd FileType html                  Nnoremap <leader>F [HtmlBeautify] :call HtmlBeautify()<CR>
@@ -520,7 +521,6 @@ augroup VimrcEx
 
     " Set the project directory to wherever vim was opened
     " autocmd VimEnter * call SetProjectDir()
-    autocmd VimEnter * hi Normal ctermbg=none
     autocmd VimEnter * set noautochdir
 
     " Don't do it for commit messages, when the position is invalid, or when
@@ -705,8 +705,8 @@ Nmap <localleader>{              [Surround current paragraph with curly braces a
 Nmap <localleader>}              [Surround current paragraph with curly braces and indent] ysip{
 " Fix for syntax highlighting from above line }}
 
-Nnoremap cP                      [Copy line to clipboard] "*yy
-Nnoremap P                       [Paste from clipboard] "*p
+Nnoremap cY                      [Copy line to clipboard] "*yy
+Nnoremap cP                       [Paste from clipboard] "*p
 Nnoremap <F10>                   [Syntax ID Debug] :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
     \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
     \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
@@ -757,7 +757,7 @@ Nnoremap <leader>z               [Background vim and return to shell] <C-Z>
 Nnoremap <silent> <leader><CR>   [Clear search highlighting] :nohlsearch<C-R>=has('diff')?'<Bar>diffupdate':''<CR><CR><C-L>
 Nnoremap <localleader>1          [Toggle NERDTree window] :NERDTreeToggle<CR>
 Nnoremap <localleader>2          [Toggle Tagbar window] :TagbarToggle<CR>
-Nnoremap <localleader>3          [Toggle Line Numbers and Git Gutter] :set rnu! nu! list!<CR>:GitGutterToggle<CR>
+Nnoremap <localleader>3          [Toggle Line Numbers and Git Gutter] :set rnu! nu! list!<CR>
 Nnoremap <localleader>4          [Toggle Paste] :set paste!<CR>
 Nnoremap <localleader>H          [Fuzzy search vim History] :History<CR>
 Nnoremap <localleader>P          [Interactively paste by choosing from recent yanks] :IPaste<CR>
@@ -799,7 +799,7 @@ Vmap <leader><               [Surround current word with an HTML tag] gS<
 Vmap <leader>>               [Surround current word with angle brackets] gS>
 Vmap <leader>[               [Surround current word with square brackets with spaces] gS[
 Vmap <leader>]               [Surround current word with square brackets] gS]
-Vmap <leader>`               [Surround current word with single quotes] gS'
+Vmap <leader>`               [Surround current word with single quotes] gS`
 Vmap <leader>{               [Surround current word with curly braces with spaces] gS{
 Vmap <leader>}               [Surround current word with curly braces] gS}
 
@@ -837,6 +837,5 @@ highlight link SyntasticErrorSign SignColumn
 highlight link SyntasticStyleErrorSign SignColumn
 highlight link SyntasticStyleWarningSign SignColumn
 highlight link SyntasticWarningSign SignColumn
-
 
 " vim: foldmethod=marker foldlevel=0

@@ -5,6 +5,7 @@ import platform, os, sys, getopt, subprocess
 # Update these files as needed
 DOTFILES = [
   'agignore',
+  'rgignore',
   'bashrc',
   'bash_profile',
   'ctags',

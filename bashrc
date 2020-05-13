@@ -231,6 +231,15 @@ alias pys='python manage.py syncdb'
 # Perl
 alias pd='perl -MData::Dumper'
 
+# Rust
+alias cc='cargo clippy'
+alias ct='cargo test'
+alias cb='cargo build'
+alias cr='cargo run'
+alias cbr='cargo build --release'
+alias crr='cargo run --release'
+alias ctt='cargo test --features no-randomize-ram'
+
 # RPM
 alias rpmi='rpm -ivh' # install rpm
 alias rpmls='rpm -qlp' # list rpm contents

@@ -11,7 +11,7 @@
 
 # == Media
 *.swf
-docs/*
+docs/
 
 # == Archives
 

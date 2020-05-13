@@ -30,6 +30,7 @@ test-driver
 # Temporary files #
 ###################
 *.tmp
+tmp
 *.swp
 *.swo
 *~
@@ -38,14 +39,13 @@ test-driver
 **/*.bk
 *.orig
 cover_db/
-tmp/
 .prove
 
 # Packages #
 ############
 *.7
 *.dmg
-# *.gz
+*.gz
 *.iso
 *.rar
 *.tar
@@ -77,6 +77,3 @@ Desktop.ini
 .settings/
 .remote-sync.json
 .gmf_branches
-Cargo.lock
-
-lib/F
