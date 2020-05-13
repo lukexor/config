@@ -203,7 +203,7 @@ if &shell =~# 'fish$' && (v:version < 704 || v:version == 704 && !has('patch276'
 endif
 
 set shiftround                   " Round to nearest multiple of shiftwidth
-set shiftwidth=4                 " The amount of space to shift when using >>, << or <tab>
+set shiftwidth=2                 " The amount of space to shift when using >>, << or <tab>
 set showcmd                      " Display incomplete command
 set showmatch                    " Blink to a matching bracket if on screen
 set showmode                     " Show current mode (INSERT, VISUAL)
@@ -706,7 +706,7 @@ Nmap <localleader>}              [Surround current paragraph with curly braces a
 " Fix for syntax highlighting from above line }}
 
 Nnoremap cY                      [Copy line to clipboard] "*yy
-Nnoremap cP                       [Paste from clipboard] "*p
+Nnoremap cP                      [Paste from clipboard] "*p
 Nnoremap <F10>                   [Syntax ID Debug] :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
     \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
     \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
@@ -755,7 +755,7 @@ Nnoremap <leader>w               [Save file changes] :write<CR>
 Nnoremap <leader>x               [Write and quit current window] :x<CR>
 Nnoremap <leader>z               [Background vim and return to shell] <C-Z>
 Nnoremap <silent> <leader><CR>   [Clear search highlighting] :nohlsearch<C-R>=has('diff')?'<Bar>diffupdate':''<CR><CR><C-L>
-Nnoremap <localleader>1          [Toggle NERDTree window] :NERDTreeToggle<CR>
+Nnoremap <localleader>1          [Toggle NERDTree window] :NERDTreeToggle<CR>:set rnu! nu! list!<CR>
 Nnoremap <localleader>2          [Toggle Tagbar window] :TagbarToggle<CR>
 Nnoremap <localleader>3          [Toggle Line Numbers and Git Gutter] :set rnu! nu! list!<CR>
 Nnoremap <localleader>4          [Toggle Paste] :set paste!<CR>
@@ -781,7 +781,6 @@ Nnoremap <silent> <localleader>_ [Toggle _ being considered part of a word] :cal
 " --------------------------------------------------------------------------------------------------
 
 " These mappings need to be recursively defined
-Vmap cP                      [Copy selection to clipboard] "*yy
 Vmap ga                      [Align columns in normal mode with ga{motion}] <Plug>(EasyAlign)
 Vmap <C-D>                   [Duplicate block down] <Plug>SchleppDupDown
 Vmap <C-L>                   [Duplicate block left] <Plug>SchleppDupLeft

@@ -282,8 +282,11 @@ alias bp="source $HOME/.bash_profile"
 
 # Misc
 alias da='date "+%Y-%m-%d %H:%M:%S"'
-alias g='grep --color=auto'
-alias grep='grep --color=auto'
+alias g='rg'
+alias grep='rg'
+function mgrep() {
+  rg $1 ~/.mysql_history | sed -En 's/\\\040/ /pg'
+}
 alias offenders='uptime;ps aux | perl -ane"print if \$F[2] > 0.9"'
 alias path='echo -e ${PATH//:/"\n"}'
 alias perl5lib='echo -e ${PERL5LIB//:/"\n"}'

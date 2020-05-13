@@ -1,5 +1,5 @@
 runtime after/ftplugin/formatoptions.vim
-runtime after/ftplugin/shiftfour.vim
+runtime after/ftplugin/shifttwo.vim
 runtime after/ftplugin/indent.vim
 
 let b:cmt = exists('b:cmt') ? b:cmt : '"'
