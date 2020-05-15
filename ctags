@@ -58,6 +58,7 @@
 --exclude=underscore*.js
 --exclude=vega*.js
 --exclude=vim/plugins/*
+--exclude=**/node_modules/*
 
 --langdef=Rust
 --langmap=Rust:.rs

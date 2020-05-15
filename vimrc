@@ -25,7 +25,7 @@ call plug#begin('~/.vim/plugins')
 Plug 'bkad/CamelCaseMotion'          " Text objects for working inside CamelCase words
 Plug 'junegunn/vim-easy-align'       " Makes aligning chunks of code super easy
 Plug 'kshenoy/vim-signature'         " Adds vim marks to gutter
-Plug 'scrooloose/syntastic'          " Syntax checking
+Plug 'dense-analysis/ale'            " Syntax Linting
 Plug 'tmhedberg/matchit'             " Advanced % matching
 Plug 'tommcdo/vim-exchange'          " Allows easy exchanging of text
 Plug 'tpope/vim-commentary'          " Commenting quality of life improvements
@@ -41,6 +41,7 @@ Plug 'honza/vim-snippets' |
 " -- File Navigation   {{{2
 " --------------------------------------------------------------------------------------------------
 
+Plug 'airblade/vim-rooter'      " Cd's to nearest git root
 " Fuzzy-finder written in Go
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' } |
     \ Plug 'junegunn/fzf.vim'
@@ -377,7 +378,7 @@ endfunction
 
 " Helper to generate tag files in the background
 function! GenerateCtags()
-    execute ":Dispatch! tags"
+    execute ":Dispatch! ctags -I ~/.ctags --file-scope=no -R"
 endfunction
 
 " Highlights search matches and flashes
