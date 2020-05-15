@@ -25,11 +25,11 @@ call plug#begin('~/.vim/plugins')
 Plug 'bkad/CamelCaseMotion'          " Text objects for working inside CamelCase words
 Plug 'junegunn/vim-easy-align'       " Makes aligning chunks of code super easy
 Plug 'kshenoy/vim-signature'         " Adds vim marks to gutter
-Plug 'dense-analysis/ale'            " Syntax Linting
+" Plug 'dense-analysis/ale'            " Syntax Linting
 Plug 'tmhedberg/matchit'             " Advanced % matching
 Plug 'tommcdo/vim-exchange'          " Allows easy exchanging of text
 Plug 'tpope/vim-commentary'          " Commenting quality of life improvements
-Plug 'tpope/vim-endwise'             " Adds ending structures to blocks e.g. endif
+" Plug 'tpope/vim-endwise'             " Adds ending structures to blocks e.g. endif
 Plug 'tpope/vim-surround'            " Enables surrounding text with quotes or brackets easier
 Plug 'tpope/vim-unimpaired'          " Adds a lot of shortcuts complimentary pairs of mappings
 Plug 'vim-scripts/YankRing.vim'      " Makes pasting previous yanks easier
@@ -68,6 +68,13 @@ Plug 'tpope/vim-repeat'     " Repeat last command using .
 Plug 'alvan/vim-closetag'               " Auto close XML/HTML tags
 Plug 'rust-lang/rust.vim'               " Rustlang support
 Plug 'leafgarland/typescript-vim'       " Typescript support
+Plug 'prabirshrestha/async.vim'
+Plug 'prabirshrestha/vim-lsp'
+" Plug 'prabirshrestha/asyncomplete.vim'
+" Plug 'prabirshrestha/asyncomplete-lsp.vim'
+if v:version >= 800
+  Plug 'neoclide/coc.nvim', {'branch': 'release'} " Code completion
+endif
 
 " -- Window Navigation   {{{2
 " --------------------------------------------------------------------------------------------------
@@ -113,6 +120,7 @@ endif
 set directory=/tmp//
 set complete+=kspell             " Use the active spell checking
 set complete+=k                  " Add dictionary to ins-complete
+set shortmess+=c                 " Don't pass messages to |ins-completion-menu|.
 set completeopt+=longest,menu,preview
 set confirm                      " Ask about unsaved/read-only files
 set copyindent
@@ -120,7 +128,7 @@ set copyindent
 if b:fsize <= 1000000
     set cursorline  " Highlight the cursorline - slows redraw
     if exists('+signcolumn')
-        set signcolumn=auto
+        set signcolumn=yes
     endif
     if exists('+colorcolumn')
         set colorcolumn=80,100
@@ -157,7 +165,10 @@ set formatoptions-=t
 set formatoptions-=c
 set formatoptions-=r
 set formatoptions-=o
-set grepprg=grep\ -nH\ $*:       " Set grep to always print filename headers
+if executable('rg')
+  set grepprg=rg\ --no-heading\ --vimgrep " Set grep to always print filename headers
+  set grepformat=%f:%l:%c:%m
+endif
 set hidden                       " Hide buffers instead of closing them
 set history=1000                 " Save the last # commands
 set hlsearch                     " Highlight all search matches
@@ -168,7 +179,7 @@ set laststatus=2
 set lazyredraw                   " Don't redraw screen during macros or commands
 set linebreak                    " Wrap long lines at a character in breakat
 set list                         " Enable visibility of unprintable chars
-exec "set listchars=tab:\\|\\ ,trail:-,extends:>,precedes:<,nbsp:~"
+exec "set listchars=tab:\\|\\ ,trail:-,extends:»,precedes:«,nbsp:~"
 
 " Set < and > as brackets for jumping with %
 set matchpairs+=<:>
@@ -206,6 +217,7 @@ endif
 set shiftround                   " Round to nearest multiple of shiftwidth
 set shiftwidth=2                 " The amount of space to shift when using >>, << or <tab>
 set showcmd                      " Display incomplete command
+set cmdheight=2
 set showmatch                    " Blink to a matching bracket if on screen
 set showmode                     " Show current mode (INSERT, VISUAL)
 set sidescrolloff=15             " Start side-scrolling when # characters away
@@ -251,7 +263,7 @@ if has('persistent_undo')
     set undodir=$HOME/.vim/undodir
     set undofile
 endif
-set updatetime=1000              " How often to write to the swap file when nothing is pressed
+set updatetime=300               " How often to write to the swap file when nothing is pressed
 set updatecount=10               " Save every 10 characters typed
 
 "           +--Disable hlsearch while loading viminfo
@@ -267,6 +279,9 @@ set viminfo=h,'500,f1,<10000,s1000,/1000,:1000,%,n$HOME/.viminfo
 set visualbell                   " stop that ANNOYING beeping
 set virtualedit=block            " Allow virtual block to put cursor where there's no actual text
 set wrapmargin=2                 " Number of chars from the right before wrapping
+set diffopt+=iwhite
+set diffopt+=algorithm:patience
+set diffopt+=indent-heuristic
 
 
 " == Abbreviations   {{{1
@@ -447,6 +462,14 @@ endfunction
 " == Autocommands   {{{1
 " ==================================================================================================
 
+if executable('rls')
+    autocmd User lsp_setup call lsp#register_server({
+        \ 'name': 'rls',
+        \ 'cmd': {server_info->['rustup', 'run', 'nightly', 'rls']},
+        \ 'whitelist': ['rust'],
+        \ })
+endif
+
 if v:version >= 800
     augroup UndoubleCompletions
         autocmd!
@@ -463,6 +486,7 @@ augroup END
 
 augroup FiletypeFormats
     autocmd!
+    autocmd BufRead            *.orig set readonly
     autocmd BufNewFile,BufRead *.apxc set filetype=java
     autocmd BufNewFile,BufRead *.conf set filetype=yaml
     autocmd BufNewFile,BufRead *.md   set filetype=markdown.help.text
@@ -484,6 +508,7 @@ augroup FiletypeShortcuts
     autocmd FileType rust                  Nnoremap <leader>F [RustFmt] :RustFmt<CR>
     autocmd FileType rust                  Vnoremap <leader>F [RustFmtRange] :RustFmtRange<CR>
     autocmd FileType rust                  Nnoremap <leader>rf [Toggle RustFmt on save] :let g:rustfmt_autosave = !g:rustfmt_autosave<CR>:echo "Set RustFmt to " . g:rustfmt_autosave<CR>
+    autocmd Filetype rust                  set colorcolumn=100
     autocmd FileType javascript,typescript Nnoremap <leader>F [JsBeautify] :call JsBeautify()<CR>
     autocmd FileType javascript,typescript Vnoremap <leader>F [RangeJsBeautify] :call RangeJsBeautify()<CR>
     autocmd FileType html                  Nnoremap <leader>F [HtmlBeautify] :call HtmlBeautify()<CR>
@@ -508,9 +533,9 @@ augroup FiletypeShortcuts
     endif
 
     " Linting
-    autocmd FileType rust                  Nnoremap <leader>l [Cargo Check] :Start cargo check<CR>
+    autocmd FileType rust                  Nnoremap <leader>L [Cargo Check] :Start cargo check<CR>
     if filereadable("./package.json")
-        autocmd FileType typescript        Nnoremap <leader>l [Npm Lint] :Start npm run lint<CR>
+        autocmd FileType typescript        Nnoremap <leader>L [Npm Lint] :Start npm run lint<CR>
     endif
 augroup END
 
@@ -541,6 +566,9 @@ augroup VimrcEx
 
     " Revert Color to default when leaving Insert Mode
     autocmd InsertLeave * highlight CursorLine ctermbg=234
+
+    " Leave paste mode when leaving insert mode
+    autocmd InsertLeave * set nopaste
 augroup END
 
 augroup AutoMkdir
@@ -563,10 +591,24 @@ augroup END
 " == Plugins   {{{1
 " ==================================================================================================
 
+let g:coc_global_extensions = [
+      \  'coc-css',
+      \  'coc-eslint',
+      \  'coc-git',
+      \  'coc-html',
+      \  'coc-json',
+      \  'coc-markdownlint',
+      \  'coc-rls',
+      \  'coc-snippets',
+      \  'coc-tsserver',
+      \  'coc-yank'
+      \ ]
 let g:fzf_buffers_jump=1          " Jump to existing window if possible
 let g:fzf_commits_log_options='--graph --pretty=format:"%C(yellow)%h (%p) %ai%Cred%d %Creset%Cblue[%ae]%Creset %s (%ar). %b %N"'
+let g:fzf_layout = { 'down': '~20%' }
 let g:rustfmt_autosave = 1
 let g:rustfmt_command = 'rustup run stable rustfmt'
+let g:rust_use_custom_ctags_defs = 1
 let g:snips_author='Lucas Petherbridge'
 let g:SuperTabDefaultCompletionType = "<c-x><c-n>"
 let g:SuperTabNoCompleteAfter=['^',',','\s']
@@ -625,7 +667,7 @@ let g:tagbar_type_go = {
         \ 'type' : 't',
     \ },
 \ }
-let g:rust_use_custom_ctags_defs = 1
+let g:UltiSnipsExpandTrigger="<c-tab>"
 
 
 " == Mappings   {{{1
@@ -656,11 +698,91 @@ xnoremap <silent> <localleader>D "_D
 nnoremap <silent> x "_x
 xnoremap <silent> x "_x
 
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+" Use <c-space> to trigger completion.
+inoremap <silent><expr> <c-space> coc#refresh()
+
+" Use <cr> to confirm completion, `<C-g>u` means break undo chain at current
+" position. Coc only does snippet and additional edit on confirm.
+" <cr> could be remapped by other vim plugin, try `:verbose imap <CR>`.
+if exists('*complete_info')
+  inoremap <expr> <cr> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u\<CR>"
+else
+  inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+endif
+
+" Use `[g` and `]g` to navigate diagnostics
+nmap <silent> [g <Plug>(coc-diagnostic-prev)
+nmap <silent> ]g <Plug>(coc-diagnostic-next)
+
+" GoTo code navigation.
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+
+" Use K to show documentation in preview window.
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  else
+    call CocAction('doHover')
+  endif
+endfunction
+
+" Highlight the symbol and its references when holding the cursor.
+autocmd CursorHold * silent call CocActionAsync('highlight')
+
+" Symbol renaming.
+nmap <leader>rn <Plug>(coc-rename)
+
+" Formatting selected code.
+xmap <leader>f  <Plug>(coc-format-selected)
+nmap <leader>f  <Plug>(coc-format-selected)
+
+augroup mygroup
+  autocmd!
+  " Setup formatexpr specified filetype(s).
+  autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
+  " Update signature help on jump placeholder.
+  autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+augroup end
+
 Doc <C-^> [Go to alternate file]
 
-" Escape insert
-Inoremap jk [Escape Insert] <ESC>
-Inoremap kj [Escape Insert] <ESC>
+inoremap <C-j> <ESC>
+
+nnoremap <C-k> <Esc>
+inoremap <C-k> <Esc>
+vnoremap <C-k> <Esc>
+snoremap <C-k> <Esc>
+xnoremap <C-k> <Esc>
+cnoremap <C-k> <Esc>
+onoremap <C-k> <Esc>
+lnoremap <C-k> <Esc>
+tnoremap <C-k> <Esc>
+
+nnoremap <C-c> <Esc>
+inoremap <C-c> <Esc>
+vnoremap <C-c> <Esc>
+snoremap <C-c> <Esc>
+xnoremap <C-c> <Esc>
+cnoremap <C-c> <Esc>
+onoremap <C-c> <Esc>
+lnoremap <C-c> <Esc>
+tnoremap <C-c> <Esc>
 
 " Helpful vim shortcuts
 Doc <C-X><C-N> [Complete Word in File]
@@ -706,6 +828,8 @@ Nmap <localleader>{              [Surround current paragraph with curly braces a
 Nmap <localleader>}              [Surround current paragraph with curly braces and indent] ysip{
 " Fix for syntax highlighting from above line }}
 
+Nnoremap H                       [Go to start of line] ^
+Nnoremap L                       [Go to end of line] $
 Nnoremap cY                      [Copy line to clipboard] "*yy
 Nnoremap cP                      [Paste from clipboard] "*p
 Nnoremap <F10>                   [Syntax ID Debug] :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
@@ -721,8 +845,8 @@ Nnoremap <leader>-               [Maximize current window when in a vertial spli
 Nnoremap <leader>=               [Equalize vertical split window widths] :wincmd =<CR>
 Nnoremap <leader>C               [Regenerate ctags] :call GenerateCtags()<CR>:echom "Tags Generated"<CR>
 Nnoremap <leader>D               [Close and delete the all but the current buffer] :call CloseAllBuffersButCurrent()<CR>
-Nnoremap <leader>H               [Open previous buffer] :bprevious<CR>
-Nnoremap <leader>L               [Open next buffer] :bnext<CR>
+Nnoremap <leader>h               [Open previous buffer] :bprevious<CR>
+Nnoremap <leader>l               [Open next buffer] :bnext<CR>
 Nnoremap <leader>M               [Fuzy search marks] :Marks<CR>
 Nnoremap <leader>Q               [Quit without saving] :qall!<CR>
 Nnoremap <leader>R               [Fuzzy search Recent files] :History<CR>
@@ -743,10 +867,10 @@ Nnoremap <leader>p               [Display current project directory] :echo g:pro
 Nnoremap <leader>q               [Close the current window] :q<CR>
 Nnoremap <leader>rT              [Retab the entire file] :call RetabIndents()<CR>
 Nnoremap <leader>rc              [Run code coverage] :call RunCover()<CR>
+Nnoremap <leader>rg              [Search with Rg] :Rg<CR>
 Nnoremap <leader>ri              [Reindent the entire file] mzgg=G`z
 Nnoremap <leader>rr              [Run SyntasticReset] :SyntasticReset<CR>
 Nnoremap <leader>rs              [Remove trailing spaces in the entire file] mz:silent! %s/\s\+$//<CR>:noh<CR>`z
-Nnoremap <leader>sc              [Run syntax checker] :SyntasticCheck<CR>
 Nnoremap <leader>sm              [Set method under cursor to the current test method] :call SetTestMethod()<CR>
 Nnoremap <leader>ss              [Toggle spellcheck] :set spell!<CR>
 Nnoremap <leader>sv              [Reload vimrc] :source $MYVIMRC<CR>

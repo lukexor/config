@@ -135,23 +135,6 @@ shopt -s promptvars # Expansion in prompt strings
 # Prevent clobbering of files with redirects
 set -o noclobber
 
-# set -o vi
-
-# == Projects {{{1
-# ==================================================================================================
-
-# FCS
-if [ -d $HOME/lib/fcs ]; then
-    sourcefile "/etc/sysconfig/fcs"
-    export FON_DIR="$HOME/lib/fcs"
-    for dir in $(find "$FON_DIR/bin" -type d); do
-        pathprepend $dir
-    done
-    pathappend "$FON_DIR/bin"
-    pathappend "$FON_DIR/lib" PERL5LIB
-    pathappend "$HOME/lib/sysapi/lib" PERL5LIB
-fi
-
 # == Colors {{{1
 # ==================================================================================================
 
@@ -255,25 +238,6 @@ alias vrc="pushd $HOME/.dotfiles/ >> /dev/null; vi $HOME/.dotfiles/vimrc; popd >
 alias slp="ssh lp"
 alias sls="ssh luc6@linux.cs.pdx.edu"
 alias sqz="ssh luc6@quizor2.cs.pdx.edu"
-alias ss1='ssh -A lpetherbridge@fcs-stg-app1.lax01.fonality.com'
-alias ss1b='ssh -A lpetherbridge@fcs-stg-batch1.fonality.com'
-alias ss1cp='ssh -A lpetherbridge@fcs-stg-cp1.fonality.com'
-alias ss2='ssh -A lpetherbridge@fcs-stg2-app1.lax01.fonality.com'
-alias ss2b='ssh -A lpetherbridge@fcs-stg2-batch1.lax01.fonality.com'
-alias ss3='ssh -A lpetherbridge@fcs-app1.stage3.arch.fonality.com'
-alias ss3b='ssh -A lpetherbridge@fcs-batch1.stage3.arch.fonality.com'
-alias ss3cp='ssh -A lpetherbridge@fcs-cp1.stage3.arch.fonality.com'
-alias ss4='ssh -A lpetherbridge@fcs-app1.stage4.arch.fonality.com'
-alias ss4b='ssh -A lpetherbridge@fcs-batch1.stage4.arch.fonality.com'
-alias ss4cp='ssh -A lpetherbridge@fcs-cp1.stage4.arch.fonality.com'
-alias ss5='ssh -A lpetherbridge@fcs-app1.stage5.arch.fonality.com'
-alias ss5b='ssh -A lpetherbridge@fcs-batch1.stage5.arch.fonality.com'
-alias ss5cp='ssh -A lpetherbridge@fcs-cp1.stage5.arch.fonality.com'
-alias ss6='ssh -A lpetherbridge@fcs-app1.stage6.arch.fonality.com'
-alias ss6b='ssh -A lpetherbridge@fcs-batch1.stage6.arch.fonality.com'
-alias ss6cp='ssh -A lpetherbridge@fcs-cp1.stage6.arch.fonality.com'
-alias ss7='ssh -A lpetherbridge@fcs-app.stage7.arch.fonality.com'
-alias ssb='ssh -A lpetherbridge@fcs-stg-bastion.lax01.fonality.com'
 alias sshl='ssh-add -L' # List ssh-agent identities
 
 # Sourcing
@@ -359,24 +323,11 @@ topm() {
     echo " %MEM %CPU   PID USER     ARGS";
     ps -eo pmem,pcpu,pid,user,args | sort -k 1 -r -n | head -10 | cut -d- -f1;
 }
-sw2() {
-    TERM=${TERM/"screen-256color"/"xterm-256color"}
-    ssh -A lpetherbridge@web-dev2.fonality.com
-    TERM=${TERM/"xterm-256color"/"screen-256color"}
-}
 purge_git() {
     if _ask_yes_no "Fully purge $1 from repo?"; then
         git filter-branch --force --index-filter "git rm --cached --ignore-unmatch $1" --prune-empty --tag-name-filter cat -- --all
     fi
 }
-# function vim() {
-#     # Only run if we're inside tmux
-#     if [[ $TMUX != "" ]]; then
-#         $HOME/bin/vim_tmux "$@"
-#     else
-#         command vim "$@"
-#     fi
-# }
 myip() {
     wget http://ipecho.net/plain -O - -q; echo
 }
