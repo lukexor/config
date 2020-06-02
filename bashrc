@@ -58,7 +58,7 @@ esac
 # == Source Files {{{1
 # ==================================================================================================
 
-sourcefile "$HOME/.fzf.bash"
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
 sourcefile "$HOME/.secure/secure.sh"
 for file in ~/.bashrc.d/*.bashrc; do
     sourcefile "${file}"
@@ -877,5 +877,3 @@ export BASH_SILENCE_DEPRECATION_WARNING=1
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash

@@ -68,10 +68,6 @@ Plug 'tpope/vim-repeat'     " Repeat last command using .
 Plug 'alvan/vim-closetag'               " Auto close XML/HTML tags
 Plug 'rust-lang/rust.vim'               " Rustlang support
 Plug 'leafgarland/typescript-vim'       " Typescript support
-Plug 'prabirshrestha/async.vim'
-Plug 'prabirshrestha/vim-lsp'
-" Plug 'prabirshrestha/asyncomplete.vim'
-" Plug 'prabirshrestha/asyncomplete-lsp.vim'
 if v:version >= 800
   Plug 'neoclide/coc.nvim', {'branch': 'release'} " Code completion
 endif
@@ -175,7 +171,7 @@ set hlsearch                     " Highlight all search matches
 set incsearch                    " Highlight incrementally
 set ignorecase                   " Case insensitive searching (unless specified)
 set infercase
-set laststatus=2
+set laststatus=1
 set lazyredraw                   " Don't redraw screen during macros or commands
 set linebreak                    " Wrap long lines at a character in breakat
 set list                         " Enable visibility of unprintable chars
@@ -462,14 +458,6 @@ endfunction
 " == Autocommands   {{{1
 " ==================================================================================================
 
-if executable('rls')
-    autocmd User lsp_setup call lsp#register_server({
-        \ 'name': 'rls',
-        \ 'cmd': {server_info->['rustup', 'run', 'nightly', 'rls']},
-        \ 'whitelist': ['rust'],
-        \ })
-endif
-
 if v:version >= 800
     augroup UndoubleCompletions
         autocmd!
@@ -610,19 +598,6 @@ let g:rustfmt_autosave = 1
 let g:rustfmt_command = 'rustup run stable rustfmt'
 let g:rust_use_custom_ctags_defs = 1
 let g:snips_author='Lucas Petherbridge'
-let g:SuperTabDefaultCompletionType = "<c-x><c-n>"
-let g:SuperTabNoCompleteAfter=['^',',','\s']
-let g:SuperTabLongestEnhanced=1
-let g:SuperTabCrMapping=1
-let g:syntastic_always_populate_loc_list=1
-let g:syntastic_auto_loc_list=1
-let g:syntastic_error_symbol='❌'
-let g:syntastic_javascript_checkers=['eslint', 'jshint']
-let g:syntastic_loc_list_height=5
-let g:syntastic_mode_map={ 'mode': 'passive' }
-let g:syntastic_style_error_symbol='[]'
-let g:syntastic_style_warning_symbol='??'
-let g:syntastic_warning_symbol='^'
 let g:tagbar_autoclose=1
 let g:tagbar_autofocus=1
 let g:tagbar_autoshowtag=1
@@ -710,7 +685,7 @@ function! s:check_back_space() abort
 endfunction
 
 " Use <c-space> to trigger completion.
-inoremap <silent><expr> <c-space> coc#refresh()
+" inoremap <silent><expr> <c-space> coc#refresh()
 
 " Use <cr> to confirm completion, `<C-g>u` means break undo chain at current
 " position. Coc only does snippet and additional edit on confirm.
@@ -869,7 +844,6 @@ Nnoremap <leader>rT              [Retab the entire file] :call RetabIndents()<CR
 Nnoremap <leader>rc              [Run code coverage] :call RunCover()<CR>
 Nnoremap <leader>rg              [Search with Rg] :Rg<CR>
 Nnoremap <leader>ri              [Reindent the entire file] mzgg=G`z
-Nnoremap <leader>rr              [Run SyntasticReset] :SyntasticReset<CR>
 Nnoremap <leader>rs              [Remove trailing spaces in the entire file] mz:silent! %s/\s\+$//<CR>:noh<CR>`z
 Nnoremap <leader>sm              [Set method under cursor to the current test method] :call SetTestMethod()<CR>
 Nnoremap <leader>ss              [Toggle spellcheck] :set spell!<CR>
@@ -956,10 +930,9 @@ onoremap il( :<c-u>normal! F)vi(<cr>
 " ==================================================================================================
 
 " Define a highlight for use in HLNext
-highlight! WhiteOnRed ctermbg=red ctermfg=white
-highlight link SyntasticErrorSign SignColumn
-highlight link SyntasticStyleErrorSign SignColumn
-highlight link SyntasticStyleWarningSign SignColumn
-highlight link SyntasticWarningSign SignColumn
+hi! WhiteOnRed cterm=NONE ctermbg=red ctermfg=white
+hi! Error cterm=NONE ctermbg=darkred ctermfg=white
+hi! ErrorMsg cterm=NONE ctermbg=darkred ctermfg=white
+hi! CursorLine cterm=NONE ctermbg=black ctermfg=white
 
 " vim: foldmethod=marker foldlevel=0
