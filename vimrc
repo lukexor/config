@@ -934,6 +934,6 @@ onoremap il( :<c-u>normal! F)vi(<cr>
 hi! WhiteOnRed cterm=NONE ctermbg=red ctermfg=white
 hi! Error cterm=NONE ctermbg=darkred ctermfg=white
 hi! ErrorMsg cterm=NONE ctermbg=darkred ctermfg=white
-hi! CursorLine cterm=NONE ctermbg=black ctermfg=white
+hi! CursorLine cterm=NONE ctermbg=darkgray ctermfg=white
 
 " vim: foldmethod=marker foldlevel=0
