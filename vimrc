@@ -68,6 +68,7 @@ Plug 'tpope/vim-repeat'     " Repeat last command using .
 Plug 'alvan/vim-closetag'               " Auto close XML/HTML tags
 Plug 'rust-lang/rust.vim'               " Rustlang support
 Plug 'leafgarland/typescript-vim'       " Typescript support
+Plug 'martinda/Jenkinsfile-vim-syntax'
 if v:version >= 800
   Plug 'neoclide/coc.nvim', {'branch': 'release'} " Code completion
 endif
@@ -856,7 +857,7 @@ Nnoremap <leader>z               [Background vim and return to shell] <C-Z>
 Nnoremap <silent> <leader><CR>   [Clear search highlighting] :nohlsearch<C-R>=has('diff')?'<Bar>diffupdate':''<CR><CR><C-L>
 Nnoremap <localleader>1          [Toggle NERDTree window] :NERDTreeToggle<CR>:set rnu! nu! list!<CR>
 Nnoremap <localleader>2          [Toggle Tagbar window] :TagbarToggle<CR>
-Nnoremap <localleader>3          [Toggle Line Numbers and Git Gutter] :set rnu! nu! list! signcolumn=no<CR>
+Nnoremap <localleader>3          [Toggle Line Numbers] :set rnu! nu! list! signcolumn=no<CR>
 Nnoremap <localleader>4          [Toggle Paste] :set paste!<CR>
 Nnoremap <localleader>5          [Toggle Relative Lines] :set rnu!<CR>
 Nnoremap <localleader>H          [Fuzzy search vim History] :History<CR>
@@ -934,6 +935,6 @@ onoremap il( :<c-u>normal! F)vi(<cr>
 hi! WhiteOnRed cterm=NONE ctermbg=red ctermfg=white
 hi! Error cterm=NONE ctermbg=darkred ctermfg=white
 hi! ErrorMsg cterm=NONE ctermbg=darkred ctermfg=white
-hi! CursorLine cterm=NONE ctermbg=black ctermfg=white
+hi! CursorLine cterm=NONE ctermbg=darkgray ctermfg=white
 
 " vim: foldmethod=marker foldlevel=0
