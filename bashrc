@@ -81,22 +81,21 @@ pathprepend "$GOPATH/bin"
 pathprepend "/usr/local/bin"
 pathprepend "$HOME/bin"
 
-# Perl
-pathprepend "$HOME/perl5/bin"
-pathprepend "$HOME/perl5/lib/perl5/" PERL5LIB
-pathprepend "$HOME/perl5" PERL_LOCAL_LIB_ROOT
-pathprepend "$HOME/perl5/lib/perl5/" GITPERLLIB
-pathprepend "$HOME/lib" PERL5LIB
-
-pathappend "/usr/local/lib" LIBRARY_PATH
-pathappend "$HOME/dev/FlameGraph/"
-
 # Android
 export ANDROID_HOME=$HOME/Library/Android/sdk
 pathappend $ANDROID_HOME/emulator
 pathappend $ANDROID_HOME/tools
 pathappend $ANDROID_HOME/tools/bin
 pathappend $ANDROID_HOME/platform-tools
+
+
+# Node/NVM
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# Java
+pathprepend /usr/local/opt/openjdk/bin
 
 # == Bash Settings {{{1
 # ==================================================================================================
@@ -109,8 +108,11 @@ HISTTIMEFORMAT='[%F %a %T] ' # YYYY-MM-DD DAY HH:MM:SS
 
 # Misc
 EDITOR="vim"
-export FZF_DEFAULT_COMMAND='(rg -l "" || ag --hidden -p ~/.gitignore -g "") 2> /dev/null'
+export FZF_DEFAULT_COMMAND='(rg --files || ag --hidden -p ~/.gitignore -g "") 2> /dev/null'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+
+# Required by latest macOS
+export BASH_SILENCE_DEPRECATION_WARNING=1
 
 # Bash 4.00 specific options
 if [[ $BASH_VERSINFO > 3 ]]; then
@@ -871,9 +873,3 @@ profile
 source_agent
 
 # vim: foldmethod=marker foldlevel=0
-
-export BASH_SILENCE_DEPRECATION_WARNING=1
-
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion

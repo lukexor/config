@@ -25,11 +25,11 @@ call plug#begin('~/.vim/plugins')
 Plug 'bkad/CamelCaseMotion'          " Text objects for working inside CamelCase words
 Plug 'junegunn/vim-easy-align'       " Makes aligning chunks of code super easy
 Plug 'kshenoy/vim-signature'         " Adds vim marks to gutter
-" Plug 'dense-analysis/ale'            " Syntax Linting
+Plug 'dense-analysis/ale'            " Syntax Linting
 Plug 'tmhedberg/matchit'             " Advanced % matching
 Plug 'tommcdo/vim-exchange'          " Allows easy exchanging of text
 Plug 'tpope/vim-commentary'          " Commenting quality of life improvements
-" Plug 'tpope/vim-endwise'             " Adds ending structures to blocks e.g. endif
+Plug 'tpope/vim-endwise'             " Adds ending structures to blocks e.g. endif
 Plug 'tpope/vim-surround'            " Enables surrounding text with quotes or brackets easier
 Plug 'tpope/vim-unimpaired'          " Adds a lot of shortcuts complimentary pairs of mappings
 Plug 'vim-scripts/YankRing.vim'      " Makes pasting previous yanks easier
@@ -43,11 +43,11 @@ Plug 'honza/vim-snippets' |
 
 Plug 'airblade/vim-rooter'      " Cd's to nearest git root
 " Fuzzy-finder written in Go
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' } |
-    \ Plug 'junegunn/fzf.vim'
+Plug 'junegunn/fzf'
 Plug 'justinmk/vim-ipmotion'                            " Improves { and } motions
 Plug 'majutsushi/tagbar'                                " Displays tags in a sidebar
-Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }  " FileTree
+Plug 'preservim/nerdtree', { 'on': 'NERDTreeToggle' }   " FileTree
+Plug 'Xuyuanp/nerdtree-git-plugin'
 
 " -- Formatting/Display   {{{2
 " --------------------------------------------------------------------------------------------------
@@ -68,6 +68,7 @@ Plug 'tpope/vim-repeat'     " Repeat last command using .
 Plug 'alvan/vim-closetag'               " Auto close XML/HTML tags
 Plug 'rust-lang/rust.vim'               " Rustlang support
 Plug 'leafgarland/typescript-vim'       " Typescript support
+Plug 'pangloss/vim-javascript'          " Javascript support
 Plug 'martinda/Jenkinsfile-vim-syntax'
 if v:version >= 800
   Plug 'neoclide/coc.nvim', {'branch': 'release'} " Code completion
@@ -357,6 +358,16 @@ function! ToggleIskeyword(char)
     endif
 endfunction
 
+function! ToggleGutter()
+  if g:show_gutter
+    execute "set nornu nonu nolist signcolumn=no"
+    let g:show_gutter = 0
+  else
+    execute "set rnu nu list signcolumn=yes"
+    let g:show_gutter = 1
+  endif
+endfunction
+
 " Simple confirmation helper
 function! AskQuit (msg, options, quit_option)
     if confirm(a:msg, a:options) == a:quit_option
@@ -466,12 +477,12 @@ if v:version >= 800
     augroup END
 endif
 
-augroup NoSimultaneousEdits
-    autocmd!
-    autocmd SwapExists * let v:swapchoice = 'o'
-    autocmd SwapExists * echom 'Duplicate edit session (readonly)'
-    autocmd SwapExists * sleep 1
-augroup END
+" augroup NoSimultaneousEdits
+"     autocmd!
+"     autocmd SwapExists * let v:swapchoice = 'o'
+"     autocmd SwapExists * echom 'Duplicate edit session (readonly)'
+"     autocmd SwapExists * sleep 1
+" augroup END
 
 augroup FiletypeFormats
     autocmd!
@@ -483,11 +494,13 @@ augroup FiletypeFormats
     " Default headers to C files since it's more likely
     autocmd BufNewFile,BufRead *.h    set filetype=c
     autocmd BufNewFile,BufRead *.tt   set filetype=tt2html.html.javascript.css
-    autocmd BufNewFile,BufRead *.tsx   set filetype=javascript.css.xml
+    autocmd BufNewFile,BufRead *.tsx  set filetype=javascript.css.xml
     autocmd BufNewFile,BufRead *.ts   set filetype=javascript.css
     autocmd BufNewFile,BufRead *.txt  set filetype=text
     autocmd BufNewFile,BufRead * if !&modifiable | setlocal nolist nospell | endif
     autocmd BufNewFile,BufRead * call camelcasemotion#CreateMotionMappings('<localleader>')
+
+    autocmd FileType javascript setlocal foldmethod=syntax
 augroup END
 
 augroup FiletypeShortcuts
@@ -511,20 +524,21 @@ augroup FiletypeShortcuts
     if filereadable("./makefile")
         autocmd FileType *                 Nnoremap <leader>m [Run Make] :Make<CR>
     elseif filereadable("./package.json")
-        autocmd FileType typescript        Nnoremap <leader>m [Npm Build] :Start npm run build<CR>
+        autocmd FileType typescript        Nnoremap <leader>m [Yarn Build] :Start yarn build<CR>
     endif
     autocmd FileType rust                  Nnoremap <leader>m [Cargo Build] :Start cargo build<CR>
+    autocmd FileType kotlin                Nnoremap <leader>m [Kotlin Build] :echo 'Unimplemented Kotlin build'<CR>
 
     " Testing
     autocmd FileType rust                  Nnoremap <leader>t [Cargo Test] :Start cargo test<CR>
     if filereadable("./package.json")
-        autocmd FileType typescript        Nnoremap <leader>t [Npm Test] :Start npm test -- --browsers ChromeHeadless --watch=false<CR>
+        autocmd FileType typescript        Nnoremap <leader>t [Yarn Test] :Start yarn test -- --browsers ChromeHeadless --watch=false<CR>
     endif
 
     " Linting
     autocmd FileType rust                  Nnoremap <leader>L [Cargo Check] :Start cargo check<CR>
     if filereadable("./package.json")
-        autocmd FileType typescript        Nnoremap <leader>L [Npm Lint] :Start npm run lint<CR>
+        autocmd FileType typescript        Nnoremap <leader>L [Yarn Lint] :Start yarn lint<CR>
     endif
 augroup END
 
@@ -534,17 +548,27 @@ augroup VimrcEx
     " Automatically rebalance windows on vim resize
     autocmd VimResized * :wincmd =
 
-    " Set the project directory to wherever vim was opened
-    " autocmd VimEnter * call SetProjectDir()
-    autocmd VimEnter * set noautochdir
+    " Open NERDTree when starting up
+    autocmd VimEnter * NERDTree | setlocal nornu nonu nolist signcolumn=no | wincmd p
+
+    " Opens NERDTree when no files specified
+    autocmd StdinReadPre * let s:std_in=1
+    autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | setlocal nornu nonu nolist signcolumn=no | endif
+
+    " Open NERDTree in a directory
+    autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | setlocal nornu nonu nolist signcolumn=no | wincmd p | ene | exe 'cd '.argv()[0] | endif
+
+    " Closes if NERDTree is the only open window
+    autocmd BufEnter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+
+    " If more than one window and previous buffer was NERDTree, go back to it.
+    autocmd BufEnter * if bufname('#') =~# "^NERD_tree_" && winnr('$') > 1 | b# | endif
+    let g:plug_window = 'noautocmd vertical topleft new'
 
     " Don't do it for commit messages, when the position is invalid, or when
     " When editing a file, always jump to the last known cursor position.
     " inside an event handler (happens when dropping a file on gvim).
     autocmd BufReadPost * if &ft != 'gitcommit' && line("'\"") > 0 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
-
-    " Closes if NERDTree is the only open window
-    autocmd BufEnter * if winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary" | qall! | endif
 
     " Save whenever switching windows or leaving vim. This is useful when running
     " the tests inside vim without having to save all files first.
@@ -580,31 +604,54 @@ augroup END
 " == Plugins   {{{1
 " ==================================================================================================
 
+let g:ale_linters = {
+  \ 'go': ['gopls'],
+  \ }
+
+" C/C++/Objective-C - use https://clangd.github.io/
+" Go - use https://github.com/golang/tools/tree/master/gopls
+" Python - use https://github.com/pappasam/jedi-language-server
+" Rust - use https://github.com/rust-lang/rls
+" Vue - use https://github.com/vuejs/vetur
+" \ 'coc-python',         " Python - use https://github.com/Microsoft/vscode-python
+" \ 'coc-rust-analyzer',  " Rust - use https://github.com/rust-analyzer/rust-analyzer
 let g:coc_global_extensions = [
-      \  'coc-css',
-      \  'coc-eslint',
-      \  'coc-git',
-      \  'coc-html',
-      \  'coc-json',
-      \  'coc-markdownlint',
-      \  'coc-rls',
-      \  'coc-snippets',
-      \  'coc-tsserver',
-      \  'coc-yank'
-      \ ]
+  \ 'coc-angular',
+  \ 'coc-clangd',
+  \ 'coc-css',
+  \ 'coc-eslint',
+  \ 'coc-git',
+  \ 'coc-go',
+  \ 'coc-highlight',
+  \ 'coc-html',
+  \ 'coc-java',
+  \ 'coc-jedi',
+  \ 'coc-json',
+  \ 'coc-lists',
+  \ 'coc-markdownlint',
+  \ 'coc-rls',
+  \ 'coc-snippets',
+  \ 'coc-sql',
+  \ 'coc-tsserver',
+  \ 'coc-vetur',
+  \ 'coc-yaml',
+  \ 'coc-yank'
+  \ ]
 let g:fzf_buffers_jump=1          " Jump to existing window if possible
 let g:fzf_commits_log_options='--graph --pretty=format:"%C(yellow)%h (%p) %ai%Cred%d %Creset%Cblue[%ae]%Creset %s (%ar). %b %N"'
 let g:fzf_layout = { 'down': '~20%' }
+let g:NERDTreeWinSize = 35
 let g:rustfmt_autosave = 1
 let g:rustfmt_command = 'rustup run stable rustfmt'
 let g:rust_use_custom_ctags_defs = 1
-let g:snips_author='Lucas Petherbridge'
-let g:tagbar_autoclose=1
-let g:tagbar_autofocus=1
-let g:tagbar_autoshowtag=1
-let g:tagbar_compact=1
-let g:tagbar_hide_nonpublic=1
-let g:tagbar_width=30
+let g:snips_author = 'Lucas Petherbridge'
+let g:show_gutter = 1
+let g:tagbar_autoclose = 1
+let g:tagbar_autofocus = 1
+let g:tagbar_autoshowtag = 1
+let g:tagbar_compact = 1
+let g:tagbar_hide_nonpublic = 1
+let g:tagbar_width = 35
 let g:tagbar_type_perl = {
     \ 'kinds' : [
         \ 'i:includes:1:0',
@@ -692,9 +739,9 @@ endfunction
 " position. Coc only does snippet and additional edit on confirm.
 " <cr> could be remapped by other vim plugin, try `:verbose imap <CR>`.
 if exists('*complete_info')
-  inoremap <expr> <cr> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u\<CR>"
+  inoremap <expr> <C-y> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u\<CR>"
 else
-  inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+  inoremap <expr> <C-y> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 endif
 
 " Use `[g` and `]g` to navigate diagnostics
@@ -855,9 +902,9 @@ Nnoremap <leader>w               [Save file changes] :write<CR>
 Nnoremap <leader>x               [Write and quit current window] :x<CR>
 Nnoremap <leader>z               [Background vim and return to shell] <C-Z>
 Nnoremap <silent> <leader><CR>   [Clear search highlighting] :nohlsearch<C-R>=has('diff')?'<Bar>diffupdate':''<CR><CR><C-L>
-Nnoremap <localleader>1          [Toggle NERDTree window] :NERDTreeToggle<CR>:set rnu! nu! list!<CR>
-Nnoremap <localleader>2          [Toggle Tagbar window] :TagbarToggle<CR>
-Nnoremap <localleader>3          [Toggle Line Numbers] :set rnu! nu! list! signcolumn=no<CR>
+Nnoremap <localleader>1          [Toggle NERDTree Window] :NERDTreeToggle<CR>
+Nnoremap <localleader>2          [Toggle Tagbar Window] :TagbarToggle<CR>
+Nnoremap <localleader>3          [Toggle Gutter Columns] :call ToggleGutter()<CR>
 Nnoremap <localleader>4          [Toggle Paste] :set paste!<CR>
 Nnoremap <localleader>5          [Toggle Relative Lines] :set rnu!<CR>
 Nnoremap <localleader>H          [Fuzzy search vim History] :History<CR>
