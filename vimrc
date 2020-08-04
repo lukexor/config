@@ -32,6 +32,7 @@ Plug 'tpope/vim-commentary'          " Commenting quality of life improvements
 Plug 'tpope/vim-endwise'             " Adds ending structures to blocks e.g. endif
 Plug 'tpope/vim-surround'            " Enables surrounding text with quotes or brackets easier
 Plug 'tpope/vim-unimpaired'          " Adds a lot of shortcuts complimentary pairs of mappings
+" Plug 'jiangmiao/auto-pairs'          " Add/delete quotes, parens, etc, in pairs
 Plug 'vim-scripts/YankRing.vim'      " Makes pasting previous yanks easier
 Plug 'vim-scripts/argtextobj.vim'    " Select/Modify inner arguments inside parens or quotes
 " Snippets engine + ultisnips
@@ -43,18 +44,20 @@ Plug 'honza/vim-snippets' |
 
 Plug 'airblade/vim-rooter'      " Cd's to nearest git root
 " Fuzzy-finder written in Go
-Plug 'junegunn/fzf'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
 Plug 'justinmk/vim-ipmotion'                            " Improves { and } motions
 Plug 'majutsushi/tagbar'                                " Displays tags in a sidebar
 Plug 'preservim/nerdtree', { 'on': 'NERDTreeToggle' }   " FileTree
 Plug 'Xuyuanp/nerdtree-git-plugin'
+Plug 'tpope/vim-fugitive'                               " Git integration
 
 " -- Formatting/Display   {{{2
 " --------------------------------------------------------------------------------------------------
 
-Plug 'maksimr/vim-jsbeautify'           " JS/JSON/HTML/CSS formatting
 Plug 'morhetz/gruvbox'                  " Colorscheme
 Plug 'nelstrom/vim-markdown-folding'    " Folding for markdown by heading
+Plug 'ap/vim-css-color'                 " Show Hex colors
 
 " -- Utility/Support   {{{2
 " --------------------------------------------------------------------------------------------------
@@ -73,6 +76,8 @@ Plug 'martinda/Jenkinsfile-vim-syntax'
 if v:version >= 800
   Plug 'neoclide/coc.nvim', {'branch': 'release'} " Code completion
 endif
+Plug 'maxmellon/vim-jsx-pretty'
+Plug 'peitalin/vim-jsx-typescript'
 
 " -- Window Navigation   {{{2
 " --------------------------------------------------------------------------------------------------
@@ -101,8 +106,10 @@ endif
 set autoindent                   " Copy indent from current line when adding a new line
 set autoread                     " Read file when changed outside vim
 set autowriteall                 " Automatically write file changes
-set background=dark
+let g:gruvbox_contrast_dark = 'hard'
+let g:gruvbox_invert_selection = 0
 colorscheme gruvbox
+set background=dark
 if &term =~ '256color'
     " Disable Background Color Erase (BCE) so that color schemes
     " work properly when Vim is used inside tmux and GNU screen.
@@ -142,9 +149,6 @@ set fileencoding=utf-8
 set fileformat=unix
 set fileformats=unix,dos,mac     " Default file types
 set nofoldenable
-set foldmethod=indent
-set foldlevel=0
-set foldlevelstart=0
 " Set formatting options
 " 1   Don't break after a one-letter word
 " l   Don't format long lines in insert mode if it was longer than textwidth
@@ -188,7 +192,6 @@ set number
 if exists('+relativenumber')
     set relativenumber           " Toggle relative line numbering
 endif
-set nrformats-=octal             " Ignore octal when incrementing/decrementing numbers with CTRL-A and CTRl-X
 
 " Search recursively
 set path+=**
@@ -302,6 +305,19 @@ iabbrev waht what
 
 " == Functions   {{{1
 " ==================================================================================================
+
+" returns true iff is NERDTree open/active
+function! IsNERDTreeOpen()
+  return exists("t:NERDTreeBufName") && (bufwinnr(t:NERDTreeBufName) != -1)
+endfunction
+
+" calls NERDTreeFind iff NERDTree is active, current window contains a modifiable file, and we're not in vimdiff
+function! NERDTreeSync()
+  if &modifiable && IsNERDTreeOpen() && strlen(expand('%')) > 0 && !&diff
+    NERDTreeFind
+    wincmd p
+  endif
+endfunction
 
 function! CloseBuffer()
     if len(filter(range(1, bufnr('$')), 'buflisted(v:val)')) > 1
@@ -491,34 +507,35 @@ augroup FiletypeFormats
     autocmd BufNewFile,BufRead *.conf set filetype=yaml
     autocmd BufNewFile,BufRead *.md   set filetype=markdown.help.text
     autocmd BufNewFile,BufRead *.t    set filetype=perl
+    autocmd BufNewFile,BufRead *.tsx  set filetype=typescript.tsx.html
+    autocmd BufNewFile,BufRead *.jsx  set filetype=javascript.jsx.html
+    autocmd BufNewFile,BufRead *.js   set filetype=javascript.html
     " Default headers to C files since it's more likely
     autocmd BufNewFile,BufRead *.h    set filetype=c
-    autocmd BufNewFile,BufRead *.tt   set filetype=tt2html.html.javascript.css
-    autocmd BufNewFile,BufRead *.tsx  set filetype=javascript.css.xml
-    autocmd BufNewFile,BufRead *.ts   set filetype=javascript.css
     autocmd BufNewFile,BufRead *.txt  set filetype=text
     autocmd BufNewFile,BufRead * if !&modifiable | setlocal nolist nospell | endif
     autocmd BufNewFile,BufRead * call camelcasemotion#CreateMotionMappings('<localleader>')
 
     autocmd FileType javascript setlocal foldmethod=syntax
+    autocmd FileType html setlocal foldmethod=indent
 augroup END
 
 augroup FiletypeShortcuts
     autocmd!
 
+    autocmd FileType *                     Nnoremap <leader>F [Prettify File] mzgggqG`z
     " Formatting
     autocmd FileType rust                  Nnoremap <leader>F [RustFmt] :RustFmt<CR>
     autocmd FileType rust                  Vnoremap <leader>F [RustFmtRange] :RustFmtRange<CR>
     autocmd FileType rust                  Nnoremap <leader>rf [Toggle RustFmt on save] :let g:rustfmt_autosave = !g:rustfmt_autosave<CR>:echo "Set RustFmt to " . g:rustfmt_autosave<CR>
-    autocmd Filetype rust                  set colorcolumn=100
-    autocmd FileType javascript,typescript Nnoremap <leader>F [JsBeautify] :call JsBeautify()<CR>
-    autocmd FileType javascript,typescript Vnoremap <leader>F [RangeJsBeautify] :call RangeJsBeautify()<CR>
-    autocmd FileType html                  Nnoremap <leader>F [HtmlBeautify] :call HtmlBeautify()<CR>
-    autocmd FileType html                  Vnoremap <leader>F [RangeHtmlBeautify] :call RangeHtmlBeautify()<CR>
-    autocmd FileType css                   Nnoremap <leader>F [CssBeautify] :call CssBeautify()<CR>
-    autocmd FileType css                   Vnoremap <leader>F [RangeCssBeautify] :call RangeCssBeautify()<CR>
-    autocmd FileType json                  Nnoremap <leader>F [JsonBeautify] :call JsonBeautify()<CR>
-    autocmd FileType json                  Vnoremap <leader>F [RangeJsonBeautify] :call RangeJsonBeautify()<CR>
+    autocmd FileType javascript,jsx        setlocal formatprg=prettier\ --parser\ babel
+    autocmd FileType typescript,tsx        setlocal formatprg=prettier\ --parser\ typescript
+    autocmd FileType html                  setlocal formatprg=prettier\ --parser\ html
+    autocmd FileType css,scss              setlocal formatprg=prettier\ --parser\ css
+    autocmd FileType json                  setlocal formatprg=prettier\ --parser\ json
+    autocmd FileType gql                   setlocal formatprg=prettier\ --parser\ graphql
+    autocmd FileType md                    setlocal formatprg=prettier\ --parser\ markdown
+    autocmd FileType yaml,yml              setlocal formatprg=prettier\ --parser\ yaml
 
     " Compiling
     if filereadable("./makefile")
@@ -549,7 +566,8 @@ augroup VimrcEx
     autocmd VimResized * :wincmd =
 
     " Open NERDTree when starting up
-    autocmd VimEnter * NERDTree | setlocal nornu nonu nolist signcolumn=no | wincmd p
+    autocmd VimEnter * NERDTree | setlocal nornu nonu nolist signcolumn=no | wincmd p | call NERDTreeSync()
+    autocmd BufEnter * call NERDTreeSync()
 
     " Opens NERDTree when no files specified
     autocmd StdinReadPre * let s:std_in=1
@@ -573,12 +591,6 @@ augroup VimrcEx
     " Save whenever switching windows or leaving vim. This is useful when running
     " the tests inside vim without having to save all files first.
     autocmd FocusLost,WinLeave * :silent! wa
-
-    " Change Color when entering Insert Mode
-    autocmd InsertEnter * highlight CursorLine ctermfg=035
-
-    " Revert Color to default when leaving Insert Mode
-    autocmd InsertLeave * highlight CursorLine ctermbg=234
 
     " Leave paste mode when leaving insert mode
     autocmd InsertLeave * set nopaste
@@ -606,7 +618,27 @@ augroup END
 
 let g:ale_linters = {
   \ 'go': ['gopls'],
+  \ 'html': ['prettier'],
+  \ 'javascript': ['prettier', 'eslint'],
+  \ 'typescript': ['prettier', 'tslint'],
+  \ 'css': ['prettier'],
+  \ 'scss': ['prettier'],
+  \ 'rust': ['rls'],
   \ }
+let g:ale_fixers = {
+  \ '*': ['remove_trailing_lines', 'trim_whitespace'],
+  \ 'html': ['prettier'],
+  \ 'javascript': ['prettier'],
+  \ 'typescript': ['prettier'],
+  \ 'css': ['prettier'],
+  \ 'scss': ['prettier'],
+  \ }
+let g:ale_linters_explicit = 1
+let g:ale_fix_on_save = 1
+let g:ale_rust_rls_toolchain = 'stable'
+
+let g:closetag_filetypes='xml,xhtml,javascript,javascript.jsx,typescript.tsx'
+let g:closetag_xhtml_filetypes='xml,xhtml,javascript,javascript.jsx,typescript.tsx'
 
 " C/C++/Objective-C - use https://clangd.github.io/
 " Go - use https://github.com/golang/tools/tree/master/gopls
@@ -732,17 +764,18 @@ function! s:check_back_space() abort
   return !col || getline('.')[col - 1]  =~# '\s'
 endfunction
 
-" Use <c-space> to trigger completion.
-" inoremap <silent><expr> <c-space> coc#refresh()
-
-" Use <cr> to confirm completion, `<C-g>u` means break undo chain at current
+" Use to confirm completion, `<C-g>u` means break undo chain at current
 " position. Coc only does snippet and additional edit on confirm.
-" <cr> could be remapped by other vim plugin, try `:verbose imap <CR>`.
+" This could be remapped by other vim plugin, try `:verbose imap <CR>`.
+let g:endwise_no_mappings = v:true
+let g:AutoPairsMapCR = v:false
 if exists('*complete_info')
-  inoremap <expr> <C-y> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u\<CR>"
+  inoremap <expr> <Plug>CustomCocCR complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u\<CR>"
 else
-  inoremap <expr> <C-y> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+  inoremap <expr> <Plug>CustomCocCR pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 endif
+imap <CR> <Plug>CustomCocCR<Plug>DiscretionaryEnd
+" <Plug>AutoPairsReturn
 
 " Use `[g` and `]g` to navigate diagnostics
 nmap <silent> [g <Plug>(coc-diagnostic-prev)
@@ -770,6 +803,7 @@ autocmd CursorHold * silent call CocActionAsync('highlight')
 
 " Symbol renaming.
 nmap <leader>rn <Plug>(coc-rename)
+nnoremap <leader>prn :CocSearch <C-R>=expand("<cword>")<CR><CR>
 
 " Formatting selected code.
 xmap <leader>f  <Plug>(coc-format-selected)
@@ -785,27 +819,9 @@ augroup end
 
 Doc <C-^> [Go to alternate file]
 
-inoremap <C-j> <ESC>
-
-nnoremap <C-k> <Esc>
-inoremap <C-k> <Esc>
-vnoremap <C-k> <Esc>
-snoremap <C-k> <Esc>
-xnoremap <C-k> <Esc>
-cnoremap <C-k> <Esc>
-onoremap <C-k> <Esc>
-lnoremap <C-k> <Esc>
-tnoremap <C-k> <Esc>
-
-nnoremap <C-c> <Esc>
-inoremap <C-c> <Esc>
-vnoremap <C-c> <Esc>
-snoremap <C-c> <Esc>
-xnoremap <C-c> <Esc>
-cnoremap <C-c> <Esc>
-onoremap <C-c> <Esc>
-lnoremap <C-c> <Esc>
-tnoremap <C-c> <Esc>
+imap <C-j> <C-[>
+imap <C-k> <C-[>
+imap <C-c> <C-[>
 
 " Helpful vim shortcuts
 Doc <C-X><C-N> [Complete Word in File]
@@ -831,7 +847,7 @@ Imap <c-x><c-l> [FZF Complete Line] <Plug>(fzf-complete-line)
 " --------------------------------------------------------------------------------------------------
 
 " These mappings need to be recursively defined
-Nmap ga                          [Align with ga{motion}] <Plug>(EasyAlign)
+Nmap gA                          [Align with gA{motion}] <Plug>(EasyAlign)
 Nmap <leader>"                   [Surround current word with double quotes] ysiw"
 Nmap <leader>'                   [Surround current word with single quotes] ysiw'
 Nmap <leader>(                   [Surround current word with parentheses with spaces] ysiw(
@@ -851,6 +867,8 @@ Nmap <localleader>{              [Surround current paragraph with curly braces a
 Nmap <localleader>}              [Surround current paragraph with curly braces and indent] ysip{
 " Fix for syntax highlighting from above line }}
 
+Nnoremap ]r                      [Go to next ALE warning] :ALENextWrap<CR>
+Nnoremap [r                      [Go to prev ALE warning] :ALEPreviousWrap<CR>
 Nnoremap H                       [Go to start of line] ^
 Nnoremap L                       [Go to end of line] $
 Nnoremap cY                      [Copy line to clipboard] "*yy
@@ -865,8 +883,7 @@ Nnoremap Q                       [Disable EX mode] <NOP>
 Nnoremap cdP                     [Change project directory to current file] :let g:project_dir = fnamemodify(resolve(expand('%')), ':h')<CR>:echo 'project_dir=' . fnamemodify(resolve(expand('%')), ':h')<CR>
 Nnoremap cd                      [Change cwd to current file] :execute 'lcd' fnamemodify(resolve(expand('%')), ':h')<CR>:echo 'cd ' . fnamemodify(resolve(expand('%')), ':h')<CR>
 Nnoremap <leader>-               [Maximize current window when in a vertial split] :wincmd _<CR>:wincmd \|<CR>
-Nnoremap <leader>=               [Equalize vertical split window widths] :wincmd =<CR>
-Nnoremap <leader>C               [Regenerate ctags] :call GenerateCtags()<CR>:echom "Tags Generated"<CR>
+Nnoremap <leader>=               [Equalize vertical split window widths] :wincmd =<CR> Nnoremap <leader>C               [Regenerate ctags] :call GenerateCtags()<CR>:echom "Tags Generated"<CR>
 Nnoremap <leader>D               [Close and delete the all but the current buffer] :call CloseAllBuffersButCurrent()<CR>
 Nnoremap <leader>h               [Open previous buffer] :bprevious<CR>
 Nnoremap <leader>l               [Open next buffer] :bnext<CR>
@@ -882,12 +899,13 @@ Nnoremap <leader>cm              [Clear currently set test method] :call ClearTe
 Nnoremap <leader>cw              [Count number of words in the current file] :!wc -w %<CR>
 Nnoremap <leader>d               [Close and delete the current buffer] :call CloseBuffer()<CR>
 Nnoremap <leader>ev              [Edit vimrc in a vertical split] :vsplit $MYVIMRC<CR>
+Nnoremap <leader>ep              [Edit Snippets] :UltiSnipsEdit<CR>
 Nnoremap <leader>f               [Fuzzy search files in cwd] :FZF<CR>
 Nnoremap <leader>g               [Fuzzy search git files] :GFiles<CR>
-Nnoremap <leader>k               [Open last viewed buffer] :b #<CR>
+Nnoremap <leader>k               [Open last viewed buffer] <C-^>
 Nnoremap <leader>n               [Edit a new, unnamed buffer] :enew<CR>
-Nnoremap <leader>p               [Display current project directory] :echo g:project_dir<CR>
 Nnoremap <leader>q               [Close the current window] :q<CR>
+Nnoremap <leader>nr              [Reveal in NERDTree] :NERDTreeFind<CR>:wincmd p<CR>
 Nnoremap <leader>rT              [Retab the entire file] :call RetabIndents()<CR>
 Nnoremap <leader>rc              [Run code coverage] :call RunCover()<CR>
 Nnoremap <leader>rg              [Search with Rg] :Rg<CR>
@@ -982,6 +1000,5 @@ onoremap il( :<c-u>normal! F)vi(<cr>
 hi! WhiteOnRed cterm=NONE ctermbg=red ctermfg=white
 hi! Error cterm=NONE ctermbg=darkred ctermfg=white
 hi! ErrorMsg cterm=NONE ctermbg=darkred ctermfg=white
-hi! CursorLine cterm=NONE ctermbg=darkgray ctermfg=white
 
 " vim: foldmethod=marker foldlevel=0

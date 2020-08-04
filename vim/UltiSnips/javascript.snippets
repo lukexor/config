@@ -1,0 +1,29 @@
+snippet rcc "React Class Component" b
+import React, { Component } from 'react';
+
+export class ${1:`!p snip.rv = snip.basename`} extends Component {
+  render() {
+    return (
+      <>
+        ${2}
+      </>
+    )
+  }
+}
+
+export default ${1};
+endsnippet
+
+snippet rfc "React Functional Component" b
+import React from 'react';
+
+const ${1:`!p snip.rv = snip.basename`} = () => {
+  return (
+    <>
+      ${2}
+    </>
+  )
+};
+
+export default ${1};
+endsnippet

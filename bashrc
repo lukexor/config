@@ -246,6 +246,9 @@ alias sshl='ssh-add -L' # List ssh-agent identities
 alias b="source $HOME/.bashrc"
 alias bp="source $HOME/.bash_profile"
 
+# Kubernetes
+alias k="kubectl"
+
 # Misc
 alias da='date "+%Y-%m-%d %H:%M:%S"'
 alias g='rg'

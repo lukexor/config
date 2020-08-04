@@ -38,6 +38,7 @@ PACKAGES = [
   'mysql',
   'node',
   'openssl',
+  'postgresql',
   'python',
   'python3',
   'readline',
