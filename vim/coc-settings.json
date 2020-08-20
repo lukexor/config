@@ -2,7 +2,7 @@
   "suggest.autoTrigger": "none",
   "suggest.noselect": false,
   "css.lint.unknownAtRules": "ignore",
-  "tsserver.enableJavascript": false,
+  "tsserver.log": "verbose",
   "coc.preferences.extensionUpdateCheck": "never",
   "coc.preferences.useQuickfixForLocations": true,
   "coc.preferences.snippets.enable": true,

@@ -311,6 +311,14 @@ function! IsNERDTreeOpen()
   return exists("t:NERDTreeBufName") && (bufwinnr(t:NERDTreeBufName) != -1)
 endfunction
 
+function! OpenNERDTree()
+    let file_count = len(split(globpath('.', '*'), '\n'))
+    let node = expand('%:p') =~ 'node_modules'
+    if file_count < 50 && !node
+      execute ':NERDTree | setlocal nornu nonu nolist signcolumn=no | wincmd p | call NERDTreeSync()'
+    endif
+endfunction
+
 " calls NERDTreeFind iff NERDTree is active, current window contains a modifiable file, and we're not in vimdiff
 function! NERDTreeSync()
   if &modifiable && IsNERDTreeOpen() && strlen(expand('%')) > 0 && !&diff
@@ -502,17 +510,17 @@ endif
 
 augroup FiletypeFormats
     autocmd!
-    autocmd BufRead            *.orig set readonly
-    autocmd BufNewFile,BufRead *.apxc set filetype=java
-    autocmd BufNewFile,BufRead *.conf set filetype=yaml
-    autocmd BufNewFile,BufRead *.md   set filetype=markdown.help.text
-    autocmd BufNewFile,BufRead *.t    set filetype=perl
-    autocmd BufNewFile,BufRead *.tsx  set filetype=typescript.tsx.html
-    autocmd BufNewFile,BufRead *.jsx  set filetype=javascript.jsx.html
-    autocmd BufNewFile,BufRead *.js   set filetype=javascript.html
+    autocmd BufRead            *.orig, *.bak setlocal readonly
+    autocmd BufNewFile,BufRead *.apxc setlocal filetype=java
+    autocmd BufNewFile,BufRead *.conf setlocal filetype=yaml formatprg=prettier\ --parser\ yaml
+    autocmd BufNewFile,BufRead *.md   setlocal filetype=markdown.help.text formatprg=prettier\ --parser\ markdown
+    autocmd BufNewFile,BufRead *.t    setlocal filetype=perl
+    autocmd BufNewFile,BufRead *.tsx  setlocal filetype=typescript.tsx.html formatprg=prettier\ --parser\ typescript
+    autocmd BufNewFile,BufRead *.jsx  setlocal filetype=javascript.jsx.html formatprg=prettier\ --parser\ babel
+    autocmd BufNewFile,BufRead *.js   setlocal filetype=javascript.html formatprg=prettier\ --parser\ babel
     " Default headers to C files since it's more likely
-    autocmd BufNewFile,BufRead *.h    set filetype=c
-    autocmd BufNewFile,BufRead *.txt  set filetype=text
+    autocmd BufNewFile,BufRead *.h    setlocal filetype=c
+    autocmd BufNewFile,BufRead *.txt  setlocal filetype=text
     autocmd BufNewFile,BufRead * if !&modifiable | setlocal nolist nospell | endif
     autocmd BufNewFile,BufRead * call camelcasemotion#CreateMotionMappings('<localleader>')
 
@@ -528,8 +536,8 @@ augroup FiletypeShortcuts
     autocmd FileType rust                  Nnoremap <leader>F [RustFmt] :RustFmt<CR>
     autocmd FileType rust                  Vnoremap <leader>F [RustFmtRange] :RustFmtRange<CR>
     autocmd FileType rust                  Nnoremap <leader>rf [Toggle RustFmt on save] :let g:rustfmt_autosave = !g:rustfmt_autosave<CR>:echo "Set RustFmt to " . g:rustfmt_autosave<CR>
-    autocmd FileType javascript,jsx        setlocal formatprg=prettier\ --parser\ babel
-    autocmd FileType typescript,tsx        setlocal formatprg=prettier\ --parser\ typescript
+    autocmd FileType javascript            setlocal formatprg=prettier\ --parser\ babel
+    autocmd FileType typescript            setlocal formatprg=prettier\ --parser\ typescript
     autocmd FileType html                  setlocal formatprg=prettier\ --parser\ html
     autocmd FileType css,scss              setlocal formatprg=prettier\ --parser\ css
     autocmd FileType json                  setlocal formatprg=prettier\ --parser\ json
@@ -549,13 +557,21 @@ augroup FiletypeShortcuts
     " Testing
     autocmd FileType rust                  Nnoremap <leader>t [Cargo Test] :Start cargo test<CR>
     if filereadable("./package.json")
+      if filereadable("./yarn.lock")
         autocmd FileType typescript        Nnoremap <leader>t [Yarn Test] :Start yarn test -- --browsers ChromeHeadless --watch=false<CR>
+      else
+        autocmd FileType typescript        Nnoremap <leader>t [Npm Lint] :Start npm run test<CR>
+      endif
     endif
 
     " Linting
     autocmd FileType rust                  Nnoremap <leader>L [Cargo Check] :Start cargo check<CR>
     if filereadable("./package.json")
+      if filereadable("./yarn.lock")
         autocmd FileType typescript        Nnoremap <leader>L [Yarn Lint] :Start yarn lint<CR>
+      else
+        autocmd FileType typescript        Nnoremap <leader>L [Npm Lint] :Start npm run lint<CR>
+      endif
     endif
 augroup END
 
@@ -566,7 +582,7 @@ augroup VimrcEx
     autocmd VimResized * :wincmd =
 
     " Open NERDTree when starting up
-    autocmd VimEnter * NERDTree | setlocal nornu nonu nolist signcolumn=no | wincmd p | call NERDTreeSync()
+    autocmd VimEnter * call OpenNERDTree()
     autocmd BufEnter * call NERDTreeSync()
 
     " Opens NERDTree when no files specified
@@ -620,6 +636,7 @@ let g:ale_linters = {
   \ 'go': ['gopls'],
   \ 'html': ['prettier'],
   \ 'javascript': ['prettier', 'eslint'],
+  \ 'json': ['prettier'],
   \ 'typescript': ['prettier', 'tslint'],
   \ 'css': ['prettier'],
   \ 'scss': ['prettier'],
@@ -629,6 +646,7 @@ let g:ale_fixers = {
   \ '*': ['remove_trailing_lines', 'trim_whitespace'],
   \ 'html': ['prettier'],
   \ 'javascript': ['prettier'],
+  \ 'json': ['prettier'],
   \ 'typescript': ['prettier'],
   \ 'css': ['prettier'],
   \ 'scss': ['prettier'],

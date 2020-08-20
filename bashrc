@@ -285,9 +285,9 @@ alias lx='ls -lXB' # Sort by extension
 # Git
 alias g='git'
 alias ga='git add'
-alias gb='git branch -v'
-alias gbm='git branch -v --merged'
-alias gbnm='git branch -v --no-merged'
+alias gb='GIT_PAGER= git branch -v'
+alias gbm='GIT_PAGER= git branch -v --merged'
+alias gbnm='GIT_PAGER= git branch -v --no-merged'
 alias gba='git branch -a'
 alias gca='gc -a'
 alias gcam='gc --amend'
