@@ -510,7 +510,7 @@ gops() {
 parse_git_branch() {
   BRANCH=$(git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/')
   STATUS=$(git status --porcelain 2> /dev/null)
-  BSTATUS=$(git status -b)
+  BSTATUS=$(git status --porcelain -b 2> /dev/null | rg 'ahead|diverged|behind')
 
   shopt -u nocasematch
   shopt -u nocaseglob
