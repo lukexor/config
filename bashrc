@@ -81,13 +81,6 @@ pathprepend "$GOPATH/bin"
 pathprepend "/usr/local/bin"
 pathprepend "$HOME/bin"
 
-# Android
-export ANDROID_HOME=$HOME/Library/Android/sdk
-pathappend $ANDROID_HOME/emulator
-pathappend $ANDROID_HOME/tools
-pathappend $ANDROID_HOME/tools/bin
-pathappend $ANDROID_HOME/platform-tools
-
 
 # Node/NVM
 export NVM_DIR="$HOME/.nvm"
@@ -570,20 +563,34 @@ gops() {
 }
 parse_git_branch() {
   BRANCH=$(git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/')
-  STATUS=$(git status -s 2> /dev/null)
+  STATUS=$(git status --porcelain 2> /dev/null)
+  shopt -u nocasematch
+  shopt -u nocaseglob
   if [[ ! -z $STATUS ]]; then
-    CHANGES=" *"
+    if [[ $STATUS =~ [[:space:]][AMD][[:space:]] ]]; then
+      CHANGES="*"
+    fi
+    if [[ $STATUS =~ [AMD][[:space:]]{2} ]]; then
+      CHANGES="$CHANGES+"
+    fi
+    if [[ $STATUS =~ [?]{2} ]]; then
+      CHANGES="$CHANGES?"
+    fi
   fi
-  echo " ($BRANCH$CHANGES)"
+  if [[ ! -z $BRANCH ]]; then
+    if [[ ! -z $CHANGES ]]; then
+      CHANGES=" $CHANGES"
+    fi
+    echo " ($BRANCH$CHANGES)"
+  else
+    echo ""
+  fi
+  shopt -s nocasematch
+  shopt -s nocaseglob
 }
 
 # == Prompt {{{1
 # ==================================================================================================
-
-# GIT
-BASH_THEME_GIT_PROMPT_PREFIX=" ${ORANGE}["
-BASH_THEME_GIT_PROMPT_SUFFIX="${ORANGE}]${RESET}"
-BASH_THEME_GIT_PROMPT_CLEAN="${GREEN}=${RESET}"
 
 BASH_THEME_GIT_PROMPT_AHEAD="${RED}!${RESET}"
 BASH_THEME_GIT_PROMPT_DIRTY="${RED} *${RESET}"
@@ -648,7 +655,8 @@ prompt_pwd() {
 #     # fi
 #     # echo -e "$(prompt_pwd)$RESET"
 # }
-PS1="\[$GRAY\][\A] \[$BLUE\]\h:\[$GREEN\]\W\[$YELLOW\]\$(parse_git_branch) \[$RESET\]\$ "
+PROMPT_DIRTRIM=2
+PS1="\[$GRAY\][\A] \[$GREEN\]\w\[$YELLOW\]\$(parse_git_branch) \[$RESET\]\$ "
 
 PROMPT_COMMAND="history -a;"
 
