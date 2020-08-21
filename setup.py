@@ -31,6 +31,7 @@ PACKAGES = [
   'ag',
   'bash',
   'cmake',
+  'coreutils',
   'ctags',
   'dos2unix',
   'git',
@@ -54,6 +55,7 @@ PACKAGES = [
   'tmux',
   'tree',
   'vim',
+  'wget',
   'yarn',
 ]
 COMMANDS = [

@@ -1,21 +1,15 @@
 # == Profiling Start {{{1
 # ==================================================================================================
 
-hqa() {
-    \cp -f ~/Library/ApplicationSupport/nfhud/nfhud_cfg.ini.qa ~/Library/ApplicationSupport/nfhud/nfhud_cfg.ini
-}
-hst() {
-    \cp -f ~/Library/ApplicationSupport/nfhud/nfhud_cfg.ini.stable ~/Library/ApplicationSupport/nfhud/nfhud_cfg.ini
-}
-
 # Turns profiling on or off
 PROFILE=0
-(( $PROFILE )) && start=$(gdate +%s.%N 2>/dev/null || date +%s.%N)
+(( $PROFILE )) && start=$(gdate +%s.%N 2>/dev/null || date +%s 2>/dev/null)
 
 # == Utility Functions {{{1
 # ==================================================================================================
 
 sourcefile() { [[ -r "$1" ]] && source $1; }
+hascmd() { [[ $(which "$1" 2> /dev/null) ]] && [[ $? -eq 0 ]]; }
 
 # Functions to help us manage paths.
 # Arguments: $path, $ENV_VAR (default: $PATH)
@@ -67,28 +61,22 @@ done
 # == ENV Variables {{{1
 # ==================================================================================================
 
-# Rust
-pathprepend "$HOME/.cargo/bin"
-pathprepend "$HOME/www/luke_web/bin"
-
 # Golang
 pathprepend "/usr/local/go/" GOROOT
 pathprepend "$HOME/dev/" GOPATH
 
 # PATH
 pathprepend "/usr/local/go/bin"
-pathprepend "$GOPATH/bin"
 pathprepend "/usr/local/bin"
+pathprepend "$GOPATH/bin"
+pathprepend "$HOME/.cargo/bin"
+pathprepend "$HOME/www/luke_web/bin"
 pathprepend "$HOME/bin"
-
 
 # Node/NVM
 export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
-# Java
-pathprepend /usr/local/opt/openjdk/bin
+sourcefile "$NVM_DIR/nvm.s"
+sourcefile "$NVM_DIR/bash_completion"
 
 # == Bash Settings {{{1
 # ==================================================================================================
@@ -114,18 +102,18 @@ if [[ $BASH_VERSINFO > 3 ]]; then
     shopt -s dirspell        # Attempts spell correction on directory names
 fi
 
-shopt -s cdable_vars         # Allow passing directory vars to cd
-shopt -s cdspell # Correct slight mispellings when cd'ing
-shopt -s checkhash # Try to check hash table before path search
-shopt -s cmdhist # Saves multi-line commands to history
-shopt -s expand_aliases # Allows use of aliases
-shopt -s extglob # Extended pattern matching
-shopt -s extquote # String quoting within parameter expansions
-shopt -s histappend # Append history from a session to HISTFILE instead of overwriting
+shopt -s cdable_vars             # Allow passing directory vars to cd
+shopt -s cdspell                 # Correct slight mispellings when cd'ing
+shopt -s checkhash               # Try to check hash table before path search
+shopt -s cmdhist                 # Saves multi-line commands to history
+shopt -s expand_aliases          # Allows use of aliases
+shopt -s extglob                 # Extended pattern matching
+shopt -s extquote                # String quoting within parameter expansions
+shopt -s histappend              # Append history from a session to HISTFILE instead of overwriting
 shopt -s no_empty_cmd_completion # Don't try to path search on an empty line
-shopt -s nocaseglob # Case insensitive pathname expansion
-shopt -s progcomp # Programmable completion capabilities
-shopt -s promptvars # Expansion in prompt strings
+shopt -s nocaseglob              # Case insensitive pathname expansion
+shopt -s progcomp                # Programmable completion capabilities
+shopt -s promptvars              # Expansion in prompt strings
 
 # Prevent clobbering of files with redirects
 set -o noclobber
@@ -189,12 +177,15 @@ alias tags='ctags -I ~/.ctags --file-scope=no -R'
 
 # System
 alias _='sudo'
-alias du='du -kh' # Human readable in 1K block sizes
-alias diskspace="du -S | sort -n -r |more"
-alias folders="find . -maxdepth 1 -type d -print | xargs du -sk | sort -rn"
+if hascmd gdu; then
+  alias du="gdu -kh"
+else
+  alias du="du -kh"
+fi
+alias diskspace="du -S | sort -n -r | more"
+alias folders="find . -maxdepth 1 -type d -print | xargs du -skh | sort -rn"
 alias df='df -kh' # Human readable in 1K block sizes with file system type
 alias stop='kill -STOP'
-alias info='info --vi-keys'
 
 # Editing
 export LESS="-RFX"
@@ -208,17 +199,14 @@ alias pym='python manage.py'
 alias pyr='python manage.py runserver 0.0.0.0:10128'
 alias pys='python manage.py syncdb'
 
-# Perl
-alias pd='perl -MData::Dumper'
-
 # Rust
 alias cc='cargo clippy'
 alias ct='cargo test'
 alias cb='cargo build'
 alias cr='cargo run'
+alias cre='cargo run --example'
 alias cbr='cargo build --release'
 alias crr='cargo run --release'
-alias ctt='cargo test --features no-randomize-ram'
 
 # RPM
 alias rpmi='rpm -ivh' # install rpm
@@ -228,13 +216,10 @@ alias rpminfo='rpm -qip' # list rpm info
 # Edit configurations
 alias vb="pushd $HOME/.dotfiles/ >> /dev/null; vi $HOME/.dotfiles/bashrc; popd >> /dev/null"
 alias vbp="pushd $HOME/.dotfiles/ >> /dev/null; vi $HOME/.dotfiles/bash_profile; popd >> /dev/null"
-alias vp="pushd $HOME/.dotfiles/ >> /dev/null; vi $HOME/.dotfiles/vim/plugins.vim; popd >> /dev/null"
 alias vrc="pushd $HOME/.dotfiles/ >> /dev/null; vi $HOME/.dotfiles/vimrc; popd >> /dev/null"
 
 # SSH
 alias slp="ssh lp"
-alias sls="ssh luc6@linux.cs.pdx.edu"
-alias sqz="ssh luc6@quizor2.cs.pdx.edu"
 alias sshl='ssh-add -L' # List ssh-agent identities
 
 # Sourcing
@@ -245,6 +230,9 @@ alias bp="source $HOME/.bash_profile"
 alias k="kubectl"
 
 # Misc
+if hascmd gdate; then
+  alias date='gdate';
+fi
 alias da='date "+%Y-%m-%d %H:%M:%S"'
 alias g='rg'
 alias grep='rg'
@@ -335,10 +323,6 @@ ssh() {
     TERM=${TERM/tmux/screen}
     command ssh "$@"
 }
-pprofile() {
-    perl -d:NYTProf $*;
-    nytprofhtml --open;
-}
 _ask_yes_no() {
     echo -en "${RED}$@ [y/n] ${RESET}" ; read ans
     case "$ans" in
@@ -353,17 +337,6 @@ _ask_yes_no() {
 
 # Converts SQL output to CSV formatting
 sqlcsv() { cat | sed "s/'/\'/;s/\t/\",\"/g;s/^/\"/;s/$/\"/;s/\n//g"; }
-
-# Syntax checks all new or modified perl files
-schk() {
-    for file in $(git status|egrep '(.pl|.pm)$' |cut -d: -f2|cut -d' ' -f4); do
-        perl -cw "$file"
-    done
-    for file in $(git status|egrep '(.pm)$' |cut -d: -f2|cut -d' ' -f4|sed 's/\//::/g'|sed 's/lib:://'|sed 's/.pm//'); do
-        echo -n "$file "
-        perl -cw -e"use $file"
-    done
-}
 
 updatedb() {
     case "$OSTYPE" in
@@ -383,7 +356,7 @@ hist_stats() { history | cut -d] -f2 | sort | uniq -c | sort -rn | head; }
 hu() { history -n; }
 
 n() { echo -n -e "\033]0;$*\007"; TERM_TITLE=$*; }
-# sn() { echo -n -e "\033k$*\033\\"; SCREEN_TITLE=$*; tmux rename-window $*; }
+sn() { echo -n -e "\033k$*\033\\"; SCREEN_TITLE=$*; tmux rename-window $*; }
 
 # Grep commands
 h() { if [ -z "$*" ]; then history; else history | egrep "$@"; fi; }
@@ -405,17 +378,14 @@ pg() {
 # Convert unix epoc to current timezone
 unixtime() { date --date="1970-01-01 $* sec GMT"; }
 
-
 btd() { perlo '%d' "0b$1"; }
 xtd() { perlo '%d' "0x$1"; }
 btx() { perlo '0x%04X' "0b$1"; }
 dtx() { perld '0x%04X' $1; }
 dtb() { perld '0b%08b' $1; }
 xtb() { perlo '0b%08b' "0x$1"; }
-perld() { perl -e'print sprintf("$ARGV[0]\n", $ARGV[1])' $1 $2; }
-perlo() { perl -e'print sprintf("$ARGV[0]\n", oct($ARGV[1]))' $1 $2; }
 
-myps() { ps -f $@ -u $USER -o pid,%cpu,%mem,bsdtime,command ; }
+myps() { ps -f $@ -u $USER -o pid,%cpu,%mem,bsdtime,command | more ; }
 
 source_agent() {
     sourcefile /tmp/ssh-agent-$HOSTNAME-info
@@ -453,20 +423,7 @@ arsa() {
     agent_running && [ $(ssh-add -L | grep -c "id_rsa") -gt 0 ] && return 0;
     start_agent && ssh-add "$HOME/.ssh/id_rsa"
 }
-sac_status() {
-    sudo launchctl list|grep -i com.SafeNet.SACSrv
-}
-restart_sac() {
-    sudo launchctl unload /Library/Frameworks/eToken.framework/Versions/A/com.SafeNet.SACSrv.plist
-    sudo launchctl load /Library/Frameworks/eToken.framework/Versions/A/com.SafeNet.SACSrv.plist
-    sudo launchctl start com.SafeNet.SACSrv
-}
-akey() {
-    [ $(system_profiler SPUSBDataType 2> /dev/null| grep "SafeNet" -c) -gt 0 ] || return 1;
-    agent_running && [ $(ssh-add -L | grep -c "libeTPkcs11.dylib.1") -gt 0 ] && return 0;
-    start_agent && ssh-add -s '/usr/local/lib/libeTPkcs11.dylib.1'
-}
-dkey() {
+drsa() {
     agent_running && ssh-add -D
 }
 
@@ -530,26 +487,15 @@ gfr() {
 gh() {
     echo "Git Help:"
     echo "  Git Status Symbols:"
-    echo "    x : Local modifications"
-    echo "    + : Files added"
-    echo "    - : Files deleted"
-    echo "    > : Files renamed"
-    echo "    . : Untracked files"
-    echo "    ! : Ahead of origin"
-    echo "    ^ : Unmerged changes"
-    echo "    * : Dirty"
-    echo "    = : Clean"
+    echo "    * : Local changes"
+    echo "    + : Changes staged"
+    echo "    ? : Untracked files"
+    echo "    ! : Ahead/Diverged origin"
+    echo "    ^ : Behind origin"
 }
 # Checkout a ticket branch
 gbt() { git checkout tickets/$@; }
 gbtn() { git checkout -b tickets/$@; }
-# Will return the current branch name
-# Usage example: git pull origin $(current_branch)
-#
-current_branch() {
-  ref=$(git symbolic-ref HEAD 2> /dev/null) || return
-  echo "${ref#refs/heads/}"
-}
 gc() {
     git commit "$@"
     # tags > /dev/null 2>&1 &
@@ -564,8 +510,11 @@ gops() {
 parse_git_branch() {
   BRANCH=$(git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/')
   STATUS=$(git status --porcelain 2> /dev/null)
+  BSTATUS=$(git status -b)
+
   shopt -u nocasematch
   shopt -u nocaseglob
+
   if [[ ! -z $STATUS ]]; then
     if [[ $STATUS =~ [[:space:]][AMD][[:space:]] ]]; then
       CHANGES="*"
@@ -577,11 +526,23 @@ parse_git_branch() {
       CHANGES="$CHANGES?"
     fi
   fi
+
+  if [[ ! -z $BSTATUS ]]; then
+    if [[ $BSTATUS =~ "ahead" ]] || [[ $BSTATUS =~ "diverged" ]]; then
+      BSTATUS="!"
+    fi
+    if [[ $BSTATUS =~ "behind" ]]; then
+      BSTATUS="$BSTATUS^"
+    fi
+  fi
+
   if [[ ! -z $BRANCH ]]; then
     if [[ ! -z $CHANGES ]]; then
       CHANGES=" $CHANGES"
+    elif [[ ! -z $BSTATUS ]]; then
+      BSTATUS=" $BSTATUS"
     fi
-    echo " ($BRANCH$CHANGES)"
+    echo " ($BRANCH$CHANGES$BSTATUS)"
   else
     echo ""
   fi
@@ -592,175 +553,15 @@ parse_git_branch() {
 # == Prompt {{{1
 # ==================================================================================================
 
-BASH_THEME_GIT_PROMPT_AHEAD="${RED}!${RESET}"
-BASH_THEME_GIT_PROMPT_DIRTY="${RED} *${RESET}"
-BASH_THEME_GIT_PROMPT_DIRTY="" # Commented since we have other flags to indicate dirty below
-BASH_THEME_GIT_PROMPT_ADDED="${GREEN}+${RESET}"
-BASH_THEME_GIT_PROMPT_MODIFIED="${BLUE}x${RESET}"
-BASH_THEME_GIT_PROMPT_DELETED="${RED}-${RESET}"
-BASH_THEME_GIT_PROMPT_RENAMED="${MAGENTA}>${RESET}"
-BASH_THEME_GIT_PROMPT_UNMERGED="${ORANGE}^${RESET}"
-BASH_THEME_GIT_PROMPT_UNTRACKED="${ORANGE}.${RESET}"
-
-# Format for git_prompt_long_sha() and git_prompt_short_sha()
-BASH_THEME_GIT_PROMPT_SHA_BEFORE="${ORANGE}"
-BASH_THEME_GIT_PROMPT_SHA_AFTER="${RESET}"
-
-# Colors vary depending on time lapsed.
-BASH_THEME_GIT_TIME_SINCE_COMMIT_SHORT="${GREEN}"
-BASH_THEME_GIT_TIME_SHORT_COMMIT_MEDIUM="${ORANGE}"
-BASH_THEME_GIT_TIME_SINCE_COMMIT_LONG="${RED}"
-
-# Git time since commit
-BASH_THEME_GIT_TIME_SINCE_COMMIT_BEFORE=""
-BASH_THEME_GIT_TIME_SINCE_COMMIT_AFTER=""
-
-# Trim working path to 1/2 of screen width
-prompt_pwd() {
-    local pwd_max_len=$(($(tput cols) / 2))
-    local trunc_symbol="..."
-    PWD=${PWD/$HOME/"~"}
-    if [ ${#PWD} -gt ${pwd_max_len} ]
-    then
-        local pwd_offset=$(( ${#PWD} - ${pwd_max_len} + 3 ))
-        PWD="${trunc_symbol}${PWD[${pwd_offset},${#PWD}]}"
-    fi
-    echo -e "${PWD}"
-}
-
-# prompt_on() {
-#     case ${OSTYPE} in
-#         darwin*)
-#             PS1_HOST="mac"
-#             ;;
-#         *)
-#             PS1_HOST="${HOSTNAME}"
-#             ;;
-#     esac
-
-
-
-#     echo -ne "$ORANGE"
-#     if [[ $(declare -f bg_jobs) && $(bg_jobs) ]]; then
-#         echo -ne "[$(bg_jobs)] "
-#     fi
-#     if [[ $(declare -f st_jobs) && $(st_jobs) ]]; then
-#         echo -ne "{$(st_jobs)} "
-#     fi
-#     # if [[ ! $TERM =~ screen ]]; then
-#     #     echo -ne "$(date +'%F %R') "
-#     # fi
-#     # if [[ $PS1_HOST ]]; then
-#     #     echo -ne "$USER @ $PS1_HOST "
-#     # fi
-#     # echo -e "$(prompt_pwd)$RESET"
-# }
 PROMPT_DIRTRIM=2
 PS1="\[$GRAY\][\A] \[$GREEN\]\w\[$YELLOW\]\$(parse_git_branch) \[$RESET\]\$ "
 
 PROMPT_COMMAND="history -a;"
 
-ascii() {
-    clear
-    echo -n $BLUE
-#     cat << 'EOF'
-# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$=X><<<<<<>>X
-# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$*$$#X><<<<<<<<>>
-# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$&$$$X<<//////<<>
-# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$=&$>/////////<>
-# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$%><<//??????//<<
-# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$@&8$$+<//?????????//<
-# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$##$$=>//???????????//
-# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$^{$&$>/??|||||||????/
-# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$.,-:;//;:=,$$$$$$$$$$$$$$o>x$$<?|||||||||||??/
-# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$. :H@@@MM@M#H/.,+%;,$$%8%*$$${<///?||||||||||||??/
-# $$$$$$$$$$@8$$$$$$$$$$$$$$$,/X+ +M@@M@MM%=,-%HMMM@X/,o%$$$</??||||!!!!!!!||||??
-# $$$$$$$$$$##8$$*$$$$$$$$$$-+@MM; $M@@MH+-,;XMMMM@MMMM@+-$</?|||!!!!!!!!!!!!|||?
-# $$$$$$$$$&^{$^^&$$$$$$$$$;@M@@M- XM@X;. -+XXXXXHHH@M@M#@/.?||!!!!!!!!!!!!!!!|||
-# $$$$$$$$$#=++={#$$$$&$,%MM@@MH ,@%=            .---=-=:=,.||!!!!!!---!!!!!!!!||
-# $$$$$$$$%#+XXX=^$$$%{{-@#@@@MX .,              -%HX$$%%%+;|!!!----------!!!!!||
-# $$$$$$$8{+><>>^%O=*+X=-./@M@M$                  .;@MMMM@MM:!--------------!!!!|
-# $$*$&$$$%><//<OOX>>>>X@/ -$MM/                    .+MM@@@M$----------------!!!|
-# $$${#$$=O>/??/>$<///,@M@H: :@:                    . -X#@@@@-----------------!!|
-# #${++{$X</????/<???/,@@@MMX, .                    /H- ;@M@M=-oooooooo--------!!
-# {=*>>==</?||||||||??.H@@@@M@+,                    %MM+..%#$.oooooooooooo-----!!
-# {X<//+O>?||!!!!||||??/MMMM@MMH/.                  XM@MH; -; ooooooooooooo-----!
-# *+<??/#&/|!!!!!!!!||??/%+%$XHH@$=              , .H@@@@MX,--oooooooooooooo-----
-# $+/||||/|!-----!!!!?/<>.=--------.           -%H.,@@@@@MX,--ooooooooooooooo----
-# @+?!!!!!--------!!!?<^^X.%MM@@@HHHXX$$$%+- .:$MMX -M@@MM%.oo;;;;;;oooooooooo---
-# +?|!------oo-----!!/^&{={$=XMMM@MM@MM#H;,-+HMM@M+ /MMMX=oooo;;;;;;;;;oooooooo--
-# /|!--oooooooooo---!<O=>$&{+/=%@M@M#@$-.=$@MM@@@M; %M%=oooooo;;;;;;;;;;;ooooooo-
-# x|--oooooooooooo--!%%X<<</?|!,:+$+-,/H#MMMMMMM@- -,ooooooooo;;;;;;;;;;;;oooooo-
-# >|-oooo;;;;oooooo-!^{O</?||!---oooo=++%%%%+/:-.!-oooooooo;;;;;;;;;;;;;;;;ooooo-
-# ?-oo;;;;;;;;;;ooo--|?<^^={$8#//$$|!--------!|=|-ooooo;;;;;;;;;;;;;;;;;;;;;ooooo
-# oo;;;;;;;;;;;;;ooo-!/*%>/?|!--oooo;;;;;;;;;;;;;;;;;;;;;::::;;;;;;;;;;;;;;;;oooo
-# ;;;;;;;;;;;;;;;;oo-O+**%^/|!-ooo;;;;;;;;;;;;;;;:::::::::::::::::;;;;;;;;;;;;ooo
-# ;;;::::::::;;;;;;o-||/+=$X<|-oo;;;;;;;;:::::::::::::::::::::::::::;;;;;;;;;;;oo
-# ::::::::::::::;;;;oo-!|?<O+|-o;;;;;;::::::::::::::::::::::::::::::::;;;;;;;;;oo
-# ::::::::::::::::;;;oo--|/&/=oo;;;;::::::::::::::::::::::::::::::::::::;;;;;;;;o
-# :::::::::::::::::;;;;o->{X--o;;;:::::::::::::::::::::::::::::::::::::::;;;;;;;;
-# :::::::::::::::::::;;o-%?-o;;;;:::::::::::::::::::::::::::::::::::::::::;;;;;;;
-# ~~~~~~~~~:::::::::::;;o!/o;;;:::::::::::::::::::::::::::::::::::::::::::::;;;;;
-# EOF
-    cat << 'EOF'
-::::::;;;;;;;;;;;;;;;;;;;;oooooooo---!|^O>/?||!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!||||||||||||||||||||||||||||||||??????????????//////<<<<<<<>>>>XX+++={O&$@O^{=+XXX>><<</////????
-::::::;;;;;;;;;;;;;;;;;;;;ooooooo----!!|/$X</??||||||!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!||||||||||||?????????????????????????????????????//////<<>+X>>>>>>XX+={$$#$O{==={$O$8&$^=++#+><<</////
-::::::;;;;;;;;;;;;;;;;;;;oooooooo---!!|?/<==X><<<>/??|||||||!!!!!!!!!!!!!!!!!!!!!!!!!!!!!||||||||||||||||?????/<>++<//?????????????????????????///////<<<>X{O&^==++++=^%#^%^+XXXXXXXXX+{#*$$%^+XXX>>X=OX
-:::::;;;;;;;;;;;;;;;;;;;;oooooooo---!!?<////<>X+=%8+=#$/?|||||||||||||||||||||||||||||||||||||||||||?????////<<+{%X><//////???????????????/////////<<<<>>>X+^$$*&OOO%&%{=+X>>>><<<<<>>XO$++=${{$@#O@#+X>
-:::::;;;;;;;;;;;;;;;;;;;;oooooooo-----!!!|||?//<XO$+><//????||||||||||||||||||||||||||||||||||????????//<#@=++=${+X><<</////////////////////////<<<<>X$===={O$$$$@&#=++=#X><<<<<//////<<<<<<>>>>X+=8${++
-:::::;;;;;;;;;;;;;;;;;;;;ooooooooo-----!!!!||?<X+#=X>><<///??????????|||?????????//<<//????????????////<<>>X+=O&{+X>>><<<<<</////////////////<<<<<<>>X+=^%&#O^^8$$%=X>><<<<//////////////////<<<>+=O$%&$
-:::::;;;;;;;;;;;;;;;;;;;;oooooooooo-----!!!!||??<{O+&%{X><//////?????????????///<>=OX><///////////////<<<>>XX+O$%{=+XXX>>><<<<<<<<<<<<<<<<<<<<<<>>>XX+==O&^=++XXX+={><</////????????????????///<<X^O8+XX
-:::::;;;;;;;;;;;;;;;;;;;;oooooooooo------!!!!|||??/<X&#=X>><<<<<<<<</////////<<<>+%$8O>><<<<</<<<<<<<<>>>>XX++={#8#@%#=+XX>>>>>>>>><<<<<<<<<>>>>>XX+={@$&{=XX>>><<<<////???????????????????????/&X>X<///
-:::::;;;;;;;;;;;;;;;;;;;;oooooooooo------!!!!|||??//<>X=%{==={++$=+={{X>><<<>>>>X+^&=+XX>>>>>>>>>>>>X+8=++++==={^O$$O{==+++++#=={*+X>>>>>>>>>>XXXX+={##{=+XX>><<<////????????|||||||||||||||||||||??????
-:::::;;;;;;;;;;;;;;;;;;;;oooooooooo-----!!!!|||??//<<>X+$^+++++++={#$${++X+++^++={O%^{==++X++O{+++++={#$*O^#&#OOO#%@$%OO%@^^^#$O{=++XXXXXXXXXX+++=={O$^{++X>><<<////??????||||||||||||||||||||||||||||||
-:::::;;;;;;;;;;;;;;;;;;;;oooooooooo----!!!||??/>=X>X+%==X><<<<<<>X+OO$8&@%@{^8&%^{=={{O$@O^^O@#^^O^O@$$$$$$$$*@8$8@8$$$$$$$&&$@%^{==++++++++={^&8#8%^^^%$^{%X><<///????|||||||||||!!!!!!!!!!!!!!!!!!!!!!
-:::::;;;;;;;;;;;;;;;;;;;;oooooooooo---!|%<=<<=%XXX&=>X></////////<<<<>>X8XX>>>>XXXXXX++=={{{{^^O#%%&8$$$$$$$$$$$$$$$$$$$$$$$$$8&##%O{{===={^O$#O##=++XXX+=O8@=XX>//???||||||||!!!!!!!!!!!!!!!!!!!!!!!!!!
-:::::;;;;;;;;;;;;;;;;;;;;;ooooooooo----!!||/O</???????????????????///////<<<<<<<>>>>>XXXX+++=={{^O#%@*$$$$$$$$$$$$$$$$$$$$$$$$$$$*&#O^^^^O#8%^{=+XX>>>>>>>>>>>X$>/???||||||!!!!!!!!!!!!!!!!!------------
-:::::;;;;;;;;;;;;;;;;;;;;;oooooooooo-----!!!!||||||||||||||||||????????///////<<<<<>>>>XXX+++={^8@8$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$@&%%*@%O^^#&%+X>><<<<<///////???||||||!!!!!!!!!!!!!------------------
-:::::;;;;;;;;;;;;;;;;;;;;;;ooooooooooo-------!!!!!!!!!!!|||||||||||???????//////<<<<>>>XX+++=={^O#%&8$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$&%#O{=++XX>><<<</////?????|||||||!!!!!!!!!!!----------------------
-:::::;;;;;;;;;;;;;;;;;;;;;;oooooooooooo----------!!!!!!!!!!!|||||||||??????//////<<<>>X*{{{{{O$##&@$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$8@#O^{=++XX>><<<////?????|||||||!!!!!!!!!!!--------------------oooo
-:::::;;;;;;;;;;;;;;;;;;;;;;;ooooooooooooo-----------!!!!!!!!!!||||||||??????/////<<<>>X+{#&&$8&&@88$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$*#O^{{&+X><<<////????|||||||!!!!!!!!!!------------------oooooooo
-:::::;;;;;;;;;;;;;;;;;;;;;;;oooooooooooooo------------!!!!!!!!!!||||||?????/////<<<<>>XX+=={^^O#%8*$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$*8$%^{=+X><<<///????||||||!!!!!!!!!----------------oooooooooooo
-:::::;;;;;;;;;;;;;;;;;;;;;;;;ooooooooooooooo------------!!!!!!!!|||||????/////<<<<>>XXX++=={&##%&@*$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$#^{=+XX>>>><<<</??|||||!!!!!!!!!--------------ooooooooooooooo
-:::::;;;;;;;;;;;;;;;;;;;;;;;;oooooooooooooooo------------!!!!!!!!||||?//<<<<<<>>>X+@{===={^^#&@$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$&O^{======+{O=>//??||||!!!!!!!!-------------ooooooooooooooooo
-:::::;;;;;;;;;;;;;;;;;;;;;;;;oooooooooooooooo-------------!!!!!!!||||?/XX+*=++++===^#@$@&$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$*@$@*%@$#{==+++{8+>/??||||!!!!!!!-------------oooooooooooooooooo
-:::::;;;;;;;;;;;;;;;;;;;;;;;;ooooooooooooooooo------------!!!!!!!||||???/<>X{O{{$^#{{{{^^O#@$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$8&#O{==++=+X>><<<<<<+/?|||!!!!!!!------------oooooooooooooooooooo
-:::::;;;;;;;;;;;;;;;;;;;;;;;;ooooooooooooooooo------------!!!!!!!!||||??/<X>>>>>XXX+++={O#%$8$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$8%O^=++X>><<<<////????||||!!!!!!!-----------ooooooooooooooooooo;;
-::::;;;;;;;;;;;;;;;;;;;;;;;;;ooooooooooooooooo------------!!!!!!!!|||||???///<<<>>XX++={^#%@*$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$*8$&&O+X><<<////????||||||!!!!!!!-----------ooooooooooooooooo;;;;
-::::;;;;;;;;;;;;;;;;;;;;;;;;;ooooooooooooooooo------------!!!!!!!!||||||????///<<>XOOO#*&@8$$$$$$$$$$$$$$$$$$$$$*@&%%%&$$&%%##%$&%88$$$8{=++XX><<<////?????||||||!!!!!!!----------oooooooooooooooo;;;;;;
-::::;;;;;;;;;;;;;;;;;;;;;;;;ooooooooooooooooo-------------!!!!!!!!|||||?????///<<>>X+{O%$$$$$$8*$&&$$@&$*$$@&###%&#^^^O8%8$^{{{=={^&&$^{=++XX>><<<////?????|||||||!!!!!!!---------oooooooooooooo;;;;;;;;
-::::;;;;;;;;;;;;;;;;;;;;;;;ooooooooooooooooo-------------!!!!!!!!|||||????////<<>>+==O$8$&##%$&#O^^OO^^^O@$&#^^{{===+++={O#$^+XXX++=O&O$#*=+XX>><<<<////?????||||||!!!!!!!--------ooooooooooooo;;;;;;;;;
-::::;;;;;;;;;;;;;;;;;;;;;;;oooooooooooooooo-------------!!!!!!!!|||||??///<<<<>>XX+{%^{======{O*O{=++++=={^@%O{{=++XXXXXXXX>>>>>>>>XXXX+{O#{=++XX>>>><<///?????|||||||!!!!!!------oooooooooooo;;;;;;;;;;
-:::;;;;;;;;;;;;;;;;;;;;;;;ooooooooooooooo-------------!!!!!!!!!|||||??/X@%#O++++=O$8{++XXXXXX+^+XXX>>XXX+O@{{^&@{+XX>>><<<<<<<<<<<<<<>>>X+{8{==O*$8#^+X>>><///???????||||||!!!-----oooooooooo;;;;;;;;;;;
-:::;;;;;;;;;;;;;;;;;;;;;;oooooooooooooo--------------!!!!!!!!!||||||??//<<>X+={^@^=+XX>>>>>><<<<<<<<<<<>>>>XX+{&^=+X>><</////////////<<>=^8OX>>>>>>X{$$@*=X><<<<<<<%<<{<//<{?|!----ooooooooo;;;;;;;;;;;;
-:::;;;;;;;;;;;;;;;;;;;;oooooooooooooo-------------!!!!!!!!!!!||||||????///<<>X+=^#=X>>><<<<<<<////////<<<<<>>X+=${{${><///??????????///<XOX<<//////<<>>X={{@O++{$^^X+8X<>//X^>!---ooooooooo;;;;;;;;;;;;;
-:::;;;;;;;;;;;;;;;;;;;oooooooooooo-------------!!!!!!!!!!!!|||||||????///<<<>X+O^=+X><<<<//////////////////<<XOOX<<<<//??????||||||??????????????????////<<>>+*X><//???|||!!!!----oooooooo;;;;;;;;;;;;;;
-::;;;;;;;;;;;;;;;;;;;;ooooooooo-----------!!!!!!!!!!!!!|||||||||?????///<>>XX+=^@*{X><<//////?????????????///>&X</????||||||||||||||||||||||||||||||?????///<O@^>/??|||!!!!-----oooooooo;;;;;;;;;;;;;;;;
-::;;;;;;;;;;;;;;;;;;;oooooooo-----!!!!!!!!!!!!!!|||||||||||||??????///<<X{$&%$#^X>><<////????????????????????????|||||||||||!!!!!!!!!!!!!!!!!!||||||||||???//<X{$^/?||!!!-----ooooooooo;;;;;;;;;;;;;;;;;
-::;;;;;;;;;;;;;;;;;;ooooooo---!//|||||||||||||||????????????????////<>X+=%8O{{{OX><////????????|||||||||||||||||||||!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!||||?/<X%#+><?||!!-----oooooooo;;;;;;;;;;;;;;;;;;;
-::;;;;;;;;;;;;;;;;;;ooooooo---!><<XO</???//+><<<#{+</////////////<<<>>X=&=XX>>><<////???????|||||||||||||||!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!|||??/<^X<?||!!----oooooooo;;;;;;;;;;;;;;;;;;::
-::;;;;;;;;;;;;;;;;;;ooooooo----!!|?/<==#{8%+XX^###OX>><<<<<<>>>>>>>>X{@OOX>><<<////??????||||||||||||!!!!!!!!!!!!!!!!!!!!!!-------------------------!!!!!!!!|||?/<$>></|!--ooooooo;;;;;;;;;;;;;;;;;;::::
-::;;;;;;;;;;;;;;;;;;oooooooo----!!|?>^X///////<>X#==*^{=@#%{%$O{=&@^O*{+X>><<<///??????||||||||||!!!!!!!!!!!!!!!!!!!--------------------------------------!!!!!||/+>?|!!--ooooooo;;;;;;;;;;;;;;;;;::::::
-:;;;;;;;;;;;;;;;;;;;;oooooooo----!!|?||||||||???/////<>$X><<>>>>X>>XX+=OO+><<<///?????|||||||||!!!!!!!!!!!!!!!!-----------------------------------------------!!!|>>|!--ooooooo;;;;;;;;;;;;;;;;;::::::::
-:;;;;;;;;;;;;;;;;;;;;oooooooooo-----!!!!!!!!!|||||||???????//////<<<>>+%8{X>><///????||||||||!!!!!!!!!!!!!!-------------------------------ooooooooooooooo------------oooooooo;;;;;;;;;;;;;;;;;::::::::::
-:;;;;;;;;;;;;;;;;;;;;;oooooooooo---------!!!!!!!!!||||||||??????////<<>>+{%^*#X//????|||||||!!!!!!!!!!!!-------------------------ooooooooooooooooooooooooooooooooooooooooo;;;;;;;;;;;;;;;;;;::::::::::::
-:;;;;;;;;;;;;;;;;;;;;;;oooooooooooo----------!!!!!!!!!||||||||????///<<>X=^{X><//????||||||!!!!!!!!!!!---------------------oooooooooooooooooooooooooooooooooooooooooo;;;;;;;;;;;;;;;;;;;;:::::::::::::::
-:;;;;;;;;;;;;;;;;;;;;;;oooooooooooooo-----------!!!!!!!!!||||||????/<>XX=$#{==^<//???|||||!!!!!!!!!!-------------------ooooooooooooooooooooooooooooooooooooooo;;;;;;;;;;;;;;;;;;;;;;;;::::::::::::::::::
-:;;;;;;;;;;;;;;;;;;;;;;;oooooooooooooo------------!!!!!!!!!|||||????/<O+={%O+X><//???|||||!!!!!!!!!-----------------oooooooooooooooooooooooooooooooooo;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;::::::::::::::::::::
-:;;;;;;;;;;;;;;;;;;;;;;;;ooooooooooooooo-----------!!!!!!!!!|||||???//<>X#{+>><///???|||||!!!!!!!!----------------ooooooooooooooooooooooooooooo;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::::::::::::::::::::::
-:;;;;;;;;;;;;;;;;;;;;;;;;oooooooooooooooo-----------!!!!!!!!||||||???//>XX=$=><<///???||||!!!!!!!--------------oooooooooooooooooooooooooooo;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::::::::::::::::::::::::::
-:;;;;;;;;;;;;;;;;;;;;;;;;oooooooooooooooo------------!!!!!!!!|||||????//<<>+%+X>><<///??|||!!!!!!------------oooooooooooooooooooooooooo;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;::::::::::::::::::::::::::::::
-:;;;;;;;;;;;;;;;;;;;;;;;;;oooooooooooooooo-----------!!!!!!!||||||????///<>>+{^=++{^$^=/?||!!!!!------------oooooooooooooooooooooooo;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::::::::::::::::::::::::::::::::
-:;;;;;;;;;;;;;;;;;;;;;;;;;oooooooooooooooo-----------!!!!!!!|||||????///<<>X#=X><///????||!!!!!-----------ooooooooooooooooooooooo;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;::::::::::::::::::::::::::::::::::::
-;;;;;;;;;;;;;;;;;;;;;;;;;;oooooooooooooooo----------!!!!!!||||||????//<>O+{*=X<//???|||||!!!!!-----------oooooooooooooooooooooo;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::::::::::::::::::::::::::::::::::::::
-EOF
-    echo -n $RESET
-}
-
 profile() {
-    clear
     (( $PROFILE )) || return
-    end=$(gdate +%s.%N 2>/dev/null || date +%s.%N)
+    clear
+    end=$(gdate +%s.%N 2>/dev/null || date +%s 2>/dev/null)
     echo -n $ORANGE
     if [[ $(which bc 2>/dev/null) ]]; then
     dt=$(echo "$end - $start" | bc)
