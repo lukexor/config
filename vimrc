@@ -36,8 +36,10 @@ Plug 'tpope/vim-unimpaired'          " Adds a lot of shortcuts complimentary pai
 Plug 'vim-scripts/YankRing.vim'      " Makes pasting previous yanks easier
 Plug 'vim-scripts/argtextobj.vim'    " Select/Modify inner arguments inside parens or quotes
 " Snippets engine + ultisnips
-Plug 'honza/vim-snippets' |
-    \ Plug 'SirVer/ultisnips'
+if has('python3')
+  Plug 'honza/vim-snippets' |
+      \ Plug 'SirVer/ultisnips'
+endif
 
 " -- File Navigation   {{{2
 " --------------------------------------------------------------------------------------------------
@@ -141,7 +143,6 @@ if b:fsize <= 1000000
 endif
 set cpoptions+=W                 " Don't overwrite readonly files with :w!
 set cpoptions-=aA                " Don't set alternate file # on :read or :write
-" set diffopt+=vertical
 set display+=lastline
 set encoding=utf-8
 set expandtab                    " Replace the tab key with spaces
@@ -280,9 +281,10 @@ set viminfo=h,'500,f1,<10000,s1000,/1000,:1000,%,n$HOME/.viminfo
 set visualbell                   " stop that ANNOYING beeping
 set virtualedit=block            " Allow virtual block to put cursor where there's no actual text
 set wrapmargin=2                 " Number of chars from the right before wrapping
-set diffopt+=iwhite
-set diffopt+=algorithm:patience
-set diffopt+=indent-heuristic
+set diffopt=filler,iblank,iwhiteall,vertical
+if v:version >= 802
+  set diffopt+=algorithm:patience,indent-heuristic
+endif
 
 
 " == Abbreviations   {{{1

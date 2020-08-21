@@ -37,6 +37,7 @@ PACKAGES = [
   'hexedit',
   'mysql',
   'node',
+  'nvm',
   'openssl',
   'postgresql',
   'python',
@@ -57,23 +58,23 @@ PACKAGES = [
 ]
 COMMANDS = [
   'vim +PlugUpgrade +PlugInstall +qall',
-  'curl https://sh.rustup.rs -sSf | sh',
-  'cargo install ripgrep',
-  'cargo install cargo-add',
-  'cargo install cargo-asm',
-  'cargo install cargo-expand',
-  'cargo install cargo-count',
-  'cargo install cargo-fmt',
-  'cargo install cargo-generate',
-  'cargo install cargo-outdated',
-  'cargo install cargo-readme',
-  'cargo install cargo-tree',
-  'cargo install cargo-watch',
-  'cargo install wasm-pack',
-  'rustup component add clippy-preview',
-  'rustup component add rls-preview',
-  'rustup component add rust-analysis',
-  'rustup component add rust-src',
+  'curl --proto "=https" --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --no-modify-path',
+  '$HOME/.cargo/bin/cargo install ripgrep',
+  '$HOME/.cargo/bin/cargo install cargo-add',
+  '$HOME/.cargo/bin/cargo install cargo-asm',
+  '$HOME/.cargo/bin/cargo install cargo-expand',
+  '$HOME/.cargo/bin/cargo install cargo-count',
+  '$HOME/.cargo/bin/cargo install cargo-fmt',
+  '$HOME/.cargo/bin/cargo install cargo-generate',
+  '$HOME/.cargo/bin/cargo install cargo-outdated',
+  '$HOME/.cargo/bin/cargo install cargo-readme',
+  '$HOME/.cargo/bin/cargo install cargo-tree',
+  '$HOME/.cargo/bin/cargo install cargo-watch',
+  '$HOME/.cargo/bin/cargo install wasm-pack',
+  '$HOME/.cargo/bin/rustup component add clippy-preview',
+  '$HOME/.cargo/bin/rustup component add rls-preview',
+  '$HOME/.cargo/bin/rustup component add rust-analysis',
+  '$HOME/.cargo/bin/rustup component add rust-src',
 ]
 
 
@@ -153,7 +154,7 @@ def rename(src, dst, opts):
         return
     os.symlink(src, dst)
 
-def sync(opts):
+def link(opts):
   if not opts['sync']: return
   rootPath = os.path.dirname(os.path.realpath(__file__))
 
@@ -173,9 +174,25 @@ def install(opts):
   if not opts['install']: return
 
   if opts['system'] == 'Darwin':
+    print("Installing xcode");
+    shellResult = subprocess.call('xcode-select --install', shell=True)
+    if shellResult:
+      print("Error installing xcode or it's already installed")
+
+    print("Checking homebrew installation")
+    brewNotInstalled = subprocess.call('which brew', shell=True)
+    if brewNotInstalled:
+      print("Installing homebrew");
+      shellResult = subprocess.call('/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"', shell=True)
+      if shellResult:
+          print("Error installing homebrew")
+          return
+
+    print("Updating homebrew installation")
     shellResult = subprocess.call('brew update', shell=True)
     if shellResult:
-        print("Error updating brew")
+        print("Error updating homebrew")
+        return
 
   for package in PACKAGES:
     if opts['verbose']:
@@ -214,7 +231,7 @@ def main(argv):
     print("$HOME must be defined to setup symlinks.")
     sys.exit(1)
 
-  sync(options)
+  link(options)
   install(options)
   commands(options)
 

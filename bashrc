@@ -146,11 +146,13 @@ if tput colors &> /dev/null; then
     export BLACK=$(tput setaf 0)
     export RED=$(tput setaf 1)
     export GREEN=$(tput setaf 34)
-    export ORANGE=$(tput setaf 11)
+    export ORANGE=$(tput setaf 166)
     export BLUE=$(tput setaf 12)
-    export PURPLE=$(tput setaf 5)
-    export CYAN=$(tput setaf 14)
+    export PURPLE=$(tput setaf 13)
+    export CYAN=$(tput setaf 50)
+    export YELLOW=$(tput setaf 11)
     export WHITE=$(tput setaf 15)
+    export GRAY=$(tput setaf 7)
   else
     export BLACK=$(tput setaf 0)
     export RED=$(tput setaf 1)
@@ -388,7 +390,7 @@ hist_stats() { history | cut -d] -f2 | sort | uniq -c | sort -rn | head; }
 hu() { history -n; }
 
 n() { echo -n -e "\033]0;$*\007"; TERM_TITLE=$*; }
-sn() { echo -n -e "\033k$*\033\\"; SCREEN_TITLE=$*; tmux rename-window $*; }
+# sn() { echo -n -e "\033k$*\033\\"; SCREEN_TITLE=$*; tmux rename-window $*; }
 
 # Grep commands
 h() { if [ -z "$*" ]; then history; else history | egrep "$@"; fi; }
@@ -566,103 +568,13 @@ gco() {
 gops() {
     git push origin $(current_branch) $@ -u
 }
-git_prompt_info() {
-    ref=$(git symbolic-ref HEAD 2> /dev/null) || return
-    echo "$BASH_THEME_GIT_PROMPT_PREFIX$(current_branch) $(parse_git_dirty) $(git_prompt_short_sha) $(git_time_since_commit)$BASH_THEME_GIT_PROMPT_SUFFIX"
-}
-# Determine the time since last commit. If branch is clean,
-# use a neutral color, otherwise colors will vary according to time.
-git_time_since_commit() {
-    if git rev-parse --git-dir > /dev/null 2>&1; then
-    # Only proceed if there is actually a commit.
-    if [[ $(git log 2>&1 > /dev/null | grep -c "^fatal: bad default revision") == 0 ]]; then
-        # Get the last commit.
-        last_commit=`git log --pretty=format:'%at' -1 2> /dev/null`
-        now=`date +%s`
-        seconds_since_last_commit=$((now-last_commit))
-
-        # Totals
-        MINUTES=$((seconds_since_last_commit / 60))
-        HOURS=$((seconds_since_last_commit/3600))
-
-        # Sub-hours and sub-minutes
-        DAYS=$((seconds_since_last_commit / 86400))
-        SUB_HOURS=$((HOURS % 24))
-        SUB_MINUTES=$((MINUTES % 60))
-
-        if [ "$HOURS" -gt 24 ]; then
-        echo "${BASH_THEME_GIT_TIME_SINCE_COMMIT_LONG}${BASH_THEME_GIT_TIME_SINCE_COMMIT_BEFORE}${DAYS}d${SUB_HOURS}h${SUB_MINUTES}m${BASH_THEME_GIT_TIME_SINCE_COMMIT_AFTER}${RCLR}"
-        elif [ "$MINUTES" -gt 60 ]; then
-        echo "${BASH_THEME_GIT_TIME_SHORT_COMMIT_MEDIUM}${BASH_THEME_GIT_TIME_SINCE_COMMIT_BEFORE}${HOURS}h${SUB_MINUTES}m${BASH_THEME_GIT_TIME_SINCE_COMMIT_AFTER}${RCLR}"
-        else
-        echo "${BASH_THEME_GIT_TIME_SINCE_COMMIT_SHORT}${BASH_THEME_GIT_TIME_SINCE_COMMIT_BEFORE}${MINUTES}m${BASH_THEME_GIT_TIME_SINCE_COMMIT_AFTER}${RCLR}"
-        fi
-    else
-        echo "${BASH_THEME_GIT_TIME_SINCE_COMMIT_BEFORE}~${BASH_THEME_GIT_TIME_SINCE_COMMIT_AFTER}"
-    fi
-    fi
-}
-# Checks if working tree is dirty
-parse_git_dirty() {
-  local SUBMODULE_SYNTAX=''
-  if [[ $POST_1_7_2_GIT -gt 0 ]]; then
-    SUBMODULE_SYNTAX="--ignore-submodules=dirty"
-  fi
-  if [[ -n $(git status -s ${SUBMODULE_SYNTAX}  2> /dev/null) ]]; then
-    echo "$BASH_THEME_GIT_PROMPT_DIRTY"
-  else
-    echo "$BASH_THEME_GIT_PROMPT_CLEAN"
-  fi
-}
-# Checks if there are commits ahead from remote
-git_prompt_ahead() {
-  if $(echo "$(git log origin/$(current_branch)..HEAD 2> /dev/null)" | grep '^commit' &> /dev/null); then
-    echo "$BASH_THEME_GIT_PROMPT_AHEAD"
-  fi
-}
-# Formats prompt string for current git commit short SHA
-git_prompt_short_sha() {
-  SHA=$(git rev-parse --short HEAD 2> /dev/null) && echo "$BASH_THEME_GIT_PROMPT_SHA_BEFORE$SHA$BASH_THEME_GIT_PROMPT_SHA_AFTER"
-}
-# Formats prompt string for current git commit long SHA
-git_prompt_long_sha() {
-  SHA=$(git rev-parse HEAD 2> /dev/null) && echo "$BASH_THEME_GIT_PROMPT_SHA_BEFORE$SHA$BASH_THEME_GIT_PROMPT_SHA_AFTER"
-}
 parse_git_branch() {
-  branch=$(git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/' )
-  echo $branch
-}
-# Get the status of the working tree
-git_prompt_status() {
-  INDEX=$(git status --porcelain 2> /dev/null)
-  STATUS=""
-  if $(echo "$INDEX" | grep '^?? ' &> /dev/null); then
-    STATUS="$BASH_THEME_GIT_PROMPT_UNTRACKED$STATUS"
+  BRANCH=$(git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/')
+  STATUS=$(git status -s 2> /dev/null)
+  if [[ ! -z $STATUS ]]; then
+    CHANGES=" *"
   fi
-  if $(echo "$INDEX" | grep '^A  ' &> /dev/null); then
-    STATUS="$BASH_THEME_GIT_PROMPT_ADDED$STATUS"
-  elif $(echo "$INDEX" | grep '^M  ' &> /dev/null); then
-    STATUS="$BASH_THEME_GIT_PROMPT_ADDED$STATUS"
-  fi
-  if $(echo "$INDEX" | grep '^ M ' &> /dev/null); then
-    STATUS="$BASH_THEME_GIT_PROMPT_MODIFIED$STATUS"
-  elif $(echo "$INDEX" | grep '^AM ' &> /dev/null); then
-    STATUS="$BASH_THEME_GIT_PROMPT_MODIFIED$STATUS"
-  elif $(echo "$INDEX" | grep '^ T ' &> /dev/null); then
-    STATUS="$BASH_THEME_GIT_PROMPT_MODIFIED$STATUS"
-  fi
-  if $(echo "$INDEX" | grep '^R  ' &> /dev/null); then
-    STATUS="$BASH_THEME_GIT_PROMPT_RENAMED$STATUS"
-  fi
-  if $(echo "$INDEX" | grep '^ D ' &> /dev/null); then
-    STATUS="$BASH_THEME_GIT_PROMPT_DELETED$STATUS"
-  elif $(echo "$INDEX" | grep '^AD ' &> /dev/null); then
-    STATUS="$BASH_THEME_GIT_PROMPT_DELETED$STATUS"
-  fi
-  if $(echo "$INDEX" | grep '^UU ' &> /dev/null); then
-    STATUS="$BASH_THEME_GIT_PROMPT_UNMERGED$STATUS"
-  fi
-  echo $STATUS
+  echo " ($BRANCH$CHANGES)"
 }
 
 # == Prompt {{{1
@@ -709,43 +621,36 @@ prompt_pwd() {
     echo -e "${PWD}"
 }
 
-prompt_on() {
-    case ${OSTYPE} in
-        darwin*)
-            PS1_HOST="mac"
-            ;;
-        *)
-            PS1_HOST="${HOSTNAME}"
-            ;;
-    esac
+# prompt_on() {
+#     case ${OSTYPE} in
+#         darwin*)
+#             PS1_HOST="mac"
+#             ;;
+#         *)
+#             PS1_HOST="${HOSTNAME}"
+#             ;;
+#     esac
 
-    echo -ne "$ORANGE"
-    if [[ $(declare -f bg_jobs) && $(bg_jobs) ]]; then
-        echo -ne "[$(bg_jobs)] "
-    fi
-    if [[ $(declare -f st_jobs) && $(st_jobs) ]]; then
-        echo -ne "{$(st_jobs)} "
-    fi
-    if [[ ! $TERM =~ screen ]]; then
-        echo -ne "$(date +'%F %R') "
-    fi
-    if [[ $PS1_HOST ]]; then
-        echo -ne "$USER @ $PS1_HOST "
-    fi
-    if [[ $(declare -f parse_git_branch) && $(parse_git_branch) ]]; then
-        echo -ne "($(parse_git_branch)) "
-    fi
-    echo -e "$(prompt_pwd)$RESET"
-}
-PS1="> "
-PS2=">> "
 
-prompt_off() {
-    PROMPT_COMMAND="history -a;"
-    PS1='$(prompt_pwd) > '
-}
 
-PROMPT_COMMAND="history -a; prompt_on"
+#     echo -ne "$ORANGE"
+#     if [[ $(declare -f bg_jobs) && $(bg_jobs) ]]; then
+#         echo -ne "[$(bg_jobs)] "
+#     fi
+#     if [[ $(declare -f st_jobs) && $(st_jobs) ]]; then
+#         echo -ne "{$(st_jobs)} "
+#     fi
+#     # if [[ ! $TERM =~ screen ]]; then
+#     #     echo -ne "$(date +'%F %R') "
+#     # fi
+#     # if [[ $PS1_HOST ]]; then
+#     #     echo -ne "$USER @ $PS1_HOST "
+#     # fi
+#     # echo -e "$(prompt_pwd)$RESET"
+# }
+PS1="\[$GRAY\][\A] \[$BLUE\]\h:\[$GREEN\]\W\[$YELLOW\]\$(parse_git_branch) \[$RESET\]\$ "
+
+PROMPT_COMMAND="history -a;"
 
 ascii() {
     clear
