@@ -40,6 +40,7 @@ PACKAGES = [
   'node',
   'nvm',
   'openssl',
+  'prettier',
   'postgresql',
   'python',
   'python3',

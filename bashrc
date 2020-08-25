@@ -515,9 +515,10 @@ parse_git_branch() {
   shopt -u nocasematch
   shopt -u nocaseglob
 
+  CHANGES=""
   if [[ ! -z $STATUS ]]; then
     if [[ $STATUS =~ [[:space:]][AMD][[:space:]] ]]; then
-      CHANGES="*"
+      CHANGES="$CHANGE*"
     fi
     if [[ $STATUS =~ [AMD][[:space:]]{2} ]]; then
       CHANGES="$CHANGES+"
@@ -529,20 +530,18 @@ parse_git_branch() {
 
   if [[ ! -z $BSTATUS ]]; then
     if [[ $BSTATUS =~ "ahead" ]] || [[ $BSTATUS =~ "diverged" ]]; then
-      BSTATUS="!"
+      CHANGES="$CHANGES!"
     fi
     if [[ $BSTATUS =~ "behind" ]]; then
-      BSTATUS="$BSTATUS^"
+      CHANGES="$CHANGES^"
     fi
   fi
 
   if [[ ! -z $BRANCH ]]; then
     if [[ ! -z $CHANGES ]]; then
       CHANGES=" $CHANGES"
-    elif [[ ! -z $BSTATUS ]]; then
-      BSTATUS=" $BSTATUS"
     fi
-    echo " ($BRANCH$CHANGES$BSTATUS)"
+    echo " ($BRANCH$CHANGES)"
   else
     echo ""
   fi
