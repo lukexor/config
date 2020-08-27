@@ -56,6 +56,7 @@ PACKAGES = [
   'tmux',
   'tree',
   'vim',
+  'watchman',
   'wget',
   'yarn',
 ]

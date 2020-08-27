@@ -496,6 +496,10 @@ gh() {
 # Checkout a ticket branch
 gbt() { git checkout tickets/$@; }
 gbtn() { git checkout -b tickets/$@; }
+current_branch() {
+  ref=$(git symbolic-ref HEAD 2> /dev/null) || return
+  echo "${ref#refs/heads/}"
+}
 gc() {
     git commit "$@"
     # tags > /dev/null 2>&1 &
