@@ -72,7 +72,9 @@ Desktop.ini
 
 # Misc #
 ########
+local.js
 *tags
+tags.*
 .includepath
 .project
 .settings/

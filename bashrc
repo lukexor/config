@@ -75,8 +75,8 @@ pathprepend "$HOME/bin"
 
 # Node/NVM
 export NVM_DIR="$HOME/.nvm"
-sourcefile "$NVM_DIR/nvm.s"
-sourcefile "$NVM_DIR/bash_completion"
+sourcefile "/usr/local/opt/nvm/nvm.sh"
+sourcefile "/usr/local/opt/nvm/etc/bash_completion.d/nvm"
 
 # == Bash Settings {{{1
 # ==================================================================================================
@@ -284,7 +284,8 @@ alias glg='git log --graph --pretty=format:"%C(yellow)%h (%p) %ai%Cred%d %Creset
 alias gll='git --no-pager log --pretty=format:"%C(yellow)%h (%p) %ai%Cred%d %Creset%Cblue[%ae]%Creset %s (%ar). %b %N" --numstat -10'
 alias gls='git --no-pager log --pretty=format:"%C(yellow)%h (%p) %ai%Cred%d %Creset%Cblue[%ae]%Creset %s (%ar). %b %N" -20'
 alias gm='git merge --no-ff'
-alias gpl='echo "use gfr"'
+alias gp='git prune && git remote prune origin'
+alias gpl='git pull'
 alias gps='git push'
 alias grhh='git reset HEAD --hard'
 alias grm='git rm'
@@ -483,6 +484,12 @@ gfr() {
   echo "git fetch origin && git rebase -p origin/$branch"
   git fetch origin
   git rebase -p origin/$branch
+}
+gmm() {
+  branch=$(current_branch)
+  echo "Merging main into $branch"
+  echo "gco main && gpl && gco $branch && gm main  -m \"Merge branch 'main' into $branch\""
+  gco main && gpl && gco $branch && gm main -m "Merge branch 'main' into $branch"
 }
 gh() {
     echo "Git Help:"

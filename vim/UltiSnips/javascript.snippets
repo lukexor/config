@@ -1,29 +1,35 @@
-snippet rcc "React Class Component" b
-import React, { Component } from 'react';
+snippet rfc "React Functional Component" b
+import React from 'react';
 
-export class ${1:`!p snip.rv = snip.basename`} extends Component {
-  render() {
-    return (
-      <>
-        ${2}
-      </>
-    )
-  }
-}
+const ${1:`!p snip.rv = snip.basename`} = (${2}) => (
+  ${3}
+);
 
 export default ${1};
 endsnippet
 
-snippet rfc "React Functional Component" b
-import React from 'react';
-
-const ${1:`!p snip.rv = snip.basename`} = () => {
-  return (
-    <>
-      ${2}
-    </>
-  )
+snippet cfn "constant function" b
+const ${1:fnName} = (${2}) => {
+  ${3}
 };
+endsnippet
 
-export default ${1};
+snippet describe "Jest Test Scope" b
+describe("${1:description}", () => {
+  it("${2:does something}", () => {
+    ${3}
+  });
+});
+endsnippet
+
+snippet it "Jest Test" b
+it("${1:does something}", () => {
+  ${2}
+});
+endsnippet
+
+snippet its "Jest Test Skip" b
+it.skip("${1:does something}", () => {
+  ${2}
+});
 endsnippet

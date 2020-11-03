@@ -40,6 +40,8 @@ if has('python3')
   Plug 'honza/vim-snippets' |
       \ Plug 'SirVer/ultisnips'
 endif
+Plug 'ludovicchabant/vim-gutentags'  " Manages updating ctags
+Plug 'kristijanhusak/vim-js-file-import', {'do': 'npm install'}  " Adds js file imports automatically
 
 " -- File Navigation   {{{2
 " --------------------------------------------------------------------------------------------------
@@ -244,7 +246,7 @@ set statusline=%n:\            " uffer number
 set statusline+=%.40F\         " Full filename truncated
 set statusline+=%m             " Modified
 set statusline+=%r             " Readonly
-set statusline+=%{tagbar#currenttag('[%s]\ ','','')}
+" set statusline+=%{tagbar#currenttag('[%s]\ ','','')}
 set statusline+=%=             " Left/Right seperator
 set statusline+=%y\            " Filetype
 set statusline+=%l/%L          " Current/Total lines
@@ -427,7 +429,7 @@ endfunction
 
 " Helper to generate tag files in the background
 function! GenerateCtags()
-    execute ":Dispatch! ctags -I ~/.ctags --file-scope=no -R"
+    execute ":Dispatch! ctags -I ~/.ctags -R"
 endfunction
 
 " Highlights search matches and flashes
@@ -515,7 +517,8 @@ augroup FiletypeFormats
     autocmd BufRead            *.orig, *.bak setlocal readonly
     autocmd BufNewFile,BufRead *.apxc setlocal filetype=java
     autocmd BufNewFile,BufRead *.conf setlocal filetype=yaml formatprg=prettier\ --parser\ yaml
-    autocmd BufNewFile,BufRead *.md   setlocal filetype=markdown.help.text formatprg=prettier\ --parser\ markdown
+    " Doesn't seem to work
+    " autocmd BufNewFile,BufRead *.md   setlocal filetype=markdown.help.text formatprg=prettier\ --parser\ markdown
     autocmd BufNewFile,BufRead *.t    setlocal filetype=perl
     autocmd BufNewFile,BufRead *.tsx  setlocal filetype=typescript.tsx.html formatprg=prettier\ --parser\ typescript
     autocmd BufNewFile,BufRead *.jsx  setlocal filetype=javascript.jsx.html formatprg=prettier\ --parser\ babel
@@ -692,6 +695,12 @@ let g:coc_global_extensions = [
 let g:fzf_buffers_jump=1          " Jump to existing window if possible
 let g:fzf_commits_log_options='--graph --pretty=format:"%C(yellow)%h (%p) %ai%Cred%d %Creset%Cblue[%ae]%Creset %s (%ar). %b %N"'
 let g:fzf_layout = { 'down': '~20%' }
+let g:gutentags_add_default_project_roots = 0
+let g:gutentags_project_root = ['package.json', '.git']
+let g:gutentags_generate_on_new = 1
+let g:gutentags_generate_on_missing = 1
+let g:gutentags_generate_on_write = 1
+let g:gutentags_generate_on_empty_buffer = 0
 let g:NERDTreeWinSize = 35
 let g:rustfmt_autosave = 1
 let g:rustfmt_command = 'rustup run stable rustfmt'
@@ -702,47 +711,97 @@ let g:tagbar_autoclose = 1
 let g:tagbar_autofocus = 1
 let g:tagbar_autoshowtag = 1
 let g:tagbar_compact = 1
-let g:tagbar_hide_nonpublic = 1
 let g:tagbar_width = 35
-let g:tagbar_type_perl = {
-    \ 'kinds' : [
-        \ 'i:includes:1:0',
-        \ 'c:constants:0:0',
-        \ 'o:ours:0:0',
-        \ 'R:readonly:0:0',
-        \ 'f:formats:0:0',
-        \ 'a:attributes:0:1',
-        \ 'x:attribute modifiers:0:1',
-        \ 's:subroutines:0:1',
-        \ 'p:packages:0:0',
-    \ ],
-\ }
 let g:tagbar_type_go = {
-    \ 'ctagstype' : 'go',
-    \ 'kinds' : [
-        \ 'p:package:0:1',
-        \ 'f:function:0:1',
-        \ 'v:variable:0:1',
-        \ 'c:constant:0:0',
-        \ 't:type:0:1',
-    \ ],
-    \ 'sro' : '.',
-    \ 'kind2scope' : {
-        \ 'p' : 'package',
-        \ 'f' : 'function',
-        \ 'v' : 'variable',
-        \ 'c' : 'constant',
-        \ 't' : 'type',
-    \ },
-    \ 'scope2kind' : {
-        \ 'package' : 'p',
-        \ 'function' : 'f',
-        \ 'variable' : 'v',
-        \ 'constant' : 'c',
-        \ 'type' : 't',
-    \ },
+  \ 'ctagstype' : 'go',
+  \ 'kinds' : [
+    \ 'p:package:0:1',
+    \ 'f:function:0:1',
+    \ 'v:variable:0:1',
+    \ 'c:constant:0:0',
+    \ 't:type:0:1',
+  \ ],
+  \ 'sro' : '.',
+  \ 'kind2scope' : {
+    \ 'p' : 'package',
+    \ 'f' : 'function',
+    \ 'v' : 'variable',
+    \ 'c' : 'constant',
+    \ 't' : 'type',
+  \ },
+  \ 'scope2kind' : {
+    \ 'package' : 'p',
+    \ 'function' : 'f',
+    \ 'variable' : 'v',
+    \ 'constant' : 'c',
+    \ 'type' : 't',
+  \ },
+\ }
+let g:tagbar_type_javascript = {
+  \ 'ctagstype': 'javascript',
+  \ 'kinds': [
+    \ 'A:arrays',
+    \ 'P:properties',
+    \ 'T:tags',
+    \ 'O:objects',
+    \ 'G:generator functions',
+    \ 'F:functions',
+    \ 'C:constructors/classes',
+    \ 'M:methods',
+    \ 'V:variables',
+    \ 'I:imports',
+    \ 'E:exports',
+    \ 'S:styled components'
+  \ ]
+\ }
+let g:tagbar_type_perl = {
+  \ 'kinds' : [
+    \ 'i:includes:1:0',
+    \ 'c:constants:0:0',
+    \ 'o:ours:0:0',
+    \ 'R:readonly:0:0',
+    \ 'f:formats:0:0',
+    \ 'a:attributes:0:1',
+    \ 'x:attribute modifiers:0:1',
+    \ 's:subroutines:0:1',
+    \ 'p:packages:0:0',
+  \ ],
+\ }
+let g:tagbar_type_rust = {
+  \ 'ctagstype' : 'rust',
+  \ 'kinds' : [
+    \ 'T:types,type definitions',
+    \ 'f:functions,function definitions',
+    \ 'g:enum,enumeration names',
+    \ 's:structure names',
+    \ 'm:modules,module names',
+    \ 'c:consts,static constants',
+    \ 't:traits',
+    \ 'i:impls,trait implementations',
+  \ ]
+\ }
+let g:tagbar_type_typescript = {
+  \ 'ctagstype': 'typescript',
+  \ 'kinds': [
+    \ 'A:arrays',
+    \ 'P:properties',
+    \ 't:types',
+    \ 'T:tags',
+    \ 'O:objects',
+    \ 'G:generator functions',
+    \ 'F:functions',
+    \ 'C:constructors/classes',
+    \ 'M:methods',
+    \ 'V:variables',
+    \ 'i:interfaces',
+    \ 'I:imports',
+    \ 'e:enums',
+    \ 'E:exports',
+    \ 'S:styled components'
+  \ ]
 \ }
 let g:UltiSnipsExpandTrigger="<c-tab>"
+let g:yankring_history_file=".yankring_history"
 
 
 " == Mappings   {{{1
@@ -903,7 +962,8 @@ Nnoremap Q                       [Disable EX mode] <NOP>
 Nnoremap cdP                     [Change project directory to current file] :let g:project_dir = fnamemodify(resolve(expand('%')), ':h')<CR>:echo 'project_dir=' . fnamemodify(resolve(expand('%')), ':h')<CR>
 Nnoremap cd                      [Change cwd to current file] :execute 'lcd' fnamemodify(resolve(expand('%')), ':h')<CR>:echo 'cd ' . fnamemodify(resolve(expand('%')), ':h')<CR>
 Nnoremap <leader>-               [Maximize current window when in a vertial split] :wincmd _<CR>:wincmd \|<CR>
-Nnoremap <leader>=               [Equalize vertical split window widths] :wincmd =<CR> Nnoremap <leader>C               [Regenerate ctags] :call GenerateCtags()<CR>:echom "Tags Generated"<CR>
+Nnoremap <leader>=               [Equalize vertical split window widths] :wincmd =<CR>
+Nnoremap <leader>C               [Regenerate ctags] :call GenerateCtags()<CR>:echom "Tags Generated"<CR>
 Nnoremap <leader>D               [Close and delete the all but the current buffer] :call CloseAllBuffersButCurrent()<CR>
 Nnoremap <leader>h               [Open previous buffer] :bprevious<CR>
 Nnoremap <leader>l               [Open next buffer] :bnext<CR>
