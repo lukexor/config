@@ -82,13 +82,14 @@ sourcefile "/usr/local/opt/nvm/etc/bash_completion.d/nvm"
 # ==================================================================================================
 
 # History
-HISTCONTROL="ignoreboth"     # Ignore commands starting with a space and duplicate commands
-HISTFILESIZE=100000          # Number of lines saved in HISTFILE
-HISTSIZE=2000                # Number of commands saved in command history
-HISTTIMEFORMAT='[%F %a %T] ' # YYYY-MM-DD DAY HH:MM:SS
+export HISTCONTROL="ignoreboth"     # Ignore commands starting with a space and duplicate commands
+export HISTFILESIZE=100000          # Number of lines saved in HISTFILE
+export HISTSIZE=2000                # Number of commands saved in command history
+export HISTTIMEFORMAT='[%F %a %T] ' # YYYY-MM-DD DAY HH:MM:SS
 
 # Misc
-EDITOR="vim"
+export EDITOR="vim"
+export LANG="en_US.UTF-8"
 export FZF_DEFAULT_COMMAND='(rg --files || ag --hidden -p ~/.gitignore -g "") 2> /dev/null'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 
