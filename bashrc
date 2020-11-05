@@ -126,12 +126,12 @@ if tput colors &> /dev/null; then
   if [[ $(tput colors) -ge 256 ]] 2>/dev/null; then
     export BLACK=$(tput setaf 0)
     export RED=$(tput setaf 1)
-    export GREEN=$(tput setaf 34)
+    export GREEN=$(tput setaf 2)
     export ORANGE=$(tput setaf 166)
-    export BLUE=$(tput setaf 12)
-    export PURPLE=$(tput setaf 13)
-    export CYAN=$(tput setaf 50)
-    export YELLOW=$(tput setaf 11)
+    export BLUE=$(tput setaf 4)
+    export PURPLE=$(tput setaf 10)
+    export CYAN=$(tput setaf 9)
+    export YELLOW=$(tput setaf 3)
     export WHITE=$(tput setaf 15)
     export GRAY=$(tput setaf 7)
   else
@@ -564,7 +564,7 @@ parse_git_branch() {
 # ==================================================================================================
 
 PROMPT_DIRTRIM=2
-PS1="\[$GRAY\][\A] \[$GREEN\]\w\[$YELLOW\]\$(parse_git_branch) \[$RESET\]\$ "
+PS1="\[$GRAY\][\A] \[$BLUE\]\w\[$YELLOW\]\$(parse_git_branch) \[$RESET\]\$ "
 
 PROMPT_COMMAND="history -a;"
 

@@ -57,6 +57,7 @@ PACKAGES = [
   'tree',
   'vim',
   'watchman',
+  'webpack',
   'wget',
   'yarn',
 ]

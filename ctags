@@ -7,6 +7,7 @@
 --exclude=*.bak
 --exclude=*.cache
 --exclude=*.min.*
+--exclude=*.ml
 --exclude=*.swo
 --exclude=*.swp
 --exclude=*.tmp

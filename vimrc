@@ -60,6 +60,7 @@ Plug 'tpope/vim-fugitive'                               " Git integration
 " --------------------------------------------------------------------------------------------------
 
 Plug 'morhetz/gruvbox'                  " Colorscheme
+Plug 'whatyouhide/vim-gotham'
 Plug 'nelstrom/vim-markdown-folding'    " Folding for markdown by heading
 Plug 'ap/vim-css-color'                 " Show Hex colors
 
@@ -112,7 +113,7 @@ set autoread                     " Read file when changed outside vim
 set autowriteall                 " Automatically write file changes
 let g:gruvbox_contrast_dark = 'hard'
 let g:gruvbox_invert_selection = 0
-colorscheme gruvbox
+colorscheme gotham256
 set background=dark
 if &term =~ '256color'
     " Disable Background Color Erase (BCE) so that color schemes
@@ -246,7 +247,7 @@ set statusline=%n:\            " uffer number
 set statusline+=%.40F\         " Full filename truncated
 set statusline+=%m             " Modified
 set statusline+=%r             " Readonly
-" set statusline+=%{tagbar#currenttag('[%s]\ ','','')}
+set statusline+=%{tagbar#currenttag('[%s]\ ','','')}
 set statusline+=%=             " Left/Right seperator
 set statusline+=%y\            " Filetype
 set statusline+=%l/%L          " Current/Total lines
@@ -701,7 +702,7 @@ let g:gutentags_generate_on_new = 1
 let g:gutentags_generate_on_missing = 1
 let g:gutentags_generate_on_write = 1
 let g:gutentags_generate_on_empty_buffer = 0
-let g:NERDTreeWinSize = 35
+let g:NERDTreeWinSize = 30
 let g:rustfmt_autosave = 1
 let g:rustfmt_command = 'rustup run stable rustfmt'
 let g:rust_use_custom_ctags_defs = 1
@@ -1080,5 +1081,7 @@ onoremap il( :<c-u>normal! F)vi(<cr>
 hi! WhiteOnRed cterm=NONE ctermbg=red ctermfg=white
 hi! Error cterm=NONE ctermbg=darkred ctermfg=white
 hi! ErrorMsg cterm=NONE ctermbg=darkred ctermfg=white
+hi! StatusLine ctermbg=NONE
+hi! StatusLineNC ctermbg=NONE
 
 " vim: foldmethod=marker foldlevel=0
