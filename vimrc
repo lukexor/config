@@ -247,6 +247,7 @@ set statusline=%n:\            " uffer number
 set statusline+=%.40F\         " Full filename truncated
 set statusline+=%m             " Modified
 set statusline+=%r             " Readonly
+set statusline+=%{gutentags#statusline()}
 set statusline+=%{tagbar#currenttag('[%s]\ ','','')}
 set statusline+=%=             " Left/Right seperator
 set statusline+=%y\            " Filetype
