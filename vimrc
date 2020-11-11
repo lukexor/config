@@ -524,7 +524,6 @@ augroup FiletypeFormats
     autocmd BufNewFile,BufRead *.t    setlocal filetype=perl
     autocmd BufNewFile,BufRead *.tsx  setlocal filetype=typescript.tsx.html formatprg=prettier\ --parser\ typescript
     autocmd BufNewFile,BufRead *.jsx  setlocal filetype=javascript.jsx.html formatprg=prettier\ --parser\ babel
-    autocmd BufNewFile,BufRead *.js   setlocal filetype=javascript.html formatprg=prettier\ --parser\ babel
     " Default headers to C files since it's more likely
     autocmd BufNewFile,BufRead *.h    setlocal filetype=c
     autocmd BufNewFile,BufRead *.txt  setlocal filetype=text
