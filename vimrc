@@ -222,7 +222,7 @@ endif
 set shiftround                   " Round to nearest multiple of shiftwidth
 set shiftwidth=2                 " The amount of space to shift when using >>, << or <tab>
 set showcmd                      " Display incomplete command
-set cmdheight=2
+set cmdheight=1
 set showmatch                    " Blink to a matching bracket if on screen
 set showmode                     " Show current mode (INSERT, VISUAL)
 set sidescrolloff=15             " Start side-scrolling when # characters away
@@ -647,7 +647,7 @@ let g:ale_linters = {
   \ 'typescript': ['prettier', 'tslint'],
   \ 'css': ['prettier'],
   \ 'scss': ['prettier'],
-  \ 'rust': ['rls'],
+  \ 'rust': ['cargo'],
   \ }
 let g:ale_fixers = {
   \ '*': ['remove_trailing_lines', 'trim_whitespace'],
@@ -657,10 +657,16 @@ let g:ale_fixers = {
   \ 'typescript': ['prettier'],
   \ 'css': ['prettier'],
   \ 'scss': ['prettier'],
+  \ 'rust': ['rustfmt'],
   \ }
 let g:ale_linters_explicit = 1
 let g:ale_fix_on_save = 1
 let g:ale_rust_rls_toolchain = 'stable'
+let g:ale_rust_cargo_use_check = 1
+let g:ale_rust_cargo_check_all_targets = 1
+let g:ale_rust_cargo_check_examples = 1
+let g:ale_rust_cargo_check_tests = 1
+let g:ale_rust_cargo_use_clippy = 1
 
 let g:closetag_filetypes='xml,xhtml,javascript,javascript.jsx,typescript.tsx'
 let g:closetag_xhtml_filetypes='xml,xhtml,javascript,javascript.jsx,typescript.tsx'
@@ -686,7 +692,6 @@ let g:coc_global_extensions = [
   \ 'coc-json',
   \ 'coc-lists',
   \ 'coc-markdownlint',
-  \ 'coc-rls',
   \ 'coc-snippets',
   \ 'coc-sql',
   \ 'coc-tsserver',
