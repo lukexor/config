@@ -7,9 +7,9 @@
 " :copen :cclose - quickfix window
 
 " Global variables
-let b:fsize=getfsize(@%)
-let mapleader=' '
-let maplocalleader=','
+let b:fsize = getfsize(@%)
+let mapleader = ' '
+let maplocalleader = ','
 
 
 " == Plugins   {{{1
@@ -41,7 +41,8 @@ if has('python3')
       \ Plug 'SirVer/ultisnips'
 endif
 Plug 'ludovicchabant/vim-gutentags'  " Manages updating ctags
-Plug 'kristijanhusak/vim-js-file-import', {'do': 'npm install'}  " Adds js file imports automatically
+Plug 'Galooshi/vim-import-js'
+Plug 'JamshedVesuna/vim-markdown-preview'
 
 " -- File Navigation   {{{2
 " --------------------------------------------------------------------------------------------------
@@ -59,10 +60,9 @@ Plug 'tpope/vim-fugitive'                               " Git integration
 " -- Formatting/Display   {{{2
 " --------------------------------------------------------------------------------------------------
 
-Plug 'morhetz/gruvbox'                  " Colorscheme
 Plug 'whatyouhide/vim-gotham'
 Plug 'nelstrom/vim-markdown-folding'    " Folding for markdown by heading
-Plug 'ap/vim-css-color'                 " Show Hex colors
+" Plug 'ap/vim-css-color'                 " Show Hex colors
 
 " -- Utility/Support   {{{2
 " --------------------------------------------------------------------------------------------------
@@ -111,8 +111,6 @@ endif
 set autoindent                   " Copy indent from current line when adding a new line
 set autoread                     " Read file when changed outside vim
 set autowriteall                 " Automatically write file changes
-let g:gruvbox_contrast_dark = 'hard'
-let g:gruvbox_invert_selection = 0
 colorscheme gotham256
 set background=dark
 if &term =~ '256color'
@@ -212,6 +210,7 @@ set wildignore+=tmp/**
 set wildignore+=*.png,*.jpg,*.gif
 set wildignore+=*.swp,*.bak,*.pyc,*.class
 set wildignore+=*/build/**
+set redrawtime=10000
 set ruler
 set sessionoptions-=help,options " Don't save help windows
 set scrolloff=15                 " Start scrolling when we're # lines away from margins
@@ -643,7 +642,7 @@ let g:ale_linters = {
   \ 'html': ['prettier'],
   \ 'javascript': ['prettier', 'eslint'],
   \ 'json': ['prettier'],
-  \ 'typescript': ['prettier', 'tslint'],
+  \ 'typescript': ['prettier', 'eslint'],
   \ 'css': ['prettier'],
   \ 'scss': ['prettier'],
   \ 'rust': ['cargo'],
@@ -651,9 +650,9 @@ let g:ale_linters = {
 let g:ale_fixers = {
   \ '*': ['remove_trailing_lines', 'trim_whitespace'],
   \ 'html': ['prettier'],
-  \ 'javascript': ['prettier'],
+  \ 'javascript': ['prettier', 'eslint'],
   \ 'json': ['prettier'],
-  \ 'typescript': ['prettier'],
+  \ 'typescript': ['prettier', 'eslint'],
   \ 'css': ['prettier'],
   \ 'scss': ['prettier'],
   \ 'rust': ['rustfmt'],
@@ -667,8 +666,8 @@ let g:ale_rust_cargo_check_examples = 1
 let g:ale_rust_cargo_check_tests = 1
 let g:ale_rust_cargo_use_clippy = 1
 
-let g:closetag_filetypes='xml,xhtml,javascript,javascript.jsx,typescript.tsx'
-let g:closetag_xhtml_filetypes='xml,xhtml,javascript,javascript.jsx,typescript.tsx'
+let g:closetag_filetypes = 'xml,xhtml,javascript,javascript.jsx,typescript.tsx'
+let g:closetag_xhtml_filetypes = 'xml,xhtml,javascript,javascript.jsx,typescript.tsx'
 
 " C/C++/Objective-C - use https://clangd.github.io/
 " Go - use https://github.com/golang/tools/tree/master/gopls
@@ -698,8 +697,8 @@ let g:coc_global_extensions = [
   \ 'coc-yaml',
   \ 'coc-yank'
   \ ]
-let g:fzf_buffers_jump=1          " Jump to existing window if possible
-let g:fzf_commits_log_options='--graph --pretty=format:"%C(yellow)%h (%p) %ai%Cred%d %Creset%Cblue[%ae]%Creset %s (%ar). %b %N"'
+let g:fzf_buffers_jump = 1          " Jump to existing window if possible
+let g:fzf_commits_log_options = '--graph --pretty=format:"%C(yellow)%h (%p) %ai%Cred%d %Creset%Cblue[%ae]%Creset %s (%ar). %b %N"'
 let g:fzf_layout = { 'down': '~20%' }
 let g:gutentags_add_default_project_roots = 0
 let g:gutentags_project_root = ['package.json', '.git']
@@ -806,11 +805,13 @@ let g:tagbar_type_typescript = {
     \ 'S:styled components'
   \ ]
 \ }
-let g:UltiSnipsExpandTrigger="<c-tab>"
-let g:yankring_history_file=".yankring_history"
+let g:UltiSnipsExpandTrigger = "<c-tab>"
+let g:vim_markdown_preview_github = 1
+let g:yankring_history_file = ".yankring_history"
 
 
 " == Mappings   {{{1
+"
 " ==================================================================================================
 
 " -- Undocumented   {{{2
@@ -1005,7 +1006,7 @@ Nnoremap <leader>tp              [Previous Tag] :tprevious<CR>
 Nnoremap <leader>w               [Save file changes] :write<CR>
 Nnoremap <leader>x               [Write and quit current window] :x<CR>
 Nnoremap <leader>z               [Background vim and return to shell] <C-Z>
-Nnoremap <silent> <leader><CR>   [Clear search highlighting] :nohlsearch<C-R>=has('diff')?'<Bar>diffupdate':''<CR><CR><C-L>
+Nnoremap <silent> <leader><CR>   [Clear search highlighting] :nohlsearch<C-R>=has('diff')?'<Bar>diffupdate':''<CR><CR><C-L>:call clearmatches()<CR>
 Nnoremap <localleader>1          [Toggle NERDTree Window] :NERDTreeToggle<CR>
 Nnoremap <localleader>2          [Toggle Tagbar Window] :TagbarToggle<CR>
 Nnoremap <localleader>3          [Toggle Gutter Columns] :call ToggleGutter()<CR>

@@ -1,9 +1,19 @@
 snippet rfc "React Functional Component" b
-import React from 'react';
+import React from "react";
 
 const ${1:`!p snip.rv = snip.basename`} = (${2}) => (
-  ${3}
+  ${3:<></>}
 );
+
+export default ${1};
+endsnippet
+
+snippet rfcb "React Functional Component w/ Braces" b
+import React from "react";
+
+const ${1:`!p snip.rv = snip.basename`} = (${2}) => {
+  return (${3:<></>});
+};
 
 export default ${1};
 endsnippet
@@ -14,11 +24,15 @@ const ${1:fnName} = (${2}) => {
 };
 endsnippet
 
+snippet cafn "constant async function" b
+const ${1:fnName} = async (${2}) => {
+  ${3}
+};
+endsnippet
+
 snippet describe "Jest Test Scope" b
 describe("${1:description}", () => {
-  it("${2:does something}", () => {
-    ${3}
-  });
+  ${2}
 });
 endsnippet
 

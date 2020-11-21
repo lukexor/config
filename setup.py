@@ -27,14 +27,16 @@ DOTFILES = [
 LINKS = [
   'bin',
 ]
-PACKAGES = [
-  'ag',
+BREW_PACKAGES = [
   'bash',
   'cmake',
   'coreutils',
+  'cc65',
+  'cmake',
   'ctags',
   'dos2unix',
   'git',
+  'grip',
   'hexedit',
   'mysql',
   'node',
@@ -45,13 +47,13 @@ PACKAGES = [
   'python',
   'python3',
   'readline',
+  'ripgrep',
   'ruby',
   'sdl2',
   'sdl2_gfx',
   'sdl2_image',
   'sdl2_mixer',
   'sdl2_ttf',
-  'the_silver_searcher',
   'sqlite',
   'tmux',
   'tree',
@@ -60,6 +62,9 @@ PACKAGES = [
   'webpack',
   'wget',
   'yarn',
+]
+NPM_PACKAGES = [
+  'import-js'
 ]
 COMMANDS = [
   'mkdir -p ~/.nvm',
@@ -200,7 +205,7 @@ def install(opts):
         print("Error updating homebrew")
         return
 
-  for package in PACKAGES:
+  for package in BREW_PACKAGES:
     if opts['verbose']:
       print("Installing '%s'" % package)
 
@@ -211,10 +216,21 @@ def install(opts):
         shellResult = subprocess.call('HOMEBREW_NO_AUTO_UPDATE=1 brew install "%s"' % package, shell=True)
       else:
         shellResult = subprocess.call('HOMEBREW_NO_AUTO_UPDATE=1 brew upgrade "%s"' % package, shell=True)
-    elif opts['system'] == 'Debian':
-      shellResult - subprocess.call('sudo apt install -y "%s"' % package, shell=True)
-    elif opts['system'] == 'Redhat':
-      shellResult - subprocess.call('sudo yum install -y "%s"' % package, shell=True)
+    # TODO: Test/support linux better
+    # elif opts['system'] == 'Debian':
+    #   shellResult - subprocess.call('sudo apt install -y "%s"' % package, shell=True)
+    # elif opts['system'] == 'Redhat':
+    #   shellResult - subprocess.call('sudo yum install -y "%s"' % package, shell=True)
+    if shellResult:
+      print("Error installing '%s'" % package)
+
+  for package in BREW_PACKAGES:
+    if opts['verbose']:
+      print("Installing '%s'" % package)
+
+    shellResult = 0
+    shellResult = subprocess.call('npm install -g "%s" > /dev/null' % package, shell=True)
+
     if shellResult:
       print("Error installing '%s'" % package)
 
