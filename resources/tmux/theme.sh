@@ -4,7 +4,9 @@
 tm_icon=""
 tm_color_active=red
 tm_color_inactive=cyan
+tm_color_branch=yellow
 tm_color_feature=white
+tm_color_path=green
 tm_color_music=green
 tm_active_border_color=yellow
 
@@ -46,11 +48,13 @@ set-option -g display-panes-colour $tm_color_inactive
 set-window-option -g clock-mode-colour $tm_color_active
 
 # tm_tunes="#[fg=$tm_color_music]#(osascript ~/.dotfiles/applescripts/tunes.scpt)"
-# tm_battery="#(~/.dotfiles/bin/battery_indicator.sh)"
+tm_battery="#(~/.dotfiles/bin/battery_indicator.sh)"
+tm_branch="#[fg=$tm_color_branch] #(~/.dotfiles/bin/parse_git_branch.sh)"
+tm_path="#[fg=$tm_color_path]#{s|$HOME|~|:pane_current_path}"
 
-tm_date="#[fg=$tm_color_inactive] %Y-%m-%d %H:%M"
+tm_date="#[fg=$tm_color_feature]|#[fg=$tm_color_inactive] %Y-%m-%d %H:%M"
 tm_host="#[fg=$tm_color_feature,bold]#h"
 tm_session_name="#[fg=$tm_color_feature,bold]$tm_icon #S"
 
 set -g status-left $tm_session_name' '
-set -g status-right $tm_tunes' '$tm_date' '$tm_host
+set -g status-right $tm_path$tm_branch' '$tm_date' '$tm_host' '$tm_battery

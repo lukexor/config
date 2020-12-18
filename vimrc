@@ -150,6 +150,7 @@ set expandtab                    " Replace the tab key with spaces
 set fileencoding=utf-8
 set fileformat=unix
 set fileformats=unix,dos,mac     " Default file types
+set foldmethod=indent
 set nofoldenable
 " Set formatting options
 " 1   Don't break after a one-letter word
@@ -246,7 +247,7 @@ set statusline=%n:\            " uffer number
 set statusline+=%.40F\         " Full filename truncated
 set statusline+=%m             " Modified
 set statusline+=%r             " Readonly
-set statusline+=%{gutentags#statusline()}
+set statusline+=%{gutentags#statusline()}\ 
 set statusline+=%{tagbar#currenttag('[%s]\ ','','')}
 set statusline+=%=             " Left/Right seperator
 set statusline+=%y\            " Filetype
@@ -710,6 +711,7 @@ let g:NERDTreeWinSize = 30
 let g:rustfmt_autosave = 1
 let g:rustfmt_command = 'rustup run stable rustfmt'
 let g:rust_use_custom_ctags_defs = 1
+let g:Schlepp#useShiftWidthLines = 1
 let g:snips_author = 'Lucas Petherbridge'
 let g:show_gutter = 1
 let g:tagbar_autoclose = 1

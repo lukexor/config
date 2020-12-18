@@ -565,7 +565,11 @@ parse_git_branch() {
 # ==================================================================================================
 
 PROMPT_DIRTRIM=2
-PS1="\[$GRAY\][\A] \[$BLUE\]\w\[$YELLOW\]\$(parse_git_branch) \[$RESET\]\$ "
+if [[ $TERM =~ "tmux" ]] || [[ $TERM =~ "screen" ]]; then
+  PS1="\[$GREEN\]\$\[$RESET\] "
+else
+  PS1="\[$GRAY\][\A] \[$BLUE\]\w\[$YELLOW\]\$(parse_git_branch) \[$GREEN\]\$\[$RESET\] "
+fi
 
 PROMPT_COMMAND="history -a;"
 
