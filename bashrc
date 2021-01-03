@@ -191,6 +191,17 @@ alias stop='kill -STOP'
 # Editing
 export LESS="-RFX"
 alias vi="vim"
+alias v="vim"
+
+alias aks-dev='az account set --subscription c6aa8a01-a744-44a7-a4f1-caad17512f27 &&  az aks get-credentials --resource-group AZEU2-DIG-DEV-RG --name AZEU2-DIGDEVAPP-K8S && az aks browse --resource-group AZEU2-DIG-DEV-RG --name AZEU2-DIGDEVAPP-K8S --listen-port 8002'
+alias aks-test='az account set --subscription c6aa8a01-a744-44a7-a4f1-caad17512f27 && az aks get-credentials --resource-group AZEU2-DIG-TEST-RG --name AZEU2-DIGTESTAPP-K8S && az aks browse --resource-group AZEU2-DIG-TEST-RG --name AZEU2-DIGTESTAPP-K8S --listen-port 8003'
+alias aks-uat='az account set --subscription c6aa8a01-a744-44a7-a4f1-caad17512f27 && az aks get-credentials --resource-group AZEU2-DIG-UAT-RG --name AZEU2-DIGUATAPP-K8S && az aks browse --resource-group AZEU2-DIG-UAT-RG --name AZEU2-DIGUATAPP-K8S --listen-port 8004'
+alias aks-prod='az account set --subscription 876d5d95-ae4a-4230-84da-55476cf71dd0 && az aks get-credentials --resource-group AZEU2-DIG-PROD-RG --name AZEU2-DIGPRODAPP-K8S && az aks browse --resource-group AZEU2-DIG-PROD-RG --name AZEU2-DIGPRODAPP-K8S --listen-port 8005'
+
+export SPRING_PROFILES_ACTIVE=local
+export JAVA_HOME=/usr/local/opt/openjdk@11/
+export CPPFLAGS="-I/usr/local/opt/openjdk@11/include"
+pathprepend /usr/local/opt/openjdk@11/bin
 
 # Python
 alias dja='django-admin.py'

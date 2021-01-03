@@ -38,6 +38,7 @@ BREW_PACKAGES = [
   'git',
   'grip',
   'hexedit',
+  'kotlin',
   'mysql',
   'node',
   'nvm',

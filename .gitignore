@@ -5,11 +5,8 @@
 *.tmp
 *secure*
 *~
-atom/packages/
-atom/storage/
-bin/minecraft*
 tags*
 vim/.netrwhist
 vim/plugins/*
-vim/sessions/
-vim/undodir/*
+vim/files
+vim/sessions

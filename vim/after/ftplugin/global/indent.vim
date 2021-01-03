@@ -1,3 +1,0 @@
-setlocal nosmartindent
-setlocal autoindent
-setlocal copyindent

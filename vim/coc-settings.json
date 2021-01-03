@@ -1,18 +1,1 @@
-{
-  "suggest.autoTrigger": "none",
-  "suggest.noselect": false,
-  "css.lint.unknownAtRules": "ignore",
-  "tsserver.log": "verbose",
-  "coc.preferences.extensionUpdateCheck": "never",
-  "coc.preferences.useQuickfixForLocations": true,
-  "coc.preferences.snippets.enable": true,
-  "suggest.snippetIndicator": "",
-  "snippets.extends": {
-    "cpp": ["c"],
-    "javascriptreact": ["javascript"],
-    "typescriptreact": ["javascript"],
-    "typescript": ["javascript"],
-    "jsx": ["javascript"],
-    "tsx": ["typescript"]
-  }
-}
+{}
