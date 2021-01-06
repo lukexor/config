@@ -1,0 +1,197 @@
+priority -50
+
+snippet nbs
+&nbsp;
+endsnippet
+
+snippet //
+<!-- ${1} -->${0}
+endsnippet
+
+snippet ! "new HTML document" b
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>${1:Title}</title>
+    <meta name="author" content="Lucas Petherbridge">
+    <meta name="description" content="${2}">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="${3}">
+  </head>
+  <body>
+    ${4}
+  </body>
+</html>
+endsnippet
+
+snippet a "<a>" w
+<a href="${1:https://${2:url.com}}" title="${3}">${4:Text}</a>
+endsnippet
+
+snippet article "<article>" w
+<article>
+  ${1:content}
+</article>
+endsnippet
+
+snippet aside "<aside>" w
+<aside>
+  ${1:content}
+</aside>
+endsnippet
+
+snippet button "<button>" w
+<button>$1</button>
+endsnippet
+
+snippet div "<div>" w
+<div>
+  ${0:${VISUAL}}
+</div>
+endsnippet
+
+snippet div# "<div> with id & class" w
+<div`!p snip.rv=' id="' if t[1] else ""`${1:name}`!p snip.rv = '"' if t[1] else ""``!p snip.rv=' class="' if t[2] else ""`${2:name}`!p snip.rv = '"' if t[2] else ""`>
+  ${0:${VISUAL}}
+</div>
+endsnippet
+
+snippet div. "<div> with class" w
+<div`!p snip.rv=' class="' if t[1] else ""`${1:name}`!p snip.rv = '"' if t[1] else ""`>
+  ${0:${VISUAL}}
+</div>
+endsnippet
+
+snippet footer "<footer>" w
+<footer>
+  ${1:content}
+</footer>
+endsnippet
+
+snippet h1 "<h1>" w
+<h1>${0:${VISUAL}}</h1>
+endsnippet
+
+snippet h2 "<h2>" w
+<h2>${0:${VISUAL}}</h2>
+endsnippet
+
+snippet h3 "<h3>" w
+<h3>${0:${VISUAL}}</h3>
+endsnippet
+
+snippet h4 "<h4>" w
+<h4>${0:${VISUAL}}</h4>
+endsnippet
+
+snippet h5 "<h5>" w
+<h5>${0:${VISUAL}}</h5>
+endsnippet
+
+snippet h6 "<h6>" w
+<h6>${0:${VISUAL}}</h6>
+endsnippet
+
+snippet header "<header>" w
+<header>
+  ${1:content}
+</header>
+endsnippet
+
+snippet hr "<hr>" w
+<hr />
+endsnippet
+
+snippet img "<img>" w
+<img src="$1" alt="$2" />
+endsnippet
+
+snippet input "<input" w
+<input type="${1:text}" name="${2:name}" id="${3:$2}" value="${4}" />
+endsnippet
+
+snippet input:text "<input type='text'>" w
+<input type="text" name="${1:name}" id="${2:$1}" value="${3}" />
+endsnippet
+
+snippet input:checkbox "<input type='checkbox'>" w
+<input type="checkbox" name="${1:name}" id="${2:$1}" value="${3}" />
+endsnippet
+
+snippet input:email "<input type='email'>" w
+<input type="email" name="${1:name}" id="${2:$1}" value="${3}" />
+endsnippet
+
+snippet input:hidden "<input type='hidden'>" w
+<input type="hidden" name="${1:name}" id="${2:$1}" value="${3}" />
+endsnippet
+
+snippet input:number "<input type='number'>" w
+<input type="number" name="${1:name}" id="${2:$1}" value="${3}" />
+endsnippet
+
+snippet input:password "<input type='password'>" w
+<input type="password" name="${1:name}" id="${2:$1}" value="${3}" />
+endsnippet
+
+snippet input:submit "<input type='submit'>" w
+<input type="submit" name="${1:name}" id="${2:$1}" value="${3}" />
+endsnippet
+
+snippet input:radio "<input type='radio'>" w
+<input type="radio" name="${1:name}" id="${2:$1}" value="${3}" />
+endsnippet
+
+snippet input:range "<input type='range'>" w
+<input type="range" name="${1:name}" id="${2:$1}" value="${3}" />
+endsnippet
+
+snippet main "<main>" w
+<main>
+  ${1:content}
+</main>
+endsnippet
+
+snippet nav "<nav>" w
+<nav>
+  ${1:links}
+</nav>
+endsnippet
+
+snippet ol "<ol>" w
+<ol>
+  <li>$1</li>
+</ol>
+endsnippet
+
+snippet ul "<ul>" w
+<ul>
+  <li>$1</li>
+</ul>
+endsnippet
+
+snippet li "<li>" w
+<li>$1</li>
+endsnippet
+
+snippet p "<p>" w
+<p>${0:${VISUAL}}</p>
+endsnippet
+
+snippet span "<span>" w
+<span>${0:${VISUAL}}</span>
+endsnippet
+
+snippet span# "<span> with id & class" w
+<span`!p snip.rv=' id="' if t[1] else ""`${1:name}`!p snip.rv = '"' if t[1] else ""``!p snip.rv=' class="' if t[2] else ""`${2:name}`!p snip.rv = '"' if t[2] else ""`>${0:${VISUAL}}</span>
+endsnippet
+
+snippet span. "<span> with class" w
+<span`!p snip.rv=' class="' if t[1] else ""`${1:name}`!p snip.rv = '"' if t[1] else ""`>${0:${VISUAL}}</span>
+endsnippet
+
+snippet textarea "<textarea>" w
+<textarea name="${1:name}" rows="${2:8}" cols="${3:40}">$0</textarea>
+endsnippet

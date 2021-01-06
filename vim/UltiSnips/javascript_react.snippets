@@ -1,0 +1,33 @@
+priority -50
+
+snippet rfc "react functional component" b
+import React from "react";
+
+const ${1:`!p snip.rv = snip.basename`} = (${2}) => {
+  ${3}
+};
+
+export default ${1};
+endsnippet
+
+snippet useS "useState" b
+const [${1}, set`!p snip.rv=t[1].title()`] = useState(${3});
+endsnippet
+
+snippet useE "useEffect" b
+useEffect(() => {
+  ${1:${0}}
+}, [${2}]);
+endsnippet
+
+snippet useC "useCallback" b
+const ${1:callback} = useCallback((${2}) => ${3:{
+  ${4}
+}}, [${5}]);
+endsnippet
+
+snippet useM "useMemo" b
+const ${1:value} = useMemo(() => ${2:{
+  ${3}
+}}, [${4}]);
+endsnippet

@@ -48,9 +48,9 @@ Plug 'kshenoy/vim-signature'                            " Adds vim marks to gutt
 " --------------------------------------------------------------------------------------------------
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}         " Semantic language support
+Plug 'SirVer/ultisnips'
 Plug 'alvan/vim-closetag'                               " Auto close XML/HTML tags
 Plug 'godlygeek/tabular'                                " Align lines
-Plug 'ap/vim-css-color'                                 " Colorize CSS colors
 Plug 'tpope/vim-surround'                               " Surround text easier
 Plug 'tpope/vim-commentary'                             " Commenting quality of life improvements
 Plug 'tpope/vim-endwise'                                " Adds endings to blocks e.g. endif
@@ -85,6 +85,12 @@ let g:fzf_buffers_jump = 1          " Jump to existing window if possible
 let g:fzf_commits_log_options = '--graph --pretty=format:"%C(yellow)%h (%p) %ai%Cred%d %Creset%Cblue[%ae]%Creset %s (%ar). %b %N"'
 let g:fzf_layout = { 'down': '~20%' }
 
+let g:UltiSnipsExpandTrigger = "<c-l>"
+let g:UltiSnipsEditSplit = "vertical"
+let g:coc_snippet_next = '<tab>'
+let g:snips_author = system('git config --get user.name')
+let g:snips_author_email = system('git config --get user.email')
+
 let g:rustfmt_autosave = 1
 let g:rustfmt_emit_files = 1
 let g:rustfmt_fail_silently = 0
@@ -101,6 +107,24 @@ let g:NERDTreeWinSize = 30
 
 let g:closetag_filetypes = 'xml,xhtml,javascript,javascript.jsx,typescript.tsx'
 let g:closetag_xhtml_filetypes = 'xml,xhtml,javascript,javascript.jsx,typescript.tsx'
+
+let g:coc_global_extensions = [
+  \ 'coc-git',
+  \ 'coc-fzf-preview',
+  \ 'coc-highlight',
+  \ 'coc-snippets',
+  \ 'coc-prettier',
+  \ 'coc-json',
+  \ 'coc-yaml',
+  \ 'coc-html',
+  \ 'coc-css',
+  \ 'coc-rust-analyzer',
+  \ 'coc-sh',
+  \ 'coc-markdownlint',
+  \ 'coc-eslint',
+  \ 'coc-stylelint',
+  \ 'coc-tsserver',
+\ ]
 
 " -- Gutentags   {{{2
 " --------------------------------------------------------------------------------------------------
@@ -231,8 +255,13 @@ nmap <leader>w :w<CR>
 nmap <leader>x :x<CR>
 
 " Vimrc/Snippets
-nmap <leader>ev :vsplit $MYVIMRC<CR>
-" nmap <leader>ep :UltiSnipsEdit<CR>
+nmap <localleader>ev :vsplit $MYVIMRC<CR>
+nmap <localleader>es :UltiSnipsEdit<CR>
+nmap <localleader>ls :Snippets<CR>
+
+" Fixes Ctrl-X Ctrl-K
+" https://github.com/SirVer/ultisnips/blob/master/doc/UltiSnips.txt
+inoremap <c-x><c-k> <c-x><c-k>
 
 " New file
 nmap <leader>n :enew<CR>
@@ -484,7 +513,8 @@ autocmd CursorHold * silent call CocActionAsync('highlight')
 " NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
 " other plugin before putting this into your config.
 inoremap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
+      \ pumvisible() ? coc#_select_confirm() :
+      \ coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
       \ <SID>check_back_space() ? "\<TAB>" :
       \ coc#refresh()
 inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"

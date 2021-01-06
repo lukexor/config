@@ -1,0 +1,219 @@
+priority -50
+
+snippet fn "fn" b
+fn ${1:name}($2)${3/..*/ -> /}$3 {
+    ${VISUAL}$0
+}
+endsnippet
+
+snippet pfn "pub fn" b
+pub fn ${1:name}($2)${3/..*/ -> /}$3 {
+    ${VISUAL}$0
+}
+endsnippet
+
+snippet afn "async fn" b
+async fn ${1:name}($2)${3/..*/ -> /}$3 {
+    ${VISUAL}$0
+}
+endsnippet
+
+snippet pafn "pub async fn" b
+pub async fn ${1:name}($2)${3/..*/ -> /}$3 {
+    ${VISUAL}$0
+}
+endsnippet
+
+snippet new "new" b
+pub fn new(${2}) -> ${1:Self} {
+    $1 { ${3} }
+}
+endsnippet
+
+snippet main "main" b
+pub fn main() {
+    ${0}
+}
+endsnippet
+
+snippet pri "print!" b
+print!("$1"${2/..*/, /}$2);
+endsnippet
+
+snippet pln "println!" b
+println!("$1"${2/..*/, /}$2);
+endsnippet
+
+snippet fmt "format!"
+format!("$1"${2/..*/, /}$2);
+endsnippet
+
+snippet .it ".iter()" i
+.iter()$0
+endsnippet
+
+snippet st "Struct definition"
+struct ${1:`!p snip.rv = ''.join(word.title() for word in snip.basename.split('_'))`} {
+    ${0}
+}
+endsnippet
+
+snippet stn "Struct with new constructor"
+pub struct ${1:`!p snip.rv = ''.join(word.title() for word in snip.basename.split('_'))`} {
+    ${0}
+}
+
+impl$2 $1$2 {
+    pub fn new(${4}) -> Self {
+        $1 { ${5} }
+    }
+}
+endsnippet
+
+snippet ty "Type alias"
+type ${1:Type} = $2;
+endsnippet
+
+snippet enum "enum"
+enum ${1:Name} {
+    ${2},
+}
+endsnippet
+
+snippet penum "pub enum"
+pub enum ${1:Name} {
+    ${2},
+}
+endsnippet
+
+snippet trait "Trait definition"
+trait ${1:Name} {
+    ${0}
+}
+endsnippet
+
+snippet impl "impl" b
+impl$4 ${1:type/trait}${2: for ${3:type}}${4:<${5:T}>} {
+    ${0}
+}
+endsnippet
+
+snippet test "test function"
+#[test]
+fn ${1:name}() {
+    ${0}
+}
+endsnippet
+
+snippet testmod "test module" b
+#[cfg(test)]
+mod tests {
+    use super::${1:*};
+
+    fn ${2:name}() {
+        ${0}
+    }
+}
+endsnippet
+
+snippet allow "allow lint attribute" b
+#[allow(${1:unused_variables})]
+endsnippet
+
+snippet cfg "cfg attribute" b
+#[cfg(${1:target_os = "linux"})]
+endsnippet
+
+snippet feat "feature attribute" b
+#![feature(${1:plugin})]
+endsnippet
+
+snippet der "derive" b
+#[derive(${1:Debug})]
+endsnippet
+
+snippet attr "#[attr]" b
+#[${1:inline}]
+endsnippet
+
+snippet opt "Option<T>"
+Option<${1:i32}>
+endsnippet
+
+snippet res "Result<T, E>"
+Result<${1:&str}, ${2:()}>
+endsnippet
+
+snippet if
+if ${1} {
+    ${0:${VISUAL}}
+}
+endsnippet
+
+snippet ife "if..else"
+if ${1} {
+    ${2:${VISUAL}}
+} else {
+    ${0}
+}
+endsnippet
+
+snippet ifl "if let"
+if let ${1:Some($2)} = $3 {
+    ${0:${VISUAL}}
+}
+endsnippet
+
+snippet el "else"
+else {
+    ${0:${VISUAL}}
+}
+endsnippet
+
+snippet eli "else if"
+else if ${1} {
+    ${0:${VISUAL}}
+}
+endsnippet
+
+snippet mat "match"
+match ${1} {
+    ${2} => ${3}
+}
+endsnippet
+
+snippet case "match case"
+${1:_} => ${2:expression}
+endsnippet
+
+snippet = "=> "
+=> $0
+endsnippet
+
+snippet loop "loop" b
+loop {
+    ${0:${VISUAL}}
+}
+endsnippet
+
+snippet wh "while"
+while ${1:condition} {
+    ${0:${VISUAL}}
+}
+endsnippet
+
+snippet whl "while let"
+while let ${1:Some($2)} = $3 {
+    ${0:${VISUAL}}
+}
+endsnippet
+
+snippet for "for...in"
+for ${1:i} in ${2} {
+    ${0}
+}
+endsnippet
+
+snippet unim "unimplemented!()"
+unimplemented!()
+endsnippet

@@ -1,1 +1,4 @@
-{}
+{
+  "suggest.noselect": false,
+  "coc.source.ultisnips.enable": false
+}

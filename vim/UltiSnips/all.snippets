@@ -1,0 +1,100 @@
+priority -60
+
+global !p
+from vimsnippets import get_comment_format
+LOREM = """
+Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod \
+tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At \
+vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, \
+no sea takimata sanctus est Lorem ipsum dolor sit amet.
+"""
+endglobal
+
+snippet "lorem(([1-4])?[0-9])?" "Lorem Ipsum" r
+`!p snip.rv = " ".join(LOREM.split()[:int(match.group(1))]) if match.group(1) else LOREM`
+endsnippet
+
+snippet date "YYYY-MM-DD" w
+`!v strftime("%Y-%m-%d")`
+endsnippet
+
+snippet diso "ISO format datetime" w
+`!v strftime("%Y-%m-%d %H:%M:%S%z")`
+endsnippet
+
+snippet datetime "YYYY-MM-DD hh:mm" w
+`!v strftime("%Y-%m-%d %H:%M")`
+endsnippet
+
+snippet todo "TODO comment" bw
+`!p snip.rv=get_comment_format()[0]` ${2:TODO}: $0
+endsnippet
+
+snippet uuid "Random UUID" w
+`!p if not snip.c: import uuid; snip.rv = str(uuid.uuid4())`
+endsnippet
+
+snippet c)
+Copyright `!v &enc[:2] == "utf" ? "©" : "(c)"` `!v strftime("%Y")` ${1:`!v g:snips_author`}. All Rights Reserved.
+endsnippet
+
+snippet GPL3
+${1:one line to give the program's name and a brief description.}
+Copyright `!v &enc[:2] == "utf" ? "©" : "(c)"` `!v strftime("%Y")` ${2:`!v g:snips_author`}
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+${0}
+endsnippet
+
+snippet MIT
+${1:one line to give the program's name and a brief description}
+Copyright `!v &enc[:2] == "utf" ? "©" : "(c)"` `!v strftime("%Y")` ${2:`!v g:snips_author`}
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the "Software"),
+to deal in the Software without restriction, including without limitation
+the rights to use, copy, modify, merge, publish, distribute, sublicense,
+and/or sell copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included
+in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
+OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+${0}
+endsnippet
+
+snippet APACHE
+${1:one line to give the program's name and a brief description}
+Copyright `!v &enc[:2] == "utf" ? "©" : "(c)"` `!v strftime("%Y")` ${2:`!v g:snips_author`}
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+${0}
+endsnippet

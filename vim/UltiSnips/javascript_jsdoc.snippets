@@ -1,0 +1,23 @@
+priority -50
+
+snippet doc "doc comment" b
+/**
+ * ${1:${VISUAL}}$0
+ */
+endsnippet
+
+snippet @au "@author"
+@author ${1:`!v g:snips_author_email`} <${2:`!v g:snips_author`}>
+endsnippet
+
+snippet @p "@param"
+@param {${1:type}} ${2:name} ${3:description}
+endsnippet
+
+snippet @ret "@return"
+@return {${1:type}} ${2:description}
+endsnippet
+
+snippet @ex "@example"
+@example ${2:example}
+endsnippet
