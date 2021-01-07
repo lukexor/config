@@ -7,35 +7,35 @@ endsnippet
 snippet /case|sw(itch)?/ "case" rb
 case ${1:word} in
   ${2:pattern} )
-    ${0:${VISUAL}};;
+    ${VISUAL}$0;;
 esac
 endsnippet
 
 snippet elif "elif" b
 elif ${2:[[ ${1:condition} ]]}; then
-  ${0:${VISUAL}}
+  ${VISUAL}$0
 endsnippet
 
 snippet for "for" b
 for (( i = 0; i < ${1:10}; i++ )); do
-  ${0:${VISUAL}}
+  ${VISUAL}$0
 done
 endsnippet
 
 snippet forin "forin" b
 for ${1:i}${2/.+/ in /}${2:words}; do
-  ${0:${VISUAL}}
+  ${VISUAL}$0
 done
 endsnippet
 
 snippet if "if" b
 if ${2:[[ ${1:condition} ]]}; then
-  ${0:${VISUAL}}
+  ${VISUAL}$0
 fi
 endsnippet
 
 snippet /wh(ile)?/ "while" rb
 while ${2:[[ ${1:condition} ]]}; do
-  ${0:${VISUAL}}
+  ${VISUAL}$0
 done
 endsnippet

@@ -83,13 +83,10 @@ call plug#end()
 
 let g:fzf_buffers_jump = 1          " Jump to existing window if possible
 let g:fzf_commits_log_options = '--graph --pretty=format:"%C(yellow)%h (%p) %ai%Cred%d %Creset%Cblue[%ae]%Creset %s (%ar). %b %N"'
-let g:fzf_layout = { 'down': '~20%' }
 
-let g:UltiSnipsExpandTrigger = "<c-l>"
-let g:UltiSnipsEditSplit = "vertical"
 let g:coc_snippet_next = '<tab>'
-let g:snips_author = system('git config --get user.name')
-let g:snips_author_email = system('git config --get user.email')
+let g:snips_author = system('git config --get user.name | tr -d "\n"')
+let g:snips_author_email = system('git config --get user.email | tr -d "\n"')
 
 let g:rustfmt_autosave = 1
 let g:rustfmt_emit_files = 1
@@ -258,6 +255,7 @@ nmap <leader>x :x<CR>
 nmap <localleader>ev :vsplit $MYVIMRC<CR>
 nmap <localleader>es :UltiSnipsEdit<CR>
 nmap <localleader>ls :Snippets<CR>
+nmap <localleader>gc :Commits<CR>
 
 " Fixes Ctrl-X Ctrl-K
 " https://github.com/SirVer/ultisnips/blob/master/doc/UltiSnips.txt
@@ -341,6 +339,8 @@ nmap <leader>Q :qall!<CR>
 " -- Editing   {{{2
 " --------------------------------------------------------------------------------------------------
 
+nmap + V"0p
+
 " Symbol renaming.
 nmap <leader>rn <Plug>(coc-rename)
 nmap <leader>prn :CocSearch <C-R>=expand("<cword>")<CR><CR>
@@ -372,6 +372,10 @@ cnoremap <C-j> <C-c>
 onoremap <C-j> <Esc>
 lnoremap <C-j> <Esc>
 tnoremap <C-j> <Esc>
+
+" Fix Coc floating windows getting stuck
+inoremap <C-c> <Esc>
+nmap <Esc> :call coc#float#close_all()<CR>
 
 " Blackhole replacements for x and d
 nnoremap <silent> <localleader>d "_d
@@ -593,11 +597,7 @@ set noesckeys                   " Disable <Esc> keys in Insert mode
 set updatecount=50              " Save every # characters typed
 set virtualedit=block           " Allow virtual block to put cursor where there's no actual text
 
-set formatoptions=tc            " Wrap text and comments using textwidth
-set formatoptions+=r            " Continue comments when pressing ENTER in I mode
-set formatoptions+=q            " Enable formatting of comments with gq
-set formatoptions+=n            " Detect lists for formatting
-set formatoptions+=b            " Auto-wrap in insert mode, and do not wrap old long lines
+" formatoptions set in vim/after/ftplugin.vim
 
 " -- Status   {{{2
 " --------------------------------------------------------------------------------------------------
@@ -768,6 +768,13 @@ augroup Filetypes
   autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
 
   autocmd BufRead,BufNewFile *.md set filetype=markdown
+  " c: Wrap comments using textwidth
+  " r: Continue comments when pressing ENTER in I mode
+  " q: Enable formatting of comments with gq
+  " n: Detect lists for formatting
+  " j: Remove comment leader when joining lines if possible
+  " p: Don't break following periods for single spaces
+  autocmd Filetype * set formatoptions=crqnjp
 augroup END
 
 augroup VimrcEx

@@ -27,7 +27,7 @@ snippet datetime "YYYY-MM-DD hh:mm" w
 endsnippet
 
 snippet todo "TODO comment" bw
-`!p snip.rv=get_comment_format()[0]` ${2:TODO}: $0
+`!p snip.rv=get_comment_format()[0]` TODO: $0 (`!v strftime("%Y-%m-%d")` `!v g:snips_author_email`) `!p snip.rv=get_comment_format()[2]`
 endsnippet
 
 snippet uuid "Random UUID" w

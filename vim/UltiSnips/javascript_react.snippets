@@ -16,18 +16,18 @@ endsnippet
 
 snippet useE "useEffect" b
 useEffect(() => {
-  ${1:${0}}
+  ${VISUAL}$0
 }, [${2}]);
 endsnippet
 
 snippet useC "useCallback" b
 const ${1:callback} = useCallback((${2}) => ${3:{
-  ${4}
-}}, [${5}]);
+  ${VISUAL}$0
+}}, [${4}]);
 endsnippet
 
 snippet useM "useMemo" b
 const ${1:value} = useMemo(() => ${2:{
-  ${3}
-}}, [${4}]);
+  ${VISUAL}$0
+}}, [${3}]);
 endsnippet

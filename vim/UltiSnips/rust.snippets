@@ -32,7 +32,7 @@ endsnippet
 
 snippet main "main" b
 pub fn main() {
-    ${0}
+    ${VISUAL}$0
 }
 endsnippet
 
@@ -48,19 +48,15 @@ snippet fmt "format!"
 format!("$1"${2/..*/, /}$2);
 endsnippet
 
-snippet .it ".iter()" i
-.iter()$0
-endsnippet
-
 snippet st "Struct definition"
 struct ${1:`!p snip.rv = ''.join(word.title() for word in snip.basename.split('_'))`} {
-    ${0}
+    ${VISUAL}$0
 }
 endsnippet
 
 snippet stn "Struct with new constructor"
 pub struct ${1:`!p snip.rv = ''.join(word.title() for word in snip.basename.split('_'))`} {
-    ${0}
+    ${VISUAL}$0
 }
 
 impl$2 $1$2 {
@@ -76,32 +72,32 @@ endsnippet
 
 snippet enum "enum"
 enum ${1:Name} {
-    ${2},
+  ${VISUAL}$0
 }
 endsnippet
 
 snippet penum "pub enum"
 pub enum ${1:Name} {
-    ${2},
+  ${VISUAL}$0
 }
 endsnippet
 
 snippet trait "Trait definition"
 trait ${1:Name} {
-    ${0}
+  ${VISUAL}$0
 }
 endsnippet
 
 snippet impl "impl" b
 impl$4 ${1:type/trait}${2: for ${3:type}}${4:<${5:T}>} {
-    ${0}
+  ${VISUAL}$0
 }
 endsnippet
 
 snippet test "test function"
 #[test]
 fn ${1:name}() {
-    ${0}
+  ${VISUAL}$0
 }
 endsnippet
 
@@ -111,7 +107,7 @@ mod tests {
     use super::${1:*};
 
     fn ${2:name}() {
-        ${0}
+      ${VISUAL}$0
     }
 }
 endsnippet
@@ -146,7 +142,7 @@ endsnippet
 
 snippet if
 if ${1} {
-    ${0:${VISUAL}}
+    ${VISUAL}$0
 }
 endsnippet
 
@@ -160,19 +156,19 @@ endsnippet
 
 snippet ifl "if let"
 if let ${1:Some($2)} = $3 {
-    ${0:${VISUAL}}
+    ${VISUAL}$0
 }
 endsnippet
 
 snippet el "else"
 else {
-    ${0:${VISUAL}}
+    ${VISUAL}$0
 }
 endsnippet
 
 snippet eli "else if"
 else if ${1} {
-    ${0:${VISUAL}}
+    ${VISUAL}$0
 }
 endsnippet
 
@@ -192,28 +188,28 @@ endsnippet
 
 snippet loop "loop" b
 loop {
-    ${0:${VISUAL}}
+    ${VISUAL}$0
 }
 endsnippet
 
 snippet wh "while"
 while ${1:condition} {
-    ${0:${VISUAL}}
+    ${VISUAL}$0
 }
 endsnippet
 
 snippet whl "while let"
 while let ${1:Some($2)} = $3 {
-    ${0:${VISUAL}}
+    ${VISUAL}$0
 }
 endsnippet
 
 snippet for "for...in"
 for ${1:i} in ${2} {
-    ${0}
+    ${VISUAL}$0
 }
 endsnippet
 
 snippet unim "unimplemented!()"
-unimplemented!()
+unimplemented!(${1})
 endsnippet

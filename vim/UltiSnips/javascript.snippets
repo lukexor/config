@@ -2,19 +2,19 @@ priority -50
 
 snippet cfn "function (const)" b
 const ${1:name} = (${2}) => {
-  ${0:${VISUAL}}
+  ${VISUAL}$0
 };
 endsnippet
 
 snippet fn "function (named)" b
 function ${1:name}(${2}) => {
-  ${0:${VISUAL}}
+  ${VISUAL}$0
 }
 endsnippet
 
 snippet if "if" b
 if (${1}) {
-  ${0:${VISUAL}}
+  ${VISUAL}$0
 }
 endsnippet
 
@@ -28,13 +28,13 @@ endsnippet
 
 snippet el "else" b
 else {
-  ${0:${VISUAL}}
+  ${VISUAL}$0
 }
 endsnippet
 
 snippet eli "else if"
 else if (${1}) {
-  ${0:${VISUAL}}
+  ${VISUAL}$0
 }
 endsnippet
 
@@ -60,55 +60,55 @@ endsnippet
 
 snippet desc "describe" b
 describe("${1:descripton}", () => {
-  ${0:${VISUAL}}
+  ${VISUAL}$0
 });
 endsnippet
 
 snippet context "context" b
 context("${1:context}", () => {
-  ${0:${VISUAL}}
+  ${VISUAL}$0
 });
 endsnippet
 
 snippet it "it" b
 it("${1:description}", () => {
-  ${0:${VISUAL}}
+  ${VISUAL}$0
 });
 endsnippet
 
 snippet bef "before" b
 before(() => {
-  $0
+  ${VISUAL}$0
 });
 endsnippet
 
 snippet befa "beforeAll" b
 beforeAll(() => {
-  $0
+  ${VISUAL}$0
 });
 endsnippet
 
 snippet befe "beforeEach" b
 beforeEach(() => {
-  $0
+  ${VISUAL}$0
 });
 endsnippet
 
 snippet aft "after" b
 after(() => {
-  $0
+  ${VISUAL}$0
 });
 endsnippet
 
 snippet afta "afterAll" b
 afterAll(() => {
-  $0
+  ${VISUAL}$0
 });
 endsnippet
 
 snippet afte "afterEach" b
 afterEach(() => {
-  $0
+  ${VISUAL}$0
 });
 endsnippet
 
@@ -116,38 +116,38 @@ snippet exp "expect" b
 expect(${1})${0};
 endsnippet
 
-snippet timeout "setTimeout"
+snippet timeout "setTimeout" b
 setTimeout(() => {
   ${VISUAL}$0
 }, ${1:1000});
 endsnippet
 
-snippet interval "setInterval"
+snippet interval "setInterval" b
 const ${1:interval} = setInterval(() => {
   ${VISUAL}$0
 }, ${2:1000});
 endsnippet
 
-snippet cl "console.log"
+snippet cl "console.log" b
 console.log(${0});
 endsnippet
 
-snippet cd "console.debug"
+snippet cd "console.debug" b
 console.debug(${0});
 endsnippet
 
-snippet ce "console.error"
+snippet ce "console.error" b
 console.error(${0});
 endsnippet
 
-snippet cw "console.warn"
+snippet cw "console.warn" b
 console.warn(${0});
 endsnippet
 
-snippet ci "console.info"
+snippet ci "console.info" b
 console.info(${0});
 endsnippet
 
-snippet ct "console.trace"
+snippet ct "console.trace" b
 console.trace(${0});
 endsnippet
