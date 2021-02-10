@@ -67,6 +67,7 @@ Plug 'leafgarland/typescript-vim'
 Plug 'pangloss/vim-javascript'
 Plug 'maxmellon/vim-jsx-pretty'
 Plug 'peitalin/vim-jsx-typescript'
+Plug 'udalov/kotlin-vim'
 
 " -- Utility/Support   {{{2
 " --------------------------------------------------------------------------------------------------
@@ -84,7 +85,7 @@ call plug#end()
 let g:fzf_buffers_jump = 1          " Jump to existing window if possible
 let g:fzf_commits_log_options = '--graph --pretty=format:"%C(yellow)%h (%p) %ai%Cred%d %Creset%Cblue[%ae]%Creset %s (%ar). %b %N"'
 
-let g:coc_snippet_next = '<tab>'
+let g:coc_snippet_next = '<c-j>'
 let g:snips_author = system('git config --get user.name | tr -d "\n"')
 let g:snips_author_email = system('git config --get user.email | tr -d "\n"')
 
@@ -339,6 +340,7 @@ nmap <leader>Q :qall!<CR>
 " -- Editing   {{{2
 " --------------------------------------------------------------------------------------------------
 
+" Deletes the current line and replaces it with the previously yanked value
 nmap + V"0p
 
 " Symbol renaming.
@@ -352,7 +354,9 @@ nmap <leader>F  <Plug>(coc-format-selected)
 " Remap keys for applying codeAction to the current buffer.
 nmap <leader>ac  <Plug>(coc-codeaction)
 " Apply AutoFix to problem on the current line.
-nmap <leader>f  <Plug>(coc-fix-current)
+nmap <leader>f  :CocFix<CR>
+nmap <leader>o  :OR<CR>:w<CR>
+nmap <localleader>f  <Plug>(coc-fix-fixAll)
 
 " Add `:Format` command to format current buffer.
 command! -nargs=0 Format :call CocAction('format')
@@ -363,7 +367,6 @@ command! -nargs=? Fold :call CocAction('fold', <f-args>)
 " Add `:OR` command for organize imports of the current buffer.
 command! -nargs=0 OR :call CocAction('runCommand', 'editor.action.organizeImport')
 
-nnoremap <C-j> <Esc>
 inoremap <C-j> <Esc>
 vnoremap <C-j> <Esc>
 snoremap <C-j> <Esc>
@@ -374,8 +377,7 @@ lnoremap <C-j> <Esc>
 tnoremap <C-j> <Esc>
 
 " Fix Coc floating windows getting stuck
-inoremap <C-c> <Esc>
-nmap <Esc> :call coc#float#close_all()<CR>
+inoremap <C-c> <Esc>:call coc#float#close_all()<CR>
 
 " Blackhole replacements for x and d
 nnoremap <silent> <localleader>d "_d
@@ -581,7 +583,7 @@ set shiftwidth=2                " The amount of space to shift when using >>, <<
 set smarttab                    " Tabs using shiftwidth
 
 set autoread                    " Read file when changed outside vim
-set autowrite                   " Write file when changed before navigating
+" set autowrite                   " Write file when changed before navigating
 set foldmethod=indent           " Default folds to indent level
 set formatexpr=CocAction('formatSelected')
 
@@ -768,6 +770,9 @@ augroup Filetypes
   autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
 
   autocmd BufRead,BufNewFile *.md set filetype=markdown
+  " autocmd BufRead,BufNewFile *.js,*.jsx nmap <leader>f :call CocAction('runCommand', 'eslint.executeAutofix')<CR>
+  " autocmd BufRead,BufNewFile *,ts,*.tsx nmap <leader>f :call CocAction('runCommand', 'tsserver.executeAutofix')<CR>:call CocAction('runCommand', 'eslint.executeAutofix')<CR>
+
   " c: Wrap comments using textwidth
   " r: Continue comments when pressing ENTER in I mode
   " q: Enable formatting of comments with gq

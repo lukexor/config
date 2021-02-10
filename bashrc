@@ -84,7 +84,7 @@ sourcefile "/usr/local/opt/nvm/etc/bash_completion.d/nvm"
 # History
 export HISTCONTROL="ignoreboth"     # Ignore commands starting with a space and duplicate commands
 export HISTFILESIZE=100000          # Number of lines saved in HISTFILE
-export HISTSIZE=2000                # Number of commands saved in command history
+export HISTSIZE=20000                # Number of commands saved in command history
 export HISTTIMEFORMAT='[%F %a %T] ' # YYYY-MM-DD DAY HH:MM:SS
 
 # Misc
@@ -433,7 +433,7 @@ ra() {
 }
 arsa() {
     [[ -f "$HOME/.ssh/id_rsa" ]] || return 1;
-    agent_running && [ $(ssh-add -L | grep -c "id_rsa") -gt 0 ] && return 0;
+    agent_running && [[ $(ssh-add -L | grep -c "id_rsa") -gt 0 ]] && return 0;
     start_agent && ssh-add "$HOME/.ssh/id_rsa"
 }
 drsa() {
@@ -616,3 +616,5 @@ profile
 source_agent
 
 # vim: foldmethod=marker foldlevel=0
+
+alias startApi='./gradlew bootRun --args="--spring.profiles.active=local --server.port=8081"'

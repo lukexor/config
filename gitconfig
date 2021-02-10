@@ -4,12 +4,14 @@
 [github]
   user = lukexor
   token = ad713daa071e284256dfde40ad14b65e
+[fetch]
+  prune = true
 [merge]
-	tool = vimdiff
+  tool = vimdiff
 [diff]
-	tool = vimdiff
+  tool = vimdiff
 [difftool]
-	prompt = false
+  prompt = false
 [alias]
   # Show verbose output about tags, branches or remotes
   tags = tags -l
