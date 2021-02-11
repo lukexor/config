@@ -1,5 +1,6 @@
 {
   "suggest.noselect": false,
   "http.proxyStrictSSL": false,
-  "coc.source.ultisnips.enable": false
+  "coc.source.ultisnips.enable": false,
+  "kotlin.compiler.jvm.target": "1.8"
 }

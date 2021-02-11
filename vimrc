@@ -38,7 +38,7 @@ Plug 'airblade/vim-rooter'                              " Cd's to nearest git ro
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'majutsushi/tagbar'                                " Displays tags in a sidebar
-Plug 'preservim/nerdtree', { 'on': 'NERDTreeToggle' }   " FileTree
+Plug 'preservim/nerdtree', { 'on': 'NERDTreeToggle', 'tag': '6.10.4' }   " FileTree
 Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'tpope/vim-fugitive'                               " Git integration
 Plug 'christoomey/vim-tmux-navigator'                   " Easily jump between splits or tmux windows
@@ -789,7 +789,7 @@ augroup VimrcEx
   " https://stackoverflow.com/questions/31449496/vim-ignore-specifc-file-in-autocommand
   autocmd BufReadPost * if expand('%:p') !~# '\m/\.git/' && line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 
-  autocmd BufWritePost * Format
+  autocmd BufWritePost * if CocHasProvider("format") | exe ":Format" | endif
 
   " Automatically rebalance windows on vim resize
   autocmd VimResized * :wincmd =
