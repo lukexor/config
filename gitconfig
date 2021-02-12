@@ -1,9 +1,6 @@
-[user]
-  name = Lucas Petherbridge
-  email = lukexor@gmail.com
-[github]
-  user = lukexor
-  token = ad713daa071e284256dfde40ad14b65e
+[include]
+  path = ~/.gitconfig.local
+
 [fetch]
   prune = true
 [merge]
@@ -54,4 +51,4 @@
   remote = origin
   merge = refs/heads/master
 [pull]
-	rebase = false
+  rebase = false

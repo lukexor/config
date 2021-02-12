@@ -82,3 +82,4 @@ tags.*
 .gmf_branches
 .env*
 *.patch
+.gitconfig.local
