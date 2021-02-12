@@ -46,9 +46,9 @@
   release = releases/
   hotfix = hotfixes/
   versiontag = v
-# Use `origin` as the default remote on the `master` branch in all cases
-[branch "master"]
+# Use `origin` as the default remote on the `main` branch in all cases
+[branch "main"]
   remote = origin
-  merge = refs/heads/master
+  merge = refs/heads/main
 [pull]
   rebase = false
