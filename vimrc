@@ -38,7 +38,7 @@ Plug 'airblade/vim-rooter'                              " Cd's to nearest git ro
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'majutsushi/tagbar'                                " Displays tags in a sidebar
-Plug 'preservim/nerdtree', { 'on': 'NERDTreeToggle', 'tag': '6.10.4' }   " FileTree
+Plug 'preservim/nerdtree', { 'on': 'NERDTreeToggle' }   " FileTree
 Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'tpope/vim-fugitive'                               " Git integration
 Plug 'christoomey/vim-tmux-navigator'                   " Easily jump between splits or tmux windows
@@ -68,6 +68,7 @@ Plug 'pangloss/vim-javascript'
 Plug 'maxmellon/vim-jsx-pretty'
 Plug 'peitalin/vim-jsx-typescript'
 Plug 'udalov/kotlin-vim'
+Plug 'gerw/vim-HiLinkTrace'
 
 " -- Utility/Support   {{{2
 " --------------------------------------------------------------------------------------------------
@@ -86,8 +87,11 @@ let g:fzf_buffers_jump = 1          " Jump to existing window if possible
 let g:fzf_commits_log_options = '--graph --pretty=format:"%C(yellow)%h (%p) %ai%Cred%d %Creset%Cblue[%ae]%Creset %s (%ar). %b %N"'
 
 let g:coc_snippet_next = '<c-j>'
+let g:coc_disable_transparent_cursor = 1
 let g:snips_author = system('git config --get user.name | tr -d "\n"')
 let g:snips_author_email = system('git config --get user.email | tr -d "\n"')
+
+let g:plug_window = 'noautocmd vertical topleft new'
 
 let g:rustfmt_autosave = 1
 let g:rustfmt_emit_files = 1
@@ -347,16 +351,23 @@ nmap + V"0p
 nmap <leader>rn <Plug>(coc-rename)
 nmap <leader>prn :CocSearch <C-R>=expand("<cword>")<CR><CR>
 
-" Formatting selected code.
-xmap <leader>F  <Plug>(coc-format-selected)
-nmap <leader>F  <Plug>(coc-format-selected)
-
 " Remap keys for applying codeAction to the current buffer.
 nmap <leader>ac  <Plug>(coc-codeaction)
-" Apply AutoFix to problem on the current line.
 nmap <leader>f  :CocFix<CR>
+nmap <leader>F  <Plug>(coc-fix-current)
 nmap <leader>o  :OR<CR>:w<CR>
-nmap <localleader>f  <Plug>(coc-fix-fixAll)
+nmap <localleader>F  <Plug>(coc-fix-fixAll)
+
+" Map function and class text objects
+" NOTE: Requires 'textDocument.documentSymbol' support from the language server.
+xmap if <Plug>(coc-funcobj-i)
+omap if <Plug>(coc-funcobj-i)
+xmap af <Plug>(coc-funcobj-a)
+omap af <Plug>(coc-funcobj-a)
+xmap ic <Plug>(coc-classobj-i)
+omap ic <Plug>(coc-classobj-i)
+xmap ac <Plug>(coc-classobj-a)
+omap ac <Plug>(coc-classobj-a)
 
 " Add `:Format` command to format current buffer.
 command! -nargs=0 Format :call CocAction('format')
@@ -366,6 +377,34 @@ command! -nargs=? Fold :call CocAction('fold', <f-args>)
 
 " Add `:OR` command for organize imports of the current buffer.
 command! -nargs=0 OR :call CocAction('runCommand', 'editor.action.organizeImport')
+
+" Remap <C-f> and <C-b> for scroll float windows/popups.
+if has('nvim-0.4.0') || has('patch-8.2.0750')
+  nnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+  nnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+  inoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
+  inoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
+  vnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+  vnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+endif
+
+" Mappings for CoCList
+" Show all diagnostics.
+nnoremap <silent><nowait> <leader>A  :<C-u>CocList diagnostics<cr>
+" Manage extensions.
+nnoremap <silent><nowait> <leader>E  :<C-u>CocList extensions<cr>
+" Show commands.
+nnoremap <silent><nowait> <leader>C  :<C-u>CocList commands<cr>
+" Find symbol of current document.
+nnoremap <silent><nowait> <leader>O  :<C-u>CocList outline<cr>
+" Search workspace symbols.
+nnoremap <silent><nowait> <leader>S  :<C-u>CocList -I symbols<cr>
+" Do default action for next item.
+nnoremap <silent><nowait> <leader>j  :<C-u>CocNext<CR>
+" Do default action for previous item.
+nnoremap <silent><nowait> <leader>k  :<C-u>CocPrev<CR>
+" Resume latest coc list.
+nnoremap <silent><nowait> <leader>r  :<C-u>CocListResume<CR>
 
 inoremap <C-j> <Esc>
 vnoremap <C-j> <Esc>
@@ -443,7 +482,7 @@ nnoremap Q <NOP>
 nmap <leader>cc :ccl<CR>
 
 " Reload vimrc
-nmap <localleader>sv :source $MYVIMRC<CR>
+nmap <localleader>sv :source $MYVIMRC<CR>:e<CR>
 
 " Change up to the next return
 onoremap r /return<CR>
@@ -472,7 +511,7 @@ nnoremap <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> 
 nnoremap <localleader>1 :NERDTreeToggle<CR>
 nnoremap <localleader>2 :TagbarToggle<CR>
 nnoremap <localleader>3 :call ToggleGutter()<CR>
-nnoremap <localleader>4 :set paste!<CR>
+nnoremap <localleader>4 :call TogglePaste()<CR>
 nnoremap <localleader>5 :set rnu!<CR>
 
 " -- Search   {{{2
@@ -500,13 +539,13 @@ nmap <leader>s :Rg<cr>
 " Use K to show documentation in preview window.
 nmap <silent> <leader>D :call <SID>show_documentation()<CR>
 
-function! s:show_documentation()
+fun! s:show_documentation()
   if (index(['vim','help'], &filetype) >= 0)
     execute 'h '.expand('<cword>')
   else
     call CocAction('doHover')
   endif
-endfunction
+endfun
 
 " Highlight the symbol and its references when holding the cursor.
 autocmd CursorHold * silent call CocActionAsync('highlight')
@@ -519,19 +558,24 @@ autocmd CursorHold * silent call CocActionAsync('highlight')
 " NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
 " other plugin before putting this into your config.
 inoremap <silent><expr> <TAB>
-      \ pumvisible() ? coc#_select_confirm() :
+      \ pumvisible() ? "\<C-n>" :
       \ coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
+      \ <SID>check_previous_space() ? "\<TAB>" :
       \ coc#refresh()
 inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 
-function! s:check_back_space() abort
+fun! s:check_previous_space() abort
     let col = col('.') - 1
-    return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
+    return !col || getline('.')[col - 1] =~# '\s'
+endfun
 
 " Use <c-.> to trigger completion.
 inoremap <silent><expr> <c-.> coc#refresh()
+
+" Make <CR> auto-select the first completion item and notify coc.nvim to
+" format on enter, <cr> could be remapped by other vim plugin
+inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
+                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 
 " Use <cr> to confirm completion, `<C-g>u` means break undo chain at current
 " position. Coc only does snippet and additional edit on confirm.
@@ -611,8 +655,10 @@ set statusline=%n:\             " Buffer number
 set statusline+=%.40F\          " Full filename truncated
 set statusline+=%m              " Modified
 set statusline+=%r              " Readonly
-" set statusline+=%{gutentags#statusline()}\
-" set statusline+=%{tagbar#currenttag('[%s]\ ','','')}
+set statusline+=%{PasteStatus()}
+set statusline+=%{gutentags#statusline('','\ ')}   " gutentags tag generation status
+set statusline+=%{tagbar#currenttag('[%s]\ ','','')}
+set statusline+=%{tagbar#currenttagtype('(%s)\ ','')}
 set statusline+=%=              " Left/Right seperator
 set statusline+=%y\             " Filetype
 set statusline+=%l/%L           " Current/Total lines
@@ -631,7 +677,7 @@ set nowrap                      " Don't wrap
 set number                      " Display line numbers
 set ruler                       " Show line/column number of cursor
 set relativenumber              " Toggle relative line numbering
-set signcolumn=yes              " Show gutter sign column
+set signcolumn=yes
 
 " -- Search/Completion   {{{2
 " --------------------------------------------------------------------------------------------------
@@ -688,6 +734,8 @@ set directory=$HOME/.vim/files/swap//
 set undolevels=5000
 set undodir=$HOME/.vim/files/undo/
 set undofile
+set nobackup
+set nowritebackup
 
 "           +--Disable hlsearch while loading viminfo
 "           | +--Remember marks for last # files
@@ -713,44 +761,80 @@ set spelllang=en
 " ==================================================================================================
 
 " returns true iff is NERDTree open/active
-function! IsNERDTreeOpen()
+fun! IsNERDTreeOpen()
   return exists("t:NERDTreeBufName") && (bufwinnr(t:NERDTreeBufName) != -1)
-endfunction
+endfun
 
-function! OpenNERDTree()
-    let file_count = len(split(globpath('.', '*'), '\n'))
-    let node = expand('%:p') =~ 'node_modules'
-    if file_count < 50 && !node
-      execute ':NERDTree | setlocal nornu nonu nolist signcolumn=no | wincmd p | call NERDTreeSync()'
-    endif
-endfunction
+fun! OpenNERDTree()
+  let arg_count = argc()
+  let file_count = len(split(globpath('.', '*'), '\n'))
+  let is_node_module = expand('%:p') =~ 'node_modules'
+  if arg_count < 1 || file_count > 50 || is_node_module || exists("s:std_in")
+    return
+  endif
+
+  let file = argv()[0]
+  if isdirectory(file)
+    execute 'NERDTree ' . file
+    setlocal nornu nonu nolist signcolumn=no
+    wincmd p
+    ene
+    execute 'cd' . file
+  else
+    NERDTree
+    setlocal nornu nonu nolist signcolumn=no
+    wincmd p
+    call NERDTreeSync()
+  endif
+endfun
 
 " calls NERDTreeFind iff NERDTree is active, current window contains a modifiable file, and we're not in vimdiff
-function! NERDTreeSync()
+fun! NERDTreeSync()
   let filename = expand('%')
   if matchstr(filename, "node_modules") == "" && filereadable(filename) && &modifiable && IsNERDTreeOpen() && !&diff
     NERDTreeFind
     wincmd p
   endif
-endfunction
+endfun
 
-function! CloseBuffer()
+fun! PasteStatus()
+  if &paste
+    return " PASTE "
+  else
+    return ""
+  endif
+endfun
+
+fun! TogglePaste()
+  set paste!
+  if &paste
+    hi StatusLine ctermbg=253 ctermfg=52
+  else
+    hi StatusLine ctermbg=238 ctermfg=253
+  endif
+endfun
+
+fun! FormatKotlin()
+  exec 'Dispatch! ktlint -F ' . expand('%')
+endf
+
+fun! CloseBuffer()
     if len(filter(range(1, bufnr('$')), 'buflisted(v:val)')) > 1
         execute ':bn|bd #'
     else
         execute ':e ' . getcwd() . '|bd #'
     endif
-endfunction
+endfun
 
-function! CloseAllBuffersButCurrent()
+fun! CloseAllBuffersButCurrent()
   let curr = bufnr("%")
   let last = bufnr("$")
 
   if curr > 1    | silent! execute "1,".(curr-1)."bd"     | endif
   if curr < last | silent! execute (curr+1).",".last."bd" | endif
-endfunction
+endfun
 
-function! ToggleGutter()
+fun! ToggleGutter()
   if g:show_gutter
     execute "set nornu nonu nolist signcolumn=no"
     let g:show_gutter = 0
@@ -758,7 +842,7 @@ function! ToggleGutter()
     execute "set rnu nu list signcolumn=yes"
     let g:show_gutter = 1
   endif
-endfunction
+endfun
 
 " == Autocommands   {{{1
 " ==================================================================================================
@@ -770,8 +854,10 @@ augroup Filetypes
   autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
 
   autocmd BufRead,BufNewFile *.md set filetype=markdown
-  " autocmd BufRead,BufNewFile *.js,*.jsx nmap <leader>f :call CocAction('runCommand', 'eslint.executeAutofix')<CR>
-  " autocmd BufRead,BufNewFile *,ts,*.tsx nmap <leader>f :call CocAction('runCommand', 'tsserver.executeAutofix')<CR>:call CocAction('runCommand', 'eslint.executeAutofix')<CR>
+  autocmd BufRead,BufNewFile *.js,*.jsx nmap <leader>F :call CocAction('runCommand', 'eslint.executeAutofix')<CR>
+  autocmd BufRead,BufNewFile *,ts,*.tsx nmap <leader>F :call CocAction('runCommand', 'tsserver.executeAutofix')<CR>:call CocAction('runCommand', 'eslint.executeAutofix')<CR>
+  autocmd Filetype kotlin setlocal softtabstop=4 shiftwidth=4
+  autocmd BufWritePost *.kt,*.kts call FormatKotlin()
 
   " c: Wrap comments using textwidth
   " r: Continue comments when pressing ENTER in I mode
@@ -782,17 +868,8 @@ augroup Filetypes
   autocmd Filetype * set formatoptions=crqnjp
 augroup END
 
-augroup VimrcEx
+augroup NERDTree
   autocmd!
-
-  " Jump to last edit position on opening file
-  " https://stackoverflow.com/questions/31449496/vim-ignore-specifc-file-in-autocommand
-  autocmd BufReadPost * if expand('%:p') !~# '\m/\.git/' && line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
-
-  autocmd BufWritePost * if CocHasProvider("format") | exe ":Format" | endif
-
-  " Automatically rebalance windows on vim resize
-  autocmd VimResized * :wincmd =
 
   " Open NERDTree when starting up
   autocmd VimEnter * call OpenNERDTree()
@@ -800,17 +877,23 @@ augroup VimrcEx
 
   " Opens NERDTree when no files specified
   autocmd StdinReadPre * let s:std_in=1
-  autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | setlocal nornu nonu nolist signcolumn=no | endif
-
-  " Open NERDTree in a directory
-  autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | setlocal nornu nonu nolist signcolumn=no | wincmd p | ene | exe 'cd '.argv()[0] | endif
 
   " Closes if NERDTree is the only open window
   autocmd BufEnter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
   " If more than one window and previous buffer was NERDTree, go back to it.
   autocmd BufEnter * if bufname('#') =~# "^NERD_tree_" && winnr('$') > 1 | b# | endif
-  let g:plug_window = 'noautocmd vertical topleft new'
+augroup END
+
+augroup VimrcEx
+  autocmd!
+
+  " Jump to last edit position on opening file
+  " https://stackoverflow.com/questions/31449496/vim-ignore-specifc-file-in-autocommand
+  autocmd BufReadPost * if expand('%:p') !~# '\m/\.git/' && line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+
+  " Automatically rebalance windows on vim resize
+  autocmd VimResized * :wincmd =
 
   " Don't do it for commit messages, when the position is invalid, or when
   " When editing a file, always jump to the last known cursor position.
@@ -823,6 +906,10 @@ augroup VimrcEx
 
   " Leave paste mode when leaving insert mode
   autocmd InsertLeave * set nopaste
+
+  " Color Insert mode differently
+  autocmd InsertEnter * hi CursorLine ctermbg=23
+  autocmd InsertLeave * hi CursorLine ctermbg=236
 augroup END
 
 " == Abbreviations   {{{1

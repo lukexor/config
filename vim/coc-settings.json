@@ -2,5 +2,17 @@
   "suggest.noselect": false,
   "http.proxyStrictSSL": false,
   "coc.source.ultisnips.enable": false,
-  "kotlin.compiler.jvm.target": "1.8"
+  "coc.preferences.formatOnType": true,
+  "coc.preferences.formatOnSaveFiletypes": [
+    "yaml",
+    "json",
+    "html",
+    "css",
+    "javascript",
+    "typescript",
+    "typescriptreact",
+    "rust"
+  ],
+  "kotlin.compiler.jvm.target": "1.8",
+  "kotlin.externalSources.autoConvertToKotlin": false
 }
