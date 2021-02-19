@@ -530,9 +530,9 @@ nnoremap / /\v
 cnoremap %s/ %sm/
 
 " Clear search highlighting
-vnoremap <leader><cr> :nohlsearch<cr>
-nnoremap <leader><cr> :nohlsearch<cr>
-nnoremap <silent> <leader><CR> :nohlsearch<C-R>=has('diff')?'<Bar>diffupdate':''<CR><CR><C-L>:call clearmatches()<CR>
+vnoremap <leader><cr> :nohlsearch<cr>:call coc#float#close_all()<CR>
+nnoremap <leader><cr> :nohlsearch<cr>:call coc#float#close_all()<CR>
+nnoremap <silent> <leader><CR> :nohlsearch<C-R>=has('diff')?'<Bar>diffupdate':''<CR><CR><C-L>:call clearmatches()<CR>:call coc#float#close_all()<CR>
 
 nmap <leader>s :Rg<cr>
 
@@ -730,6 +730,12 @@ set lazyredraw
 " --------------------------------------------------------------------------------------------------
 
 " Store swp in global /tmp for easier cleanup
+if !isdirectory($HOME."/.vim/files")
+  call mkdir($HOME."/.vim/files/swap", "p")
+  call mkdir($HOME."/.vim/files/undo", "p")
+  call mkdir($HOME."/.vim/files/info", "p")
+  call mkdir($HOME."/.vim/files/spell", "p")
+endif
 set directory=$HOME/.vim/files/swap//
 set undolevels=5000
 set undodir=$HOME/.vim/files/undo/
