@@ -53,10 +53,7 @@ esac
 # ==================================================================================================
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
-sourcefile "$HOME/.secure/secure.sh"
-for file in ~/.bashrc.d/*.bashrc; do
-    sourcefile "${file}"
-done
+sourcefile "$HOME/.bashrc.local"
 
 # == ENV Variables {{{1
 # ==================================================================================================
@@ -193,12 +190,6 @@ export LESS="-RFX"
 alias vi="vim"
 alias v="vim"
 
-alias aks-dev='az account set --subscription c6aa8a01-a744-44a7-a4f1-caad17512f27 &&  az aks get-credentials --resource-group AZEU2-DIG-DEV-RG --name AZEU2-DIGDEVAPP-K8S && az aks browse --resource-group AZEU2-DIG-DEV-RG --name AZEU2-DIGDEVAPP-K8S --listen-port 8002'
-alias aks-test='az account set --subscription c6aa8a01-a744-44a7-a4f1-caad17512f27 && az aks get-credentials --resource-group AZEU2-DIG-TEST-RG --name AZEU2-DIGTESTAPP-K8S && az aks browse --resource-group AZEU2-DIG-TEST-RG --name AZEU2-DIGTESTAPP-K8S --listen-port 8003'
-alias aks-uat='az account set --subscription c6aa8a01-a744-44a7-a4f1-caad17512f27 && az aks get-credentials --resource-group AZEU2-DIG-UAT-RG --name AZEU2-DIGUATAPP-K8S && az aks browse --resource-group AZEU2-DIG-UAT-RG --name AZEU2-DIGUATAPP-K8S --listen-port 8004'
-alias aks-prod='az account set --subscription 876d5d95-ae4a-4230-84da-55476cf71dd0 && az aks get-credentials --resource-group AZEU2-DIG-PROD-RG --name AZEU2-DIGPRODAPP-K8S && az aks browse --resource-group AZEU2-DIG-PROD-RG --name AZEU2-DIGPRODAPP-K8S --listen-port 8005'
-
-export SPRING_PROFILES_ACTIVE=local
 export JAVA_HOME=/usr/local/opt/openjdk@11/
 export CPPFLAGS="-I/usr/local/opt/openjdk@11/include"
 pathprepend /usr/local/opt/openjdk@11/bin
@@ -253,7 +244,6 @@ function mgrep() {
 }
 alias offenders='uptime;ps aux | perl -ane"print if \$F[2] > 0.9"'
 alias path='echo -e ${PATH//:/"\n"}'
-alias perl5lib='echo -e ${PERL5LIB//:/"\n"}'
 alias tm='tm.sh'
 alias which='type -a'
 alias x='extract.sh'
@@ -616,5 +606,3 @@ profile
 source_agent
 
 # vim: foldmethod=marker foldlevel=0
-
-alias startApi='./gradlew bootRun --args="--spring.profiles.active=local --server.port=8081"'

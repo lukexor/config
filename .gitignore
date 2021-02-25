@@ -3,7 +3,7 @@
 *.pyc
 *.sw?
 *.tmp
-*secure*
+*.local
 *~
 tags*
 vim/.netrwhist

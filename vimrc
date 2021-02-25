@@ -105,7 +105,7 @@ let g:vim_markdown_new_list_item_indent = 0
 let g:vim_markdown_auto_insert_bullets = 0
 let g:vim_markdown_frontmatter = 1
 
-let g:NERDTreeWinSize = 30
+let g:NERDTreeWinSize = 35
 
 let g:closetag_filetypes = 'xml,xhtml,javascript,javascript.jsx,typescript.tsx'
 let g:closetag_xhtml_filetypes = 'xml,xhtml,javascript,javascript.jsx,typescript.tsx'
@@ -404,7 +404,7 @@ nnoremap <silent><nowait> <leader>j  :<C-u>CocNext<CR>
 " Do default action for previous item.
 nnoremap <silent><nowait> <leader>k  :<C-u>CocPrev<CR>
 " Resume latest coc list.
-nnoremap <silent><nowait> <leader>r  :<C-u>CocListResume<CR>
+nnoremap <silent><nowait> <localleader>r  :<C-u>CocListResume<CR>
 
 inoremap <C-j> <Esc>
 vnoremap <C-j> <Esc>
@@ -776,13 +776,13 @@ fun! OpenNERDTree()
   let file = argv()[0]
   if isdirectory(file)
     execute 'NERDTree ' . file
-    setlocal nornu nonu nolist signcolumn=no
+    setlocal nolist signcolumn=no
     wincmd p
     ene
     execute 'cd' . file
   else
     NERDTree
-    setlocal nornu nonu nolist signcolumn=no
+    setlocal nolist signcolumn=no
     wincmd p
     call NERDTreeSync()
   endif
@@ -855,7 +855,7 @@ augroup Filetypes
 
   autocmd BufRead,BufNewFile *.md set filetype=markdown
   autocmd BufRead,BufNewFile *.js,*.jsx nmap <leader>F :call CocAction('runCommand', 'eslint.executeAutofix')<CR>
-  autocmd BufRead,BufNewFile *,ts,*.tsx nmap <leader>F :call CocAction('runCommand', 'tsserver.executeAutofix')<CR>:call CocAction('runCommand', 'eslint.executeAutofix')<CR>
+  autocmd BufRead,BufNewFile *.ts,*.tsx nmap <leader>F :call CocAction('runCommand', 'tsserver.executeAutofix')<CR>:call CocAction('runCommand', 'eslint.executeAutofix')<CR>
   autocmd Filetype kotlin setlocal softtabstop=4 shiftwidth=4
   autocmd BufWritePost *.kt,*.kts call FormatKotlin()
 

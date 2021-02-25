@@ -5,6 +5,7 @@
   "coc.preferences.formatOnType": true,
   "coc.preferences.formatOnSaveFiletypes": [
     "yaml",
+    "markdown",
     "json",
     "html",
     "css",
