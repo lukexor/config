@@ -85,6 +85,7 @@ export HISTSIZE=20000                # Number of commands saved in command histo
 export HISTTIMEFORMAT='[%F %a %T] ' # YYYY-MM-DD DAY HH:MM:SS
 
 # Misc
+export PAGER="vim -M +MANPAGER -c 'setlocal nofoldenable nolist' -"
 export EDITOR="vim"
 export LANG="en_US.UTF-8"
 export FZF_DEFAULT_COMMAND='(rg --files || ag --hidden -p ~/.gitignore -g "") 2> /dev/null'

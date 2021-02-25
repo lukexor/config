@@ -1,0 +1,14 @@
+let $PAGER=''
+set nocompatible
+set ft=man
+set nomod
+set nolist
+
+colorscheme mustang
+set background=dark
+set hidden
+
+map q :q!<CR>
+map <SPACE> <C-D>
+map b <C-U>
+nmap K :Man <C-R>=expand("<cword>")<CR><CR>'

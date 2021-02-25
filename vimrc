@@ -11,6 +11,7 @@
 " == Globals   {{{1
 " ==================================================================================================
 
+let $PAGER=''
 let mapleader=' '
 let maplocalleader=','
 
@@ -600,7 +601,9 @@ syntax on                       " Enable syntax highlighting
 colorscheme mustang
 set background=dark
 
-set fileformat=unix
+if &modifiable
+  set fileformat=unix
+endif
 set breakindent                 " Wrapped lines indent are indented
 
 set cursorline                  " Highlight the cursorline
@@ -863,6 +866,7 @@ augroup Filetypes
   autocmd BufRead,BufNewFile *.js,*.jsx nmap <leader>F :call CocAction('runCommand', 'eslint.executeAutofix')<CR>
   autocmd BufRead,BufNewFile *.ts,*.tsx nmap <leader>F :call CocAction('runCommand', 'tsserver.executeAutofix')<CR>:call CocAction('runCommand', 'eslint.executeAutofix')<CR>
   autocmd Filetype kotlin setlocal softtabstop=4 shiftwidth=4
+  autocmd Filetype man setlocal nolist
   autocmd BufWritePost *.kt,*.kts call FormatKotlin()
 
   " c: Wrap comments using textwidth
