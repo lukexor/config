@@ -33,6 +33,7 @@ test-driver
 tmp
 *.swp
 *.swo
+*.local
 *~
 ~*
 **/*.bak
@@ -40,7 +41,7 @@ tmp
 *.orig
 cover_db/
 .prove
-TODO.md
+TODO*
 
 # Packages #
 ############
@@ -55,16 +56,16 @@ TODO.md
 # Logs and databases #
 ######################
 *.log
+logs/
 *.sqlite
-./data/
-./save/
+data/
+save/
 
 # OS generated files #
 ######################
 .DS_Store*
-ehthumbs.db
+*.db
 Icon\?
-Thumbs.db
 ._*
 Desktop.ini
 .Spotlight-V100

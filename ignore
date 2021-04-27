@@ -10,6 +10,7 @@
 *.ico
 
 # == Media
+
 *.swf
 docs/
 
@@ -23,9 +24,12 @@ docs/
 *.tar
 *.iso
 
-# == Binaries
+# == Libs/Binaries
 
 bin/*.exe
+build/
+target/
+node_modules/
 
 # == Misc
 
@@ -37,8 +41,7 @@ bin/*.exe
 *.pdf
 *.db
 tags
-*tags
-.*tags
-Cargo.lock
-target/
-.node_modules/
+logs/
+vim/files/
+vim/view/
+vim/plugins/

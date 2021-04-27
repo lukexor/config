@@ -1,19 +1,7 @@
 {
   "suggest.noselect": false,
   "http.proxyStrictSSL": false,
-  "coc.source.ultisnips.enable": false,
-  "coc.preferences.formatOnType": true,
-  "coc.preferences.formatOnSaveFiletypes": [
-    "yaml",
-    "markdown",
-    "json",
-    "html",
-    "css",
-    "javascript",
-    "typescript",
-    "typescriptreact",
-    "rust"
-  ],
+  "git.addGBlameToBufferVar": true,
   "kotlin.compiler.jvm.target": "1.8",
   "kotlin.externalSources.autoConvertToKotlin": false
 }

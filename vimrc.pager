@@ -1,7 +1,9 @@
 let $PAGER=''
+
 set nocompatible
 set ft=man
 set nomod
+set nofoldenable
 set nolist
 
 colorscheme mustang

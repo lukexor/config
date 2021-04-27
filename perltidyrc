@@ -1,9 +1,0 @@
--pbp
---closing-side-comments
---cuddled-else
---noblanks-before-comments
---nooutdent-labels
---opening-sub-brace-on-new-line
---paren-tightness=2
---nooutdent-long-lines
---vertical-tightness=0

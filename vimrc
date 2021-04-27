@@ -91,22 +91,59 @@ call plug#end()
 let g:fzf_buffers_jump = 1          " Jump to existing window if possible
 let g:fzf_commits_log_options = '--graph --pretty=format:"%C(yellow)%h (%p) %ai%Cred%d %Creset%Cblue[%ae]%Creset %s (%ar). %b %N"'
 
-let g:coc_snippet_next = '<c-j>'
+let g:closetag_filetypes = 'xml,xhtml,javascript,javascript.jsx,typescript.tsx'
+let g:closetag_xhtml_filetypes = 'xml,xhtml,javascript,javascript.jsx,typescript.tsx'
+
+let g:coc_snippet_next = '<tab>'
+let g:coc_snippet_pref = '<s-tab>'
 let g:coc_disable_transparent_cursor = 1
+let g:coc_global_extensions = [
+  \ 'coc-css',
+  \ 'coc-eslint',
+  \ 'coc-fzf-preview',
+  \ 'coc-git',
+  \ 'coc-highlight',
+  \ 'coc-html',
+  \ 'coc-kotlin',
+  \ 'coc-java',
+  \ 'coc-json',
+  \ 'coc-markdownlint',
+  \ 'coc-prettier',
+  \ 'coc-react-refactor',
+  \ 'coc-rust-analyzer',
+  \ 'coc-rls',
+  \ 'coc-sh',
+  \ 'coc-snippets',
+  \ 'coc-sql',
+  \ 'coc-stylelint',
+  \ 'coc-stylelintplus',
+  \ 'coc-tag',
+  \ 'coc-toml',
+  \ 'coc-tsserver',
+  \ 'coc-ultisnips',
+  \ 'coc-vimlsp',
+  \ 'coc-yaml',
+  \ 'coc-yank',
+\ ]
+
 let g:snips_author = system('git config --get user.name | tr -d "\n"')
 let g:snips_author_email = system('git config --get user.email | tr -d "\n"')
+
+let g:UltiSnipsExpandTrigger = '<c-l>'
 
 let g:lightline = {
   \ 'colorscheme': 'seoul256',
   \ 'active': {
   \   'left': [ [ 'mode', 'paste' ],
-  \             [ 'cocstatus', 'readonly', 'filename', 'modified' ] ],
+  \             [ 'cocstatus', 'tagstatus', 'readonly', 'filename', 'modified', 'function' ] ],
   \   'right': [ [ 'lineinfo' ],
   \              [ 'percent' ],
   \              [ 'gitstatus', 'gitbranch', 'filetype' ] ],
   \ },
   \ 'component_function': {
+  \   'function': 'CurrentFunction',
   \   'filename': 'LightlineFilename',
+  \   'tagstatus': 'gutentags#statusline',
   \   'cocstatus': 'coc#status',
   \   'gitstatus': 'GitStatus',
   \   'gitbranch': 'FugitiveHead'
@@ -128,35 +165,6 @@ let g:vim_markdown_auto_insert_bullets = 0
 let g:vim_markdown_frontmatter = 1
 
 let g:NERDTreeWinSize = 35
-
-let g:closetag_filetypes = 'xml,xhtml,javascript,javascript.jsx,typescript.tsx'
-let g:closetag_xhtml_filetypes = 'xml,xhtml,javascript,javascript.jsx,typescript.tsx'
-
-let g:coc_global_extensions = [
-  \ 'coc-css',
-  \ 'coc-eslint',
-  \ 'coc-fzf-preview',
-  \ 'coc-git',
-  \ 'coc-highlight',
-  \ 'coc-html',
-  \ 'coc-kotlin',
-  \ 'coc-java',
-  \ 'coc-json',
-  \ 'coc-markdownlint',
-  \ 'coc-prettier',
-  \ 'coc-rust-analyzer',
-  \ 'coc-rls',
-  \ 'coc-sh',
-  \ 'coc-snippets',
-  \ 'coc-sql',
-  \ 'coc-stylelint',
-  \ 'coc-stylelintplus',
-  \ 'coc-toml',
-  \ 'coc-tsserver',
-  \ 'coc-vimlsp',
-  \ 'coc-yaml',
-  \ 'coc-yank',
-\ ]
 
 " -- Gutentags   {{{2
 " --------------------------------------------------------------------------------------------------
@@ -288,8 +296,8 @@ nmap <leader>x :x<CR>
 
 " Vimrc/Snippets
 nmap <localleader>ev :vsplit $MYVIMRC<CR>
-nmap <localleader>es :UltiSnipsEdit<CR>
-nmap <localleader>ls :Snippets<CR>
+nmap <localleader>es :CocCommand snippets.editSnippets<CR>
+nmap <localleader>ls :CocList snippets<CR>
 nmap <localleader>gc :Commits<CR>
 
 " Fixes Ctrl-X Ctrl-K
@@ -383,6 +391,8 @@ nmap <leader>prn :CocSearch <C-R>=expand("<cword>")<CR><CR>
 
 " Remap keys for applying codeAction to the current buffer.
 nmap <leader>ac  <Plug>(coc-codeaction)
+xmap <leader>as  <Plug>(coc-codeaction-selected)
+nmap <leader>as  <Plug>(coc-codeaction-selected)
 nmap <leader>f  :CocFix<CR>
 nmap <leader>F  <Plug>(coc-fix-current)
 nmap <leader>o  :OR<CR>:w<CR>
@@ -400,13 +410,13 @@ xmap ac <Plug>(coc-classobj-a)
 omap ac <Plug>(coc-classobj-a)
 
 " Add `:Format` command to format current buffer.
-command! -nargs=0 Format :call CocAction('format')
+command! -nargs=0 Format :call CocActionAsync('format')
 
 " Add `:Fold` command to fold current buffer.
-command! -nargs=? Fold :call CocAction('fold', <f-args>)
+command! -nargs=? Fold :call CocActionAsync('fold', <f-args>)
 
 " Add `:OR` command for organize imports of the current buffer.
-command! -nargs=0 OR :call CocAction('runCommand', 'editor.action.organizeImport')
+command! -nargs=0 OR :call CocActionAsync('runCommand', 'editor.action.organizeImport')
 
 " Remap <C-f> and <C-b> for scroll float windows/popups.
 if has('nvim-0.4.0') || has('patch-8.2.0750')
@@ -440,13 +450,13 @@ inoremap <C-j> <Esc>
 vnoremap <C-j> <Esc>
 snoremap <C-j> <Esc>
 xnoremap <C-j> <Esc>
-cnoremap <C-j> <C-c>
+cnoremap <C-j> <Esc>
 onoremap <C-j> <Esc>
 lnoremap <C-j> <Esc>
 tnoremap <C-j> <Esc>
 
-" Fix Coc floating windows getting stuck
-inoremap <C-c> <Esc>:call coc#float#close_all()<CR>
+" Disable using C-C to exit insert mode - Use <C-j> or <C-[> in paste mode
+inoremap <C-c> <NOP>
 
 " Blackhole replacements for x and d
 nnoremap <silent> <localleader>d "_d
@@ -537,7 +547,7 @@ nnoremap <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> 
   \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
   \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
 
-nnoremap <localleader>1 :NERDTreeToggle<CR>
+nnoremap <localleader>1 :call OpenNERDTree()<CR>
 nnoremap <localleader>2 :TagbarToggle<CR>
 nnoremap <localleader>3 :call ToggleGutter()<CR>
 nnoremap <localleader>4 :call TogglePaste()<CR>
@@ -572,7 +582,7 @@ fun! s:show_documentation()
   if (index(['vim','help'], &filetype) >= 0)
     execute 'h '.expand('<cword>')
   else
-    call CocAction('doHover')
+    call CocActionAsync('doHover')
   endif
 endfun
 
@@ -587,11 +597,10 @@ autocmd CursorHold * silent call CocActionAsync('highlight')
 " NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
 " other plugin before putting this into your config.
 inoremap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
+      \ pumvisible() ? coc#_select_confirm() :
       \ coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
       \ <SID>check_previous_space() ? "\<TAB>" :
       \ coc#refresh()
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 
 fun! s:check_previous_space() abort
     let col = col('.') - 1
@@ -660,7 +669,7 @@ set nostartofline               " Keep same column for navigation
 
 set autoread                    " Read file when changed outside vim
 set foldmethod=indent           " Default folds to indent level
-set formatexpr=CocAction('formatSelected')
+set formatexpr=CocActionAsync('formatSelected')
 
 if &diff
   set diffopt+=iwhite             " No whitespace in vimdiff
@@ -685,30 +694,14 @@ set virtualedit=block           " Allow virtual block to put cursor where there'
 
 set laststatus=2                " Always show statusline
 set display=lastline            " Show as much as possible of the last line
+
 set noshowmode                  " Disable INSERT display since lightline shows it
-
-set statusline=%n:\             " Buffer number
-set statusline+=%.40F\          " Full filename truncated
-set statusline+=%m              " Modified
-set statusline+=%r              " Readonly
-set statusline+=%{PasteStatus()}
-set statusline+=%{gutentags#statusline('','\ ')}   " gutentags tag generation status
-set statusline+=%{tagbar#currenttag('[%s]\ ','','')}
-set statusline+=%{tagbar#currenttagtype('(%s)\ ','')}
-set statusline+=%{\ get(g:,'coc_git_status','')}%{get(b:,'coc_git_status','')}%{get(b:,'coc_git_blame','')}
-set statusline+=%=              " Left/Right seperator
-set statusline+=%y\             " Filetype
-set statusline+=%l/%L           " Current/Total lines
-set statusline+=\:%c            " Cursor position
-set statusline+=\ %p%%          " Percent through file
-
-set showmode                    " Show current mode in command-line
 set showcmd                     " Show already typed keys when more are expected
 set cmdheight=2                 " Set two lines for better messaging
 set report=0                    " Always report changed lines
 
 " You will have bad experience for diagnostic messages when it's default 4000.
-set updatetime=300
+set updatetime=200
 
 set nowrap                      " Don't wrap
 set number                      " Display line numbers
@@ -797,9 +790,6 @@ set dictionary=$HOME/.vim/files/spell/en-basic.latin1.spl
 set spellfile=$HOME/.vim/files/spell/vim-spell.utf-8.add
 set spelllang=en
 
-" == Syntax Overrides   {{{1
-" ==================================================================================================
-
 " == Functions   {{{1
 " ==================================================================================================
 
@@ -840,20 +830,16 @@ fun! NERDTreeSync()
   endif
 endfun
 
+fun CurrentFunction()
+  return tagbar#currenttag('[%s]','','')
+endf
+
 func! LightlineFilename()
   return expand('%:t') !=# '' ? @% : '[No Name]'
 endfun
 
 func! GitStatus()
   return get(b:, 'coc_git_status', '') . get(b:, 'coc_git_blame', '')
-endfun
-
-fun! PasteStatus()
-  if &paste
-    return " PASTE "
-  else
-    return ""
-  endif
 endfun
 
 fun! TogglePaste()
@@ -906,8 +892,8 @@ augroup Filetypes
   autocmd User CocStatusChange,CocDiagnosticChange call lightline#update()
 
   autocmd BufRead,BufNewFile *.md set filetype=markdown
-  autocmd BufRead,BufNewFile *.js,*.jsx nmap <leader>F :call CocAction('runCommand', 'eslint.executeAutofix')<CR>
-  autocmd BufRead,BufNewFile *.ts,*.tsx nmap <leader>F :call CocAction('runCommand', 'tsserver.executeAutofix')<CR>:call CocAction('runCommand', 'eslint.executeAutofix')<CR>
+  autocmd BufRead,BufNewFile *.js,*.jsx nmap <leader>F :call CocActionAsync('runCommand', 'eslint.executeAutofix')<CR>
+  autocmd BufRead,BufNewFile *.ts,*.tsx nmap <leader>F :call CocActionAsync('runCommand', 'tsserver.executeAutofix')<CR>:call CocActionAsync('runCommand', 'eslint.executeAutofix')<CR>
   autocmd Filetype kotlin setlocal softtabstop=4 shiftwidth=4
   autocmd Filetype man setlocal nolist
   autocmd BufWritePost *.kt,*.kts call FormatKotlin()
@@ -939,21 +925,12 @@ augroup END
 augroup VimrcEx
   autocmd!
 
-  " Jump to last edit position on opening file
-  " https://stackoverflow.com/questions/31449496/vim-ignore-specifc-file-in-autocommand
-  autocmd BufReadPost * if expand('%:p') !~# '\m/\.git/' && line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
-
   " Automatically rebalance windows on vim resize
   autocmd VimResized * :wincmd =
 
   " Don't do it for commit messages, when the position is invalid, or when
   " When editing a file, always jump to the last known cursor position.
-  " inside an event handler (happens when dropping a file on gvim).
   autocmd BufReadPost * if &ft != 'gitcommit' && line("'\"") > 0 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
-
-  " Save whenever switching windows or leaving vim. This is useful when running
-  " the tests inside vim without having to save all files first.
-  autocmd FocusLost,WinLeave * :silent! wa
 
   " Leave paste mode when leaving insert mode
   autocmd InsertLeave * set nopaste
@@ -968,8 +945,10 @@ augroup END
 
 iabbrev ,, =>
 iabbrev eml lukexor@gmail.com
+iabbrev eml2 me@lukeworks.tech
 iabbrev adn and
-iabbrev cpy Copyright Lucas Petherbridge, All Rights Reserved.
+iabbrev cpy Copyright Lucas Petherbridge. All Rights Reserved.
+iabbrev copy Copyright Lucas Petherbridge. All Rights Reserved.
 iabbrev liek like
 iabbrev liekwise likewise
 iabbrev pritn print
