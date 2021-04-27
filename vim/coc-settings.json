@@ -1,6 +1,5 @@
 {
   "coc.preferences.formatOnSaveFiletypes": ["*"],
-  "diagnostic.displayByAle": true,
   "suggest.noselect": false,
   "http.proxyStrictSSL": false,
   "git.addGBlameToBufferVar": true,

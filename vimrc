@@ -89,8 +89,7 @@ call plug#end()
 " == Plugins Settings   {{{1
 " ==================================================================================================
 
-let g:ale_fix_on_save = 1
-let b:ale_disable_lsp = 1
+let b:ale_enabled = 0
 
 let b:local_vimrc = getcwd() . '/.vimrc'
 if filereadable(b:local_vimrc)
@@ -120,7 +119,6 @@ let g:coc_global_extensions = [
   \ 'coc-prettier',
   \ 'coc-react-refactor',
   \ 'coc-rust-analyzer',
-  \ 'coc-rls',
   \ 'coc-sh',
   \ 'coc-snippets',
   \ 'coc-sql',
