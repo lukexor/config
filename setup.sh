@@ -84,6 +84,8 @@ RUST_COMP=(
 COMMANDS=(
   'mkdir -p ~/.nvm'
   'nvim +PlugUpgrade +PlugInstall +PlugClean +PlugUpdate +UpdateRemotePlugins +qall'
+  'python3 -m pip install --upgrade pi'
+  'pip3 install pynvim'
   'curl --proto "=https" --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --no-modify-path'
 )
 

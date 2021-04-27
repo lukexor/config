@@ -17,12 +17,17 @@
 --exclude=bin
 --exclude=build
 --exclude=coverage
+--exclude=*coverage
 --exclude=dist
 --exclude=docs
 --exclude=node_modules
 --exclude=target
 --exclude=tmp
+--exclude=.next
+--exclude=vim/plugins
+--exclude=nvim/plugins
 
+--exclude=*.log
 --exclude=log
 --exclude=logs
 

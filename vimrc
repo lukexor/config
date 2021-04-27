@@ -50,6 +50,7 @@ Plug 'itchyny/lightline.vim'
 " --------------------------------------------------------------------------------------------------
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}         " Semantic language support
+Plug 'dense-analysis/ale'                               " Mostly to allow for custom fixers
 if v:version >= 800
   Plug 'SirVer/ultisnips'
 endif
@@ -87,6 +88,14 @@ call plug#end()
 
 " == Plugins Settings   {{{1
 " ==================================================================================================
+
+let g:ale_fix_on_save = 1
+let b:ale_disable_lsp = 1
+
+let b:local_vimrc = getcwd() . '/.vimrc'
+if filereadable(b:local_vimrc)
+  exe 'source' b:local_vimrc
+endif
 
 let g:fzf_buffers_jump = 1          " Jump to existing window if possible
 let g:fzf_commits_log_options = '--graph --pretty=format:"%C(yellow)%h (%p) %ai%Cred%d %Creset%Cblue[%ae]%Creset %s (%ar). %b %N"'
@@ -170,8 +179,7 @@ let g:NERDTreeWinSize = 35
 " --------------------------------------------------------------------------------------------------
 
 let g:gutentags_add_default_project_roots = 0
-let g:gutentags_project_root = ['package.json', '.git']
-let g:gutentags_generate_on_new = 1
+let g:gutentags_project_root = ['package.json', '.git', 'cargo.toml']
 let g:gutentags_generate_on_missing = 1
 let g:gutentags_generate_on_write = 1
 let g:gutentags_generate_on_empty_buffer = 0
@@ -390,12 +398,13 @@ nmap <leader>rn <Plug>(coc-rename)
 nmap <leader>prn :CocSearch <C-R>=expand("<cword>")<CR><CR>
 
 " Remap keys for applying codeAction to the current buffer.
+xmap <leader>ac  <Plug>(coc-codeaction)
 nmap <leader>ac  <Plug>(coc-codeaction)
 xmap <leader>as  <Plug>(coc-codeaction-selected)
 nmap <leader>as  <Plug>(coc-codeaction-selected)
 nmap <leader>f  :CocFix<CR>
 nmap <leader>F  <Plug>(coc-fix-current)
-nmap <leader>o  :OR<CR>:w<CR>
+nmap <leader>o  :OR<CR>
 nmap <localleader>F  <Plug>(coc-fix-fixAll)
 
 " Map function and class text objects
@@ -701,7 +710,7 @@ set cmdheight=2                 " Set two lines for better messaging
 set report=0                    " Always report changed lines
 
 " You will have bad experience for diagnostic messages when it's default 4000.
-set updatetime=200
+set updatetime=300
 
 set nowrap                      " Don't wrap
 set number                      " Display line numbers
