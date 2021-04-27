@@ -49,7 +49,9 @@ Plug 'kshenoy/vim-signature'                            " Adds vim marks to gutt
 " --------------------------------------------------------------------------------------------------
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}         " Semantic language support
-Plug 'SirVer/ultisnips'
+if v:version > 801
+  Plug 'SirVer/ultisnips'
+endif
 Plug 'alvan/vim-closetag'                               " Auto close XML/HTML tags
 Plug 'godlygeek/tabular'                                " Align lines
 Plug 'tpope/vim-surround'                               " Surround text easier
@@ -490,7 +492,6 @@ onoremap r /return<CR>
 " Change inside next parens
 onoremap in( :<c-u>normal! f(vi(<cr>
 " Change inside last parens
-" onoremap il( :<c-u>normal! F)vi(<cr>
 onoremap il( :<c-u>normal! F)vi(<cr>
 
 " -- Status   {{{2
@@ -628,16 +629,18 @@ set softtabstop=2               " Tab key indents by 4 spaces.
 set shiftround                  " Round to nearest multiple of shiftwidth
 set shiftwidth=2                " The amount of space to shift when using >>, << or <tab>
 set smarttab                    " Tabs using shiftwidth
+set nostartofline               " Keep same column for navigation
 
 set autoread                    " Read file when changed outside vim
-" set autowrite                   " Write file when changed before navigating
 set foldmethod=indent           " Default folds to indent level
 set formatexpr=CocAction('formatSelected')
 
-set diffopt+=iwhite             " No whitespace in vimdiff
-" Make diffing better: https://vimways.org/2018/the-power-of-diff/
-set diffopt+=algorithm:patience
-set diffopt+=indent-heuristic
+if &diff
+  set diffopt+=iwhite             " No whitespace in vimdiff
+  " Make diffing better: https://vimways.org/2018/the-power-of-diff/
+  set diffopt+=algorithm:patience
+  set diffopt+=indent-heuristic
+endif
 
 " Set < and > as brackets for jumping with %
 set matchpairs+=<:>
@@ -646,7 +649,7 @@ set noesckeys                   " Disable <Esc> keys in Insert mode
 set updatecount=50              " Save every # characters typed
 set virtualedit=block           " Allow virtual block to put cursor where there's no actual text
 
-" formatoptions set in vim/after/ftplugin.vim
+" formatoptions set as autocmd
 
 " -- Status   {{{2
 " --------------------------------------------------------------------------------------------------

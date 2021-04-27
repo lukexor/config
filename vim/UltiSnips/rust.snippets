@@ -31,7 +31,7 @@ pub fn new(${2}) -> ${1:Self} {
 endsnippet
 
 snippet main "main" b
-pub fn main() {
+fn main() {
     ${VISUAL}$0
 }
 endsnippet
@@ -72,32 +72,69 @@ endsnippet
 
 snippet enum "enum"
 enum ${1:Name} {
-  ${VISUAL}$0
+    ${VISUAL}$0
 }
 endsnippet
 
 snippet penum "pub enum"
 pub enum ${1:Name} {
-  ${VISUAL}$0
+    ${VISUAL}$0
 }
 endsnippet
 
-snippet trait "Trait definition"
+snippet trait "trait"
 trait ${1:Name} {
-  ${VISUAL}$0
+    ${VISUAL}$0
+}
+endsnippet
+
+snippet ptrait "pub trait"
+pub trait ${1:Name} {
+    ${VISUAL}$0
 }
 endsnippet
 
 snippet impl "impl" b
+impl ${1:type/trait}${2: for ${3:type}} {
+    ${VISUAL}$0
+}
+endsnippet
+
+snippet implg "impl (generic)" b
 impl$4 ${1:type/trait}${2: for ${3:type}}${4:<${5:T}>} {
-  ${VISUAL}$0
+    ${VISUAL}$0
+}
+endsnippet
+
+snippet idebug "impl Debug" b
+impl std::fmt::Debug for ${1:type} {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+      ${VISUAL}$0
+    }
+}
+endsnippet
+
+snippet ideref "impl Deref" b
+impl Deref for ${1:type} {
+    type Target = ${2:targetType};
+    fn deref(&self) -> &Self::Target {
+        ${VISUAL}${0:&self.value}
+    }
+}
+endsnippet
+
+snippet iderefm "impl DerefMut" b
+impl DerefMut for ${1:type} {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        ${VISUAL}${0:&mut self.value}
+    }
 }
 endsnippet
 
 snippet test "test function"
 #[test]
 fn ${1:name}() {
-  ${VISUAL}$0
+    ${VISUAL}$0
 }
 endsnippet
 
