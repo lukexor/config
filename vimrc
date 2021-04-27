@@ -44,6 +44,7 @@ Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'tpope/vim-fugitive'                               " Git integration
 Plug 'christoomey/vim-tmux-navigator'                   " Easily jump between splits or tmux windows
 Plug 'kshenoy/vim-signature'                            " Adds vim marks to gutter
+Plug 'itchyny/lightline.vim'
 
 " -- Editing   {{{2
 " --------------------------------------------------------------------------------------------------
@@ -63,6 +64,7 @@ Plug 'tommcdo/vim-exchange'                             " Allows easy exchanging
 " --------------------------------------------------------------------------------------------------
 
 Plug 'plasticboy/vim-markdown'
+Plug 'cespare/vim-toml'
 Plug 'stephpy/vim-yaml'
 Plug 'rust-lang/rust.vim'
 Plug 'rhysd/vim-clang-format'
@@ -93,6 +95,23 @@ let g:coc_snippet_next = '<c-j>'
 let g:coc_disable_transparent_cursor = 1
 let g:snips_author = system('git config --get user.name | tr -d "\n"')
 let g:snips_author_email = system('git config --get user.email | tr -d "\n"')
+
+let g:lightline = {
+  \ 'colorscheme': 'seoul256',
+  \ 'active': {
+  \   'left': [ [ 'mode', 'paste' ],
+  \             [ 'cocstatus', 'readonly', 'filename', 'modified' ] ],
+  \   'right': [ [ 'lineinfo' ],
+  \              [ 'percent' ],
+  \              [ 'gitstatus', 'gitbranch', 'filetype' ] ],
+  \ },
+  \ 'component_function': {
+  \   'filename': 'LightlineFilename',
+  \   'cocstatus': 'coc#status',
+  \   'gitstatus': 'GitStatus',
+  \   'gitbranch': 'FugitiveHead'
+  \ },
+\ }
 
 let g:plug_window = 'noautocmd vertical topleft new'
 
@@ -666,6 +685,7 @@ set virtualedit=block           " Allow virtual block to put cursor where there'
 
 set laststatus=2                " Always show statusline
 set display=lastline            " Show as much as possible of the last line
+set noshowmode                  " Disable INSERT display since lightline shows it
 
 set statusline=%n:\             " Buffer number
 set statusline+=%.40F\          " Full filename truncated
@@ -820,6 +840,14 @@ fun! NERDTreeSync()
   endif
 endfun
 
+func! LightlineFilename()
+  return expand('%:t') !=# '' ? @% : '[No Name]'
+endfun
+
+func! GitStatus()
+  return get(b:, 'coc_git_status', '') . get(b:, 'coc_git_blame', '')
+endfun
+
 fun! PasteStatus()
   if &paste
     return " PASTE "
@@ -875,6 +903,7 @@ augroup Filetypes
 
   " Update signature help on jump placeholder.
   autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+  autocmd User CocStatusChange,CocDiagnosticChange call lightline#update()
 
   autocmd BufRead,BufNewFile *.md set filetype=markdown
   autocmd BufRead,BufNewFile *.js,*.jsx nmap <leader>F :call CocAction('runCommand', 'eslint.executeAutofix')<CR>
@@ -895,8 +924,6 @@ augroup END
 augroup NERDTree
   autocmd!
 
-  " Open NERDTree when starting up
-  autocmd VimEnter * call OpenNERDTree()
   autocmd BufEnter * call NERDTreeSync()
 
   " Opens NERDTree when no files specified
