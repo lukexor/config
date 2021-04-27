@@ -40,6 +40,7 @@ BREW_PACKAGES = [
   'hexedit',
   'kotlin',
   'mysql',
+  'neovim',
   'node',
   'nvm',
   'openssl',
@@ -69,7 +70,7 @@ NPM_PACKAGES = [
 ]
 COMMANDS = [
   'mkdir -p ~/.nvm',
-  'vim +PlugUpgrade +PlugInstall +qall',
+  'vim +PlugUpgrade +PlugInstall +PlugClean +PlugUpdate +UpdateRemotePlugins +qall',
   'curl --proto "=https" --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --no-modify-path',
   '$HOME/.cargo/bin/cargo install ripgrep',
   '$HOME/.cargo/bin/cargo install cargo-add',

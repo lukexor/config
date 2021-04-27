@@ -49,7 +49,7 @@ Plug 'kshenoy/vim-signature'                            " Adds vim marks to gutt
 " --------------------------------------------------------------------------------------------------
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}         " Semantic language support
-if v:version > 801
+if v:version >= 800
   Plug 'SirVer/ultisnips'
 endif
 Plug 'alvan/vim-closetag'                               " Auto close XML/HTML tags
@@ -114,21 +114,29 @@ let g:closetag_filetypes = 'xml,xhtml,javascript,javascript.jsx,typescript.tsx'
 let g:closetag_xhtml_filetypes = 'xml,xhtml,javascript,javascript.jsx,typescript.tsx'
 
 let g:coc_global_extensions = [
-  \ 'coc-git',
-  \ 'coc-fzf-preview',
-  \ 'coc-highlight',
-  \ 'coc-snippets',
-  \ 'coc-prettier',
-  \ 'coc-json',
-  \ 'coc-yaml',
-  \ 'coc-html',
   \ 'coc-css',
-  \ 'coc-rust-analyzer',
-  \ 'coc-sh',
-  \ 'coc-markdownlint',
   \ 'coc-eslint',
+  \ 'coc-fzf-preview',
+  \ 'coc-git',
+  \ 'coc-highlight',
+  \ 'coc-html',
+  \ 'coc-kotlin',
+  \ 'coc-java',
+  \ 'coc-json',
+  \ 'coc-markdownlint',
+  \ 'coc-prettier',
+  \ 'coc-rust-analyzer',
+  \ 'coc-rls',
+  \ 'coc-sh',
+  \ 'coc-snippets',
+  \ 'coc-sql',
   \ 'coc-stylelint',
+  \ 'coc-stylelintplus',
+  \ 'coc-toml',
   \ 'coc-tsserver',
+  \ 'coc-vimlsp',
+  \ 'coc-yaml',
+  \ 'coc-yank',
 \ ]
 
 " -- Gutentags   {{{2
@@ -644,7 +652,9 @@ endif
 
 " Set < and > as brackets for jumping with %
 set matchpairs+=<:>
-set noesckeys                   " Disable <Esc> keys in Insert mode
+if has('noesckeys')
+  set noesckeys                   " Disable <Esc> keys in Insert mode
+endif
 
 set updatecount=50              " Save every # characters typed
 set virtualedit=block           " Allow virtual block to put cursor where there's no actual text
@@ -665,6 +675,7 @@ set statusline+=%{PasteStatus()}
 set statusline+=%{gutentags#statusline('','\ ')}   " gutentags tag generation status
 set statusline+=%{tagbar#currenttag('[%s]\ ','','')}
 set statusline+=%{tagbar#currenttagtype('(%s)\ ','')}
+set statusline+=%{\ get(g:,'coc_git_status','')}%{get(b:,'coc_git_status','')}%{get(b:,'coc_git_blame','')}
 set statusline+=%=              " Left/Right seperator
 set statusline+=%y\             " Filetype
 set statusline+=%l/%L           " Current/Total lines

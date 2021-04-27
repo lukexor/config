@@ -90,8 +90,8 @@ export HISTSIZE=20000                # Number of commands saved in command histo
 export HISTTIMEFORMAT='[%F %a %T] ' # YYYY-MM-DD DAY HH:MM:SS
 
 # Misc
-export PAGER="vim -M +MANPAGER -c 'setlocal nofoldenable nolist' -"
-export EDITOR="vim"
+export PAGER="nvim -M +MANPAGER -c 'setlocal nofoldenable nolist' -"
+export EDITOR="nvim"
 export LANG="en_US.UTF-8"
 export FZF_DEFAULT_COMMAND='(rg --files || ag --hidden -p ~/.gitignore -g "") 2> /dev/null'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
@@ -193,8 +193,9 @@ alias stop='kill -STOP'
 
 # Editing
 export LESS="-RFX"
-alias vi="vim"
-alias v="vim"
+alias vim="nvim"
+alias vi="nvim"
+alias v="nvim"
 
 export JAVA_HOME=/usr/local/opt/openjdk/
 export CPPFLAGS="-I/usr/local/opt/openjdk/include"
