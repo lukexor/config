@@ -3,5 +3,5 @@
 if [ -z $3 ]; then
     echo "Usage: srep <DIRECTORY> <PATTERN> <REPLACE>"
 else
-    find "$1" -type f -exec rg -q "$2" {} \; -print -exec vim -c "%s/$2/$3/gc" -c 'wq' {} \;
+    find "$1" -type f -exec sed -i '' -e "s/$2/$3/g" {} \;
 fi

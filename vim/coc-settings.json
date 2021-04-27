@@ -15,5 +15,6 @@
     "rust"
   ],
   "kotlin.compiler.jvm.target": "1.8",
-  "kotlin.externalSources.autoConvertToKotlin": false
+  "kotlin.externalSources.autoConvertToKotlin": false,
+  "kotlin.languageServer.path": "/Users/LucasPetherbridge/dev/kotlin-language-server/server/build/install/server/bin/kotlin-language-server"
 }

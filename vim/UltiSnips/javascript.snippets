@@ -118,14 +118,36 @@ it("${1:description}", () => {
 });
 endsnippet
 
-snippet it.o "it.only" b
+snippet ita "it (async)" b
+it("${1:description}", async () => {
+  ${VISUAL}$0
+});
+endsnippet
+
+snippet ito "it.only" b
 it.only("${1:description}", () => {
   ${VISUAL}$0
 });
 endsnippet
 
-snippet it.s "it.skip" b
+snippet ita "it.only (async)" b
+it.only("${1:description}", async () => {
+  ${VISUAL}$0
+});
+endsnippet
+
+snippet its "it.skip" b
 it.skip("${1:description}", () => {${VISUAL}$0});
+endsnippet
+
+snippet itsa "it.skip (async)" b
+it.skip("${1:description}", async () => {${VISUAL}$0});
+endsnippet
+
+snippet act "act" b
+await act(() => {
+  ${VISUAL}$0
+});
 endsnippet
 
 snippet dcy "cy.dataCy" b
