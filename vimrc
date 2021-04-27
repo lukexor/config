@@ -44,12 +44,15 @@ Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'tpope/vim-fugitive'                               " Git integration
 Plug 'christoomey/vim-tmux-navigator'                   " Easily jump between splits or tmux windows
 Plug 'kshenoy/vim-signature'                            " Adds vim marks to gutter
+Plug 'itchyny/lightline.vim'
 
 " -- Editing   {{{2
 " --------------------------------------------------------------------------------------------------
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}         " Semantic language support
-Plug 'SirVer/ultisnips'
+if v:version >= 800
+  Plug 'SirVer/ultisnips'
+endif
 Plug 'alvan/vim-closetag'                               " Auto close XML/HTML tags
 Plug 'godlygeek/tabular'                                " Align lines
 Plug 'tpope/vim-surround'                               " Surround text easier
@@ -61,6 +64,7 @@ Plug 'tommcdo/vim-exchange'                             " Allows easy exchanging
 " --------------------------------------------------------------------------------------------------
 
 Plug 'plasticboy/vim-markdown'
+Plug 'cespare/vim-toml'
 Plug 'stephpy/vim-yaml'
 Plug 'rust-lang/rust.vim'
 Plug 'rhysd/vim-clang-format'
@@ -92,6 +96,23 @@ let g:coc_disable_transparent_cursor = 1
 let g:snips_author = system('git config --get user.name | tr -d "\n"')
 let g:snips_author_email = system('git config --get user.email | tr -d "\n"')
 
+let g:lightline = {
+  \ 'colorscheme': 'seoul256',
+  \ 'active': {
+  \   'left': [ [ 'mode', 'paste' ],
+  \             [ 'cocstatus', 'readonly', 'filename', 'modified' ] ],
+  \   'right': [ [ 'lineinfo' ],
+  \              [ 'percent' ],
+  \              [ 'gitstatus', 'gitbranch', 'filetype' ] ],
+  \ },
+  \ 'component_function': {
+  \   'filename': 'LightlineFilename',
+  \   'cocstatus': 'coc#status',
+  \   'gitstatus': 'GitStatus',
+  \   'gitbranch': 'FugitiveHead'
+  \ },
+\ }
+
 let g:plug_window = 'noautocmd vertical topleft new'
 
 let g:rustfmt_autosave = 1
@@ -112,21 +133,29 @@ let g:closetag_filetypes = 'xml,xhtml,javascript,javascript.jsx,typescript.tsx'
 let g:closetag_xhtml_filetypes = 'xml,xhtml,javascript,javascript.jsx,typescript.tsx'
 
 let g:coc_global_extensions = [
-  \ 'coc-git',
-  \ 'coc-fzf-preview',
-  \ 'coc-highlight',
-  \ 'coc-snippets',
-  \ 'coc-prettier',
-  \ 'coc-json',
-  \ 'coc-yaml',
-  \ 'coc-html',
   \ 'coc-css',
-  \ 'coc-rust-analyzer',
-  \ 'coc-sh',
-  \ 'coc-markdownlint',
   \ 'coc-eslint',
+  \ 'coc-fzf-preview',
+  \ 'coc-git',
+  \ 'coc-highlight',
+  \ 'coc-html',
+  \ 'coc-kotlin',
+  \ 'coc-java',
+  \ 'coc-json',
+  \ 'coc-markdownlint',
+  \ 'coc-prettier',
+  \ 'coc-rust-analyzer',
+  \ 'coc-rls',
+  \ 'coc-sh',
+  \ 'coc-snippets',
+  \ 'coc-sql',
   \ 'coc-stylelint',
+  \ 'coc-stylelintplus',
+  \ 'coc-toml',
   \ 'coc-tsserver',
+  \ 'coc-vimlsp',
+  \ 'coc-yaml',
+  \ 'coc-yank',
 \ ]
 
 " -- Gutentags   {{{2
@@ -490,7 +519,6 @@ onoremap r /return<CR>
 " Change inside next parens
 onoremap in( :<c-u>normal! f(vi(<cr>
 " Change inside last parens
-" onoremap il( :<c-u>normal! F)vi(<cr>
 onoremap il( :<c-u>normal! F)vi(<cr>
 
 " -- Status   {{{2
@@ -628,31 +656,36 @@ set softtabstop=2               " Tab key indents by 4 spaces.
 set shiftround                  " Round to nearest multiple of shiftwidth
 set shiftwidth=2                " The amount of space to shift when using >>, << or <tab>
 set smarttab                    " Tabs using shiftwidth
+set nostartofline               " Keep same column for navigation
 
 set autoread                    " Read file when changed outside vim
-" set autowrite                   " Write file when changed before navigating
 set foldmethod=indent           " Default folds to indent level
 set formatexpr=CocAction('formatSelected')
 
-set diffopt+=iwhite             " No whitespace in vimdiff
-" Make diffing better: https://vimways.org/2018/the-power-of-diff/
-set diffopt+=algorithm:patience
-set diffopt+=indent-heuristic
+if &diff
+  set diffopt+=iwhite             " No whitespace in vimdiff
+  " Make diffing better: https://vimways.org/2018/the-power-of-diff/
+  set diffopt+=algorithm:patience
+  set diffopt+=indent-heuristic
+endif
 
 " Set < and > as brackets for jumping with %
 set matchpairs+=<:>
-set noesckeys                   " Disable <Esc> keys in Insert mode
+if has('noesckeys')
+  set noesckeys                   " Disable <Esc> keys in Insert mode
+endif
 
 set updatecount=50              " Save every # characters typed
 set virtualedit=block           " Allow virtual block to put cursor where there's no actual text
 
-" formatoptions set in vim/after/ftplugin.vim
+" formatoptions set as autocmd
 
 " -- Status   {{{2
 " --------------------------------------------------------------------------------------------------
 
 set laststatus=2                " Always show statusline
 set display=lastline            " Show as much as possible of the last line
+set noshowmode                  " Disable INSERT display since lightline shows it
 
 set statusline=%n:\             " Buffer number
 set statusline+=%.40F\          " Full filename truncated
@@ -662,6 +695,7 @@ set statusline+=%{PasteStatus()}
 set statusline+=%{gutentags#statusline('','\ ')}   " gutentags tag generation status
 set statusline+=%{tagbar#currenttag('[%s]\ ','','')}
 set statusline+=%{tagbar#currenttagtype('(%s)\ ','')}
+set statusline+=%{\ get(g:,'coc_git_status','')}%{get(b:,'coc_git_status','')}%{get(b:,'coc_git_blame','')}
 set statusline+=%=              " Left/Right seperator
 set statusline+=%y\             " Filetype
 set statusline+=%l/%L           " Current/Total lines
@@ -806,6 +840,14 @@ fun! NERDTreeSync()
   endif
 endfun
 
+func! LightlineFilename()
+  return expand('%:t') !=# '' ? @% : '[No Name]'
+endfun
+
+func! GitStatus()
+  return get(b:, 'coc_git_status', '') . get(b:, 'coc_git_blame', '')
+endfun
+
 fun! PasteStatus()
   if &paste
     return " PASTE "
@@ -861,6 +903,7 @@ augroup Filetypes
 
   " Update signature help on jump placeholder.
   autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+  autocmd User CocStatusChange,CocDiagnosticChange call lightline#update()
 
   autocmd BufRead,BufNewFile *.md set filetype=markdown
   autocmd BufRead,BufNewFile *.js,*.jsx nmap <leader>F :call CocAction('runCommand', 'eslint.executeAutofix')<CR>
@@ -881,8 +924,6 @@ augroup END
 augroup NERDTree
   autocmd!
 
-  " Open NERDTree when starting up
-  autocmd VimEnter * call OpenNERDTree()
   autocmd BufEnter * call NERDTreeSync()
 
   " Opens NERDTree when no files specified

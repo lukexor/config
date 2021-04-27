@@ -52,7 +52,7 @@ esac
 # == Source Files {{{1
 # ==================================================================================================
 
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+[ -f $HOME/.fzf.bash ] && source $HOME/.fzf.bash
 sourcefile "$HOME/.bashrc.local"
 
 # == ENV Variables {{{1
@@ -70,10 +70,15 @@ pathprepend "$HOME/.cargo/bin"
 pathprepend "$HOME/www/luke_web/bin"
 pathprepend "$HOME/bin"
 
+
 # Node/NVM
 export NVM_DIR="$HOME/.nvm"
+[ ! -d $NVM_DIR ] && mkdir -p $NVM_DIR
 sourcefile "/usr/local/opt/nvm/nvm.sh"
-sourcefile "/usr/local/opt/nvm/etc/bash_completion.d/nvm"
+
+for DIR in /usr/local/etc/bash_completion.d/*; do
+  sourcefile $DIR
+done
 
 # == Bash Settings {{{1
 # ==================================================================================================
@@ -85,8 +90,8 @@ export HISTSIZE=20000                # Number of commands saved in command histo
 export HISTTIMEFORMAT='[%F %a %T] ' # YYYY-MM-DD DAY HH:MM:SS
 
 # Misc
-export PAGER="vim -M +MANPAGER -c 'setlocal nofoldenable nolist' -"
-export EDITOR="vim"
+export PAGER="nvim -M +MANPAGER -c 'setlocal nofoldenable nolist' -"
+export EDITOR="nvim"
 export LANG="en_US.UTF-8"
 export FZF_DEFAULT_COMMAND='(rg --files || ag --hidden -p ~/.gitignore -g "") 2> /dev/null'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
@@ -188,12 +193,13 @@ alias stop='kill -STOP'
 
 # Editing
 export LESS="-RFX"
-alias vi="vim"
-alias v="vim"
+alias vim="nvim"
+alias vi="nvim"
+alias v="nvim"
 
-export JAVA_HOME=/usr/local/opt/openjdk@11/
-export CPPFLAGS="-I/usr/local/opt/openjdk@11/include"
-pathprepend /usr/local/opt/openjdk@11/bin
+export JAVA_HOME=/usr/local/opt/openjdk/
+export CPPFLAGS="-I/usr/local/opt/openjdk/include"
+pathprepend /usr/local/opt/openjdk/bin
 
 # Python
 alias dja='django-admin.py'
@@ -388,6 +394,8 @@ btx() { perlo '0x%04X' "0b$1"; }
 dtx() { perld '0x%04X' $1; }
 dtb() { perld '0b%08b' $1; }
 xtb() { perlo '0b%08b' "0x$1"; }
+perld() { perl -e'print sprintf("$ARGV[0]\n", $ARGV[1])' $1 $2; }
+perlo() { perl -e'print sprintf("$ARGV[0]\n", oct($ARGV[1]))' $1 $2; }
 
 myps() { ps -f $@ -u $USER -o pid,%cpu,%mem,bsdtime,command | more ; }
 
@@ -607,3 +615,5 @@ profile
 source_agent
 
 # vim: foldmethod=marker foldlevel=0
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
