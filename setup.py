@@ -12,6 +12,7 @@ DOTFILES = [
   'gitconfig',
   'gitignore',
   'inputrc',
+  'ignore',
   'jsbeautifyrc',
   'jshintrc',
   'perlcriticrc',

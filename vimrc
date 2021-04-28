@@ -39,7 +39,7 @@ Plug 'airblade/vim-rooter'                              " Cd's to nearest git ro
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'majutsushi/tagbar'                                " Displays tags in a sidebar
-Plug 'preservim/nerdtree', { 'on': 'NERDTreeToggle' }   " FileTree
+Plug 'preservim/nerdtree', { 'on': 'NERDTreeFind' }   " FileTree
 Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'tpope/vim-fugitive'                               " Git integration
 Plug 'christoomey/vim-tmux-navigator'                   " Easily jump between splits or tmux windows
@@ -89,7 +89,7 @@ call plug#end()
 " == Plugins Settings   {{{1
 " ==================================================================================================
 
-let b:ale_enabled = 0
+let g:ale_enabled = 0
 
 let b:local_vimrc = getcwd() . '/.vimrc'
 if filereadable(b:local_vimrc)
@@ -145,7 +145,7 @@ let g:lightline = {
   \             [ 'cocstatus', 'tagstatus', 'readonly', 'filename', 'modified', 'function' ] ],
   \   'right': [ [ 'lineinfo' ],
   \              [ 'percent' ],
-  \              [ 'gitstatus', 'gitbranch', 'filetype' ] ],
+  \              [ 'gitstatus', 'filetype' ] ],
   \ },
   \ 'component_function': {
   \   'function': 'CurrentFunction',
@@ -153,7 +153,6 @@ let g:lightline = {
   \   'tagstatus': 'gutentags#statusline',
   \   'cocstatus': 'coc#status',
   \   'gitstatus': 'GitStatus',
-  \   'gitbranch': 'FugitiveHead'
   \ },
 \ }
 
@@ -350,7 +349,7 @@ nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
 
 " cd to cwd of current file
-nnoremap cd :execute 'lcd' fnamemodify(resolve(expand('%')), ':h')<CR>
+nnoremap cd :execute 'lcd ' fnamemodify(resolve(expand('%')), ':h')<CR>
   \ :echo 'cd ' . fnamemodify(resolve(expand('%')), ':h')<CR>
 
 " Navigate buffers
@@ -554,7 +553,7 @@ nnoremap <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> 
   \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
   \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
 
-nnoremap <localleader>1 :call OpenNERDTree()<CR>
+nnoremap <localleader>1 :NERDTreeFind<CR>
 nnoremap <localleader>2 :TagbarToggle<CR>
 nnoremap <localleader>3 :call ToggleGutter()<CR>
 nnoremap <localleader>4 :call TogglePaste()<CR>
@@ -805,29 +804,6 @@ fun! IsNERDTreeOpen()
   return exists("t:NERDTreeBufName") && (bufwinnr(t:NERDTreeBufName) != -1)
 endfun
 
-fun! OpenNERDTree()
-  let arg_count = argc()
-  let file_count = len(split(globpath('.', '*'), '\n'))
-  let is_node_module = expand('%:p') =~ 'node_modules'
-  if arg_count < 1 || file_count > 50 || is_node_module || exists("s:std_in")
-    return
-  endif
-
-  let file = argv()[0]
-  if isdirectory(file)
-    execute 'NERDTree ' . file
-    setlocal nolist signcolumn=no
-    wincmd p
-    ene
-    execute 'cd' . file
-  else
-    NERDTree
-    setlocal nolist signcolumn=no
-    wincmd p
-    call NERDTreeSync()
-  endif
-endfun
-
 " calls NERDTreeFind iff NERDTree is active, current window contains a modifiable file, and we're not in vimdiff
 fun! NERDTreeSync()
   let filename = expand('%')
@@ -846,7 +822,16 @@ func! LightlineFilename()
 endfun
 
 func! GitStatus()
-  return get(b:, 'coc_git_status', '') . get(b:, 'coc_git_blame', '')
+  let maxWidth = winwidth(0) - 70
+  let status = get(b:, 'coc_git_status', '') . get(b:, 'coc_git_blame', '')
+  let branch = ' [' . FugitiveHead() . ']'
+  if len(status . branch) >= maxWidth
+    let status = status[0:(maxWidth - len(branch))] . '...'
+  endif
+  if len(branch) >= 30
+    let branch = branch[0:30] . '...]'
+  endif
+  return status . branch
 endfun
 
 fun! TogglePaste()
