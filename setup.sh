@@ -65,6 +65,7 @@ CARGO=(
   'cargo-asm'
   'cargo-expand'
   'cargo-count'
+  'cargo-flamegraph'
   'cargo-fmt'
   'cargo-generate'
   'cargo-outdated'

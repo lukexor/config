@@ -1,6 +1,7 @@
 {
   "coc.preferences.formatOnSaveFiletypes": ["*"],
-  "suggest.noselect": false,
+  "suggest.noselect": true,
+  "snippets.priority": 200,
   "http.proxyStrictSSL": false,
   "git.addGBlameToBufferVar": true,
   "kotlin.compiler.jvm.target": "1.8",

@@ -81,7 +81,8 @@ tags.*
 .settings/
 .remote-sync.json
 .gmf_branches
-*.env*
+*.env
+.env*
 *.patch
 .gitconfig.local
 .vim

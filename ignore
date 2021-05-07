@@ -30,6 +30,8 @@ bin/*.exe
 build/
 target/
 node_modules/
+*coverage/
+dist/
 
 # == Misc
 

@@ -52,3 +52,5 @@
   merge = refs/heads/main
 [pull]
   rebase = false
+[init]
+	defaultBranch = main

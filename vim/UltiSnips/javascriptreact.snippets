@@ -1,13 +1,21 @@
 priority -40
 
 snippet rfc "react functional component" b
-import React from "react";
-
 const ${1:`!p snip.rv = snip.basename`} = (${2}) => {
-  ${3}
+  return <>${3}</>
 };
 
 export default $1;
+endsnippet
+
+snippet msty "makeStyles" b
+import { makeStyles } from "@material-ui/core";
+
+const useStyles = makeStyles((theme) => ({
+  $0
+}));
+
+export default useStyles;
 endsnippet
 
 snippet useS "useState" b

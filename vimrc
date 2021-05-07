@@ -39,7 +39,7 @@ Plug 'airblade/vim-rooter'                              " Cd's to nearest git ro
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'majutsushi/tagbar'                                " Displays tags in a sidebar
-Plug 'preservim/nerdtree', { 'on': 'NERDTreeFind' }   " FileTree
+Plug 'preservim/nerdtree'                               " FileTree
 Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'tpope/vim-fugitive'                               " Git integration
 Plug 'christoomey/vim-tmux-navigator'                   " Easily jump between splits or tmux windows
@@ -50,7 +50,6 @@ Plug 'itchyny/lightline.vim'
 " --------------------------------------------------------------------------------------------------
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}         " Semantic language support
-Plug 'dense-analysis/ale'                               " Mostly to allow for custom fixers
 if v:version >= 800
   Plug 'SirVer/ultisnips'
 endif
@@ -89,21 +88,14 @@ call plug#end()
 " == Plugins Settings   {{{1
 " ==================================================================================================
 
-let g:ale_enabled = 0
-
-let b:local_vimrc = getcwd() . '/.vimrc'
-if filereadable(b:local_vimrc)
-  exe 'source' b:local_vimrc
-endif
-
 let g:fzf_buffers_jump = 1          " Jump to existing window if possible
 let g:fzf_commits_log_options = '--graph --pretty=format:"%C(yellow)%h (%p) %ai%Cred%d %Creset%Cblue[%ae]%Creset %s (%ar). %b %N"'
 
 let g:closetag_filetypes = 'xml,xhtml,javascript,javascript.jsx,typescript.tsx'
 let g:closetag_xhtml_filetypes = 'xml,xhtml,javascript,javascript.jsx,typescript.tsx'
 
-let g:coc_snippet_next = '<tab>'
-let g:coc_snippet_pref = '<s-tab>'
+let g:coc_snippet_next = '<C-j>'
+let g:coc_snippet_pref = '<C-k>'
 let g:coc_disable_transparent_cursor = 1
 let g:coc_global_extensions = [
   \ 'coc-css',
@@ -461,8 +453,7 @@ onoremap <C-j> <Esc>
 lnoremap <C-j> <Esc>
 tnoremap <C-j> <Esc>
 
-" Disable using C-C to exit insert mode - Use <C-j> or <C-[> in paste mode
-inoremap <C-c> <NOP>
+inoremap <C-c> <Esc>
 
 " Blackhole replacements for x and d
 nnoremap <silent> <localleader>d "_d
@@ -553,7 +544,7 @@ nnoremap <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> 
   \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
   \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
 
-nnoremap <localleader>1 :NERDTreeFind<CR>
+nnoremap <localleader>1 :call OpenNERDTree()<CR>
 nnoremap <localleader>2 :TagbarToggle<CR>
 nnoremap <localleader>3 :call ToggleGutter()<CR>
 nnoremap <localleader>4 :call TogglePaste()<CR>
@@ -575,8 +566,8 @@ nnoremap / /\v
 cnoremap %s/ %sm/
 
 " Clear search highlighting
-vnoremap <leader><cr> :nohlsearch<cr>:call coc#float#close_all()<CR>
 nnoremap <leader><cr> :nohlsearch<cr>:call coc#float#close_all()<CR>
+vnoremap <leader><cr> :nohlsearch<cr>:call coc#float#close_all()<CR>
 nnoremap <silent> <leader><CR> :nohlsearch<C-R>=has('diff')?'<Bar>diffupdate':''<CR><CR><C-L>:call clearmatches()<CR>:call coc#float#close_all()<CR>
 
 nmap <leader>s :Rg<cr>
@@ -603,10 +594,11 @@ autocmd CursorHold * silent call CocActionAsync('highlight')
 " NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
 " other plugin before putting this into your config.
 inoremap <silent><expr> <TAB>
-      \ pumvisible() ? coc#_select_confirm() :
+      \ pumvisible() ? "\<C-n>" :
       \ coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
       \ <SID>check_previous_space() ? "\<TAB>" :
       \ coc#refresh()
+inoremap <silent><expr> <S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 
 fun! s:check_previous_space() abort
     let col = col('.') - 1
@@ -616,10 +608,13 @@ endfun
 " Use <c-.> to trigger completion.
 inoremap <silent><expr> <c-.> coc#refresh()
 
-" Make <CR> auto-select the first completion item and notify coc.nvim to
-" format on enter, <cr> could be remapped by other vim plugin
-inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
-                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+nnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+nnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+inoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
+inoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
+vnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+vnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+
 
 " Use <cr> to confirm completion, `<C-g>u` means break undo chain at current
 " position. Coc only does snippet and additional edit on confirm.
@@ -675,7 +670,7 @@ set nostartofline               " Keep same column for navigation
 
 set autoread                    " Read file when changed outside vim
 set foldmethod=indent           " Default folds to indent level
-set formatexpr=CocActionAsync('formatSelected')
+set foldlevelstart=99           " Default no closed
 
 if &diff
   set diffopt+=iwhite             " No whitespace in vimdiff
@@ -804,6 +799,16 @@ fun! IsNERDTreeOpen()
   return exists("t:NERDTreeBufName") && (bufwinnr(t:NERDTreeBufName) != -1)
 endfun
 
+fun! OpenNERDTree()
+  if IsNERDTreeOpen()
+    NERDTreeClose
+  elseif filereadable(expand('%'))
+      NERDTreeFind
+  else
+      NERDTree
+  endif
+endfun
+
 " calls NERDTreeFind iff NERDTree is active, current window contains a modifiable file, and we're not in vimdiff
 fun! NERDTreeSync()
   let filename = expand('%')
@@ -812,6 +817,13 @@ fun! NERDTreeSync()
     wincmd p
   endif
 endfun
+
+
+fun! SetFormatExpr()
+  if CocHasProvider('formatSelected')
+    set formatexpr=CocActionAsync('formatSelected')
+  endif
+endf
 
 fun CurrentFunction()
   return tagbar#currenttag('[%s]','','')
@@ -883,6 +895,7 @@ augroup Filetypes
   autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
   autocmd User CocStatusChange,CocDiagnosticChange call lightline#update()
 
+  autocmd BufRead,BufNewFile * call SetFormatExpr()
   autocmd BufRead,BufNewFile *.md set filetype=markdown
   autocmd BufRead,BufNewFile *.js,*.jsx nmap <leader>F :call CocActionAsync('runCommand', 'eslint.executeAutofix')<CR>
   autocmd BufRead,BufNewFile *.ts,*.tsx nmap <leader>F :call CocActionAsync('runCommand', 'tsserver.executeAutofix')<CR>:call CocActionAsync('runCommand', 'eslint.executeAutofix')<CR>
