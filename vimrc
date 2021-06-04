@@ -94,8 +94,8 @@ let g:fzf_commits_log_options = '--graph --pretty=format:"%C(yellow)%h (%p) %ai%
 let g:closetag_filetypes = 'xml,xhtml,javascript,javascript.jsx,typescript.tsx'
 let g:closetag_xhtml_filetypes = 'xml,xhtml,javascript,javascript.jsx,typescript.tsx'
 
-let g:coc_snippet_next = '<C-j>'
-let g:coc_snippet_pref = '<C-k>'
+let g:coc_snippet_next = '<C-l>'
+let g:coc_snippet_pref = '<C-h>'
 let g:coc_disable_transparent_cursor = 1
 let g:coc_global_extensions = [
   \ 'coc-css',
@@ -311,14 +311,6 @@ nmap <leader>q :q<CR>
 " Jump to start and end of line using the home row keys
 map H ^
 map L $
-
-" No arrow keys --- force yourself to use the home row
-nnoremap <up> <nop>
-nnoremap <down> <nop>
-inoremap <up> <nop>
-inoremap <down> <nop>
-inoremap <left> <nop>
-inoremap <right> <nop>
 
 nmap <leader>M :Marks<CR>
 nmap <leader>T :Tags<CR>
