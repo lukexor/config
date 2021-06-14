@@ -168,10 +168,10 @@ let g:NERDTreeWinSize = 35
 " --------------------------------------------------------------------------------------------------
 
 let g:gutentags_add_default_project_roots = 0
-let g:gutentags_project_root = ['package.json', '.git', 'cargo.toml']
+let g:gutentags_project_root = ['package.json', '.git', 'Cargo.toml']
+let g:gutentags_generate_on_new = 0
 let g:gutentags_generate_on_missing = 1
 let g:gutentags_generate_on_write = 1
-let g:gutentags_generate_on_empty_buffer = 0
 
 " -- Tagbar   {{{2
 " --------------------------------------------------------------------------------------------------
@@ -311,14 +311,6 @@ nmap <leader>q :q<CR>
 " Jump to start and end of line using the home row keys
 map H ^
 map L $
-
-" No arrow keys --- force yourself to use the home row
-nnoremap <up> <nop>
-nnoremap <down> <nop>
-inoremap <up> <nop>
-inoremap <down> <nop>
-inoremap <left> <nop>
-inoremap <right> <nop>
 
 nmap <leader>M :Marks<CR>
 nmap <leader>T :Tags<CR>
@@ -468,6 +460,9 @@ xnoremap <silent> x "_x
 " Swap visual and visual linewise shortcuts
 vnoremap <C-V> v
 vnoremap v <C-V>
+
+inoremap <C-v> <c-r>+
+nnoremap <C-v> "+p
 
 " Surround text with punctuation easier 'you surround' + motion
 nmap <leader>" ysiw"
@@ -783,7 +778,11 @@ set nowritebackup
 "           | |     |   |      |     |     +---Remember last # commands
 "           | |     |   |      |     |     |   +--Save/restore buffer list
 "           v v     v   v      v     v     v   v  +-- Viminfo file
-set viminfo=h,'100,f1,<10000,s1000,/1000,:1000,%,n$HOME/.vim/files/info/viminfo
+if !has('nvim')
+  set viminfo=h,'100,f1,<10000,s1000,/1000,:1000,%,n$HOME/.vim/files/info/viminfo
+else
+  set viminfo+=n$HOME/.vim/files/info/viminfo
+endif
 
 " Set spellfile to location that is guaranteed to exist, can be symlinked to
 " Dropbox or kept in Git and managed outside of thoughtbot/dotfiles using rcm.
@@ -953,7 +952,6 @@ iabbrev eml lukexor@gmail.com
 iabbrev eml2 me@lukeworks.tech
 iabbrev adn and
 iabbrev cpy Copyright Lucas Petherbridge. All Rights Reserved.
-iabbrev copy Copyright Lucas Petherbridge. All Rights Reserved.
 iabbrev liek like
 iabbrev liekwise likewise
 iabbrev pritn print

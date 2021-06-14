@@ -1,5 +1,6 @@
 {
   "coc.preferences.formatOnSaveFiletypes": ["*"],
+  "eslint.autoFixOnSave": true,
   "suggest.noselect": true,
   "snippets.priority": 200,
   "http.proxyStrictSSL": false,

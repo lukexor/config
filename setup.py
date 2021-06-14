@@ -7,6 +7,7 @@ DOTFILES = [
   'agignore',
   'bash_profile',
   'bashrc',
+  'git-completion.bash',
   'ctags',
   'editrc',
   'gitconfig',

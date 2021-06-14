@@ -12,6 +12,7 @@
 # == Media
 
 *.swf
+*.mp4
 docs/
 
 # == Archives

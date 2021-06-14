@@ -79,6 +79,7 @@ sourcefile "/usr/local/opt/nvm/nvm.sh"
 for DIR in /usr/local/etc/bash_completion.d/*; do
   sourcefile $DIR
 done
+sourcefile "$HOME/.git-completion.bash"
 
 # == Bash Settings {{{1
 # ==================================================================================================
@@ -518,14 +519,8 @@ current_branch() {
   ref=$(git symbolic-ref HEAD 2> /dev/null) || return
   echo "${ref#refs/heads/}"
 }
-gc() {
-    git commit "$@"
-    # tags > /dev/null 2>&1 &
-}
-gco() {
-    git checkout "$@"
-    # tags > /dev/null 2>&1 &
-}
+alias gc="git commit"
+alias gco="git checkout"
 gops() {
     git push origin $(current_branch) $@ -u
 }
