@@ -66,6 +66,13 @@ impl$2 $1$2 {
 }
 endsnippet
 
+snippet pst "Pub struct definition"
+pub struct ${1:`!p snip.rv = ''.join(word.title() for word in snip.basename.split('_'))`} {
+    ${VISUAL}$0
+}
+endsnippet
+
+
 snippet ty "Type alias"
 type ${1:Type} = $0;
 endsnippet
@@ -106,10 +113,30 @@ impl$4 ${1:type/trait}${2: for ${3:type}}${4:<${5:T}>} {
 }
 endsnippet
 
-snippet idebug "impl Debug" b
+snippet idef "impl Default" b
+impl Default for ${1:type} {
+    fn default() -> Self {
+        Self {
+            ${VISUAL}$0
+        }
+    }
+}
+endsnippet
+
+snippet ifrom "impl From" b
+impl From<${1:type}> for ${2:type} {
+    fn from(${3:value}: $1) -> Self {
+        Self {
+            ${VISUAL}$0
+        }
+    }
+}
+endsnippet
+
+snippet idbg "impl Debug" b
 impl std::fmt::Debug for ${1:type} {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-      ${VISUAL}$0
+        ${VISUAL}$0
     }
 }
 endsnippet
@@ -143,8 +170,9 @@ snippet testmod "test module" b
 mod tests {
     use super::${1:*};
 
+    #[test]
     fn ${2:name}() {
-      ${VISUAL}$0
+        ${VISUAL}$0
     }
 }
 endsnippet
@@ -248,5 +276,9 @@ for ${1:i} in ${2} {
 endsnippet
 
 snippet unim "unimplemented!()"
-unimplemented!($1)
+unimplemented!($1);
+endsnippet
+
+snippet todo "todo!()"
+todo!($1);
 endsnippet

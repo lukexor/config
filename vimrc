@@ -94,8 +94,8 @@ let g:fzf_commits_log_options = '--graph --pretty=format:"%C(yellow)%h (%p) %ai%
 let g:closetag_filetypes = 'xml,xhtml,javascript,javascript.jsx,typescript.tsx'
 let g:closetag_xhtml_filetypes = 'xml,xhtml,javascript,javascript.jsx,typescript.tsx'
 
-let g:coc_snippet_next = '<C-j>'
-let g:coc_snippet_pref = '<C-k>'
+let g:coc_snippet_next = '<C-l>'
+let g:coc_snippet_pref = '<C-h>'
 let g:coc_disable_transparent_cursor = 1
 let g:coc_global_extensions = [
   \ 'coc-css',
