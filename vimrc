@@ -80,6 +80,7 @@ Plug 'gerw/vim-HiLinkTrace'
 "
 Plug 'tpope/vim-dispatch'                                " Run tasks in the background
 Plug 'tpope/vim-repeat'                                  " Repeat last command using '.'
+Plug 'puremourning/vimspector'                           " Graphical debugger
 
 " 2}}}
 
@@ -461,8 +462,8 @@ xnoremap <silent> x "_x
 vnoremap <C-V> v
 vnoremap v <C-V>
 
+" Paste from CLIPBOARD
 inoremap <C-v> <c-r>+
-nnoremap <C-v> "+p
 
 " Surround text with punctuation easier 'you surround' + motion
 nmap <leader>" ysiw"
