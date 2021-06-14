@@ -271,6 +271,21 @@ let g:tagbar_type_typescript = {
   \ ]
 \ }
 
+" -- Vimspector   {{{2
+" --------------------------------------------------------------------------------------------------
+
+let g:vimspector_enable_mappings = 'HUMAN'
+let g:vimspector_install_gadgets = [ 'vscode-cpptools', 'CodeLLDB', 'debugger-for-chrome' ]
+
+" mnemonic 'di' = 'debug inspect'
+nmap <leader>dd :call vimspector#Launch()<CR>
+nmap <leader>dx :VimspectorReset<CR>
+nmap <leader>de :VimspectorEval
+nmap <leader>dw :VimspectorWatch
+nmap <leader>do :VimspectorShowOutput
+nmap <leader>di <Plug>VimspectorBalloonEval
+xmap <leader>di <Plug>VimspectorBalloonEval
+
 " == Mappings   {{{1
 " ==================================================================================================
 
