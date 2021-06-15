@@ -301,7 +301,7 @@ alias grm='git rm'
 alias gsl='git --no-pager stash list'
 alias gss='git status -s'
 alias gst='git status'
-alias gt=git_time_since_commit
+alias gt='git tag'
 alias gtoday='git --no-pager log --graph --pretty=format:"%C(yellow)%h %ad%Cred%d %Creset%Cblue[%cn]%Creset  %s (%ar)" --date=iso --all --branches=* --remotes=* --since="23 hours ago" --author="$(git config user.name)"'
 alias gun='git reset HEAD --'
 

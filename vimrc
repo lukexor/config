@@ -379,6 +379,8 @@ nmap <leader>rn <Plug>(coc-rename)
 nmap <leader>prn :CocSearch <C-R>=expand("<cword>")<CR><CR>
 
 " Remap keys for applying codeAction to the current buffer.
+xmap <leader>aa  :CocAction<CR>
+nmap <leader>aa  :CocAction<CR>
 xmap <leader>ac  <Plug>(coc-codeaction)
 nmap <leader>ac  <Plug>(coc-codeaction)
 xmap <leader>as  <Plug>(coc-codeaction-selected)
@@ -811,12 +813,6 @@ fun! NERDTreeSync()
 endfun
 
 
-fun! SetFormatExpr()
-  if CocHasProvider('formatSelected')
-    set formatexpr=CocActionAsync('formatSelected')
-  endif
-endf
-
 fun CurrentFunction()
   return tagbar#currenttag('[%s]','','')
 endf
@@ -887,7 +883,6 @@ augroup Filetypes
   autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
   autocmd User CocStatusChange,CocDiagnosticChange call lightline#update()
 
-  autocmd BufRead,BufNewFile * call SetFormatExpr()
   autocmd BufRead,BufNewFile *.md set filetype=markdown
   autocmd BufRead,BufNewFile *.js,*.jsx nmap <leader>F :call CocActionAsync('runCommand', 'eslint.executeAutofix')<CR>
   autocmd BufRead,BufNewFile *.ts,*.tsx nmap <leader>F :call CocActionAsync('runCommand', 'tsserver.executeAutofix')<CR>:call CocActionAsync('runCommand', 'eslint.executeAutofix')<CR>
