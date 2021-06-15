@@ -80,6 +80,7 @@ Plug 'gerw/vim-HiLinkTrace'
 "
 Plug 'tpope/vim-dispatch'                                " Run tasks in the background
 Plug 'tpope/vim-repeat'                                  " Repeat last command using '.'
+Plug 'puremourning/vimspector'                           " Graphical debugger
 
 " 2}}}
 
@@ -168,10 +169,10 @@ let g:NERDTreeWinSize = 35
 " --------------------------------------------------------------------------------------------------
 
 let g:gutentags_add_default_project_roots = 0
-let g:gutentags_project_root = ['package.json', '.git', 'cargo.toml']
+let g:gutentags_project_root = ['package.json', '.git', 'Cargo.toml']
+let g:gutentags_generate_on_new = 0
 let g:gutentags_generate_on_missing = 1
 let g:gutentags_generate_on_write = 1
-let g:gutentags_generate_on_empty_buffer = 0
 
 " -- Tagbar   {{{2
 " --------------------------------------------------------------------------------------------------
@@ -269,6 +270,21 @@ let g:tagbar_type_typescript = {
     \ 'S:styled components'
   \ ]
 \ }
+
+" -- Vimspector   {{{2
+" --------------------------------------------------------------------------------------------------
+
+let g:vimspector_enable_mappings = 'HUMAN'
+let g:vimspector_install_gadgets = [ 'vscode-cpptools', 'CodeLLDB', 'debugger-for-chrome' ]
+
+" mnemonic 'di' = 'debug inspect'
+nmap <leader>dd :call vimspector#Launch()<CR>
+nmap <leader>dx :VimspectorReset<CR>
+nmap <leader>de :VimspectorEval
+nmap <leader>dw :VimspectorWatch
+nmap <leader>do :VimspectorShowOutput
+nmap <leader>di <Plug>VimspectorBalloonEval
+xmap <leader>di <Plug>VimspectorBalloonEval
 
 " == Mappings   {{{1
 " ==================================================================================================
@@ -462,6 +478,9 @@ xnoremap <silent> x "_x
 " Swap visual and visual linewise shortcuts
 vnoremap <C-V> v
 vnoremap v <C-V>
+
+" Paste from CLIPBOARD
+inoremap <C-v> <c-r>+
 
 " Surround text with punctuation easier 'you surround' + motion
 nmap <leader>" ysiw"
@@ -777,7 +796,11 @@ set nowritebackup
 "           | |     |   |      |     |     +---Remember last # commands
 "           | |     |   |      |     |     |   +--Save/restore buffer list
 "           v v     v   v      v     v     v   v  +-- Viminfo file
-set viminfo=h,'100,f1,<10000,s1000,/1000,:1000,%,n$HOME/.vim/files/info/viminfo
+if !has('nvim')
+  set viminfo=h,'100,f1,<10000,s1000,/1000,:1000,%,n$HOME/.vim/files/info/viminfo
+else
+  set viminfo+=n$HOME/.vim/files/info/viminfo
+endif
 
 " Set spellfile to location that is guaranteed to exist, can be symlinked to
 " Dropbox or kept in Git and managed outside of thoughtbot/dotfiles using rcm.
@@ -940,7 +963,6 @@ iabbrev eml lukexor@gmail.com
 iabbrev eml2 me@lukeworks.tech
 iabbrev adn and
 iabbrev cpy Copyright Lucas Petherbridge. All Rights Reserved.
-iabbrev copy Copyright Lucas Petherbridge. All Rights Reserved.
 iabbrev liek like
 iabbrev liekwise likewise
 iabbrev pritn print

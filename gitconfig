@@ -21,7 +21,7 @@
   last = log -1 HEAD
 [core]
   excludesfile = ~/.gitignore
-  editor = vim
+  editor = vim -i NONE
   pager = less -+F -+X -x1,5
 [color]
   # Use colors in Git commands that are capable of colored output when outputting

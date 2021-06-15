@@ -87,3 +87,4 @@ tags.*
 .gitconfig.local
 .vim
 .vimrc
+*.mp4
