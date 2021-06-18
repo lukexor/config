@@ -275,7 +275,7 @@ let g:tagbar_type_typescript = {
 " --------------------------------------------------------------------------------------------------
 
 let g:vimspector_enable_mappings = 'HUMAN'
-let g:vimspector_install_gadgets = [ 'vscode-cpptools', 'CodeLLDB', 'debugger-for-chrome' ]
+let g:vimspector_install_gadgets = [ 'CodeLLDB', 'debugger-for-chrome', 'vscode-bash-debug' ]
 
 " mnemonic 'di' = 'debug inspect'
 nmap <leader>dd :call vimspector#Launch()<CR>

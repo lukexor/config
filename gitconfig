@@ -1,6 +1,5 @@
 [include]
   path = ~/.gitconfig.local
-
 [fetch]
   prune = true
 [merge]
@@ -53,4 +52,4 @@
 [pull]
   rebase = false
 [init]
-	defaultBranch = main
+  defaultBranch = main
