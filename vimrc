@@ -18,6 +18,8 @@ let maplocalleader=','
 let g:show_gutter = 1  " Used by ToggleGutter
 
 set nocompatible  " Disable VI backwards compatible settings. Must be first
+set shell=/bin/bash
+let $SHELL="/bin/bash"
 
 " == Plugins   {{{1
 " ==================================================================================================

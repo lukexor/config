@@ -416,7 +416,7 @@ kill_agent() {
     rm -f /tmp/ssh-agent-$HOSTNAME-info
 }
 agent_running() {
-    if [ $(pg ssh-agent-$HOSTNAME|grep -v grep -c) -gt 0 ]; then
+    if [ $(pg ssh-agent-$HOSTNAME|grep -v rg -c) -gt 0 ]; then
         return 0;
     fi;
     return 1;

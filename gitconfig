@@ -3,9 +3,9 @@
 [fetch]
   prune = true
 [merge]
-  tool = vimdiff
+  tool = nvimdiff3
 [diff]
-  tool = vimdiff
+  tool = nvimdiff3
 [difftool]
   prompt = false
 [alias]
@@ -20,8 +20,10 @@
   last = log -1 HEAD
 [core]
   excludesfile = ~/.gitignore
-  editor = vim -i NONE
-  pager = less -+F -+X -x1,5
+  editor = nvim -i NONE
+  pager = nvim -R -i NONE -c 'setlocal nolist nofoldenable'
+[pager]
+  color = false
 [color]
   # Use colors in Git commands that are capable of colored output when outputting
   # to the terminal
