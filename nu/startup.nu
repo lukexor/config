@@ -98,3 +98,20 @@ def ra [] {
 def vf [] {
   (fzf-tmux) | compact | each { nvim $it }
 }
+
+# Output git branches with last commit.
+def gb-age [] {
+  git branch | lines | str substring 2, | wrap name | insert "last commit" {
+      get name | each {
+          git show $it --no-patch --format=%as
+      }
+  } | sort-by "last commit"
+}
+
+# Clean old git branches.
+dev gb-clean [] {
+  git branch -vl | lines | str substring 2, | split column " " branch hash status --collapse-empty | where status == '[gone]' | each { git branch -d $it.branch }
+}
+
+# Start a new tmux session if we're not already in one.
+if ($nu.env | pivot name value | any? name == TMUX) {} { tmux new -c ~ }

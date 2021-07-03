@@ -310,7 +310,7 @@ nmap <leader>w :w<CR>
 nmap <leader>x :x<CR>
 
 " Vimrc/Snippets
-nmap <localleader>ev :vsplit $MYVIMRC<CR>
+nmap <localleader>ev :vsplit ~/.vimrc<CR>
 nmap <localleader>es :CocCommand snippets.editSnippets<CR>
 nmap <localleader>ls :CocList snippets<CR>
 nmap <localleader>gc :Commits<CR>
@@ -909,6 +909,7 @@ augroup Filetypes
   autocmd User CocStatusChange,CocDiagnosticChange call lightline#update()
 
   autocmd BufRead,BufNewFile *.md set filetype=markdown
+  autocmd BufRead,BufNewFile *.nu set filetype=sh
   autocmd BufRead,BufNewFile *.js,*.jsx nmap <leader>F :call CocActionAsync('runCommand', 'eslint.executeAutofix')<CR>
   autocmd BufRead,BufNewFile *.ts,*.tsx nmap <leader>F :call CocActionAsync('runCommand', 'tsserver.executeAutofix')<CR>:call CocActionAsync('runCommand', 'eslint.executeAutofix')<CR>
   autocmd Filetype kotlin setlocal softtabstop=4 shiftwidth=4
