@@ -10,10 +10,10 @@ alias ct = cargo test
 alias da = (date now | date format '%Y-%m-%d %H:%M:%S')
 alias g = git
 alias ga = git add
-alias gb = git branch -v
+alias gb = git --no-pager branch -v
 alias gba = git branch -a
-alias gbm = git branch -v --merged
-alias gbnm = git branch -v --no-merged
+alias gbm = git --no-pager branch -v --merged
+alias gbnm = git --no-pager branch -v --no-merged
 alias gc = git commit
 alias gcb = git checkout -b
 alias gco = git checkout
@@ -22,7 +22,7 @@ alias gd = git diff
 alias gdt = git difftool
 alias gf = git fetch origin
 alias glg = git log --graph --pretty=format:'%C(yellow)%h (%p) %ai%Cred%d %Creset%Cblue[%ae]%Creset %s (%ar). %b %N'
-alias gops = (git rev-parse --abbrev-ref HEAD | git push origin $it -u)
+alias gops = git push origin (git rev-parse --abbrev-ref HEAD) -u
 alias gpl = git pull
 alias gps = git push
 alias grhh = git reset HEAD --hard
@@ -30,7 +30,7 @@ alias grm = git rm
 alias gsl = git --no-pager stash list
 alias gst = git status
 alias gt = git tag
-alias gtoday = git --no-pager log --graph --pretty=format:'%C(yellow)%h %ad%Cred%d %Creset%Cblue[%cn]%Creset  %s (%ar)' --date=iso --all --branches=* --remotes=* --since='23 hours ago' --author='$(git config user.name)'
+alias gtoday = git --no-pager log --graph --pretty=format:'%C(yellow)%h %ad%Cred%d %Creset%Cblue[%cn]%Creset  %s (%ar)' --date=iso --all --branches=* --remotes=* --since='23 hours ago' --author=$(git config user.email)
 alias gun = git reset HEAD --
 alias h = history
 alias fbroken = find . -maxdepth 1 -type l ! -exec test -e '{}' ';' -print
@@ -54,8 +54,8 @@ alias tm = tm.sh
 alias topc = (ps | sort-by cpu | reverse | first 10)
 alias topm = (ps | sort-by mem | reverse | first 10)
 alias v = nvim
-alias version = (^version | pivot key value)
 alias vi = nvim
+alias vf = (let f = (fzf-tmux); if $f | empty? {} { nvim $f })
 alias vim = nvim
 alias vnu = nvim ~/cargo.toml
 alias vrc = nvim ~/.vimrc
@@ -73,7 +73,7 @@ def hl [count: int] {
 
 # Output history containing given text.
 def hs [search: string] {
-  history | where (echo $it | str contains $search)
+  history | where ($it | str contains $search)
 }
 
 # Search process list for a given string.
@@ -83,14 +83,14 @@ def pg [search: string] {
 
 # Output PATH variables.
 def "path list" [] {
-  echo $nu.path
+  $nu.path
 }
 
 # Restart ssh-agent.
 def ra [] {
   pg ssh-agent | each { kill $it.pid }
   let agent = (ssh-agent -s -a /tmp/ssh-agent)
-  echo $agent | save /tmp/ssh-agent-info
+  $agent | save /tmp/ssh-agent-info
   ssh-add ~/.ssh/id_rsa
 }
 

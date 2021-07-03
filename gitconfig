@@ -21,9 +21,7 @@
 [core]
   excludesfile = ~/.gitignore
   editor = nvim -i NONE
-  pager = nvim -R -i NONE -c 'setlocal nolist nofoldenable'
-[pager]
-  color = false
+  pager =  less -+F -+X -x1,5
 [color]
   # Use colors in Git commands that are capable of colored output when outputting
   # to the terminal
