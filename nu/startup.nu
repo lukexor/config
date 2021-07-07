@@ -15,6 +15,7 @@ alias gba = git branch -a
 alias gbm = git --no-pager branch -v --merged
 alias gbnm = git --no-pager branch -v --no-merged
 alias gc = git commit
+alias gcam = git commit --amend
 alias gcb = git checkout -b
 alias gco = git checkout
 alias gcp = git cherry-pick
@@ -22,6 +23,7 @@ alias gd = git diff
 alias gdt = git difftool
 alias gf = git fetch origin
 alias glg = git log --graph --pretty=format:'%C(yellow)%h (%p) %ai%Cred%d %Creset%Cblue[%ae]%Creset %s (%ar). %b %N'
+alias gm = git merge
 alias gops = git push origin (git rev-parse --abbrev-ref HEAD) -u
 alias gpl = git pull
 alias gps = git push
@@ -55,7 +57,6 @@ alias topc = (ps | sort-by cpu | reverse | first 10)
 alias topm = (ps | sort-by mem | reverse | first 10)
 alias v = nvim
 alias vi = nvim
-alias vf = (let f = (fzf-tmux); if $f | empty? {} { nvim $f })
 alias vim = nvim
 alias vnu = nvim ~/cargo.toml
 alias vrc = nvim ~/.vimrc
@@ -94,11 +95,6 @@ def ra [] {
   ssh-add ~/.ssh/id_rsa
 }
 
-# Edit file using FZF.
-def vf [] {
-  (fzf-tmux) | compact | each { nvim $it }
-}
-
 # Output git branches with last commit.
 def gb-age [] {
   git branch | lines | str substring 2, | wrap name | insert "last commit" {
@@ -109,8 +105,14 @@ def gb-age [] {
 }
 
 # Clean old git branches.
-dev gb-clean [] {
+def gb-clean [] {
   git branch -vl | lines | str substring 2, | split column " " branch hash status --collapse-empty | where status == '[gone]' | each { git branch -d $it.branch }
+}
+
+# Search and edit file with FZF.
+def vf [] {
+  let f = (fzf-tmux)
+  if (echo $f | empty?) {} { nvim $f }
 }
 
 # Start a new tmux session if we're not already in one.

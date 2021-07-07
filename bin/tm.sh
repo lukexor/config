@@ -5,10 +5,10 @@
 
 function newSession() {
   read -p "Enter new session name: " SESSION_NAME
-  tmux new-session -d -s $SESSION_NAME -n "editor"
-  tmux new-window -d -n "shell"
-  tmux new-window -d -n "shell"
-  tmux new-window -d -n "services"
+  tmux new-session -d -s $SESSION_NAME -n "nvim"
+  tmux new-window -d -n "nu"
+  tmux new-window -d -n "nu"
+  tmux new-window -d -n "nu"
   tmux attach-session -d -t $SESSION_NAME
 }
 
