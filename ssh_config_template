@@ -1,5 +1,0 @@
-host lp
-    Hostname <IP>
-    port <PORT>
-    User <USER>
-    IdentityFile <FILE>

@@ -1,0 +1,10 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhistcnt =8
+let g:netrw_dirhist_8='/Users/LucasPetherbridge/dev/pix-engine/src'
+let g:netrw_dirhist_7='/Users/LucasPetherbridge/dev/pix-engine/src/state'
+let g:netrw_dirhist_6='/Users/LucasPetherbridge/dev/pix-engine/src'
+let g:netrw_dirhist_5='/Users/LucasPetherbridge/dev/pix-engine/src/renderer'
+let g:netrw_dirhist_4='/Users/LucasPetherbridge/dev/pix-engine/src'
+let g:netrw_dirhist_3='/Users/LucasPetherbridge/dev/Admin-API'
+let g:netrw_dirhist_2='/Users/LucasPetherbridge/dev/Account-Center-API'
+let g:netrw_dirhist_1='/Users/LucasPetherbridge/.dotfiles'

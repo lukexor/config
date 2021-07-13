@@ -1,0 +1,28 @@
+[init]
+  defaultBranch = main
+[include]
+  path = ~/.gitconfig.local
+[fetch]
+  prune = true
+[merge]
+  tool = nvimdiff3
+[diff]
+  tool = nvimdiff3
+[core]
+  excludesfile = ~/.gitignore
+  editor = nvim -i NONE
+  pager =  less -+F -+X -x1,5
+[color "branch"]
+  current = yellow reverse
+  local = yellow
+  remote = green
+[color "diff"]
+  meta = yellow bold
+  frag = magenta bold
+  old = red bold
+  new = green bold
+  whitespace = red reverse
+[color "status"]
+  added = green
+  changed = yellow
+  untracked = cyan

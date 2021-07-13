@@ -1,0 +1,50 @@
+*.exe*
+*.o
+*.so
+*.pyc
+build
+dist
+target
+node_modules
+
+# Temporary files #
+###################
+*.cache
+*.tmp
+tmp
+*.swp
+*.swo
+*.local
+*~
+~*
+*.bak
+*.orig
+TODO*
+
+# Logs #
+########
+*.log
+logs
+
+# OS generated files #
+######################
+.DS_Store*
+*.db
+Icon\?
+._*
+Desktop.ini
+.Spotlight-V100
+.Trashes
+
+# Misc #
+########
+tags
+ctags
+.project
+.settings
+*.env
+.env*
+*.patch
+.gitconfig.local
+plugins
+sessions

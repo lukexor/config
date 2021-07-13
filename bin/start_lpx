@@ -1,6 +1,0 @@
-#!/bin/bash
-
-tmux new-session -s 'Servers' \; \
-    send-keys 'cd ~/dev/line-planning-tool-ui && npm start' C-m \; \
-    split-window -h \; \
-    send-keys 'cd ~/dev/line-planning-services && npm start' C-m \;
