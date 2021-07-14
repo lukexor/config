@@ -36,7 +36,9 @@ echo $npm_packages | each { npm install -g $it }
 
 if (which rustup | empty?) {
   curl --proto "=https" --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --no-modify-path
-} {}
+} {
+  rustup update
+}
 echo $cargo_packages | each { cargo install $it }
 echo $cargo_components | each { rustup component add $it }
 
