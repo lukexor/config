@@ -84,6 +84,7 @@ Plug 'gerw/vim-HiLinkTrace'
 Plug 'neovim/nvim-lspconfig'
 Plug 'kabouzeid/nvim-lspinstall'
 Plug 'sainnhe/gruvbox-material'
+Plug 'nvim-lua/lsp_extensions.nvim'
 
 " -- Utility/Support   {{{2
 " --------------------------------------------------------------------------------------------------
@@ -114,7 +115,7 @@ let g:snips_author = system('git config --get user.name | tr -d "\n"')
 let g:snips_author_email = system('git config --get user.email | tr -d "\n"')
 
 let g:lightline = {
-  \ 'colorscheme': 'seoul256',
+  \ 'colorscheme': 'gruvbox_material',
   \ 'active': {
   \   'left': [ [ 'mode', 'paste' ],
   \             [ 'readonly', 'filename', 'modified', 'function' ] ],
@@ -128,8 +129,6 @@ let g:lightline = {
   \   'gitstatus': 'FugitiveStatusline',
   \ },
 \ }
-
-let g:gruvbox_material_diagnostic_virtual_text = 'colored'
 
 let g:plug_window = 'noautocmd vertical topleft new'
 
@@ -353,14 +352,14 @@ nmap <leader>, :set list<cr>
 " Shows stats
 nnoremap <localleader>q g<c-g>
 
-nnoremap <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
+nnoremap <F10> :echo "hi<" . srustCommentLineDocynIDattr(synID(line("."),col("."),1),"name") . '> trans<'
   \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
   \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
 
 nnoremap <localleader>1 :call OpenNERDTree()<CR>
 nnoremap <localleader>2 :TagbarToggle<CR>
 nnoremap <localleader>3 :call ToggleGutter()<CR>
-nnoremap <localleader>4 :call TogglePaste()<CR>
+nnoremap <localleader>4 :set paste!<CR>
 nnoremap <localleader>5 :set rnu!<CR>
 
 " -- Search   {{{2
@@ -397,8 +396,18 @@ vnoremap <leader><cr> :nohlsearch<cr>
 filetype plugin indent on       " Load plugins according to detected filetype
 syntax on                       " Enable syntax highlighting
 
+if has('termguicolors')
+  set termguicolors
+endif
+
 set background=dark
+let g:gruvbox_material_background = 'hard'
+let g:gruvbox_material_enable_italic = 1
+let g:gruvbox_material_diagnostic_virtual_text = 'colored'
+let g:gruvbox_material_better_performance = 1
 colorscheme gruvbox-material
+
+hi SpecialComment ctermfg=108 guifg=#89b482 guisp=#89b482
 
 if &modifiable
   set fileformat=unix
@@ -588,15 +597,6 @@ func! LightlineFilename()
   return expand('%:t') !=# '' ? @% : '[No Name]'
 endfun
 
-fun! TogglePaste()
-  set paste!
-  if &paste
-    hi StatusLine ctermbg=253 ctermfg=52
-  else
-    hi StatusLine ctermbg=238 ctermfg=253
-  endif
-endfun
-
 fun! FormatKotlin()
   exec 'Dispatch! ktlint -F ' . expand('%')
 endf
@@ -676,8 +676,8 @@ augroup Init
   autocmd InsertLeave * set nopaste
 
   " Color Insert mode differently
-  autocmd InsertEnter * hi CursorLine ctermbg=23
-  autocmd InsertLeave * hi CursorLine ctermbg=236
+  autocmd InsertEnter * hi CursorLine ctermbg=237 guibg=#3c3836
+  autocmd InsertLeave * hi CursorLine ctermbg=235 guibg=#282828
 augroup END
 
 " == Abbreviations   {{{1
