@@ -2,7 +2,7 @@ alias _ = sudo
 alias cb = cargo build
 alias cbr = cargo build --release
 alias cc = cargo clippy
-alias cdot = cd ~/.dotfiles
+alias cfg = cd ~/config
 alias cr = cargo run
 alias cre = cargo run --example
 alias crr = cargo run --release
@@ -54,6 +54,7 @@ alias sshl = ssh-add -L
 alias topc = (ps | sort-by cpu | reverse | first 10)
 alias topm = (ps | sort-by mem | reverse | first 10)
 alias v = nvim
+alias vf = nvim (fzf-tmux)
 alias vi = nvim
 alias vim = nvim
 alias vnu = nvim ($nu.config-path)
@@ -106,10 +107,4 @@ def gb-age [] {
 # Clean old git branches.
 def gb-clean [] {
   git branch -vl | lines | str substring 2, | split column " " branch hash status --collapse-empty | where status == '[gone]' | each { git branch -d $it.branch }
-}
-
-# Search and edit file with FZF.
-def vf [] {
-  let f = (fzf-tmux)
-  if (echo $f | empty?) {} { echo $f; nvim $f }
 }
