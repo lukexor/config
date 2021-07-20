@@ -126,7 +126,7 @@ let g:lightline = {
   \ 'component_function': {
   \   'function': 'CurrentFunction',
   \   'filename': 'LightlineFilename',
-  \   'gitstatus': 'FugitiveStatusline',
+  \   'gitstatus': 'FugitiveHead',
   \ },
 \ }
 
