@@ -34,7 +34,7 @@ alias gst = git status
 alias gt = git tag
 alias gtoday = git --no-pager log --graph --pretty=format:'%C(yellow)%h %ad%Cred%d %Creset%Cblue[%cn]%Creset  %s (%ar)' --date=iso --all --branches=* --remotes=* --since='23 hours ago' --author=$(git config user.email)
 alias gun = git reset HEAD --
-alias h = history
+alias h = (history | wrap | rename command)
 alias fbroken = find . -maxdepth 1 -type l ! -exec test -e '{}' ';' -print
 alias k = kubectl
 alias ls = ls -s
@@ -79,7 +79,7 @@ def hs [search: string] {
 
 # Search process list for a given string.
 def pg [search: string] {
-  ps | where ($it.name | str contains $search)
+  ps -l | where ($it.name | str contains $search)
 }
 
 # Output PATH variables.
@@ -97,7 +97,7 @@ def ra [] {
 
 # Output git branches with last commit.
 def gb-age [] {
-  git branch | lines | str substring 2, | wrap name | insert "last commit" {
+  git branch -a | lines | str substring 2, | wrap name | where name !~ HEAD | insert "last commit" {
       get name | each {
           git show $it --no-patch --format=%as
       }

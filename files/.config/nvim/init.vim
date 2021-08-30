@@ -24,12 +24,6 @@ let $SHELL="/bin/bash"
 " == Plugins   {{{1
 " ==================================================================================================
 
-let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim'
-if empty(glob(data_dir . '/autoload/plug.vim'))
-  silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
-  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
-endif
-
 call plug#begin('~/.config/nvim/plugins')
 
 " -- Enhancements   {{{2
@@ -121,7 +115,8 @@ let g:lightline = {
   \             [ 'readonly', 'filename', 'modified', 'function' ] ],
   \   'right': [ [ 'lineinfo' ],
   \              [ 'percent' ],
-  \              [ 'gitstatus', 'filetype' ] ],
+  \              [ 'gitstatus', 'filetype' ],
+  \              [ 'charvaluehex' ] ],
   \ },
   \ 'component_function': {
   \   'function': 'CurrentFunction',
@@ -152,7 +147,14 @@ let g:vimspector_enable_mappings = 'HUMAN'
 let g:vimspector_install_gadgets = [ 'CodeLLDB', 'debugger-for-chrome', 'vscode-bash-debug' ]
 
 " mnemonic 'di' = 'debug inspect'
-nmap <leader>dd :call vimspector#Launch()<CR>
+nmap <leader>dd <Plug>VimspectorLaunch
+nmap <leader>db <Plug>VimspectorToggleBreakpoint
+nmap <leader>dc <Plug>VimspectorContinue
+nmap <leader>dq <Plug>VimspectorStop
+nmap <leader>dO <Plug>VimspectorStepOver
+nmap <leader>dI <Plug>VimspectorStepInto
+nmap <leader>dE <Plug>VimspectorStepOut
+nmap <leader>dr <Plug>VimspectorRunToCursor
 nmap <leader>dx :VimspectorReset<CR>
 nmap <leader>de :VimspectorEval
 nmap <leader>dw :VimspectorWatch
@@ -458,6 +460,8 @@ endif
 set updatecount=50              " Save every # characters typed
 set virtualedit=block           " Allow virtual block to put cursor where there's no actual text
 
+nmap gT :call RunTest()<CR>
+
 " formatoptions set as autocmd
 
 " -- Status   {{{2
@@ -597,10 +601,6 @@ func! LightlineFilename()
   return expand('%:t') !=# '' ? @% : '[No Name]'
 endfun
 
-fun! FormatKotlin()
-  exec 'Dispatch! ktlint -F ' . expand('%')
-endf
-
 fun! CloseBuffer()
     if len(filter(range(1, bufnr('$')), 'buflisted(v:val)')) > 1
         execute ':bn|bd #'
@@ -615,6 +615,17 @@ fun! CloseAllBuffersButCurrent()
 
   if curr > 1    | silent! execute "1,".(curr-1)."bd"     | endif
   if curr < last | silent! execute (curr+1).",".last."bd" | endif
+endfun
+
+fun! RunTest()
+  let in_test = match(expand("%"), '\(.test.ts\)$') != -1
+  if in_test
+    if expand("%") != ""
+      :w
+    end
+    let filename = substitute(expand("%"), '\(.test.ts\)$', '.ts', "")
+    exec ":!npm run test " . @% . " -- --coverage --collectCoverageOnlyFrom " . filename
+  end
 endfun
 
 fun! ToggleGutter()
@@ -637,7 +648,6 @@ augroup Filetypes
   autocmd BufRead,BufNewFile *.nu set filetype=sh
   autocmd Filetype kotlin setlocal softtabstop=4 shiftwidth=4
   autocmd Filetype man setlocal nolist
-  autocmd BufWritePost *.kt,*.kts call FormatKotlin(
   " c: Wrap comments using textwidth
   " r: Continue comments when pressing ENTER in I mode
   " q: Enable formatting of comments with gq
@@ -668,8 +678,8 @@ augroup Init
   " Automatically rebalance windows on vim resize
   autocmd VimResized * :wincmd =
 
-  " Don't do it for commit messages, when the position is invalid, or when
   " When editing a file, always jump to the last known cursor position.
+  " Don't do it for commit messages, when the position is invalid, or when
   autocmd BufReadPost * if &ft != 'gitcommit' && line("'\"") > 0 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
 
   " Leave paste mode when leaving insert mode

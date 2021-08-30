@@ -1,4 +1,4 @@
---Enable (broadcasting) snippet capability for completion
+-- Enable (broadcasting) snippet capability for completion
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities.textDocument.completion.completionItem.snippetSupport = true
 capabilities.textDocument.completion.completionItem.resolveSupport = {
@@ -9,25 +9,42 @@ capabilities.textDocument.completion.completionItem.resolveSupport = {
   }
 }
 
-local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
-local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
+local buf_set_keymap = function (...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
+local buf_set_option = function (...) vim.api.nvim_buf_set_option(bufnr, ...) end
+
+local format_async = function(err, _, result, _, bufnr)
+  if err ~= nil or result == nil then return end
+  if not vim.api.nvim_buf_get_option(bufnr, "modified") then
+    local view = vim.fn.winsaveview()
+    vim.lsp.util.apply_text_edits(result, bufnr)
+    vim.fn.winrestview(view)
+    if bufnr == vim.api.nvim_get_current_buf() then
+      vim.api.nvim_command("noautocmd :update")
+    end
+  end
+end
 
 -- Use an on_attach function to only map the following keys
 -- after the language server attaches to the current buffer
 local on_attach = function(client, bufnr)
-  --Enable completion triggered by <c-x><c-o>
+  -- Enable completion triggered by <c-x><c-o>
   buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
 
   -- Mappings.
   local opts = { noremap=true, silent=true }
 
-  local signs = { Error = " ", Warning = " ", Hint = " ", Information = " " }
+  local signs = { Error = "❗", Warning = "❕", Hint = "❔", Information = " " }
   for type, icon in pairs(signs) do
     local hl = "LspDiagnosticsSign" .. type
     vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
   end
 
-  vim.cmd [[autocmd CursorHold,CursorHoldI * lua require'nvim-lightbulb'.update_lightbulb()]]
+  vim.api.nvim_exec([[
+    augroup LspLightbulb
+      autocmd!
+      autocmd CursorHold,CursorHoldI * lua require'nvim-lightbulb'.update_lightbulb()
+    augroup END
+  ]], true)
 
   -- See `:help vim.lsp.*` for documentation on any of the below functions
   buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
@@ -39,18 +56,21 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
   buf_set_keymap('n', 'gR', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
   buf_set_keymap('n', 'ga', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
+  buf_set_keymap('n', 'gO', '<cmd>lua lsp_organize_imports()<CR>', opts)
   buf_set_keymap('n', '[e', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
   buf_set_keymap('n', ']e', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
   buf_set_keymap('n', 'ge', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
-  buf_set_keymap("n", "<leader>f", "<cmd>lua vim.lsp.buf.formatting_sync()<CR>", opts)
+  buf_set_keymap("n", "<leader>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
 
   if client.resolved_capabilities.document_formatting then
+    vim.lsp.handlers["textDocument/formatting"] = format_async
     vim.api.nvim_exec([[
       augroup LspFormat
         autocmd! * <buffer>
-        autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting_sync()
+        autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting()
       augroup END
-      ]], true)
+    ]], true)
+
   end
 end
 
@@ -89,7 +109,10 @@ require'compe'.setup {
 }
 
 vim.api.nvim_exec([[
-  autocmd CursorHold,CursorHoldI *.rs lua require'lsp_extensions'.inlay_hints{ highlight = "VirtualTextInfo", prefix = " ▸▸ ", aligned = false, only_current_line = true, enabled = { "TypeHint", "ChainingHint", "ParameterHint" } }
+  augroup LspInlay
+    autocmd!
+    autocmd VimEnter,InsertLeave,BufEnter,BufWinEnter,TabEnter,BufWritePost *.rs lua require'lsp_extensions'.inlay_hints{ highlight = "VirtualTextInfo", prefix = " ▸ ", aligned = false, enabled = { "TypeHint", "ChainingHint", "ParameterHint" } }
+  augroup END
 ]], true)
 
 local t = function(str)
@@ -126,6 +149,26 @@ local function setup_servers()
         }
       }
     elseif server == 'typescript' then
+      _G.lsp_organize_imports = function()
+        local params = {
+          command = "_typescript.organizeImports",
+              arguments = {vim.api.nvim_buf_get_name(0)},
+              title = ""
+          }
+          vim.lsp.buf.execute_command(params)
+      end
+
+      require'lspconfig'[server].setup{
+        on_attach = function(client)
+          client.resolved_capabilities.document_formatting = false
+          on_attach(client)
+        end,
+        capabilities = capabilities,
+        flags = {
+          debounce_text_changes = 150,
+        }
+      }
+    elseif server == 'html' then
       require'lspconfig'[server].setup{
         on_attach = function(client)
           client.resolved_capabilities.document_formatting = false
@@ -151,8 +194,8 @@ local function setup_servers()
             eslint = {
               sourceName = 'eslint',
               command = 'eslint_d',
-              rootPatterns = { '.eslintrc.js', 'package.json' },
-              debounce = 100,
+              rootPatterns = { 'package.json' },
+              debounce = 150,
               args = { '--stdin', '--stdin-filename', '%filepath', '--format', 'json' },
               parseJson = {
                 errorsRoot = '[0].messages',
@@ -183,7 +226,7 @@ local function setup_servers()
             json = 'prettier',
             typescript = 'prettier',
             typescriptreact = 'prettier'
-    }
+          }
         },
         on_attach = on_attach,
         capabilities = capabilities,
