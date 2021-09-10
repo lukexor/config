@@ -1,3 +1,5 @@
+let-env HOME = (build-string /Users/ (whoami | str trim))
+
 alias _ = sudo
 alias cb = cargo build
 alias cbr = cargo build --release
@@ -58,6 +60,7 @@ alias vf = nvim (fzf-tmux)
 alias vi = nvim
 alias vim = nvim
 alias vnu = nvim ($nu.config-path)
+alias vcfg = nvim ~/.config/nu/config.toml
 alias vnus = nvim ~/.config/nu/startup.nu
 alias vrc = nvim ~/.config/nvim/init.vim
 alias x = extract.sh

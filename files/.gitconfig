@@ -5,9 +5,9 @@
 [fetch]
   prune = true
 [merge]
-  tool = nvimdiff3
+  tool = nvimdiff
 [diff]
-  tool = nvimdiff3
+  tool = nvimdiff
 [core]
   excludesfile = ~/.gitignore
   editor = nvim -i NONE

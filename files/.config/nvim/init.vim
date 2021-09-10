@@ -181,6 +181,7 @@ nmap <leader>R :History<CR>
 
 " Quick save
 nmap <leader>w :w<CR>
+nmap <leader>W :noa w<CR>
 nmap <leader>x :x<CR>
 
 " Config/Snippets

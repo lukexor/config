@@ -70,7 +70,6 @@ local on_attach = function(client, bufnr)
         autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting()
       augroup END
     ]], true)
-
   end
 end
 
