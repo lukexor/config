@@ -110,7 +110,7 @@ require'compe'.setup {
 vim.api.nvim_exec([[
   augroup LspInlay
     autocmd!
-    autocmd VimEnter,InsertLeave,BufEnter,BufWinEnter,TabEnter,BufWritePost *.rs lua require'lsp_extensions'.inlay_hints{ highlight = "VirtualTextInfo", prefix = " ▸ ", aligned = false, enabled = { "TypeHint", "ChainingHint", "ParameterHint" } }
+    autocmd VimEnter,InsertLeave,BufEnter,BufWinEnter,TabEnter *.rs lua require'lsp_extensions'.inlay_hints{ highlight = "VirtualTextInfo", prefix = " ▸ ", aligned = false, enabled = { "TypeHint", "ChainingHint", "ParameterHint" } }
   augroup END
 ]], true)
 

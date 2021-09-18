@@ -1,5 +1,3 @@
-let-env HOME = (build-string /Users/ (whoami | str trim))
-
 alias _ = sudo
 alias cb = cargo build
 alias cbr = cargo build --release
