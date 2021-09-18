@@ -131,7 +131,20 @@ local function setup_servers()
   require'lspinstall'.setup()
   local servers = require'lspinstall'.installed_servers()
   for _, server in pairs(servers) do
-    if server == 'json' then
+    local formatting = true
+    if (server == 'html' or server == 'rust' or server == 'typescript' or server == 'javascript') then
+      formatting = false
+    end
+    if server == 'typescript' then
+      _G.lsp_organize_imports = function()
+        local params = {
+          command = "_typescript.organizeImports",
+              arguments = {vim.api.nvim_buf_get_name(0)},
+              title = ""
+          }
+          vim.lsp.buf.execute_command(params)
+      end
+    elseif server == 'json' then
       -- Range formatting for entire document
       require'lspconfig'[server].setup{
         commands = {
@@ -141,36 +154,8 @@ local function setup_servers()
             end
           }
         },
-        on_attach = on_attach,
-        capabilities = capabilities,
-        flags = {
-          debounce_text_changes = 150,
-        }
-      }
-    elseif server == 'typescript' then
-      _G.lsp_organize_imports = function()
-        local params = {
-          command = "_typescript.organizeImports",
-              arguments = {vim.api.nvim_buf_get_name(0)},
-              title = ""
-          }
-          vim.lsp.buf.execute_command(params)
-      end
-
-      require'lspconfig'[server].setup{
         on_attach = function(client)
-          client.resolved_capabilities.document_formatting = false
-          on_attach(client)
-        end,
-        capabilities = capabilities,
-        flags = {
-          debounce_text_changes = 150,
-        }
-      }
-    elseif server == 'html' then
-      require'lspconfig'[server].setup{
-        on_attach = function(client)
-          client.resolved_capabilities.document_formatting = false
+          client.resolved_capabilities.document_formatting = formatting
           on_attach(client)
         end,
         capabilities = capabilities,
@@ -227,7 +212,10 @@ local function setup_servers()
             typescriptreact = 'prettier'
           }
         },
-        on_attach = on_attach,
+        on_attach = function(client)
+          client.resolved_capabilities.document_formatting = formatting
+          on_attach(client)
+        end,
         capabilities = capabilities,
         flags = {
           debounce_text_changes = 150,
@@ -235,7 +223,10 @@ local function setup_servers()
       }
     else
       require'lspconfig'[server].setup{
-        on_attach = on_attach,
+        on_attach = function(client)
+          client.resolved_capabilities.document_formatting = formatting
+          on_attach(client)
+        end,
         capabilities = capabilities,
         flags = {
           debounce_text_changes = 150,
