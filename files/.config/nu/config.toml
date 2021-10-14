@@ -42,7 +42,7 @@ path = [
   "/Users/LucasPetherbridge/.nvm/versions/node/v14.16.1/bin",
   "/Users/LucasPetherbridge/.fzf/bin",
   "/Users/LucasPetherbridge/.cargo/bin",
-  "/usr/local/opt/openjdk/bin",
+  "/usr/local/opt/openjdk@11/bin",
   "/bin",
   "/usr/local/bin",
   "/usr/bin",
@@ -57,7 +57,7 @@ FZF_CTRL_T_COMMAND = "rg --files --hidden --no-ignore --ignore-file ~/.rgignore"
 FZF_DEFAULT_COMMAND = "rg --files --hidden --no-ignore --ignore-file ~/.rgignore"
 GOPATH = "/Users/lukepetherbridge/dev:/Users/LucasPetherbridge/dev"
 GOROOT = ""
-JAVA_HOME = "/usr/local/opt/openjdk/"
+JAVA_HOME = "/usr/local/opt/openjdk@11/"
 LESS = "-RFX"
 PAGER = "nvim -nR -i NONE -c 'setlocal ft=man nofoldenable nolist'"
 MANPAGER = "nvim -nR -i NONE -c 'setlocal ft=man nofoldenable nolist'"

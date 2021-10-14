@@ -144,7 +144,8 @@ local function setup_servers()
           }
           vim.lsp.buf.execute_command(params)
       end
-    elseif server == 'json' then
+    end
+    if server == 'json' then
       -- Range formatting for entire document
       require'lspconfig'[server].setup{
         commands = {
