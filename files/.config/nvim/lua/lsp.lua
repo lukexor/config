@@ -222,6 +222,26 @@ local function setup_servers()
           debounce_text_changes = 150,
         }
       }
+    elseif server == 'rust' then
+      require'lspconfig'[server].setup{
+        on_attach = function(client)
+          client.resolved_capabilities.document_formatting = formatting
+          on_attach(client)
+        end,
+        capabilities = capabilities,
+        flags = {
+          debounce_text_changes = 150,
+        },
+        settings = {
+          ["rust-analyzer"] = {
+            cargo = {
+              -- allFeatures = false, -- procMacro currently crashing due to serde
+              -- target = "wasm32-unknown-unknown"
+            },
+            checkOnSave = { command = "clippy" }
+          }
+        }
+      }
     else
       require'lspconfig'[server].setup{
         on_attach = function(client)
