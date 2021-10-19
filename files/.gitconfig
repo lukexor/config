@@ -26,3 +26,5 @@
   added = green
   changed = yellow
   untracked = cyan
+[pull]
+	ff = only
