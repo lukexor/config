@@ -98,6 +98,7 @@ def ra [] {
 
 # Output git branches with last commit.
 def gb-age [] {
+  # substring 2, skips the currently checked out branch: "* "
   git branch -a | lines | str substring 2, | wrap name | where name !~ HEAD | insert "last commit" {
       get name | each {
           git show $it --no-patch --format=%as

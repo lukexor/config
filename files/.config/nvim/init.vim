@@ -86,6 +86,7 @@ Plug 'nvim-lua/lsp_extensions.nvim'
 Plug 'tpope/vim-dispatch'                                " Run tasks in the background
 Plug 'tpope/vim-repeat'                                  " Repeat last command using '.'
 Plug 'puremourning/vimspector'                           " Graphical debugger
+Plug 'vim-test/vim-test'
 
 " 2}}}
 
