@@ -234,8 +234,11 @@ local function setup_servers()
         },
         settings = {
           ["rust-analyzer"] = {
+            updates = {
+              channel = "nightly"
+            },
             cargo = {
-              -- allFeatures = false, -- procMacro currently crashing due to serde
+              allFeatures = true,
               -- target = "wasm32-unknown-unknown"
             },
             checkOnSave = { command = "clippy" }

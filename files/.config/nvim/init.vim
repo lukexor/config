@@ -87,6 +87,7 @@ Plug 'tpope/vim-dispatch'                                " Run tasks in the back
 Plug 'tpope/vim-repeat'                                  " Repeat last command using '.'
 Plug 'puremourning/vimspector'                           " Graphical debugger
 Plug 'vim-test/vim-test'
+Plug 'liuchengxu/vim-which-key'
 
 " 2}}}
 
@@ -140,6 +141,9 @@ let g:vim_markdown_auto_insert_bullets = 0
 let g:vim_markdown_frontmatter = 1
 
 let g:NERDTreeWinSize = 35
+
+nnoremap <silent> <leader> :<c-u>WhichKey '<Space>'<CR>
+nnoremap <silent> <localleader> :<c-u>WhichKey ','<CR>
 
 " -- Vimspector   {{{2
 " --------------------------------------------------------------------------------------------------
@@ -197,6 +201,12 @@ inoremap <c-x><c-k> <c-x><c-k>
 nmap <leader>n :enew<CR>
 nmap <leader>q :q<CR>
 
+nmap <silent> <leader>t :TestNearest<CR>
+nmap <silent> <leader>T :TestFile<CR>
+nmap <silent> <leader>a :TestSuite<CR>
+nmap <silent> <localleader>l :TestLast<CR>
+nmap <silent> <leader>g :TestVisit<CR>
+
 " -- Navigation   {{{2
 " --------------------------------------------------------------------------------------------------
 
@@ -204,8 +214,8 @@ nmap <leader>q :q<CR>
 map H ^
 map L $
 
-nmap <leader>M :Marks<CR>
-nmap <leader>T :Tags<CR>
+nmap <localleader>M :Marks<CR>
+nmap <localleader>T :Tags<CR>
 
 " Move by line
 nnoremap j gj
@@ -223,12 +233,12 @@ nmap <leader>h :bp<CR>
 nmap <leader>l :bn<CR>
 
 " Navigate tags
-nmap <leader>tn :tnext<CR>
-nmap <leader>tp :tprevious<CR>
+nmap <localleader>tn :tnext<CR>
+nmap <localleader>tp :tprevious<CR>
 
 " Navigate errors
-nnoremap <leader>en :cnext<CR>
-nnoremap <leader>ep :cprevious<CR>
+nnoremap <localleader>en :cnext<CR>
+nnoremap <localleader>ep :cprevious<CR>
 
 " -- Windows/Buffers   {{{2
 " --------------------------------------------------------------------------------------------------
@@ -256,9 +266,35 @@ nmap <leader>Q :qall!<CR>
 " Deletes the current line and replaces it with the previously yanked value
 nmap + V"0p
 
-inoremap <C-j> <Esc>
+" Make Y act like D and C
+nnoremap Y y$
+
+" Join lines, but keep cursor position
+nnoremap J mzJ`z
+
+" Move selections up/down
+" gv restores visual mode selection, = enures indent is honored
+vnoremap J :m '>+1<CR>gv=gv
+vnoremap K :m '<-2<CR>gv=gv
+
+" Move line up/down
+" == honors indent
+nnoremap <leader>j :m .+1<CR>==
+nnoremap <leader>k :m .-2<CR>==
+
+" Add breaks in undo chain when typing punctuation
+inoremap . .<C-g>u
+inoremap , ,<C-g>u
+inoremap ! !<C-g>u
+inoremap ? ?<C-g>u
+
+" Add relative jumps of more than 5 lines to jump list
+nnoremap <expr> j (v:count > 5 ? "m'" . v:count : "") . 'j'
+nnoremap <expr> k (v:count > 5 ? "m'" . v:count : "") . 'k'
+
 vnoremap <C-j> <Esc>
 snoremap <C-j> <Esc>
+inoremap <C-j> <Esc>
 xnoremap <C-j> <Esc>
 cnoremap <C-j> <Esc>
 onoremap <C-j> <Esc>
@@ -320,10 +356,6 @@ nmap <localleader>} ysip{
 nnoremap cY "*yy
 nnoremap cP "*p
 
-" Move lines up or down
-nnoremap J ddp
-nnoremap K dd<up>P
-
 " Disable EX mode
 nnoremap Q <NOP>
 
@@ -339,6 +371,14 @@ onoremap r /return<CR>
 onoremap in( :<c-u>normal! f(vi(<cr>
 " Change inside last parens
 onoremap il( :<c-u>normal! F)vi(<cr>
+" Change inside next brace
+onoremap in{ :<c-u>normal! f{vi{<cr>
+" Change inside last brace
+onoremap il{ :<c-u>normal! F{vi{<cr>
+" Change inside next bracket
+onoremap in[ :<c-u>normal! f[vi[<cr>
+" Change inside last bracket
+onoremap il[ :<c-u>normal! F[vi[<cr>
 
 " Completion
 inoremap <silent><expr> <C-Space> compe#complete()
@@ -369,12 +409,14 @@ nnoremap <localleader>5 :set rnu!<CR>
 " -- Search   {{{2
 " --------------------------------------------------------------------------------------------------
 
-" Search results centered please
-nnoremap <silent> n nzz
-nnoremap <silent> N Nzz
-nnoremap <silent> * *zz
-nnoremap <silent> # #zz
-nnoremap <silent> g* g*zz
+" Keep cursor in the center when cycling through search
+" zz centers curor, zv opens any folds
+nnoremap n nzzzv
+nnoremap N Nzzzv
+nnoremap <silent> * *zzzv
+nnoremap <silent> # #zzzv
+nnoremap <silent> g* g*zzzv
+nnoremap <silent> g# g*zzzv
 
 " Very magic by default
 nnoremap ? ?\v
