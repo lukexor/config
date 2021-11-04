@@ -698,7 +698,7 @@ augroup Filetypes
   " n: Detect lists for formatting
   " j: Remove comment leader when joining lines if possible
   " p: Don't break following periods for single spaces
-  autocmd Filetype * set formatoptions=crqnjp
+  autocmd Filetype * set formatoptions=croqnjp
 augroup END
 
 augroup NERDTree
