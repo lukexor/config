@@ -237,8 +237,11 @@ local function setup_servers()
             updates = {
               channel = "nightly"
             },
+            assist = {
+              importGroup = false,
+            },
             cargo = {
-              allFeatures = true,
+              features = { "serde" },
               -- target = "wasm32-unknown-unknown"
             },
             checkOnSave = { command = "clippy" }
