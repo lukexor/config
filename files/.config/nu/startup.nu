@@ -58,7 +58,6 @@ alias sshl = ssh-add -L
 alias topc = (ps | sort-by cpu | reverse | first 10)
 alias topm = (ps | sort-by mem | reverse | first 10)
 alias v = nvim
-alias vf = nvim (fzf-tmux)
 alias vi = nvim
 alias vim = nvim
 alias vnu = nvim ($nu.config-path)
@@ -66,6 +65,16 @@ alias vcfg = nvim ~/.config/nu/config.toml
 alias vnus = nvim ~/.config/nu/startup.nu
 alias vrc = nvim ~/.config/nvim/init.vim
 alias x = extract.sh
+
+def vf [] {
+  let file = (fzf-tmux)
+  let cmd = (build-string "nvim " $file)
+  # Does not currently update history in the current session :(
+  open $nu.history-path | lines | wrap entry | where entry !~ "vf" | append [[entry]; [cmd]] | format "{entry}
+" | save $nu.history-path
+  echo $cmd
+  nvim $file
+}
 
 # Output last N git commits.
 def gl [count: int] {

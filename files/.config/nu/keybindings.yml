@@ -1,6 +1,6 @@
 # Delete 1 word at a time
 - key:
-    Backspace:
+    Char: W
   modifiers:
     CTRL:
   binding:
@@ -8,15 +8,41 @@
       BackwardWord:
         repeat: 1
         word: Big
+# Move 1 word backward
 - key:
-    Backspace:
+    Char: B
   modifiers:
-    ALT:
+    CTRL:
   binding:
-    Kill:
+    Move:
       BackwardWord:
         repeat: 1
         word: Big
+# Move 1 word forward
+- key:
+    Char: F
+  modifiers:
+    CTRL:
+  binding:
+    Move:
+      ForwardWord:
+        repeat: 1
+        at: AfterEnd
+        word: Big
+# Move beginning of line
+- key:
+    Char: 0
+  modifiers:
+    CTRL:
+  binding:
+    Move: BeginningOfLine
+# Move end of line
+- key:
+    Char: $
+  modifiers:
+    CTRL:
+  binding:
+    Move: EndOfLine
 # Move cursor one character left
 - key:
     Left: #Left Arrow Key
@@ -42,13 +68,6 @@
     CTRL:
   binding:
     Interrupt:
-# Finish the line entry
-- key:
-    Char: J
-  modifiers:
-    CTRL:
-  binding:
-    AcceptLine:
 # Next match from history
 - key:
     Down: #Down Arrow Key
@@ -80,38 +99,6 @@
     CTRL:
   binding:
     Kill: BeginningOfLine
-# Insert any special character without performing its associated action (#65)
-- key:
-    Char: Q
-  modifiers:
-    CTRL:
-  binding:
-    QuotedInsert:
-- key:
-    Char: V
-  modifiers:
-    CTRL:
-  binding:
-    QuotedInsert:
-# Delete word leading up to cursor (using white space as a word boundary)
-- key:
-    Char: W
-  modifiers:
-    CTRL:
-  binding:
-    Kill:
-      BackwardWord:
-        repeat: 1
-        word: Big
-# Paste from Yank buffer
-- key:
-    Char: Y
-  modifiers:
-    CTRL:
-  binding:
-    Yank:
-      repeat: 1
-      anchor: Before
 # Suspend (Unix only)
 - key:
     Char: Z
