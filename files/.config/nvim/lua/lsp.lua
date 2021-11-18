@@ -12,18 +12,6 @@ capabilities.textDocument.completion.completionItem.resolveSupport = {
 local buf_set_keymap = function (...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
 local buf_set_option = function (...) vim.api.nvim_buf_set_option(bufnr, ...) end
 
-local format_async = function(err, _, result, _, bufnr)
-  if err ~= nil or result == nil then return end
-  if not vim.api.nvim_buf_get_option(bufnr, "modified") then
-    local view = vim.fn.winsaveview()
-    vim.lsp.util.apply_text_edits(result, bufnr)
-    vim.fn.winrestview(view)
-    if bufnr == vim.api.nvim_get_current_buf() then
-      vim.api.nvim_command("noautocmd :update")
-    end
-  end
-end
-
 -- Use an on_attach function to only map the following keys
 -- after the language server attaches to the current buffer
 local on_attach = function(client, bufnr)
@@ -64,7 +52,6 @@ local on_attach = function(client, bufnr)
   buf_set_keymap("n", "<leader>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
 
   if client.resolved_capabilities.document_formatting then
-    vim.lsp.handlers["textDocument/formatting"] = format_async
     vim.api.nvim_exec([[
       augroup LspFormat
         autocmd! * <buffer>
