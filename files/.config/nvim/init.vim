@@ -236,9 +236,11 @@ nmap <leader>l :bn<CR>
 nmap <localleader>tn :tnext<CR>
 nmap <localleader>tp :tprevious<CR>
 
-" Navigate errors
-nnoremap <localleader>en :cnext<CR>
-nnoremap <localleader>ep :cprevious<CR>
+" Make cnext wrap around
+command! Cnext try | cnext | catch | cfirst | catch | endtry
+command! Cprev try | cprev | catch | clast | catch | endtry
+nnoremap [e :Cnext<CR>
+nnoremap ]e :Cprev<CR>
 
 " -- Windows/Buffers   {{{2
 " --------------------------------------------------------------------------------------------------
@@ -401,7 +403,7 @@ nnoremap <F7> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> t
   \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
 
 nnoremap <localleader>1 :call OpenNERDTree()<CR>
-nnoremap <localleader>2 :TagbarToggle<CR>
+nnoremap <localleader>2 :call ToggleQuickFix()<CR>
 nnoremap <localleader>3 :call ToggleGutter()<CR>
 nnoremap <localleader>4 :set paste!<CR>
 nnoremap <localleader>5 :set rnu!<CR>
@@ -640,6 +642,17 @@ fun! NERDTreeSync()
   endif
 endfun
 
+fun! ToggleQuickFix()
+  if exists("w:quickfix_title")
+    cclose
+  else
+    try
+      copen
+    catch
+      echo "No Errors found!"
+    endtry
+  endif
+endfun
 
 func! LightlineFilename()
   return expand('%:t') !=# '' ? @% : '[No Name]'

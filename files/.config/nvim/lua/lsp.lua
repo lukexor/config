@@ -9,6 +9,27 @@ capabilities.textDocument.completion.completionItem.resolveSupport = {
   }
 }
 
+
+do
+  local method = "textDocument/publishDiagnostics"
+  local default_handler = vim.lsp.handlers[method]
+  vim.lsp.handlers[method] = function(err, method, result, client_id, bufnr, config)
+    default_handler(err, method, result, client_id, bufnr, config)
+    local diagnostics = vim.lsp.diagnostic.get_all()
+    local qflist = {}
+    for bufnr, diagnostic in pairs(diagnostics) do
+      for _, d in ipairs(diagnostic) do
+        d.bufnr = bufnr
+        d.lnum = d.range.start.line + 1
+        d.col = d.range.start.character + 1
+        d.text = d.message
+        table.insert(qflist, d)
+      end
+    end
+    vim.lsp.util.set_qflist(qflist)
+  end
+end
+
 local buf_set_keymap = function (...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
 local buf_set_option = function (...) vim.api.nvim_buf_set_option(bufnr, ...) end
 
@@ -46,8 +67,8 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', 'gR', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
   buf_set_keymap('n', 'ga', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
   buf_set_keymap('n', 'gO', '<cmd>lua lsp_organize_imports()<CR>', opts)
-  buf_set_keymap('n', '[e', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
-  buf_set_keymap('n', ']e', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
+  buf_set_keymap('n', 'gp', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
+  buf_set_keymap('n', 'gn', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
   buf_set_keymap('n', 'ge', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
   buf_set_keymap("n", "<leader>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
 
