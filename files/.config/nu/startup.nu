@@ -55,6 +55,7 @@ alias pwd = (^pwd | str trim | str find-replace $nu.env.HOME '~')
 alias py = python
 alias slp = ssh caeledh@138.197.217.136
 alias sshl = ssh-add -L
+alias startApi = ./gradlew bootRun --args="--spring.profiles.active=local --server.port=8081"
 alias topc = (ps | sort-by cpu | reverse | first 10)
 alias topm = (ps | sort-by mem | reverse | first 10)
 alias v = nvim

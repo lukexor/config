@@ -76,7 +76,7 @@ Plug 'peitalin/vim-jsx-typescript'
 Plug 'udalov/kotlin-vim'
 Plug 'gerw/vim-HiLinkTrace'
 Plug 'neovim/nvim-lspconfig'
-Plug 'kabouzeid/nvim-lspinstall'
+Plug 'williamboman/nvim-lsp-installer'
 Plug 'sainnhe/gruvbox-material'
 Plug 'nvim-lua/lsp_extensions.nvim'
 

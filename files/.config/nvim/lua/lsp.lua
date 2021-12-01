@@ -128,155 +128,110 @@ local t = function(str)
 end
 
 local check_back_space = function()
-    local col = vim.fn.col('.') - 1
-    if col == 0 or vim.fn.getline('.'):sub(col, col):match('%s') then
-        return true
-    else
-        return false
-    end
-end
-
-local function setup_servers()
-  require'lspinstall'.setup()
-  local servers = require'lspinstall'.installed_servers()
-  for _, server in pairs(servers) do
-    local formatting = true
-    if (server == 'html' or server == 'rust' or server == 'typescript' or server == 'javascript') then
-      formatting = false
-    end
-    if server == 'typescript' then
-      _G.lsp_organize_imports = function()
-        local params = {
-          command = "_typescript.organizeImports",
-              arguments = {vim.api.nvim_buf_get_name(0)},
-              title = ""
-          }
-          vim.lsp.buf.execute_command(params)
-      end
-    end
-    if server == 'json' then
-      -- Range formatting for entire document
-      require'lspconfig'[server].setup{
-        commands = {
-          Format = {
-            function()
-              vim.lsp.buf.range_formatting({},{0,0},{vim.fn.line("$"),0})
-            end
-          }
-        },
-        on_attach = function(client)
-          client.resolved_capabilities.document_formatting = formatting
-          on_attach(client)
-        end,
-        capabilities = capabilities,
-        flags = {
-          debounce_text_changes = 150,
-        }
-      }
-    elseif server == 'diagnosticls' then
-      local filetypes = {
-        javascript = 'eslint',
-        javascriptreact = 'eslint',
-        typescript = 'eslint',
-        typescriptreact = 'eslint',
-        markdown = 'markdownlint',
-      }
-      require'lspconfig'[server].setup{
-        filetypes = vim.tbl_keys(filetypes),
-        init_options = {
-          linters = {
-            eslint = {
-              sourceName = 'eslint',
-              command = 'eslint_d',
-              rootPatterns = { 'package.json' },
-              debounce = 150,
-              args = { '--stdin', '--stdin-filename', '%filepath', '--format', 'json' },
-              parseJson = {
-                errorsRoot = '[0].messages',
-                line = 'line',
-                column = 'column',
-                endLine = 'endLine',
-                endColumn = 'endColumn',
-                message = '${message} [${ruleId}]',
-                security = 'severity'
-              },
-              securities = {
-                [2] = 'error',
-                [1] = 'warning'
-              }
-            }
-          },
-          formatters = {
-            prettier = {
-              command = 'prettier',
-              args = { '--stdin-filepath', '%filename' }
-            }
-          },
-          filetypes = filetypes,
-          formatFiletypes = {
-            css = 'prettier',
-            javascript = 'prettier',
-            javascriptreact = 'prettier',
-            json = 'prettier',
-            typescript = 'prettier',
-            typescriptreact = 'prettier'
-          }
-        },
-        on_attach = function(client)
-          client.resolved_capabilities.document_formatting = formatting
-          on_attach(client)
-        end,
-        capabilities = capabilities,
-        flags = {
-          debounce_text_changes = 150,
-        }
-      }
-    elseif server == 'rust' then
-      require'lspconfig'[server].setup{
-        on_attach = function(client)
-          client.resolved_capabilities.document_formatting = formatting
-          on_attach(client)
-        end,
-        capabilities = capabilities,
-        flags = {
-          debounce_text_changes = 150,
-        },
-        settings = {
-          ["rust-analyzer"] = {
-            updates = {
-              channel = "nightly"
-            },
-            assist = {
-              importGroup = false,
-            },
-            cargo = {
-              features = { "serde" },
-              -- target = "wasm32-unknown-unknown"
-              target_os = "macos"
-            },
-            checkOnSave = { command = "clippy" }
-          }
-        }
-      }
-    else
-      require'lspconfig'[server].setup{
-        on_attach = function(client)
-          client.resolved_capabilities.document_formatting = formatting
-          on_attach(client)
-        end,
-        capabilities = capabilities,
-        flags = {
-          debounce_text_changes = 150,
-        }
-      }
-    end
+  local col = vim.fn.col('.') - 1
+  if col == 0 or vim.fn.getline('.'):sub(col, col):match('%s') then
+    return true
+  else
+    return false
   end
 end
 
-setup_servers()
+local lsp_installer = require("nvim-lsp-installer")
+lsp_installer.on_server_ready(function(server)
+  if server.name == 'typescript' then
+    _G.lsp_organize_imports = function()
+      local params = {
+        command = "_typescript.organizeImports",
+            arguments = {vim.api.nvim_buf_get_name(0)},
+            title = ""
+        }
+        vim.lsp.buf.execute_command(params)
+    end
+  end
 
--- Automatically reload after `:LspInstall <server>` so we don't have to restart neovim
-require'lspinstall'.post_install_hook = function ()
-  setup_servers() -- reload installed servers
-  vim.cmd("bufdo e") -- this triggers the FileType autocmd that starts the server
-end
+  local opts = {
+    on_attach = on_attach,
+    capabilities = capabilities,
+    flags = {
+      debounce_text_changes = 150,
+    }
+  }
+
+  if server.name == 'json' then
+    -- Range formatting for entire document
+    opts.commands = {
+      Format = {
+        function()
+          vim.lsp.buf.range_formatting({},{0,0},{vim.fn.line("$"),0})
+        end
+      }
+    }
+  elseif server.name == 'diagnosticls' then
+    local filetypes = {
+      javascript = 'eslint',
+      javascriptreact = 'eslint',
+      typescript = 'eslint',
+      typescriptreact = 'eslint',
+      markdown = 'markdownlint',
+    }
+    opts.filetypes = vim.tbl_keys(filetypes)
+    opts.init_options = {
+      linters = {
+        eslint = {
+          sourceName = 'eslint',
+          command = 'eslint_d',
+          rootPatterns = { 'package.json' },
+          debounce = 150,
+          args = { '--stdin', '--stdin-filename', '%filepath', '--format', 'json' },
+          parseJson = {
+            errorsRoot = '[0].messages',
+            line = 'line',
+            column = 'column',
+            endLine = 'endLine',
+            endColumn = 'endColumn',
+            message = '${message} [${ruleId}]',
+            security = 'severity'
+          },
+          securities = {
+            [2] = 'error',
+            [1] = 'warning'
+          }
+        }
+      },
+      formatters = {
+        prettier = {
+          command = 'prettier',
+          args = { '--stdin-filepath', '%filename' }
+        }
+      },
+      filetypes = filetypes,
+      formatFiletypes = {
+        css = 'prettier',
+        javascript = 'prettier',
+        javascriptreact = 'prettier',
+        json = 'prettier',
+        typescript = 'prettier',
+        typescriptreact = 'prettier'
+      }
+    }
+  elseif server.name == 'rust' then
+    opts.settings = {
+      ["rust-analyzer"] = {
+        updates = {
+          channel = "nightly"
+        },
+        assist = {
+          importGroup = false,
+        },
+        cargo = {
+          features = { "serde" },
+          -- target = "wasm32-unknown-unknown"
+          target_os = "macos"
+        },
+        checkOnSave = { command = "clippy" }
+      }
+    }
+  end
+
+  server:setup(opts)
+end)
