@@ -231,6 +231,11 @@ lsp_installer.on_server_ready(function(server)
         checkOnSave = { command = "clippy" }
       }
     }
+  elseif (server.name == 'html' or server.name == 'tsserver' or server.name == 'eslint') then
+    opts.on_attach = function(client)
+        client.resolved_capabilities.document_formatting = formatting
+        on_attach(client)
+    end
   end
 
   server:setup(opts)
