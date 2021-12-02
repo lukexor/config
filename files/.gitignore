@@ -48,3 +48,4 @@ ctags
 .gitconfig.local
 **/nvim/plugins
 sessions
+roms

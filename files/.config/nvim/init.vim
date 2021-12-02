@@ -239,8 +239,10 @@ nmap <localleader>tp :tprevious<CR>
 " Make cnext wrap around
 command! Cnext try | cnext | catch | cfirst | catch | endtry
 command! Cprev try | cprev | catch | clast | catch | endtry
-nnoremap [e :Cnext<CR>
-nnoremap ]e :Cprev<CR>
+nnoremap [e :Cprev<CR>
+nnoremap ]e :Cnext<CR>
+" Clear quickfix
+nnoremap <leader>cc :cexpr []
 
 " -- Windows/Buffers   {{{2
 " --------------------------------------------------------------------------------------------------
@@ -335,17 +337,17 @@ nmap <leader>{ ysiw{
 nmap <leader>} ysiw}
 
 " Same mappers for visual mode
-vmap <leader>" gS"
-vmap <leader>' gS'
-vmap <leader>( gS(
-vmap <leader>) gS)
-vmap <leader>< gS<
-vmap <leader>> gS>
-vmap <leader>[ gS[
-vmap <leader>] gS]
-vmap <leader>` gS`
-vmap <leader>{ gS{
-vmap <leader>} gS}
+vmap <leader>" vgS"
+vmap <leader>' vgS'
+vmap <leader>( vgS(
+vmap <leader>) vgS)
+vmap <leader>< vgS<
+vmap <leader>> vgS>
+vmap <leader>[ vgS[
+vmap <leader>] vgS]
+vmap <leader>` vgS`
+vmap <leader>{ vgS{
+vmap <leader>} vgS}
 
 nmap <localleader>[ ysip[
 nmap <localleader>] ysip]
@@ -360,9 +362,6 @@ nnoremap cP "*p
 
 " Disable EX mode
 nnoremap Q <NOP>
-
-" Close quickfix
-nmap <leader>cc :ccl<CR>
 
 " Reload Config
 nmap <localleader>sv :source $MYVIMRC<CR>:e<CR>
