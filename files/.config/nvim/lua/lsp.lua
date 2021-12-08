@@ -223,12 +223,11 @@ lsp_installer.on_server_ready(function(server)
         assist = {
           importGroup = false,
         },
+        checkOnSave = { command = "clippy" },
         cargo = {
-          features = { "serde" },
-          -- target = "wasm32-unknown-unknown"
+          allFeatures = true,
           target_os = "macos"
         },
-        checkOnSave = { command = "clippy" }
       }
     }
   elseif (server.name == 'html' or server.name == 'tsserver' or server.name == 'eslint') then
