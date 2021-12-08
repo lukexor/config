@@ -59,8 +59,8 @@ GOPATH = "/Users/lukepetherbridge/dev:/Users/LucasPetherbridge/dev"
 GOROOT = ""
 JAVA_HOME = "/usr/local/opt/openjdk@11/"
 LESS = "-RFX"
-PAGER = "nvim -nR -i NONE -c 'setlocal ft=man nofoldenable nolist'"
-MANPAGER = "nvim -nR -i NONE -c 'setlocal ft=man nofoldenable nolist'"
+PAGER = "nvim +Man!"
+MANPAGER = "nvim +Man!"
 SPRING_PROFILES_ACTIVE = "local"
 
 [color_config]
