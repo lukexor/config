@@ -11,6 +11,7 @@ alias cre = cargo run --example
 alias crr = cargo run --release
 alias ct = cargo test
 alias da = (date now | date format '%Y-%m-%d %H:%M:%S')
+alias fbroken = find . -maxdepth 1 -type l ! -exec test -e '{}' ';' -print
 alias g = git
 alias ga = git add
 alias gb = git --no-pager branch -v
@@ -38,7 +39,8 @@ alias gt = git tag
 alias gtoday = git --no-pager log --graph --pretty=format:'%C(yellow)%h %ad%Cred%d %Creset%Cblue[%cn]%Creset  %s (%ar)' --date=iso --all --branches=* --remotes=* --since='23 hours ago' --author=$(git config user.email)
 alias gun = git reset HEAD --
 alias h = (history | wrap | rename command)
-alias fbroken = find . -maxdepth 1 -type l ! -exec test -e '{}' ';' -print
+alias java11 = (let-env JAVA_HOME = (/usr/libexec/java_home -v 11.0.12 | str trim))
+alias java15 = (let-env JAVA_HOME = (/usr/libexec/java_home -v 15.0.2 | str trim))
 alias k = kubectl
 alias ls = ls -s
 alias la = ls -sa
@@ -123,3 +125,5 @@ def gb-age [] {
 def gb-clean [] {
   git branch -vl | lines | str substring 2, | split column " " branch hash status --collapse-empty | where status == '[gone]' | each { git branch -d $it.branch }
 }
+
+java11
