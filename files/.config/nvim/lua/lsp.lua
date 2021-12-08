@@ -138,7 +138,7 @@ end
 
 local lsp_installer = require("nvim-lsp-installer")
 lsp_installer.on_server_ready(function(server)
-  if server.name == 'typescript' then
+  if server.name == 'tsserver' then
     _G.lsp_organize_imports = function()
       local params = {
         command = "_typescript.organizeImports",
@@ -157,7 +157,7 @@ lsp_installer.on_server_ready(function(server)
     }
   }
 
-  if server.name == 'json' then
+  if server.name == 'jsonls' then
     -- Range formatting for entire document
     opts.commands = {
       Format = {
@@ -214,7 +214,7 @@ lsp_installer.on_server_ready(function(server)
         typescriptreact = 'prettier'
       }
     }
-  elseif server.name == 'rust' then
+  elseif server.name == 'rust_analyzer' then
     opts.settings = {
       ["rust-analyzer"] = {
         updates = {
