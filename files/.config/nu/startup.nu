@@ -1,3 +1,5 @@
+## Aliases
+
 alias _ = sudo
 alias cb = cargo build
 alias cbr = cargo build --release
@@ -68,6 +70,9 @@ alias vnus = nvim ~/.config/nu/startup.nu
 alias vrc = nvim ~/.config/nvim/init.vim
 alias x = extract.sh
 
+
+## Commands
+
 def vf [] {
   let file = (fzf-tmux)
   let cmd = (build-string "nvim " $file)
@@ -125,5 +130,8 @@ def gb-age [] {
 def gb-clean [] {
   git branch -vl | lines | str substring 2, | split column " " branch hash status --collapse-empty | where status == '[gone]' | each { git branch -d $it.branch }
 }
+
+
+## Startup
 
 java11

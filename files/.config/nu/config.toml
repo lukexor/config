@@ -53,8 +53,8 @@ path = [
 [env]
 EDITOR = "nvim"
 FZF_DEFAULT_OPTS = "--height 50% --layout=reverse --border --inline-info"
-FZF_CTRL_T_COMMAND = "rg --files --hidden --no-ignore --ignore-file ~/.rgignore"
-FZF_DEFAULT_COMMAND = "rg --files --hidden --no-ignore --ignore-file ~/.rgignore"
+FZF_CTRL_T_COMMAND = "rg --files --hidden"
+FZF_DEFAULT_COMMAND = "rg --files --hidden"
 GOPATH = "/Users/lukepetherbridge/dev:/Users/LucasPetherbridge/dev"
 GOROOT = ""
 LESS = "-RFX"

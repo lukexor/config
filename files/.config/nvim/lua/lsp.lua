@@ -70,7 +70,7 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', 'gp', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
   buf_set_keymap('n', 'gn', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
   buf_set_keymap('n', 'ge', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
-  buf_set_keymap("n", "<leader>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
+  buf_set_keymap("n", "<localleader>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
 
   if client.resolved_capabilities.document_formatting then
     vim.api.nvim_exec([[
