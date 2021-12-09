@@ -46,6 +46,5 @@ ctags
 .env*
 *.patch
 .gitconfig.local
-**/nvim/plugins
 sessions
 roms
