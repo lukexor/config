@@ -57,8 +57,6 @@ set sidescrolloff=8
 set splitright
 set splitbelow
 set confirm
-set backup
-set backupdir=~/.local/share/nvim/backup//
 set updatetime=300 " You will have bad experience for diagnostic messages when it's default 4000.
 set redrawtime=10000 " Allow more time for loading syntax on large files
 set textwidth=80
