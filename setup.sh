@@ -40,7 +40,7 @@ $HOME/.cargo/bin/cargo install nu --features=extra
 pushd files
 find . -maxdepth 1 -mindepth 1 -exec mv ~/{} ~/{}.orig \; 2> /dev/null
 popd
-stow -t $HOME files
+stow files
 
 BIN=$HOME/.cargo/bin/nu
 if [ $(grep $BIN /etc/shells|wc -l) -eq 0 ]; then
@@ -51,5 +51,8 @@ if [ $(grep $BIN /etc/shells|wc -l) -eq 0 ]; then
   fi
 fi
 chsh -s $BIN
+
+echo "Setup Complete!"
+
 $BIN install.nu
 $BIN

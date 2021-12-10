@@ -35,7 +35,6 @@ set expandtab
 set shiftwidth=2
 set tabstop=2
 set shiftround
-set signcolumn=yes:2
 set virtualedit=block
 set relativenumber
 set number
@@ -44,8 +43,8 @@ set undofile
 set updatecount=50
 set spell
 set title
-set ignorecase
-set smartcase
+set nohlsearch
+set incsearch
 set wildmode=longest:full,full
 set nowrap
 set breakindent
@@ -61,7 +60,8 @@ set updatetime=300 " You will have bad experience for diagnostic messages when i
 set redrawtime=10000 " Allow more time for loading syntax on large files
 set textwidth=80
 set cursorline
-set colorcolumn=80,100
+set colorcolumn=100
+set signcolumn=yes:2
 set synmaxcol=200
 set foldmethod=indent
 set foldlevelstart=99
@@ -92,9 +92,6 @@ let maplocalleader=','
 nmap <localleader>ve :edit $MYVIMRC<CR>
 nmap <localleader>vc :edit ~/.config/nvim/lua/lsp.lua<CR>
 nmap <localleader>vr :source $MYVIMRC<CR>:edit<CR>
-
-nnoremap <leader><cr> :nohlsearch<cr>
-vnoremap <leader><cr> :nohlsearch<cr>
 
 " Quick save
 nmap <leader>w :w<CR>

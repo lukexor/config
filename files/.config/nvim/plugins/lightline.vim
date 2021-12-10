@@ -17,6 +17,6 @@ let g:lightline = {
   \ },
 \ }
 
-func! LightlineFilename()
+fun! LightlineFilename()
   return expand('%:t') !=# '' ? @% : '[No Name]'
 endfun

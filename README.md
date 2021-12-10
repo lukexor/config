@@ -56,11 +56,17 @@ on operating system to get nushell installed. From there, `install.nu` is
 executed to finish installing the remaining packages I normally use on a daily
 basis.
 
+`git` and `bash` must be installed and many of the features expect the latest
+versions. The setup attempts to update your package manager, but depending on
+the system, additional repositories may need to be added.
+
 To get up and running on a new system:
 
 ```sh
+# cd ~/
 # git clone https://github.com/lukexor/config.git
+# cd config/
 # ./setup.sh
 ```
 
-Then follow any prompts for configuration.
+Then follow any prompts for customizing the setup & installation.

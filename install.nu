@@ -18,7 +18,7 @@ let apt_packages = [
 let npm_packages = [eslint_d]
 let cargo_packages = [
   cargo-asm cargo-expand cargo-generate cargo-outdated cargo-readme cargo-tree
-  cargo-watch flamegraph neovide ripgrep wasm-pack
+  cargo-watch flamegraph ripgrep wasm-pack
 ]
 let cargo_components = [clippy rust-analysis]
 
@@ -38,10 +38,14 @@ python3 -m pip install --upgrade pip
 python3 -m pip install --upgrade pi
 pip3 install pynvim
 
-^rm -f $nu.config-path
-^rm -f $nu.keybinding-path
-ln -s (build-string $nu.home-dir /.config/nu/config.toml) ($nu.config-path)
-ln -s (build-string $nu.home-dir /.config/nu/keybindings.yml) ($nu.keybinding-path)
+# macOS has a different config-path
+let config = (build-string $nu.home-dir /.config/nu/config.toml)
+if ($nu.config-path != $config) {
+  ^rm -f $nu.config-path
+  ^rm -f $nu.keybinding-path
+  ln -s (build-string $nu.home-dir /.config/nu/config.toml) ($nu.config-path)
+  ln -s (build-string $nu.home-dir /.config/nu/keybindings.yml) ($nu.keybinding-path)
+} {}
 nu
 
 echo "Installation Complete!"
