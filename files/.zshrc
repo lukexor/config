@@ -1,8 +1,7 @@
-export BASH_SILENCE_DEPRECATION_WARNING=1
-export CLICOLOR=1
 export EDITOR="nvim"
 export PAGER="nvim +Man!"
-export PATH="~/bin:~/.cargo/bin:~/.fzf/bin:$PATH"
+
+path=("~/bin" "~/.cargo/bin" "~/.fzf/bin" $path)
 
 alias rm="rm -i"
 alias cp="cp -ia"
@@ -13,4 +12,4 @@ alias ls="ls --color=auto"
 alias ll="ls -lh"
 alias la="ls -alh"
 
-[ -f ~/.fzf.sh ] && source ~/.fzf.sh
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

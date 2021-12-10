@@ -34,18 +34,11 @@ table_mode = "compact_double"
 table_pager = "less"
 
 path = [
-  "/Users/lukepetherbridge/bin",
-  "/Users/lukepetherbridge/.fzf/bin",
-  "/Users/lukepetherbridge/.cargo/bin",
-  "/Users/LucasPetherbridge/bin",
-  "/Users/LucasPetherbridge/.fzf/bin",
-  "/Users/LucasPetherbridge/.cargo/bin",
-  "/usr/local/opt/openjdk@11/bin",
-  "/bin",
-  "/usr/local/bin",
   "/usr/bin",
+  "/bin",
   "/usr/sbin",
   "/sbin",
+  "/usr/local/bin",
 ]
 
 [env]
@@ -58,6 +51,8 @@ PAGER = "nvim +Man!"
 MANPAGER = "nvim +Man!"
 JAVA_HOME = "/usr/local/opt/openjdk@11"
 SPRING_PROFILES_ACTIVE = "local"
+LC_CTYPE = "en_US.UTF-8"
+LC_ALL = "en_US.UTF-8"
 
 [color_config]
 header_align = "l" # left|l, right|r, center|c

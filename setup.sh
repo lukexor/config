@@ -1,17 +1,15 @@
 #!/bin/bash
 
-#--------------------------#
-# Install/Update packages #
-#-------------------------#
+set -e
 
 case "$OSTYPE" in
   linux*)
     if command -v apt &>/dev/null; then
-      apt update
-      apt install stow pkg-config libssl-dev libxcb-composite0-dev libx11-dev
-    else if  command -v yum &>/dev/null; then
+      apt-get update
+      apt-get -y install stow pkg-config libssl-dev libxcb-composite0-dev libx11-dev curl cmake
+    elif command -v yum &>/dev/null; then
       yum update
-      yum install stow libxcb openssl-devel libX11-devel
+      yum install stow libxcb openssl-devel libX11-devel curl
     else
       echo "unsupported package manager"
       exit 1
@@ -32,35 +30,25 @@ case "$OSTYPE" in
     ;;
 esac
 
-#--------------#
-# Install Rust #
-#--------------#
-
 if command -v rustup &> /dev/null; then
     rustup update
 else
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 fi
 
-#-----------------#
-# Install nushell #
-#-----------------#
-
-cargo install nu --features=extra
-
-#-----------------#
-# Symlink Configs #
-#-----------------#
-
-stow files
-
-#----------------------#
-# Change default shell #
-#----------------------#
+$HOME/.cargo/bin/cargo install nu --features=extra
+pushd files
+find . -maxdepth 1 -mindepth 1 -exec mv ~/{} ~/{}.orig \; 2> /dev/null
+popd
+stow -t $HOME files
 
 BIN=$HOME/.cargo/bin/nu
-if [[ $(grep $BIN /etc/shells|wc -l) -eq 0 ]]; then
+if [ $(grep $BIN /etc/shells|wc -l) -eq 0 ]; then
+  if [ "$EUID" -eq 0 ]; then
+    echo $BIN >> /etc/shells
+  else
     sudo echo $BIN >> /etc/shells
+  fi
 fi
 chsh -s $BIN
 nu install.nu
