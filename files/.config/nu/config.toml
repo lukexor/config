@@ -22,7 +22,11 @@
 # abbreviated: green bold = gb, red underline = ru, blue dimmed = ud
 # or verbose: green_bold, red_underline, blue_dimmed
 
-startup = ["source ~/.config/nu/startup.nu"]
+startup = [
+  "mkdir ~/.cache/starship",
+  "starship init nu | save ~/.cache/starship/init.nu",
+  "source ~/.config/nu/startup.nu",
+]
 
 ctrlc_exit = false
 complete_from_path = true
@@ -39,6 +43,7 @@ path = [
   "/usr/sbin",
   "/sbin",
   "/usr/local/bin",
+  "/usr/games/",
 ]
 
 [env]
@@ -51,8 +56,7 @@ PAGER = "nvim +Man!"
 MANPAGER = "nvim +Man!"
 JAVA_HOME = "/usr/local/opt/openjdk@11"
 SPRING_PROFILES_ACTIVE = "local"
-LC_CTYPE = "en_US.UTF-8"
-LC_ALL = "en_US.UTF-8"
+LANG = "en_US.UTF-8"
 
 [color_config]
 header_align = "l" # left|l, right|r, center|c

@@ -6,10 +6,10 @@ case "$OSTYPE" in
   linux*)
     if command -v apt &>/dev/null; then
       apt-get update
+      apt-get -y install software-properties-common
+      add-apt-repository ppa:neovim-ppa/stable
       apt-get -y install stow pkg-config libssl-dev libxcb-composite0-dev libx11-dev curl cmake
-    elif command -v yum &>/dev/null; then
-      yum update
-      yum install stow libxcb openssl-devel libX11-devel curl
+      /bin/bash -c "$(curl -fsSL https://starship.rs/install.sh)"
     else
       echo "unsupported package manager"
       exit 1
@@ -22,7 +22,7 @@ case "$OSTYPE" in
     else
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     fi
-    brew install stow openssl cmake
+    brew install stow openssl cmake starship
     ;;
   *)
     echo "unsupported: $OSTYPE"
@@ -51,5 +51,5 @@ if [ $(grep $BIN /etc/shells|wc -l) -eq 0 ]; then
   fi
 fi
 chsh -s $BIN
-nu install.nu
-nu
+$BIN install.nu
+$BIN

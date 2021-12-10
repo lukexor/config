@@ -283,11 +283,4 @@ pathvar add ~/.fzf/bin
 pathvar add ~/.cargo/bin
 pathvar add ~/bin
 
-
-if (ls ~/.cache/ | where name =~ starship | length) == 0 {
-  md ~/.cache/starship
-  starship init nu | save ~/.cache/starship/init.nu
-} {}
-
-source ~/.cache/starship/init.nu
 logo
