@@ -4,13 +4,13 @@ echo "Installing Packages..."
 
 let brew_packages = [
   azure-cli bash cc65 cmake coreutils docker fzf git gnutls gradle helm hexedit
-  kotlin ktlint kubernetes-cli llvm lolcat mongocli neovim node openjdk
+  kotlin ktlint kubernetes-cli llvm mongocli neovim node openjdk
   openjdk@11 openssl postgresql prettier python python3 sdl2 sdl2_gfx sdl2_image
   sdl2_mixer sdl2_ttf sqlite stow tmux tree vim watchman
   wget
 ]
 let apt_packages = [
-  bash cc65 cmake coreutils docker fzf git hexedit llvm lolcat mongocli neovim
+  bash cc65 cmake coreutils docker fzf git hexedit llvm mongocli neovim
   nodejs npm openjdk-11-jdk openssl postgresql prettier pip python python3
   libsdl2-2.0-0 libsdl2-gfx-1.0-0 libsdl2-image-2.0-0 libsdl2-mixer-2.0-0
   libsdl2-ttf-2.0-0 sqlite stow tmux tree vim watchman wget

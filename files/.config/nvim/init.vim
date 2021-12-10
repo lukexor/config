@@ -238,7 +238,7 @@ fun! ToggleGutter()
     let b:show_gutter = 1
   endif
 endfun
-nnoremap <localleader>2 :call ToggleGutter()<CR>
+nnoremap <localleader>1 :call ToggleGutter()<CR>
 
 " ==================================================================================================
 " Plugins   {{{1

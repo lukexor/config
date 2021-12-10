@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -e
+LANG=${LANG:-C.UTF-8}
 
 case "$OSTYPE" in
   linux*)
@@ -8,7 +9,7 @@ case "$OSTYPE" in
       apt-get update
       apt-get -y install software-properties-common
       add-apt-repository ppa:neovim-ppa/stable
-      apt-get -y install stow pkg-config libssl-dev libxcb-composite0-dev libx11-dev curl cmake
+      apt-get -y install stow pkg-config libssl-dev libxcb-composite0-dev libx11-dev curl cmake lolcat
       /bin/bash -c "$(curl -fsSL https://starship.rs/install.sh)"
     else
       echo "unsupported package manager"
@@ -16,13 +17,15 @@ case "$OSTYPE" in
     fi
     ;;
   darwin*)
+    set +e
     xcode-select --install
+    set -e
     if command -v brew &>/dev/null; then
         brew update
     else
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     fi
-    brew install stow openssl cmake starship
+    brew install stow openssl cmake starship lolcat
     ;;
   *)
     echo "unsupported: $OSTYPE"
@@ -42,15 +45,11 @@ find . -maxdepth 1 -mindepth 1 -exec mv ~/{} ~/{}.orig \; 2> /dev/null
 popd
 stow files
 
+sudo=
+[ "$EUID" -eq 0 ] && sudo=sudo
 BIN=$HOME/.cargo/bin/nu
-if [ $(grep $BIN /etc/shells|wc -l) -eq 0 ]; then
-  if [ "$EUID" -eq 0 ]; then
-    echo $BIN >> /etc/shells
-  else
-    sudo echo $BIN >> /etc/shells
-  fi
-fi
-chsh -s $BIN
+grep -qxF $BIN /etc/shells|wc -l || $sudo echo $BIN >> /etc/shells
+[ "$SHELL" == $BIN ] || chsh -s $BIN
 
 echo "Setup Complete!"
 
