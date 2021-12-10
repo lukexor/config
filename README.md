@@ -62,3 +62,5 @@ To get up and running on a new system:
 # git clone https://github.com/lukexor/config.git
 # ./setup.sh
 ```
+
+Then follow any prompts for configuration.
