@@ -87,7 +87,7 @@ endif
 " ==================================================================================================
 
 let mapleader=' '
-let maplocalleader=','
+let maplocalleader='-'
 
 nmap <localleader>ve :edit $MYVIMRC<CR>
 nmap <localleader>vc :edit ~/.config/nvim/lua/lsp.lua<CR>
@@ -121,6 +121,7 @@ nnoremap <silent> <expr> j (v:count == 0 ? 'gj' : 'j')
 nnoremap <silent> <expr> k (v:count == 0 ? 'gk' : 'k')
 
 " Navigate tags
+nmap gt :tag <cword><CR>
 nmap <localleader>tn :tnext<CR>
 nmap <localleader>tp :tprevious<CR>
 

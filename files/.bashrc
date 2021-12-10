@@ -13,4 +13,4 @@ alias ls="ls --color=auto"
 alias ll="ls -lh"
 alias la="ls -alh"
 
-[ -f ~/.fzf.sh ] && source ~/.fzf.sh
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash

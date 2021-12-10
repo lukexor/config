@@ -1,6 +1,8 @@
 #!/usr/bin/env nu
 
-echo "Installing Packages..."
+echo "
+Installing Packages...
+"
 
 let brew_packages = [
   azure-cli bash cc65 cmake coreutils docker fzf git gnutls gradle helm hexedit
@@ -34,9 +36,9 @@ echo $cargo_packages | each { cargo install $it }
 echo $cargo_components | each { rustup component add $it }
 
 vim +PlugUpgrade +PlugInstall +PlugClean +PlugUpdate +UpdateRemotePlugins +qall
-python3 -m pip install --upgrade pip
-python3 -m pip install --upgrade pi
-pip3 install pynvim
+python3 -m pip install --upgrade --user pip
+pip3 install --upgrade --user pip
+pip3 install --upgrade --user pynvim
 
 # macOS has a different config-path
 let config = (build-string $nu.home-dir /.config/nu/config.toml)
@@ -48,4 +50,6 @@ if ($nu.config-path != $config) {
 } {}
 nu
 
-echo "Installation Complete!"
+echo "
+Installation Complete!
+"
