@@ -42,7 +42,7 @@ tags
 ctags
 .project
 .settings
-*.env
+.nu-env
 .env*
 *.patch
 .gitconfig.local

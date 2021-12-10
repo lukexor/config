@@ -27,7 +27,7 @@ startup = ["source ~/.config/nu/startup.nu"]
 ctrlc_exit = false
 complete_from_path = true
 pivot_mode = "auto"
-prompt = "build-string (ansi w) (do -i { if ($nu.env | select TMUX | empty?) { date now | date format -t '[%H:%M] ' } {} }) (ansi u) (pwd) (ansi y) (do -i { git rev-parse --abbrev-ref HEAD } | str trim | str find-replace '(.*)' ' ($1)') (ansi reset) ' > '"
+prompt = "starship prompt"
 rm_always_trash = true
 skip_welcome_message = true
 table_mode = "compact_double"
@@ -35,11 +35,9 @@ table_pager = "less"
 
 path = [
   "/Users/lukepetherbridge/bin",
-  "/Users/lukepetherbridge/.nvm/versions/node/v14.16.1/bin",
   "/Users/lukepetherbridge/.fzf/bin",
   "/Users/lukepetherbridge/.cargo/bin",
   "/Users/LucasPetherbridge/bin",
-  "/Users/LucasPetherbridge/.nvm/versions/node/v14.16.1/bin",
   "/Users/LucasPetherbridge/.fzf/bin",
   "/Users/LucasPetherbridge/.cargo/bin",
   "/usr/local/opt/openjdk@11/bin",
@@ -55,11 +53,10 @@ EDITOR = "nvim"
 FZF_DEFAULT_OPTS = "--height 50% --layout=reverse --border --inline-info"
 FZF_CTRL_T_COMMAND = "rg --files --hidden"
 FZF_DEFAULT_COMMAND = "rg --files --hidden"
-GOPATH = "/Users/lukepetherbridge/dev:/Users/LucasPetherbridge/dev"
-GOROOT = ""
 LESS = "-RFX"
 PAGER = "nvim +Man!"
 MANPAGER = "nvim +Man!"
+JAVA_HOME = "/usr/local/opt/openjdk@11"
 SPRING_PROFILES_ACTIVE = "local"
 
 [color_config]
@@ -87,10 +84,11 @@ separator_color = "purple"
 auto_add_history = true
 bell_style = "visible" # audible, none, visible
 color_mode = "enabled" # enabled, forced, disabled
+completion_type = "circular"
 completion_match_method = "case-insensitive" # case-insensitive, case-sensitive
 edit_mode = "vi"
 history_duplicates = "ignoreconsecutive" # alwaysadd, ignoreconsecutive
-history_ignore_space = "true"
+history_ignore_space = true
 max_history_size = 100000
 tab_stop = 4
 

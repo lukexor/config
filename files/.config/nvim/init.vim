@@ -1,7 +1,7 @@
 "
-"                                  ________________________
-"                                 |#####||#################\
-"                                 |#####||##################\
+"                                  _____   ________________
+"                                 |#####| /################\
+"                                 |#####|/##################\
 "                                 |#####||#####|      |#####|
 "                                 |#####||#####|      |#####|
 "                                 |#####||#####|      |#####|
@@ -11,9 +11,9 @@
 "                                 |#####||#####|
 "                                 |#####||#####|
 "                                 |#####||#####|_____
-"                                 |##################\
-"                                 |###################\
-"                                  --------------------
+"                                 \##################\
+"                                  \##################\
+"                                   -------------------
 "
 "       Personal vim configuration of Luke Petherbridge <me@lukeworks.tech>
 
@@ -127,11 +127,6 @@ nnoremap <silent> <expr> k (v:count == 0 ? 'gk' : 'k')
 nmap <localleader>tn :tnext<CR>
 nmap <localleader>tp :tprevious<CR>
 
-" Make cnext wrap around
-command! Cnext try | cnext | catch | cfirst | catch | endtry
-command! Cprev try | cprev | catch | clast | catch | endtry
-nnoremap [e :Cprev<CR>
-nnoremap ]e :Cnext<CR>
 " Clear quickfix
 nnoremap <leader>cc :cexpr []
 
@@ -236,19 +231,6 @@ nnoremap <F7> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> t
   \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
 
 
-fun! ToggleQuickFix()
-  if exists("w:quickfix_title")
-    cclose
-  else
-    try
-      copen
-    catch
-      echo "No Errors found!"
-    endtry
-  endif
-endfun
-nnoremap <localleader>1 :call ToggleQuickFix()<CR>
-
 let b:show_gutter = 1
 fun! ToggleGutter()
   if b:show_gutter
@@ -299,6 +281,7 @@ source ~/.config/nvim/plugins/snippets.vim
 source ~/.config/nvim/plugins/surround.vim
 source ~/.config/nvim/plugins/test.vim
 source ~/.config/nvim/plugins/unimpaired.vim
+source ~/.config/nvim/plugins/quickfix.vim
 source ~/.config/nvim/plugins/vimspector.vim
 source ~/.config/nvim/plugins/which-key.vim
 
