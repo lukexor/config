@@ -46,6 +46,7 @@ set title
 set nohlsearch
 set incsearch
 set wildmode=longest:full,full
+set completeopt=menu,menuone,noselect
 set nowrap
 set breakindent
 set list
@@ -263,25 +264,30 @@ source ~/.config/nvim/plugins/floatterm.vim
 source ~/.config/nvim/plugins/fugitive.vim
 source ~/.config/nvim/plugins/fzf.vim
 source ~/.config/nvim/plugins/gruvbox.vim
+source ~/.config/nvim/plugins/highlightedyank.vim
 source ~/.config/nvim/plugins/kotlin.vim
 source ~/.config/nvim/plugins/lightline.vim
 source ~/.config/nvim/plugins/lsp.vim
+source ~/.config/nvim/plugins/complete.vim
 source ~/.config/nvim/plugins/markdown-preview.vim
+source ~/.config/nvim/plugins/matchup.vim
 source ~/.config/nvim/plugins/nerdtree.vim
-source ~/.config/nvim/plugins/projectionist.vim
 source ~/.config/nvim/plugins/polyglot.vim
+source ~/.config/nvim/plugins/projectionist.vim
+source ~/.config/nvim/plugins/quickfix.vim
 source ~/.config/nvim/plugins/repeat.vim
 source ~/.config/nvim/plugins/rooter.vim
 source ~/.config/nvim/plugins/rust.vim
 source ~/.config/nvim/plugins/signature.vim
 source ~/.config/nvim/plugins/smooth-scroll.vim
+source ~/.config/nvim/plugins/sneak.vim
 source ~/.config/nvim/plugins/snippets.vim
 source ~/.config/nvim/plugins/surround.vim
 source ~/.config/nvim/plugins/test.vim
 source ~/.config/nvim/plugins/unimpaired.vim
-source ~/.config/nvim/plugins/quickfix.vim
 source ~/.config/nvim/plugins/vimspector.vim
 source ~/.config/nvim/plugins/which-key.vim
+source ~/.config/nvim/plugins/yaml.vim
 
 call plug#end()
 doautocmd User PlugLoaded

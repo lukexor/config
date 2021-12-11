@@ -1,5 +1,5 @@
-Plug 'hrsh7th/nvim-compe'
 Plug 'kosayoda/nvim-lightbulb'
 Plug 'neovim/nvim-lspconfig'
-Plug 'williamboman/nvim-lsp-installer'
 Plug 'nvim-lua/lsp_extensions.nvim'
+Plug 'ray-x/lsp_signature.nvim'
+Plug 'williamboman/nvim-lsp-installer'

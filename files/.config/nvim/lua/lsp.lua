@@ -9,7 +9,6 @@ capabilities.textDocument.completion.completionItem.resolveSupport = {
   }
 }
 
-
 do
   local method = "textDocument/publishDiagnostics"
   local default_handler = vim.lsp.handlers[method]
@@ -30,8 +29,41 @@ do
   end
 end
 
+local cmp = require'cmp'
+cmp.setup({
+  snippet = {
+    expand = function(args)
+      vim.fn["UltiSnips#Anon"](args.body)
+    end,
+  },
+  mapping = {
+    ['<Tab>'] = cmp.mapping.confirm({ select = true })
+  },
+  sources = cmp.config.sources({
+    { name = 'nvim_lsp' },
+    { name = 'ultisnips' },
+  }, {
+    { name = 'path' },
+  }),
+  experimental = {
+    ghost_text = true,
+  },
+})
+cmp.setup.cmdline('/', {
+  sources = {
+    { name = 'buffer' }
+  }
+})
+cmp.setup.cmdline(':', {
+  sources = cmp.config.sources({
+    { name = 'path' }
+  })
+})
+
+
 local buf_set_keymap = function (...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
 local buf_set_option = function (...) vim.api.nvim_buf_set_option(bufnr, ...) end
+local capabilities = require('cmp_nvim_lsp').update_capabilities(capabilities)
 
 -- Use an on_attach function to only map the following keys
 -- after the language server attaches to the current buffer
@@ -42,12 +74,10 @@ local on_attach = function(client, bufnr)
   -- Mappings.
   local opts = { noremap=true, silent=true }
 
-  local signs = { Error = "!", Warning = "*", Hint = "?", Information = " " }
-  for type, icon in pairs(signs) do
-    local hl = "LspDiagnosticsSign" .. type
-    vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
-  end
-  vim.fn.sign_define('LightBulbSign', { text = "?", texthl = "", linehl="", numhl="" })
+  vim.fn.sign_define("DiagnosticSignError", { text = "❗️", texthl = "LspDiagnosticsSignError" })
+  vim.fn.sign_define("DiagnosticSignWarn", { text = "⚠️ ", texthl = "LspDiagnosticsSignWarning" })
+  vim.fn.sign_define("DiagnosticSignHint", { text = "❔", texthl = "LspDiagnosticsSignHint" })
+  vim.fn.sign_define("DiagnosticSignInformation", { text = "ℹ️ ", texthl = "LspDiagnosticsSignInformation" })
 
   vim.api.nvim_exec([[
     augroup LspLightbulb
@@ -70,62 +100,31 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', 'gp', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
   buf_set_keymap('n', 'gn', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
   buf_set_keymap('n', 'ge', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
-  buf_set_keymap("n", "<localleader>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
+  buf_set_keymap("n", "<localleader>f", "<cmd>lua vim.lsp.buf.formatting_sync(nil, 1000)<CR>", opts)
 
   if client.resolved_capabilities.document_formatting then
     vim.api.nvim_exec([[
       augroup LspFormat
         autocmd! * <buffer>
-        autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting()
+        autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting_sync(nil, 1000)
       augroup END
     ]], true)
   end
+
+  require "lsp_signature".on_attach({
+    doc_lines = 0,
+    handler_opts = {
+      border = "none"
+    },
+  })
 end
-
-require'compe'.setup {
-  enabled = true;
-  autocomplete = true;
-  debug = false;
-  min_length = 1;
-  preselect = 'enable';
-  throttle_time = 80;
-  source_timeout = 200;
-  resolve_timeout = 800;
-  incomplete_delay = 400;
-  max_abbr_width = 100;
-  max_kind_width = 100;
-  max_menu_width = 100;
-  documentation = {
-    border = 'single',
-    winhighlight = 'NormalFloat:CompeDocumentation,FloatBorder:CompeDocumentationBorder',
-    max_width = 120,
-    min_width = 60,
-    max_height = math.floor(vim.o.lines * 0.3),
-    min_height = 1,
-  };
-
-  source = {
-    path = true;
-    buffer = true;
-    calc = true;
-    nvim_lsp = true;
-    nvim_lua = true;
-    vsnip = true;
-    ultisnips = true;
-    luasnip = true;
-  };
-}
 
 vim.api.nvim_exec([[
   augroup LspInlay
     autocmd!
-    autocmd VimEnter,InsertLeave,BufEnter,BufWinEnter,TabEnter *.rs lua require'lsp_extensions'.inlay_hints{ highlight = "VirtualTextInfo", prefix = " ▸ ", aligned = false, enabled = { "TypeHint", "ChainingHint", "ParameterHint" } }
+    autocmd CursorHold,CursorHoldI *.rs lua require'lsp_extensions'.inlay_hints{ highlight = "VirtualTextInfo", prefix = " ▸ ", only_current_line = true, enabled = {"TypeHint", "ChainingHint", "ParameterHint"} }
   augroup END
 ]], true)
-
-local t = function(str)
-  return vim.api.nvim_replace_termcodes(str, true, true, true)
-end
 
 local check_back_space = function()
   local col = vim.fn.col('.') - 1
@@ -226,7 +225,6 @@ lsp_installer.on_server_ready(function(server)
         checkOnSave = { command = "clippy" },
         cargo = {
           allFeatures = true,
-          target_os = "macos"
         },
       }
     }

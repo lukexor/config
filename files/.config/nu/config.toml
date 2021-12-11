@@ -24,7 +24,7 @@
 
 startup = [
   "mkdir ~/.cache/starship",
-  "starship init nu | save ~/.cache/starship/init.nu",
+  "if (ls ~/.cache/starship/ | where name =~ init | length) == 0 { starship init nu | save ~/.cache/starship/init.nu } {}",
   "source ~/.config/nu/startup.nu",
 ]
 
