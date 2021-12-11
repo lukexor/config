@@ -53,5 +53,5 @@ grep -qxF $BIN /etc/shells|wc -l || $sudo echo $BIN >> /etc/shells
 
 echo "Setup Complete!"
 
-$BIN install.nu
+$BIN ./install.nu
 $BIN

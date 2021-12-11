@@ -25,9 +25,11 @@ let cargo_packages = [
 let cargo_components = [clippy rust-analysis]
 
 if ((sys).host.name =~ Darwin) {
+  ^open ./roboto_mono_nerd_font.ttf
   echo $brew_packages | each { brew install $it }
 } {
   if ((sys).host.name =~ Ubuntu) {
+    xdg-open ./roboto_mono_nerd_font.ttf
     echo $apt_packages | each { apt-get -y install $it }
   } {}
 }
@@ -52,4 +54,6 @@ nu
 
 echo "
 Installation Complete!
+
+Make sure to update your terminal font to use Roboto Mono Nerd Font!
 "
