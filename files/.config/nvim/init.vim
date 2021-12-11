@@ -268,6 +268,7 @@ source ~/.config/nvim/plugins/highlightedyank.vim
 source ~/.config/nvim/plugins/kotlin.vim
 source ~/.config/nvim/plugins/lightline.vim
 source ~/.config/nvim/plugins/lsp.vim
+source ~/.config/nvim/plugins/cheatsh.vim
 source ~/.config/nvim/plugins/complete.vim
 source ~/.config/nvim/plugins/markdown-preview.vim
 source ~/.config/nvim/plugins/matchup.vim
