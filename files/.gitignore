@@ -43,8 +43,10 @@ ctags
 .project
 .settings
 .nu-env
+.jrc
 .env*
 *.patch
 .gitconfig.local
 sessions
+configstore
 roms

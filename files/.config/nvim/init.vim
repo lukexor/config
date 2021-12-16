@@ -61,7 +61,7 @@ set updatetime=300 " You will have bad experience for diagnostic messages when i
 set redrawtime=10000 " Allow more time for loading syntax on large files
 set textwidth=80
 set cursorline
-set colorcolumn=100
+set colorcolumn=80
 set signcolumn=yes:2
 set synmaxcol=200
 set foldmethod=indent
@@ -230,14 +230,11 @@ nnoremap <F7> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> t
   \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
 
 
-let b:show_gutter = 1
 fun! ToggleGutter()
-  if b:show_gutter
+  if &nu
     execute "set nornu nonu nolist signcolumn=no"
-    let b:show_gutter = 0
   else
     execute "set rnu nu list signcolumn=yes:2"
-    let b:show_gutter = 1
   endif
 endfun
 nnoremap <localleader>1 :call ToggleGutter()<CR>

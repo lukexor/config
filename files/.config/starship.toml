@@ -1,0 +1,21 @@
+[[battery.display]]
+threshold = 15
+style = "bold red"
+discharging_symbol = "💀 "
+
+[[battery.display]]
+threshold = 30
+style = "bold yellow"
+
+[time]
+disabled = false
+format = '[\[$time\]]($style) '
+time_format = "%H:%M"
+
+[directory]
+truncate_to_repo = false
+truncation_symbol = "../"
+
+[python]
+python_binary = "python3"
+disabled = true
