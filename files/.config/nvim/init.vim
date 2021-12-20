@@ -266,7 +266,6 @@ source ~/.config/nvim/plugins/kotlin.vim
 source ~/.config/nvim/plugins/lightline.vim
 source ~/.config/nvim/plugins/lsp.vim
 source ~/.config/nvim/plugins/cheatsh.vim
-source ~/.config/nvim/plugins/complete.vim
 source ~/.config/nvim/plugins/markdown-preview.vim
 source ~/.config/nvim/plugins/matchup.vim
 source ~/.config/nvim/plugins/nerdtree.vim
@@ -279,7 +278,6 @@ source ~/.config/nvim/plugins/rust.vim
 source ~/.config/nvim/plugins/signature.vim
 source ~/.config/nvim/plugins/smooth-scroll.vim
 source ~/.config/nvim/plugins/sneak.vim
-source ~/.config/nvim/plugins/snippets.vim
 source ~/.config/nvim/plugins/surround.vim
 source ~/.config/nvim/plugins/test.vim
 source ~/.config/nvim/plugins/unimpaired.vim
@@ -289,8 +287,6 @@ source ~/.config/nvim/plugins/yaml.vim
 
 call plug#end()
 doautocmd User PlugLoaded
-
-lua require("lsp")
 
 " Abbreviations   {{{1
 " ==================================================================================================

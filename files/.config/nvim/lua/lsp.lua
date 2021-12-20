@@ -1,24 +1,12 @@
--- Enable (broadcasting) snippet capability for completion
-local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities.textDocument.completion.completionItem.snippetSupport = true
-capabilities.textDocument.completion.completionItem.resolveSupport = {
-  properties = {
-    'documentation',
-    'detail',
-    'additionalTextEdits',
-  }
-}
-
 do
-  local method = "textDocument/publishDiagnostics"
-  local default_handler = vim.lsp.handlers[method]
-  vim.lsp.handlers[method] = function(err, method, result, client_id, bufnr, config)
+  local default_handler = vim.lsp.handlers['textDocument/publishDiagnostics']
+  vim.lsp.handlers['textDocument/publishDiagnostics'] = function(err, method, result, client_id, bufnr, config)
     default_handler(err, method, result, client_id, bufnr, config)
     local diagnostics = vim.lsp.diagnostic.get_all()
     local qflist = {}
-    for bufnr, diagnostic in pairs(diagnostics) do
+    for bufnum, diagnostic in pairs(diagnostics) do
       for _, d in ipairs(diagnostic) do
-        d.bufnr = bufnr
+        d.bufnr = bufnum
         d.lnum = d.range.start.line + 1
         d.col = d.range.start.character + 1
         d.text = d.message
@@ -60,14 +48,14 @@ cmp.setup.cmdline(':', {
   })
 })
 
-
-local buf_set_keymap = function (...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
-local buf_set_option = function (...) vim.api.nvim_buf_set_option(bufnr, ...) end
-local capabilities = require('cmp_nvim_lsp').update_capabilities(capabilities)
+local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
 
 -- Use an on_attach function to only map the following keys
 -- after the language server attaches to the current buffer
 local on_attach = function(client, bufnr)
+  local buf_set_keymap = function (...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
+  local buf_set_option = function (...) vim.api.nvim_buf_set_option(bufnr, ...) end
+
   -- Enable completion triggered by <c-x><c-o>
   buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
 
@@ -125,15 +113,6 @@ vim.api.nvim_exec([[
     autocmd CursorHold,CursorHoldI *.rs lua require'lsp_extensions'.inlay_hints{ highlight = "VirtualTextInfo", prefix = " ▸ ", only_current_line = true, enabled = {"TypeHint", "ChainingHint", "ParameterHint"} }
   augroup END
 ]], true)
-
-local check_back_space = function()
-  local col = vim.fn.col('.') - 1
-  if col == 0 or vim.fn.getline('.'):sub(col, col):match('%s') then
-    return true
-  else
-    return false
-  end
-end
 
 local lsp_installer = require("nvim-lsp-installer")
 lsp_installer.on_server_ready(function(server)
@@ -216,23 +195,25 @@ lsp_installer.on_server_ready(function(server)
   elseif server.name == 'rust_analyzer' then
     opts.settings = {
       ["rust-analyzer"] = {
-        updates = {
-          channel = "nightly"
-        },
         assist = {
           importGroup = false,
         },
         checkOnSave = { command = "clippy" },
-        cargo = {
-          allFeatures = true,
-        },
       }
     }
   elseif (server.name == 'html' or server.name == 'tsserver' or server.name == 'eslint') then
     opts.on_attach = function(client)
-        client.resolved_capabilities.document_formatting = formatting
+        client.resolved_capabilities.document_formatting = false
         on_attach(client)
     end
+  elseif (server.name == 'sumneko_lua') then
+    opts.settings = {
+      Lua = {
+        diagnostics = {
+          globals = { 'vim' }
+        }
+      }
+    }
   end
 
   server:setup(opts)

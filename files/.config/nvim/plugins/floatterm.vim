@@ -3,7 +3,7 @@ Plug 'voldikss/vim-floaterm'
 let g:floaterm_shell = 'nu'
 let g:floaterm_title = 'nvim $1/$2'
 
-let g:floaterm_keymap_new = '<c-k>'
+let g:floaterm_keymap_new = '<c-0>'
 let g:floaterm_keymap_toggle = '<c-t>'
 let g:floaterm_keymap_prev = '<c-[>'
 let g:floaterm_keymap_next = '<c-]>'
