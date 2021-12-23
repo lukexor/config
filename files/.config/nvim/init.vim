@@ -100,6 +100,7 @@ nmap <leader>W :noa w<CR>
 
 nmap <leader>q :q<CR>
 nmap <leader>Q :qall<CR>
+nmap Q <nop>
 nmap <leader>d :bdelete<CR>
 nmap <leader>D :bufdo bdelete<CR>
 
@@ -125,6 +126,9 @@ nnoremap <silent> <expr> k (v:count == 0 ? 'gk' : 'k')
 nmap gt :tag <cword><CR>
 nmap <localleader>tn :tnext<CR>
 nmap <localleader>tp :tprevious<CR>
+
+command! Cnext try | cnext | catch | cfirst | catch | endtry
+command! Cprev try | cprev | catch | clast | catch | endtry
 
 " Clear quickfix
 nnoremap <leader>cc :cexpr []
@@ -252,9 +256,11 @@ endif
 
 call plug#begin(data_dir . '/plugins')
 
+source ~/.config/nvim/plugins/buftabline.vim
 source ~/.config/nvim/plugins/closetag.vim
 source ~/.config/nvim/plugins/commentary.vim
 source ~/.config/nvim/plugins/dispatch.vim
+source ~/.config/nvim/plugins/dressing.vim
 source ~/.config/nvim/plugins/editorconfig.vim
 source ~/.config/nvim/plugins/endwise.vim
 source ~/.config/nvim/plugins/floatterm.vim
@@ -269,6 +275,7 @@ source ~/.config/nvim/plugins/cheatsh.vim
 source ~/.config/nvim/plugins/markdown-preview.vim
 source ~/.config/nvim/plugins/matchup.vim
 source ~/.config/nvim/plugins/nerdtree.vim
+source ~/.config/nvim/plugins/notify.vim
 source ~/.config/nvim/plugins/polyglot.vim
 source ~/.config/nvim/plugins/projectionist.vim
 source ~/.config/nvim/plugins/quickfix.vim

@@ -1,24 +1,9 @@
-do
-  local default_handler = vim.lsp.handlers['textDocument/publishDiagnostics']
-  vim.lsp.handlers['textDocument/publishDiagnostics'] = function(err, method, result, client_id, bufnr, config)
-    default_handler(err, method, result, client_id, bufnr, config)
-    local diagnostics = vim.lsp.diagnostic.get_all()
-    local qflist = {}
-    for bufnum, diagnostic in pairs(diagnostics) do
-      for _, d in ipairs(diagnostic) do
-        d.bufnr = bufnum
-        d.lnum = d.range.start.line + 1
-        d.col = d.range.start.character + 1
-        d.text = d.message
-        table.insert(qflist, d)
-      end
-    end
-    vim.lsp.util.set_qflist(qflist)
-  end
-end
+require'trouble'.setup{}
+require'fzf_lsp'.setup{}
+require'lspfuzzy'.setup{}
 
 local cmp = require'cmp'
-cmp.setup({
+cmp.setup{
   snippet = {
     expand = function(args)
       vim.fn["UltiSnips#Anon"](args.body)
@@ -36,7 +21,7 @@ cmp.setup({
   experimental = {
     ghost_text = true,
   },
-})
+}
 cmp.setup.cmdline('/', {
   sources = {
     { name = 'buffer' }
@@ -48,7 +33,7 @@ cmp.setup.cmdline(':', {
   })
 })
 
-local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+local capabilities = require'cmp_nvim_lsp'.update_capabilities(vim.lsp.protocol.make_client_capabilities())
 
 -- Use an on_attach function to only map the following keys
 -- after the language server attaches to the current buffer
@@ -85,8 +70,8 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', 'gR', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
   buf_set_keymap('n', 'ga', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
   buf_set_keymap('n', 'gO', '<cmd>lua lsp_organize_imports()<CR>', opts)
-  buf_set_keymap('n', 'gp', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
-  buf_set_keymap('n', 'gn', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
+  buf_set_keymap('n', 'gp', ':Cprev<CR>', opts)
+  buf_set_keymap('n', 'gn', ':Cnext<CR>', opts)
   buf_set_keymap('n', 'ge', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
   buf_set_keymap("n", "<localleader>f", "<cmd>lua vim.lsp.buf.formatting_sync(nil, 1000)<CR>", opts)
 
@@ -99,7 +84,7 @@ local on_attach = function(client, bufnr)
     ]], true)
   end
 
-  require "lsp_signature".on_attach({
+  require'lsp_signature'.on_attach({
     doc_lines = 0,
     handler_opts = {
       border = "none"
@@ -114,7 +99,7 @@ vim.api.nvim_exec([[
   augroup END
 ]], true)
 
-local lsp_installer = require("nvim-lsp-installer")
+local lsp_installer = require'nvim-lsp-installer'
 lsp_installer.on_server_ready(function(server)
   if server.name == 'tsserver' then
     _G.lsp_organize_imports = function()
