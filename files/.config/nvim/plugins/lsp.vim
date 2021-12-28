@@ -22,7 +22,7 @@ let g:snips_author_email = system('git config --get user.email | tr -d "\n"')
 inoremap <c-x><c-k> <c-x><c-k>
 
 " Default LSP shortcuts to no-ops for non-supported file types
-nmap gt <nop>
+nmap gT <nop>
 nmap gh <nop>
 nmap gH <nop>
 nmap gi <nop>

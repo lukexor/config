@@ -62,6 +62,7 @@ alias topm = (ps | sort-by mem | reverse | first 10)
 alias v = nvim
 alias vi = nvim
 alias vim = nvim
+alias vimdiff = nvim -d
 
 
 ## Commands
