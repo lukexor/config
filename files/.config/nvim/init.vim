@@ -50,7 +50,7 @@ set completeopt=menu,menuone,noselect
 set nowrap
 set breakindent
 set list
-set listchars=tab:▸\ ,trail:·
+set listchars=tab:▸\ ,trail:·,extends:»,precedes:«,nbsp:+
 set matchpairs+=<:>
 set scrolloff=8
 set sidescrolloff=8
@@ -79,9 +79,10 @@ if &diff
 endif
 
 if executable('rg')
-  set grepprg=rg\ --no-heading\ --vimgrep
+  set grepprg=rg\ --no-heading\ --vimgrep\ -.\ --ignore-file\ .git/
   set grepformat=%f:%l:%c:%m
 endif
+
 
 " ==================================================================================================
 " Key Maps   {{{1
@@ -90,22 +91,28 @@ endif
 let mapleader=' '
 let maplocalleader='-'
 
-nmap <localleader>ve :edit $MYVIMRC<CR>
-nmap <localleader>vc :edit ~/.config/nvim/lua/lsp.lua<CR>
-nmap <localleader>vr :source $MYVIMRC<CR>:edit<CR>
+" Quick edit vim files
+nmap <leader>ve :edit $MYVIMRC<CR>
+nmap <leader>vc :edit ~/.config/nvim/lua/lsp.lua<CR>
+nmap <leader>vr :source $MYVIMRC<CR>:edit<CR>
 
 " Quick save
 nmap <leader>w :w<CR>
+" Save but don't run autocmds which might format
 nmap <leader>W :noa w<CR>
 
+" Quick quit
 nmap <leader>q :q<CR>
 nmap <leader>Q :qall<CR>
-nmap Q <nop>
 nmap <leader>d :bdelete<CR>
 nmap <leader>D :bufdo bdelete<CR>
 
-" Allow gf to open non-existent files
-map gf :edit <cfile><cr>
+" Disable Q for Ex mode since it's accidentally hit. gQ still works.
+nmap Q <nop>
+
+" Allow gf to open non-existent files, doesn't auto-find like original gf, but
+" can use gF instead.
+map <silent> gf :edit <cfile><cr>
 
 " Switch between windows
 nmap <silent> <C-h> <C-w>h
@@ -118,15 +125,12 @@ nmap <leader>h :bp<CR>
 nmap <leader>l :bn<CR>
 nmap <leader><leader> <c-^>
 
-" Move by terminal rows, not lines, unless count is provided
-nnoremap <silent> <expr> j (v:count == 0 ? 'gj' : 'j')
-nnoremap <silent> <expr> k (v:count == 0 ? 'gk' : 'k')
-
 " Navigate tags
-nnoremap gt <C-]>
-nmap <localleader>tn :tnext<CR>
-nmap <localleader>tp :tprevious<CR>
+nnoremap <silent> gt <C-]>
+nmap <leader>tn :tnext<CR>
+nmap <leader>tp :tprevious<CR>
 
+" Have quickfix wrap around, user commands must start with uppercase
 command! Cnext try | cnext | catch | cfirst | catch | endtry
 command! Cprev try | cprev | catch | clast | catch | endtry
 
@@ -157,8 +161,8 @@ vnoremap K :m '<-2<CR>gv=gv
 
 " Move line up/down
 " == honors indent
-nnoremap <leader>j :m .+1<CR>==
-nnoremap <leader>k :m .-2<CR>==
+nnoremap <silent> <leader>j :m .+1<CR>==
+nnoremap <silent> <leader>k :m .-2<CR>==
 
 " Keep cursor centered
 nnoremap n nzzzv
@@ -189,8 +193,9 @@ inoremap ! !<C-g>u
 inoremap ? ?<C-g>u
 
 " Add relative jumps of more than 5 lines to jump list
-nnoremap <expr> j (v:count > 5 ? "m'" . v:count : "") . 'j'
-nnoremap <expr> k (v:count > 5 ? "m'" . v:count : "") . 'k'
+" Move by terminal rows, not lines, unless count is provided
+nnoremap <silent> <expr> j (v:count > 0 ? "m'" . v:count . 'j' : "gj")
+nnoremap <silent> <expr> k (v:count > 0 ? "m'" . v:count . 'k' : "gk")
 
 " Maximize window
 nmap <leader>- :wincmd _<CR>:wincmd \|<CR>
@@ -198,50 +203,117 @@ nmap <leader>- :wincmd _<CR>:wincmd \|<CR>
 nmap <leader>= :wincmd =<CR>
 
 " Resize windows
-nnoremap <silent> <Down> :resize -5<CR>
-nnoremap <silent> <Left> :vertical resize -5<CR>
-nnoremap <silent> <Right> :vertical resize +5<CR>
-nnoremap <silent> <Up> :resize +5<CR>
+nnoremap <Down> :resize -5<CR>
+nnoremap <Left> :vertical resize -5<CR>
+nnoremap <Right> :vertical resize +5<CR>
+nnoremap <Up> :resize +5<CR>
 
 " cd to cwd of current file
-nnoremap cd :execute 'lcd ' fnamemodify(resolve(expand('%')), ':h')<CR>
-  \ :echo 'cd ' . fnamemodify(resolve(expand('%')), ':h')<CR>
+nnoremap cd :execute 'lcd ' fnamemodify(resolve(expand('%')), ':p:h')<CR>
+  \ :echo 'cd ' . fnamemodify(resolve(expand('%')), ':p:h')<CR>
 
-" Clipboard
+" Yank/Paste to/from clipboard
+nnoremap cy "*y
 nnoremap cY "*Y
 nnoremap cyy "*yy
+vnoremap cy "*y
 nnoremap cp "*p
 nnoremap cP "*P
-vnoremap cy "*y
 
-" Change up to the next return
-onoremap r /return<CR>
-" Change inside next parens
+" Next/Last parens text-object
 onoremap in( :<c-u>normal! f(vi(<cr>
-" Change inside last parens
 onoremap il( :<c-u>normal! F)vi(<cr>
-" Change inside next brace
-onoremap in{ :<c-u>normal! f{vi{<cr>
-" Change inside last brace
-onoremap il{ :<c-u>normal! F{vi{<cr>
-" Change inside next bracket
-onoremap in[ :<c-u>normal! f[vi[<cr>
-" Change inside last bracket
-onoremap il[ :<c-u>normal! F[vi[<cr>
+onoremap an( :<c-u>normal! f(va(<cr>
+onoremap al( :<c-u>normal! F)va(<cr>
+vnoremap in( :<c-u>normal! f(vi(<cr><esc>gv
+vnoremap il( :<c-u>normal! F)vi(<cr><esc>gv
+vnoremap an( :<c-u>normal! f(va(<cr><esc>gv
+vnoremap al( :<c-u>normal! F)va(<cr><esc>gv
 
-nnoremap <F7> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
+" Next/Last brace text-object
+onoremap in{ :<c-u>normal! f{vi{<cr>
+onoremap il{ :<c-u>normal! F{vi{<cr>
+onoremap an{ :<c-u>normal! f{va{<cr>
+onoremap al{ :<c-u>normal! F{va{<cr>
+vnoremap in{ :<c-u>normal! f{vi{<cr><esc>gv
+vnoremap il{ :<c-u>normal! F{vi{<cr><esc>gv
+vnoremap an{ :<c-u>normal! f{va{<cr><esc>gv
+vnoremap al{ :<c-u>normal! F{va{<cr><esc>gv
+
+" Next/Last bracket text-object
+onoremap in[ :<c-u>normal! f[vi[<cr>
+onoremap il[ :<c-u>normal! F[vi[<cr>
+onoremap an[ :<c-u>normal! f[va[<cr>
+onoremap al[ :<c-u>normal! F[va[<cr>
+vnoremap in[ :<c-u>normal! f[vi[<cr><esc>gv
+vnoremap il[ :<c-u>normal! F[vi[<cr><esc>gv
+vnoremap an[ :<c-u>normal! f[va[<cr><esc>gv
+vnoremap al[ :<c-u>normal! F[va[<cr><esc>gv
+
+" Fold text-object
+vnoremap af :<c-u>silent! normal! [zV]z<cr>
+omap af :normal Vaf<cr>
+
+" Indent text-object
+onoremap ai :<c-u>call <SID>IndTxtObj(0)<cr>
+onoremap ii :<c-u>call <SID>IndTxtObj(1)<cr>
+vnoremap ai :<c-u>call <SID>IndTxtObj(0)<cr><esc>gv
+vnoremap ii :<c-u>call <SID>IndTxtObj(1)<cr><esc>gv
+
+fun! s:indtxtobj(inner)
+  let curcol = col(".")
+  let curline = line(".")
+  let lastline = line("$")
+  let i = indent(line(".")) - &shiftwidth * (v:count1 - 1)
+  let i = i < 0 ? 0 : i
+  if getline(".") !~ "^\\s*$"
+    let p = line(".") - 1
+    let pp = line(".") - 2
+    let nextblank = getline(p) =~ "^\\s*$"
+    let nextnextblank = getline(pp) =~ "^\\s*$"
+    while p > 0 && (((!nextblank || (pp > 0 && !nextnextblank)) && indent(p) >= i) || (!a:inner && nextblank))
+      -
+      let p = line(".") - 1
+      let pp = line(".") - 2
+      let nextblank = getline(p) =~ "^\\s*$"
+      let nextnextblank = getline(pp) =~ "^\\s*$"
+    endwhile
+    normal! 0V
+    call cursor(curline, curcol)
+    let p = line(".") + 1
+    let pp = line(".") + 2
+    let nextblank = getline(p) =~ "^\\s*$"
+    let nextnextblank = getline(pp) =~ "^\\s*$"
+    while p <= lastline && (((!nextblank || (pp > 0 && !nextnextblank)) && indent(p) >= i) || (!a:inner && nextblank))
+      +
+      let p = line(".") + 1
+      let pp = line(".") + 2
+
+      let nextblank = getline(p) =~ "^\\s*$"
+      let nextnextblank = getline(pp) =~ "^\\s*$"
+    endwhile
+    normal! $
+  endif
+endfun
+
+" 
+
+" Identify syntax ID under cursor
+nnoremap <leader>i :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
   \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
   \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
 
+" Toggle gutter and signs
+nnoremap <leader>\ :call <SID>ToggleGutter()<CR>
 
-fun! ToggleGutter()
-  if &nu
+fun! s:ToggleGutter()
+  if &nu || &rnu || &list || &signcolumn
     execute "set nornu nonu nolist signcolumn=no"
   else
     execute "set rnu nu list signcolumn=yes:2"
   endif
 endfun
-nnoremap <localleader>1 :call ToggleGutter()<CR>
+
 
 " ==================================================================================================
 " Plugins   {{{1
@@ -259,10 +331,12 @@ call plug#begin(data_dir . '/plugins')
 source ~/.config/nvim/plugins/buftabline.vim
 source ~/.config/nvim/plugins/closetag.vim
 source ~/.config/nvim/plugins/commentary.vim
+source ~/.config/nvim/plugins/dadbod.vim
 source ~/.config/nvim/plugins/dispatch.vim
 source ~/.config/nvim/plugins/dressing.vim
 source ~/.config/nvim/plugins/editorconfig.vim
 source ~/.config/nvim/plugins/endwise.vim
+source ~/.config/nvim/plugins/eunuch.vim
 source ~/.config/nvim/plugins/floatterm.vim
 source ~/.config/nvim/plugins/fugitive.vim
 source ~/.config/nvim/plugins/fzf.vim
@@ -276,13 +350,16 @@ source ~/.config/nvim/plugins/markdown-preview.vim
 source ~/.config/nvim/plugins/matchup.vim
 source ~/.config/nvim/plugins/nerdtree.vim
 source ~/.config/nvim/plugins/notify.vim
+source ~/.config/nvim/plugins/obsession.vim
 source ~/.config/nvim/plugins/polyglot.vim
 source ~/.config/nvim/plugins/projectionist.vim
 source ~/.config/nvim/plugins/quickfix.vim
+source ~/.config/nvim/plugins/radical.vim
 source ~/.config/nvim/plugins/repeat.vim
 source ~/.config/nvim/plugins/rooter.vim
 source ~/.config/nvim/plugins/rust.vim
 source ~/.config/nvim/plugins/signature.vim
+source ~/.config/nvim/plugins/sleuth.vim
 source ~/.config/nvim/plugins/smooth-scroll.vim
 source ~/.config/nvim/plugins/sneak.vim
 source ~/.config/nvim/plugins/surround.vim
@@ -294,6 +371,7 @@ source ~/.config/nvim/plugins/yaml.vim
 
 call plug#end()
 doautocmd User PlugLoaded
+
 
 " Abbreviations   {{{1
 " ==================================================================================================
@@ -308,16 +386,19 @@ iabbrev teh the
 iabbrev tehn then
 iabbrev waht what
 
+
 " ==================================================================================================
 " Misc   {{{1
 " ==================================================================================================
 
-hi SpecialComment ctermfg=108 guifg=#89b482 guisp=#89b482
+hi! SpecialComment ctermfg=108 guifg=#89b482 guisp=#89b482
+hi! ColorColumn ctermbg=237 guibg=#333333
 
 augroup FileTypeOverrides
-  autocmd TermOpen * setlocal nospell
   autocmd!
-  autocmd BufRead,BufNewFile *.nu set filetype=sh
+  autocmd TermOpen * setlocal nospell
+  autocmd BufRead,BufNewFile *.nu set ft=nu
+  autocmd Filetype help set nu rnu
   autocmd Filetype * set formatoptions=croqnjp
 augroup END
 

@@ -40,10 +40,15 @@ else
 fi
 
 $HOME/.cargo/bin/cargo install nu --features=extra
-pushd files
-find . -maxdepth 1 -mindepth 1 -exec mv ~/{} ~/{}.orig \; 2> /dev/null
-popd
-stow files
+
+CONFLICTS=$(stow -nv files 2>&1 | awk '/\* existing target is/ {print $NF}')
+for file in ${CONFLICTS[@]}; do
+  if [ -f "$HOME/$file" ] || [ -L "$HOME/$file" ]; then
+    echo "Moved $file to $file.orig"
+    mv "$HOME/$file"{,.orig}
+  fi
+done
+stow --no-folding -Rv files
 
 sudo=
 [ "$EUID" -eq 0 ] && sudo=sudo

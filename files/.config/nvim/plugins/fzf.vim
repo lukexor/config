@@ -8,18 +8,26 @@ let g:fzf_commits_log_options = '--graph --pretty=format:"%C(yellow)%h (%p) %ai%
 
 " Use rg
 command! -bang -nargs=? -complete=dir Files
-  \ call fzf#run(fzf#wrap('files', fzf#vim#with_preview({ 'dir': <q-args>, 'sink': 'e', 'source': 'rg --files --hidden --glob !.git/' }), <bang>0))
+  \ call fzf#run(fzf#wrap(
+  \   'files',
+  \   fzf#vim#with_preview({ 'dir': <q-args>, 'sink': 'e', 'source': 'rg --files --hidden --glob !.git/' }), <bang>0))
 
 " Add AllFiles which ignores .gitignore
 command! -bang -nargs=? -complete=dir AllFiles
-  \ call fzf#run(fzf#wrap('allfiles', fzf#vim#with_preview({ 'dir': <q-args>, 'sink': 'e', 'source': 'rg --files --hidden --no-ignore --glob !.git/' }), <bang>0))
+  \ call fzf#run(fzf#wrap(
+  \   'allfiles',
+  \   fzf#vim#with_preview({ 'dir': <q-args>, 'sink': 'e', 'source': 'rg --files --hidden --no-ignore --glob !.git/' }), <bang>0))
+
+command! -bang -nargs=* Rg
+  \ call fzf#vim#grep(
+  \   'rg -. --ignore-file .git/ --column --line-number --no-heading --color=always --smart-case -- '.shellescape(<q-args>), 1,
+  \   fzf#vim#with_preview(), <bang>0)
 
 nmap <leader>f :Files<CR>
 nmap <leader>F :AllFiles<CR>
 nmap <leader>b :Buffers<CR>
 nmap <leader>H :History<CR>
 nmap <leader>M :Marks<CR>
-nmap <leader>T :Tags<CR>
 nmap <leader>r :Rg<CR>
 nmap <leader>R :Rg<Space>
 nmap <leader>gb :GBranches<CR>
