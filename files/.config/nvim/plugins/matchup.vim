@@ -1,1 +1,1 @@
-Plug 'andymass/vim-matchup'
+Plug 'RRethy/vim-illuminate'

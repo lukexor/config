@@ -8,7 +8,6 @@ let g:gruvbox_material_better_performance = 1
 let g:gruvbox_material_visual = 'reverse'
 let g:gruvbox_material_menu_selection_background = 'green'
 let g:gruvbox_material_ui_contrast = 'high'
-let g:gruvbox_material_better_performance = 1
 
 set background=dark
 
