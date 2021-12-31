@@ -12,6 +12,7 @@
 " - Typescript: HerringtonDarkholme/yats.vim
 
 Plug 'sheerun/vim-polyglot'
+Plug 'stephpy/vim-yaml'
 
 let g:rustfmt_autosave = 1
 " Let vim-sleuth do it

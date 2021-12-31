@@ -128,10 +128,8 @@ nmap <leader>h :bp<CR>
 nmap <leader>l :bn<CR>
 nmap <leader><leader> <c-^>
 
-" Navigate tags
+" Navigate to tag
 nnoremap <silent> gt <C-]>
-nmap <leader>tn :tnext<CR>
-nmap <leader>tp :tprevious<CR>
 
 " Show diffs in a modified buffer
 command DiffOrig vert new | set bt=nofile | r ++edit # | 0d_ | diffthis
@@ -371,7 +369,6 @@ source ~/.config/nvim/plugins/test.vim
 source ~/.config/nvim/plugins/unimpaired.vim
 source ~/.config/nvim/plugins/vimspector.vim
 source ~/.config/nvim/plugins/which-key.vim
-source ~/.config/nvim/plugins/yaml.vim
 
 call plug#end()
 doautocmd User PlugLoaded

@@ -6,17 +6,25 @@ TABLE OF CONTENTS                                                      *cht-toc*
   VIM                                   |cht-vim|
     More                                |cht-vim-more|
     Shortcuts                           |cht-vim-shortcuts|
+  BASH                                  |cht-bash|
   PLUGINS                               |cht-plugins|
     Database                            |cht-plugins-db|
+    Debug                               |cht-plugins-debug|
     Dispatch                            |cht-plugins-dispatch|
-    Unix                                |cht-plugins-unix|
-    Terminal                            |cht-plugins-terminal|
+    Files & Search                      |cht-plugins-files-search|
     Git                                 |cht-plugins-git|
-    Projects                            |cht-plugins-projects|
-    FZF                                 |cht-plugins-fzf|
-    Markdown                            |cht-plugins-markdown|
     LSP                                 |cht-plugins-lsp|
+    Markdown                            |cht-plugins-markdown|
+    Marks                               |cht-plugins-marks|
+    Math                                |cht-plugins-math|
+    Navigation                          |cht-plugins-navigation|
+    Projects                            |cht-plugins-projects|
+    Search                              |cht-plugins-search|
     Sessions                            |cht-plugins-sessions|
+    Surround                            |cht-plugins-surround|
+    Terminal                            |cht-plugins-terminal|
+    Test                                |cht-plugins-test|
+    Unix                                |cht-plugins-unix|
 
 VIM                                                                    *cht-vim*
 ==============================================================================
@@ -50,43 +58,81 @@ gf                  Go file, whether it exists or not.
 cy/cY/cyy           Copy to clipboard.      
 cp/cP               Paste from clipboard.
 
+BASH                                                                  *cht-bash*
+==============================================================================
+
+echo ${Variable/Some/A} # Variable substitution
+echo ${Variable:0:7} # Variable substring
+echo ${Variable: -5}
+echo ${#Variable} # String length
+echo ${Foo:-"DefaultValueIfFooIsMissingOrEmpty"}
+
+array0=(one two three four five six)
+echo $array0 # => "one"
+echo ${array0[0]} # => "one"
+echo ${array0[@]} # => "one two three four five six"
+echo ${#array0[@]} # => "6"
+echo ${array0[@]:3:2} # => "four five"
+
+echo "Last program's return value: $?"
+echo "Script's PID: $$"
+echo "Number of arguments passed to script: $#"
+echo "All arguments passed to script: $@"
+echo "Script's arguments separated into different variables: $1 $2..."
 
 PLUGINS                                                            *cht-plugins*
 ==============================================================================
 
-Database (dadbod)~
-                                                                *cht-plugins-db*
+Database~
+                                                         |dadbod| *cht-plugins-db*
 
 |:DB| [url] {cmd}       Start interactive database console or execute command.
 
+Debug~
+                                                  |vimspector| *cht-plugins-debug*
+
+<localleader>dd       Launch debugger using `.vimspector.json`.
+                      |<Plug>VimspectorLaunch|.
+<localleader>dc       Continue (or start). |<Plug>VimspectorContinue|.
+<localleader>dp       Pause debugging. |<Plug>VimspectorPause|.
+<localleader>dq       Stop debugging. |<Plug>VimspectorStop|.
+<localleader>db       Toggle breakpoint. |<Plug>VimspectorToggleBreakpoint|.
+<localleader>dB       Toggle conditional breakpoint.
+                      |<Plug>VimspectorToggleConditionalBreakpoint|.
+<localleader>di       Step into. |<Plug>VimspectorStepInto|.
+<localleader>do       Step over. |<Plug>VimspectorStepOver|.
+<localleader>dO       Step out. |<Plug>VimspectorStepOut|.
+<localleader>dr       Run until cursor. |<Plug>VimspectorRunToCursor|.
+<localleader>dR       Restart debugger. |<Plug>VimspectorRestart|.
+<localleader>de       Evaluate expression. |<Plug>VimspectorEval|.
+
 Dispatch~
-                                                          *cht-plugins-dispatch*
+                                                 |dispatch| *cht-plugins-dispatch*
 
 |:Make|[!]              Foreground or background make with |:compiler|.
 |:Start|[!] {cmd}       Start command in a new focused or unfocused window.
 |:Copen|[!]             Loads latest build into quickfix list.
 
-Unix Commands (eunuch)~
-                                                              *cht-plugins-unix*
+Files & Search~
+                                                  |fzf| *cht-plugins-files-search*
 
-|:Delete|[!]            Delete from disk and |:bdelete|.
-|:Remove|[!]            Delete from disk but leave buffer open.
-|:Move|[!]              Move file on disk and buffer.
-|:Rename|[!]            |:Move| but relative to current file directory.
-|:Chmod| {mode}         Change file permission.
-|:Mkdir|[!] {dir}       Create directory with optional `-p` argument.
-|:SudoWrite|            Writes file using `sudo`.
+<leader>f             Search files except hidden. |:Files|.
+<leader>F             Search files including hidden. `:AllFiles`.
+<leader>b             Search buffers. |:Buffers|.
+<leader>B             Search current buffer lines. |:BLines|.
+<leader>C             Search commands. |:Commands|.
+<leader>H             Search command history. |:History|.
+<leader>S             Search snippets. |:Snippets|.
+<leader>r             Search all files. |:Rg|.
+<leader>gb            Search git branches. |:Gbranches|.
+<leader>gc            Search buffer git commits. |:BCommits|.
+<leader>gC            Search all git commits. |:Commits|.
+|:Maps|                 Search normal mode mappings.
+|:Helptags|             Search help tags.
+|:Filetypes|            Search file types.
 
-Terminal (floatterm)~
-                                                          *cht-plugins-terminal*
-
-CTRL-0                Open new terminal.
-CTRL-T                Toggle terminal.
-CTRL-[                Previous terminal.
-CTRL-]                Next terminal.
-
-Git (fugitive)~
-                                                               *cht-plugins-git*
+Git~
+                                                      |fugitive| *cht-plugins-git*
 
 |:Git|[!] {args}        Run a git command. Alias: :G {args}. `-p` paginates.
 :Git blame            Git blame in a vertical split. |:Git_blame|
@@ -104,38 +150,8 @@ Git (fugitive)~
 |:GRemove|              Delete file but leave buffer open.
 :DiffOrig             Pull up diff split for a modified buffer.
 
-Projects~
-                                                           *cht-plugins-project*
-
-|:A|                    Open `alternate` file if one exists for this project.
-                      |projectionist-:A|. |:AS| or |:AV| opens in a split.
-
-Files & Search~
-                                                      *cht-plugins-files-search*
-
-<leader>f             Search files except hidden. |:Files|.
-<leader>F             Search files including hidden. `:AllFiles`.
-<leader>b             Search buffers. |:Buffers|.
-<leader>B             Search current buffer lines. |:BLines|.
-<leader>C             Search commands. |:Commands|.
-<leader>H             Search command history. |:History|.
-<leader>S             Search snippets. |:Snippets|.
-<leader>r             Search all files. |:Rg|.
-<leader>gb            Search git branches. |:Gbranches|.
-<leader>gc            Search buffer git commits. |:BCommits|.
-<leader>gC            Search all git commits. |:Commits|.
-|:Maps|                 Search normal mode mappings.
-|:Helptags|             Search help tags.
-|:Filetypes|            Search file types.
-
-Markdown~
-                                                          *cht-plugins-markdown*
-
-|:MarkdownPreview|      Open markdown file in a browser preview.
-|:MarkdownPreviewStop|  Stop previewing markdown file.
-
 LSP~
-                                                               *cht-plugins-lsp*
+                                                           |lsp| *cht-plugins-lsp*
 
 <leader>L             Show current LSP status. |:LspInfo|.
 <leader>to            Display buffer symbols outline. |:SymbolsOutline|.
@@ -151,28 +167,16 @@ gr                    List references.
 gR                    Rename symbol.
 ga                    Execute code action (lightbulb).
 gO                    Organize imports.
-gp                    Previous quickfix entry. |:cprev|. Wraps around.
-gn                    Next quickfix entry. |:cnext|. Wraps around.
 ge                    Show line diagnostics.
 
-Sessions~
-                                                          *cht-plugins-sessions*
+Markdown~
+                                                          *cht-plugins-markdown*
 
-|:Obsession| {file}     Start a stored vim session in {file}.
-                      Excluding {file} will start (or pause) a session in the
-                      current directory.
-
-Math~
-                                                              |cht-plugins-math|
-
-gA                    Print numerical representation. |RadicalView|.
-crd                   Convert to decimal. |RadicalCoerceToDecimal|.
-crx                   Convert to hexadecimal. |RadicalCoerceToDecimal|.
-cro                   Convert to octal. |RadicalCoerceToDecimal|.
-crb                   Convert to binary. |RadicalCoerceToDecimal|.
+|:MarkdownPreview|      Open markdown file in a browser preview.
+|:MarkdownPreviewStop|  Stop previewing markdown file.
 
 Marks~
-                                                             |cht-plugins-marks|
+                                                   |signature| *cht-plugins-marks*
 
 <leader>M             Search marks. |:Marks|.
 m{mark}               Toggle mark where {mark} is a-zA-Z.
@@ -182,5 +186,99 @@ m-                    Delete all marks from current line.
 m<Space>              Delete all marks from current buffer.
 ]`                    Jump to next mark.
 [`                    Jump to prev mark.
+
+Math~
+                                                      |radical| *cht-plugins-math*
+
+gA                    Print numerical representation. |RadicalView|.
+crd                   Convert to decimal. |RadicalCoerceToDecimal|.
+crx                   Convert to hexadecimal. |RadicalCoerceToDecimal|.
+cro                   Convert to octal. |RadicalCoerceToDecimal|.
+crb                   Convert to binary. |RadicalCoerceToDecimal|.
+
+Navigation~
+                                             |unimpaired| *cht-plugins-navigation*
+
+[a                    Previous file from argument list. |:previous|.
+]a                    Nexrt file from argument list. |:next|.
+[b or <leader>h       Previous buffer. |:bprevious|.
+]b or <leader>l       Next buffer. |:bnext|.
+[l                    Previous location list entry. |:lprevious|.
+]l                    Next location list entry. |:lnext.|
+[t                    Previous tag entry. |:tprevious|.
+]t                    Next tag entry. |:tnext|.
+[q                    Previous quickfix entry. |:cprev|. Wraps around.
+]q                    Next quickfix entry. |:cnext|. Wraps around.
+[n                    Previous conflict marker.
+]n                    Next conflict marker.
+
+Projects~
+                                             |projectionist| *cht-plugins-project*
+
+|:A|                    Open `alternate` file if one exists for this project.
+                      |projectionist-:A|. |:AS| or |:AV| opens in a split.
+
+Search~
+                                                      |sneak| *cht-plugins-search*
+
+s{char}{char}         Goto next occurrence of {char}{char}.
+S{char}{char}         Goto previous occurrence of {char}{char}.
+s                     Go to [count]th next match.
+S                     Go to [count]th previous match.
+
+Sessions~
+                                                |obsession| *cht-plugins-sessions*
+
+<leader>O             Start or pause a vim session in `Session.vim`.
+|:Obsession| {file}     Start a vim session in {file}.
+
+Surround~
+                                                 |surround| *cht-plugins-surround*
+
+<leader>{char}        Surround current word in {char} where {char} is one of:
+                      ", ', (, ), <, [, ], `, {, }, |.
+ys{obj}{char}         Surround current {object} in {char}. "you surround".
+ds{obj}{char}         Delete surrounding {char} from {object}.
+                      "delete surround".
+cs{obj}{from}{to}     Change surrounding {from} to {to}. "change surround".
+S{char}               Surround visual selection with {char}.
+gS{char}              Surround visual selection with {char}.
+                      Handles empty lines using |'virtualedit'|.
+
+
+Terminal~
+                                                |floatterm| *cht-plugins-terminal*
+
+CTRL-0                Open new terminal.
+CTRL-T                Toggle terminal.
+CTRL-[                Previous terminal.
+CTRL-]                Next terminal.
+
+Test~
+                                                         |test| *cht-plugins-test*
+
+<leader>Tn            Run nearest test. |:TestNearest|
+<leader>Tf            Run test for current file. |:TestFile|
+<leader>Ts            Run test suite for current file. |:TestSuite|
+<leader>Tl            Run last test. |:TestLast|
+<leader>Tv            Open last run test in current buffer. |:TestVisit|
+:Jest [args]          Run `jest` command.
+:ReactScripts [args]  Run `react-scripts test` command.
+:Cypress [args]       Run `cypress` command.
+:CargoTest [args]     Run `cargo test` command.
+:GradleTest [args]    Run `gradle test` command.
+
+Unix Commands~
+                                                       |eunuch| *cht-plugins-unix*
+
+|:Delete|[!]            Delete from disk and |:bdelete|.
+|:Remove|[!]            Delete from disk but leave buffer open.
+|:Move|[!]              Move file on disk and buffer.
+|:Rename|[!]            |:Move| but relative to current file directory.
+|:Chmod| {mode}         Change file permission.
+|:Mkdir|[!] {dir}       Create directory with optional `-p` argument.
+|:SudoWrite|            Writes file using `sudo`.
+
+
 
 vim:ft=help
