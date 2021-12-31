@@ -48,7 +48,7 @@ for file in ${CONFLICTS[@]}; do
     mv "$HOME/$file"{,.orig}
   fi
 done
-stow --no-folding -Rv files
+stow -Rv files
 
 sudo=
 [ "$EUID" -eq 0 ] && sudo=sudo
