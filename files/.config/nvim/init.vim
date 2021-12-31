@@ -23,13 +23,14 @@
 " General Settings   {{{1
 " ==================================================================================================
 
-set nocompatible  " Disable VI backwards compatible settings. Must be first
+set nocompatible " Disable VI backwards compatible settings. Must be first
 
 " Ensure a vim-compatible shell
 set shell=/bin/bash
 let $SHELL="/bin/bash"
 
-let $PAGER='' " Don't use nvim as a pager within itself
+" Don't use nvim as a pager within itself
+let $PAGER='less'
 
 set expandtab
 set shiftwidth=2
@@ -43,7 +44,6 @@ set undofile
 set updatecount=50
 set spell
 set title
-set nohlsearch
 set incsearch
 set wildmode=longest:full,full
 set completeopt=menu,menuone,noselect
@@ -104,11 +104,14 @@ nmap <leader>W :noa w<CR>
 " Quick quit
 nmap <leader>q :q<CR>
 nmap <leader>Q :qall<CR>
-nmap <leader>d :bdelete<CR>
+nmap <leader>d :Bdelete<CR>
 nmap <leader>D :bufdo bdelete<CR>
 
 " Disable Q for Ex mode since it's accidentally hit. gQ still works.
 nmap Q <nop>
+
+" Clear search
+nmap <leader><cr> :nohlsearch<cr>
 
 " Allow gf to open non-existent files, doesn't auto-find like original gf, but
 " can use gF instead.
@@ -130,12 +133,9 @@ nnoremap <silent> gt <C-]>
 nmap <leader>tn :tnext<CR>
 nmap <leader>tp :tprevious<CR>
 
-" Have quickfix wrap around, user commands must start with uppercase
-command! Cnext try | cnext | catch | cfirst | catch | endtry
-command! Cprev try | cprev | catch | clast | catch | endtry
-
-" Clear quickfix
-nnoremap <leader>cc :cexpr []
+" Show diffs in a modified buffer
+command DiffOrig vert new | set bt=nofile | r ++edit # | 0d_ | diffthis
+  \ | wincmd p | diffthis
 
 " Reselect visual after indenting
 vnoremap < <gv
@@ -260,7 +260,7 @@ onoremap ii :<c-u>call <SID>IndTxtObj(1)<cr>
 vnoremap ai :<c-u>call <SID>IndTxtObj(0)<cr><esc>gv
 vnoremap ii :<c-u>call <SID>IndTxtObj(1)<cr><esc>gv
 
-fun! s:indtxtobj(inner)
+fun! s:IndTxtObj(inner)
   let curcol = col(".")
   let curline = line(".")
   let lastline = line("$")
@@ -323,17 +323,24 @@ endfun
 let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim'
 if empty(glob(data_dir . '/autoload/plug.vim'))
   silent execute '!curl -fLo ' . data_dir . '/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
-  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
 
-call plug#begin(data_dir . '/plugins')
+" Run PlugInstall if there are missing plugins
+autocmd VimEnter * if len(filter(values(g:plugs), '!isdirectory(v:val.dir)'))
+  \| PlugInstall --sync | source $MYVIMRC
+  \| endif
 
+call plug#begin(data_dir . '/plugged')
+
+source ~/.config/nvim/plugins/bufdelete.vim
 source ~/.config/nvim/plugins/buftabline.vim
+source ~/.config/nvim/plugins/cheatsh.vim
 source ~/.config/nvim/plugins/closetag.vim
 source ~/.config/nvim/plugins/commentary.vim
 source ~/.config/nvim/plugins/dadbod.vim
 source ~/.config/nvim/plugins/dispatch.vim
 source ~/.config/nvim/plugins/dressing.vim
+source ~/.config/nvim/plugins/easy-align.vim
 source ~/.config/nvim/plugins/editorconfig.vim
 source ~/.config/nvim/plugins/endwise.vim
 source ~/.config/nvim/plugins/eunuch.vim
@@ -342,10 +349,8 @@ source ~/.config/nvim/plugins/fugitive.vim
 source ~/.config/nvim/plugins/fzf.vim
 source ~/.config/nvim/plugins/gruvbox.vim
 source ~/.config/nvim/plugins/highlightedyank.vim
-source ~/.config/nvim/plugins/kotlin.vim
 source ~/.config/nvim/plugins/lightline.vim
 source ~/.config/nvim/plugins/lsp.vim
-source ~/.config/nvim/plugins/cheatsh.vim
 source ~/.config/nvim/plugins/markdown-preview.vim
 source ~/.config/nvim/plugins/matchup.vim
 source ~/.config/nvim/plugins/nerdtree.vim
@@ -357,7 +362,6 @@ source ~/.config/nvim/plugins/quickfix.vim
 source ~/.config/nvim/plugins/radical.vim
 source ~/.config/nvim/plugins/repeat.vim
 source ~/.config/nvim/plugins/rooter.vim
-source ~/.config/nvim/plugins/rust.vim
 source ~/.config/nvim/plugins/signature.vim
 source ~/.config/nvim/plugins/sleuth.vim
 source ~/.config/nvim/plugins/smooth-scroll.vim
@@ -391,9 +395,6 @@ iabbrev waht what
 " Misc   {{{1
 " ==================================================================================================
 
-hi! SpecialComment ctermfg=108 guifg=#89b482 guisp=#89b482
-hi! ColorColumn ctermbg=237 guibg=#333333
-
 augroup FileTypeOverrides
   autocmd!
   autocmd TermOpen * setlocal nospell
@@ -404,12 +405,11 @@ augroup END
 
 augroup Init
   autocmd!
-  " Jump to the last known cursor position.
-  autocmd BufReadPost * if &ft != 'gitcommit' && line("'\"") > 0 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
-
+  " Jump to the last known cursor position. See |last-position-jump|.
+  autocmd BufRead * autocmd FileType <buffer> ++once
+    \ if &ft !~# 'commit\|rebase' && line("'\"") > 1 && line("'\"") <= line("$") | exe 'normal! g`"' | endif
   autocmd InsertLeave * set nopaste
-  autocmd InsertEnter * hi CursorLine ctermbg=237 guibg=#3c3836
-  autocmd InsertLeave * hi CursorLine ctermbg=235 guibg=#282828
+  autocmd VimEnter * helptags ~/.config/nvim/doc
 augroup END
 
 

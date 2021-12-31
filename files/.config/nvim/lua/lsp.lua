@@ -1,4 +1,3 @@
-require'trouble'.setup{}
 require'fzf_lsp'.setup{}
 require'lspfuzzy'.setup{}
 
@@ -53,9 +52,10 @@ local on_attach = function(client, bufnr)
   vim.fn.sign_define("DiagnosticSignInformation", { text = "ℹ️ ", texthl = "LspDiagnosticsSignInformation" })
 
   vim.api.nvim_exec([[
-    augroup LspLightbulb
+    augroup LspVirtualText
       autocmd!
       autocmd CursorHold,CursorHoldI * lua require'nvim-lightbulb'.update_lightbulb()
+      autocmd CursorHold,CursorHoldI *.rs lua require'lsp_extensions'.inlay_hints{ highlight = "VirtualTextInfo", prefix = " ▸ ", only_current_line = true, enabled = {"TypeHint", "ChainingHint", "ParameterHint"} }
     augroup END
   ]], true)
 
@@ -70,16 +70,14 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', 'gR', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
   buf_set_keymap('n', 'ga', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
   buf_set_keymap('n', 'gO', '<cmd>lua lsp_organize_imports()<CR>', opts)
-  buf_set_keymap('n', 'gp', ':Cprev<CR>', opts)
-  buf_set_keymap('n', 'gn', ':Cnext<CR>', opts)
   buf_set_keymap('n', 'ge', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
-  buf_set_keymap("n", "<localleader>f", "<cmd>lua vim.lsp.buf.formatting_sync(nil, 1000)<CR>", opts)
 
   if client.resolved_capabilities.document_formatting then
+    buf_set_keymap("n", "<localleader>f", "<cmd>lua vim.lsp.buf.formatting_sync(nil, 4000)<CR>", opts)
     vim.api.nvim_exec([[
       augroup LspFormat
         autocmd! * <buffer>
-        autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting_sync(nil, 1000)
+        autocmd BufWrite <buffer> lua vim.lsp.buf.formatting_sync(nil, 1000)
       augroup END
     ]], true)
   end
@@ -92,35 +90,15 @@ local on_attach = function(client, bufnr)
   })
 end
 
-vim.api.nvim_exec([[
-  augroup LspInlay
-    autocmd!
-    autocmd CursorHold,CursorHoldI *.rs lua require'lsp_extensions'.inlay_hints{ highlight = "VirtualTextInfo", prefix = " ▸ ", only_current_line = true, enabled = {"TypeHint", "ChainingHint", "ParameterHint"} }
-  augroup END
-]], true)
-
-local lsp_installer = require'nvim-lsp-installer'
-lsp_installer.on_server_ready(function(server)
-  if server.name == 'tsserver' then
-    _G.lsp_organize_imports = function()
-      local params = {
-        command = "_typescript.organizeImports",
-            arguments = {vim.api.nvim_buf_get_name(0)},
-            title = ""
-        }
-        vim.lsp.buf.execute_command(params)
-    end
+local disable_formatting = function(opts) 
+  opts.on_attach = function(client)
+      client.resolved_capabilities.document_formatting = false
+      on_attach(client)
   end
+end
 
-  local opts = {
-    on_attach = on_attach,
-    capabilities = capabilities,
-    flags = {
-      debounce_text_changes = 150,
-    }
-  }
-
-  if server.name == 'jsonls' then
+local enhance_server_opts = {
+  ["jsonls"] = function(opts)
     -- Range formatting for entire document
     opts.commands = {
       Format = {
@@ -129,7 +107,8 @@ lsp_installer.on_server_ready(function(server)
         end
       }
     }
-  elseif server.name == 'diagnosticls' then
+  end,
+  ["diagnosticls"] = function(opts)
     local filetypes = {
       javascript = 'eslint',
       javascriptreact = 'eslint',
@@ -177,7 +156,8 @@ lsp_installer.on_server_ready(function(server)
         typescriptreact = 'prettier'
       }
     }
-  elseif server.name == 'rust_analyzer' then
+  end,
+  ["rust_analyzer"] = function(opts)
     opts.settings = {
       ["rust-analyzer"] = {
         assist = {
@@ -186,12 +166,20 @@ lsp_installer.on_server_ready(function(server)
         checkOnSave = { command = "clippy" },
       }
     }
-  elseif (server.name == 'html' or server.name == 'tsserver' or server.name == 'eslint') then
-    opts.on_attach = function(client)
-        client.resolved_capabilities.document_formatting = false
-        on_attach(client)
-    end
-  elseif (server.name == 'sumneko_lua') then
+  end,
+  ["kotlin_language_server"] = function(opts)
+    local jdk_home = "/usr/local/Cellar/openjdk@11/11.0.12/libexec/openjdk.jdk/Contents/Home"
+    opts.settings = {
+      ["kotlin-language-server"] = {
+        cmd_env = {
+          PATH = jdk_home .. "/bin:" .. vim.env.PATH,
+          JAVA_HOME = jdk_home,
+        }
+      }
+    }
+  end,
+  ["html"] = disable_formatting,
+  ["sumneko_lua"] = function(opts)
     opts.settings = {
       Lua = {
         diagnostics = {
@@ -199,6 +187,31 @@ lsp_installer.on_server_ready(function(server)
         }
       }
     }
+  end,
+  ["tsserver"] = function(opts)
+    disable_formatting(opts)
+    _G.lsp_organize_imports = function()
+      vim.lsp.buf.execute_command({
+        command = "_typescript.organizeImports",
+        arguments = {vim.api.nvim_buf_get_name(0)},
+        title = ""
+      })
+    end
+  end,
+}
+
+local lsp_installer = require'nvim-lsp-installer'
+lsp_installer.on_server_ready(function(server)
+  local opts = {
+    on_attach = on_attach,
+    capabilities = capabilities,
+    flags = {
+      debounce_text_changes = 150,
+    }
+  }
+
+  if enhance_server_opts[server.name] then
+    enhance_server_opts[server.name](opts)
   end
 
   server:setup(opts)

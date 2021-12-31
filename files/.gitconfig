@@ -5,7 +5,7 @@
 [fetch]
   prune = true
 [merge]
-  tool = nvimdiff
+  tool = fugitive
 [diff]
   tool = nvimdiff
 [core]
@@ -28,3 +28,5 @@
   untracked = cyan
 [pull]
   rebase = false
+[mergetool "fugitive"]
+  cmd = nvim -f -c \"Gvdiffsplit!\" \"$MERGED\"

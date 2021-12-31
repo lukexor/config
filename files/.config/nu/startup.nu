@@ -280,6 +280,7 @@ def logo [] {
 
 ## Startup
 
+pathvar reset
 pathvar add ~/.fzf/bin
 pathvar add ~/.cargo/bin
 pathvar add ~/bin

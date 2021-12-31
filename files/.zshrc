@@ -1,6 +1,8 @@
 export EDITOR="nvim"
 export PAGER="nvim +Man!"
 
+export PROMPT="%F{cyan}%~ %F{yellow}[%T] %F{green}❯%f "
+
 path=("~/bin" "~/.cargo/bin" "~/.fzf/bin" $path)
 
 alias rm="rm -i"

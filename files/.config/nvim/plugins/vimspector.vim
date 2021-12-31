@@ -1,4 +1,4 @@
-Plug 'puremourning/vimspector'
+Plug 'puremourning/vimspector', { 'on': ['VimspectorLaunch', 'VimspectorToggleBreakpoint'] }
 
 let g:vimspector_install_gadgets = [ 'CodeLLDB', 'debugger-for-chrome', 'vscode-bash-debug' ]
 

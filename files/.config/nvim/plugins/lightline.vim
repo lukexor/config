@@ -3,8 +3,8 @@ Plug 'itchyny/lightline.vim'
 let g:lightline = {
   \ 'colorscheme': 'gruvbox_material',
   \ 'active': {
-  \   'left': [ [ 'mode', 'paste' ],
-  \             [ 'readonly', 'filename', 'modified', 'function' ] ],
+  \   'left': [ [ 'mode', 'paste', ],
+  \             [ 'sessionstatus', 'indent', 'readonly', 'filename', 'modified', 'function' ] ],
   \   'right': [ [ 'lineinfo' ],
   \              [ 'percent' ],
   \              [ 'gitstatus', 'filetype' ],
@@ -14,9 +14,11 @@ let g:lightline = {
   \   'function': 'CurrentFunction',
   \   'filename': 'LightlineFilename',
   \   'gitstatus': 'FugitiveHead',
+  \   'sessionstatus': 'ObsessionStatus',
+  \   'indent': 'SleuthIndicator',
   \ },
 \ }
 
-fun! s:LightlineFilename()
+fun! LightlineFilename()
   return expand('%:t') !=# '' ? @% : '[No Name]'
 endfun

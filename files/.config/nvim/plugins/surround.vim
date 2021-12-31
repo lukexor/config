@@ -15,6 +15,7 @@ nmap <leader>] ysiw]
 nmap <leader>` ysiw`
 nmap <leader>{ ysiw{
 nmap <leader>} ysiw}
+nmap <leader><Bar> ysiw|
 
 " Same mappers for visual mode
 vmap <leader>" gS"
@@ -28,6 +29,7 @@ vmap <leader>] gS]
 vmap <leader>` gS`
 vmap <leader>{ gS{
 vmap <leader>} gS}
+vmap <leader><Bar> gS|
 
 nmap <localleader>[ ysip[
 nmap <localleader>] ysip]

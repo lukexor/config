@@ -1,0 +1,186 @@
+*cht.txt*             Personal Cheatsheet
+
+TABLE OF CONTENTS                                                      *cht-toc*
+==============================================================================
+
+  VIM                                   |cht-vim|
+    More                                |cht-vim-more|
+    Shortcuts                           |cht-vim-shortcuts|
+  PLUGINS                               |cht-plugins|
+    Database                            |cht-plugins-db|
+    Dispatch                            |cht-plugins-dispatch|
+    Unix                                |cht-plugins-unix|
+    Terminal                            |cht-plugins-terminal|
+    Git                                 |cht-plugins-git|
+    Projects                            |cht-plugins-projects|
+    FZF                                 |cht-plugins-fzf|
+    Markdown                            |cht-plugins-markdown|
+    LSP                                 |cht-plugins-lsp|
+    Sessions                            |cht-plugins-sessions|
+
+VIM                                                                    *cht-vim*
+==============================================================================
+
+More~
+                                                      |more-prompt| *cht-vim-more*
+
+j                   Down a line.
+d                   Down half a screen.
+f                   Down a screen.
+G                   Down to end.
+k                   Up a line.
+u                   Up a half screen.
+b                   Up a screen.
+g                   Up to start.
+q                   Quit.
+:                   Quit and start a command.
+CTRL-Y              Yank selection.
+
+Shortcuts~
+                                                             *cht-vim-shortcuts*
+
+gf                  Go file, whether it exists or not.
+|gF|                  Go file (and line number) only if exists, fuzzy matches
+                    file extension.
+|v_o|/|v_O|             Go to Other end of highlighted text.
++                   Replace current line with yank.
+<leader>s           Start global search/replace.
+;;                  Quick insert trailing semicolon.
+,,                  Quick insert trailing comma.
+cy/cY/cyy           Copy to clipboard.      
+cp/cP               Paste from clipboard.
+
+
+PLUGINS                                                            *cht-plugins*
+==============================================================================
+
+Database (dadbod)~
+                                                                *cht-plugins-db*
+
+|:DB| [url] {cmd}       Start interactive database console or execute command.
+
+Dispatch~
+                                                          *cht-plugins-dispatch*
+
+|:Make|[!]              Foreground or background make with |:compiler|.
+|:Start|[!] {cmd}       Start command in a new focused or unfocused window.
+|:Copen|[!]             Loads latest build into quickfix list.
+
+Unix Commands (eunuch)~
+                                                              *cht-plugins-unix*
+
+|:Delete|[!]            Delete from disk and |:bdelete|.
+|:Remove|[!]            Delete from disk but leave buffer open.
+|:Move|[!]              Move file on disk and buffer.
+|:Rename|[!]            |:Move| but relative to current file directory.
+|:Chmod| {mode}         Change file permission.
+|:Mkdir|[!] {dir}       Create directory with optional `-p` argument.
+|:SudoWrite|            Writes file using `sudo`.
+
+Terminal (floatterm)~
+                                                          *cht-plugins-terminal*
+
+CTRL-0                Open new terminal.
+CTRL-T                Toggle terminal.
+CTRL-[                Previous terminal.
+CTRL-]                Next terminal.
+
+Git (fugitive)~
+                                                               *cht-plugins-git*
+
+|:Git|[!] {args}        Run a git command. Alias: :G {args}. `-p` paginates.
+:Git blame            Git blame in a vertical split. |:Git_blame|
+                      g?  show help.
+                      A   resize to author.
+                      C   resize to author.
+                      o   show patch in horizontal split.
+                      p   show patch in preview window.
+|:Gdiffsplit!|          Perform vimdiff againt file.
+|:Gwrite|               Write and stage changes.
+|:Gwq|                  Write, stage changes, and quit.
+|:GMove|                Move file and buffer.
+|:GRename|              |:GMove| but reative to current file directory.
+|:GDelete|              Delete file and buffer.
+|:GRemove|              Delete file but leave buffer open.
+:DiffOrig             Pull up diff split for a modified buffer.
+
+Projects~
+                                                           *cht-plugins-project*
+
+|:A|                    Open `alternate` file if one exists for this project.
+                      |projectionist-:A|. |:AS| or |:AV| opens in a split.
+
+Files & Search~
+                                                      *cht-plugins-files-search*
+
+<leader>f             Search files except hidden. |:Files|.
+<leader>F             Search files including hidden. `:AllFiles`.
+<leader>b             Search buffers. |:Buffers|.
+<leader>B             Search current buffer lines. |:BLines|.
+<leader>C             Search commands. |:Commands|.
+<leader>H             Search command history. |:History|.
+<leader>S             Search snippets. |:Snippets|.
+<leader>r             Search all files. |:Rg|.
+<leader>gb            Search git branches. |:Gbranches|.
+<leader>gc            Search buffer git commits. |:BCommits|.
+<leader>gC            Search all git commits. |:Commits|.
+|:Maps|                 Search normal mode mappings.
+|:Helptags|             Search help tags.
+|:Filetypes|            Search file types.
+
+Markdown~
+                                                          *cht-plugins-markdown*
+
+|:MarkdownPreview|      Open markdown file in a browser preview.
+|:MarkdownPreviewStop|  Stop previewing markdown file.
+
+LSP~
+                                                               *cht-plugins-lsp*
+
+<leader>L             Show current LSP status. |:LspInfo|.
+<leader>to            Display buffer symbols outline. |:SymbolsOutline|.
+<leader>ct            Toggle quickfix window.
+<leader>cc            Clear quickfix errors.
+gd                    Goto definition.
+gD                    Goto declaration.
+gT                    Goto type definition.
+gh                    Show hover preview.
+gH                    Show signature information.
+gi                    Goto implementation.
+gr                    List references.
+gR                    Rename symbol.
+ga                    Execute code action (lightbulb).
+gO                    Organize imports.
+gp                    Previous quickfix entry. |:cprev|. Wraps around.
+gn                    Next quickfix entry. |:cnext|. Wraps around.
+ge                    Show line diagnostics.
+
+Sessions~
+                                                          *cht-plugins-sessions*
+
+|:Obsession| {file}     Start a stored vim session in {file}.
+                      Excluding {file} will start (or pause) a session in the
+                      current directory.
+
+Math~
+                                                              |cht-plugins-math|
+
+gA                    Print numerical representation. |RadicalView|.
+crd                   Convert to decimal. |RadicalCoerceToDecimal|.
+crx                   Convert to hexadecimal. |RadicalCoerceToDecimal|.
+cro                   Convert to octal. |RadicalCoerceToDecimal|.
+crb                   Convert to binary. |RadicalCoerceToDecimal|.
+
+Marks~
+                                                             |cht-plugins-marks|
+
+<leader>M             Search marks. |:Marks|.
+m{mark}               Toggle mark where {mark} is a-zA-Z.
+m,                    Place next available mark.
+m.                    Place next available mark or remove existing mark.
+m-                    Delete all marks from current line.
+m<Space>              Delete all marks from current buffer.
+]`                    Jump to next mark.
+[`                    Jump to prev mark.
+
+vim:ft=help

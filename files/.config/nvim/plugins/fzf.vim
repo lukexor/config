@@ -26,10 +26,12 @@ command! -bang -nargs=* Rg
 nmap <leader>f :Files<CR>
 nmap <leader>F :AllFiles<CR>
 nmap <leader>b :Buffers<CR>
-nmap <leader>H :History<CR>
+nmap <leader>B :BLines<CR>
+nmap <leader>C :Commands<CR>
+nmap <leader>H :History:<CR>
+nmap <leader>S :Snippets<CR>
 nmap <leader>M :Marks<CR>
 nmap <leader>r :Rg<CR>
-nmap <leader>R :Rg<Space>
 nmap <leader>gb :GBranches<CR>
-nmap <leader>gc :Commits<CR>
-
+nmap <leader>gc :BCommits<CR>
+nmap <leader>gC :Commits<CR>
