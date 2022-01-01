@@ -41,6 +41,10 @@ fi
 
 $HOME/.cargo/bin/cargo install nu --features=extra
 
+config=$(nu -c 'echo $nu.config-path')
+rm -f $config
+ln -s ~/.config/nu/config.toml $config
+
 CONFLICTS=$(stow -nv files 2>&1 | awk '/\* existing target is/ {print $NF}')
 for file in ${CONFLICTS[@]}; do
   if [ -f "$HOME/$file" ] || [ -L "$HOME/$file" ]; then
