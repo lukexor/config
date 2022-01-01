@@ -1,0 +1,1 @@
+Plug 'RRethy/vim-illuminate'
