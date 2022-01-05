@@ -23,6 +23,10 @@ let cargo_packages = [
   cargo-watch flamegraph ripgrep wasm-pack
 ]
 let cargo_components = [clippy rust-analysis]
+let language_servers = [
+  bashls cssls diagnosticls eslint html jsonls kotlin_language_server
+  rust_analyzer sumneko_lua tsserver vimls yamlls
+]
 
 if ((sys).host.name =~ Darwin) {
   ^open ./roboto_mono_nerd_font.ttf
@@ -38,6 +42,7 @@ echo $cargo_packages | each { cargo install $it }
 echo $cargo_components | each { rustup component add $it }
 
 vim +PlugUpgrade +PlugInstall +PlugClean +PlugUpdate +UpdateRemotePlugins +qall
+vim -c (build-string "LspInstall " ($language_servers | str collect " ") " | echo 'Press <leader>Q when complete'")
 python3 -m pip install --upgrade --user pip
 pip3 install --upgrade --user pip
 pip3 install --upgrade --user pynvim
