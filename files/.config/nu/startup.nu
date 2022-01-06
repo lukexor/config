@@ -82,11 +82,11 @@ def "nvim lsp" [] { nvim ~/.config/nvim/lua/lsp.lua }
 # Fuzzy search for file to edit.
 def vf [] {
   let file = (fzf-tmux | wrap filename | get filename)
-  if ($file | length) > 0 {
+  if ($file | empty?) {} {
     echo "nvim $file"
     echo $file | str trim | pbcopy
     nvim $file
-  } {}
+  }
 }
 
 # Output last N git commits.
@@ -257,7 +257,7 @@ def venv [
 
 # Print out personalized ASCII logo.
 def logo [] {
-  if (tty | wrap name | where name =~ "dev" | empty?) {} {
+  if ($nu.env.SHLVL | into int) == 1 {
     echo "
                i  t
               LE  ED.
@@ -272,10 +272,20 @@ def logo [] {
     :W##########WtE#t
     :,,,,,,,,,,,,,.
 " | lolcat
-  }
+  } {}
 }
 
 ## Startup
+
+# Fix tmux adding 2 to the SHLVL
+let level = ($nu.env | default SHLVL 1 | get SHLVL | into int)
+let-env SHLVL = (
+  if ($nu.env | default TMUX $nothing | get TMUX) != "" && $level >= 3 {
+    $level - 2
+  } {
+    $level
+  }
+)
 
 pathvar reset
 pathvar add ~/.fzf/bin

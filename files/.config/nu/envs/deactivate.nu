@@ -1,3 +1,3 @@
-let-env PATH = (if ($nu.env | get VENV_OLD_PATH) == "" { $nu.env.PATH } { $nu.env.VENV_OLD_PATH })
-let-env VIRTUAL_ENV = ""
-let-env VENV_OLD_PATH = ""
+let-env PATH = ($nu.env | default VENV_OLD_PATH $nu.path | get VENV_OLD_PATH)
+let-env VIRTUAL_ENV = $nothing
+let-env VENV_OLD_PATH = $nothing
