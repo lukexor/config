@@ -259,17 +259,17 @@ def venv [
 def logo [] {
   if (tty | wrap name | where name =~ "dev" | empty?) {} {
     echo "
-               i  t         
-              LE  ED.       
-             L#E  E#K:      
-            G#W.  E##W;     
-           D#K.   E#E##t    
-          E#K.    E#ti##f   
-        .E#E.     E#t ;##D. 
+               i  t
+              LE  ED.
+             L#E  E#K:
+            G#W.  E##W;
+           D#K.   E#E##t
+          E#K.    E#ti##f
+        .E#E.     E#t ;##D.
        .K#E       E#ELLE##K:
       .K#D        E#L;;;;;;,
-     .W#G         E#t       
-    :W##########WtE#t       
+     .W#G         E#t
+    :W##########WtE#t
     :,,,,,,,,,,,,,.
 " | lolcat
   }
