@@ -364,6 +364,7 @@ source ~/.config/nvim/plugins/smooth-scroll.vim
 source ~/.config/nvim/plugins/sneak.vim
 source ~/.config/nvim/plugins/surround.vim
 source ~/.config/nvim/plugins/test.vim
+source ~/.config/nvim/plugins/todo-lists.vim
 source ~/.config/nvim/plugins/unimpaired.vim
 source ~/.config/nvim/plugins/vimspector.vim
 source ~/.config/nvim/plugins/which-key.vim

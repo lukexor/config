@@ -1,3 +1,4 @@
+# Binaries
 *.exe*
 *.o
 *.so
@@ -7,11 +8,9 @@ dist
 target
 node_modules
 
-# Temporary files #
-###################
+# Temporary files
 *.cache
 *.tmp
-tmp
 *.swp
 *.swo
 *.local
@@ -19,16 +18,8 @@ tmp
 ~*
 *.bak
 *.orig
-TODO*
+.todo.md
 Session.vim
-
-# Logs #
-########
-*.log
-logs
-
-# OS generated files #
-######################
 .DS_Store*
 *.db
 Icon\?
@@ -37,8 +28,11 @@ Desktop.ini
 .Spotlight-V100
 .Trashes
 
-# Misc #
-########
+# Logs
+*.log
+logs
+
+# Project
 tags
 ctags
 .project
@@ -46,8 +40,7 @@ ctags
 .nu-env
 .jrc
 .env*
+
+# Misc
 *.patch
-.gitconfig.local
-sessions
-configstore
 roms
