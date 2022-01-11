@@ -1,5 +1,6 @@
 export EDITOR="nvim"
 export PAGER="nvim +Man!"
+export LESS="-RFX"
 
 export PROMPT="%F{cyan}%~ %F{yellow}[%T] %F{green}❯%f "
 

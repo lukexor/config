@@ -3,6 +3,7 @@ export CLICOLOR=1
 export EDITOR="nvim"
 export PAGER="nvim +Man!"
 export PATH="~/bin:~/.cargo/bin:~/.fzf/bin:$PATH"
+export LESS="-RFX"
 
 export BLACK=$(tput setaf 0)
 export RED=$(tput setaf 1)

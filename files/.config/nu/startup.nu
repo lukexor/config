@@ -48,7 +48,7 @@ alias ll = ls -sl
 alias lc = (ls -s | sort-by modified | reverse)
 alias lk = (ls -s | sort-by size | reverse)
 alias cp = ^cp -ia
-alias myip = curl api.ipify.org
+alias myip = curl -s api.ipify.org
 alias mv = ^mv -i
 alias md = ^mkdir -p
 alias rm = ^rm -i
@@ -256,17 +256,31 @@ def venv [
 }
 
 # Print out personalized ASCII logo.
-def logo [] {
+def init [] {
   if ($nu.env.SHLVL | into int) == 1 {
-    echo "
-               i  t
-              LE  ED.
+    let load = (uptime | parse -r "averages: (?P<avg>.*)" | get avg)
+    let sys = (sys)
+    let macos = $sys.host.name =~ Darwin
+    let os = (if $macos {
+      let vers = (sw_vers | parse -r "(?P<name>\w+):(?P<value>.*)" | str trim | pivot -r)
+      $"($vers.ProductName) ($vers.ProductVersion)"
+    } {
+      uname -srm | str trim
+    })
+    let cpu = (if $macos {
+      sysctl -n machdep.cpu.brand_string | str trim
+    } {
+      cat /proc/cpuinfo | rg "model name\s+: (.*)" -r '$1' | uniq | str trim
+    })
+    echo $"
+               i  t             (date now | date format '%Y-%m-%d %H:%M:%S')
+              LE  ED.           ($os)
              L#E  E#K:
-            G#W.  E##W;
-           D#K.   E#E##t
-          E#K.    E#ti##f
-        .E#E.     E#t ;##D.
-       .K#E       E#ELLE##K:
+            G#W.  E##W;         Uptime......: ($sys.host.uptime)
+           D#K.   E#E##t        Memory......: ($sys.mem.free) [Free] / ($sys.mem.total) [Total]
+          E#K.    E#ti##f       CPU.........: ($cpu)
+        .E#E.     E#t ;##D.     Load........: ($load) [1, 5, 15 min]
+       .K#E       E#ELLE##K:    IP Address..: (ifconfig en0 | rg 'inet (\d+.\d+.\d+.\d+)' -or '$1' | str trim) 
       .K#D        E#L;;;;;;,
      .W#G         E#t
     :W##########WtE#t
@@ -281,7 +295,7 @@ def logo [] {
 let level = ($nu.env | default SHLVL 1 | get SHLVL | into int)
 let-env SHLVL = (
   if ($nu.env | default TMUX $nothing | get TMUX) != "" && $level >= 3 {
-    $level - 2
+    $level - 3
   } {
     $level
   }
@@ -292,4 +306,4 @@ pathvar add ~/.fzf/bin
 pathvar add ~/.cargo/bin
 pathvar add ~/bin
 
-logo
+init

@@ -55,7 +55,6 @@ LESS = "-RFX"
 PAGER = "nvim +Man!"
 MANPAGER = "nvim +Man!"
 JAVA_HOME = "/usr/local/opt/openjdk@11"
-SPRING_PROFILES_ACTIVE = "local"
 
 [color_config]
 header_align = "l" # left|l, right|r, center|c

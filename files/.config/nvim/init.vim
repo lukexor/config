@@ -45,7 +45,6 @@ set relativenumber
 set number
 set termguicolors
 set undofile
-set updatecount=50
 set spell
 set title
 set incsearch
@@ -60,8 +59,10 @@ set scrolloff=8
 set sidescrolloff=8
 set splitright
 set splitbelow
+set cmdheight=2
 set confirm
-set updatetime=300 " You will have bad experience for diagnostic messages when it's default 4000.
+set updatetime=300 " Save more often than 4 seconds.
+set updatecount=50 " Save more often than 200 characters typed.
 set redrawtime=10000 " Allow more time for loading syntax on large files
 set textwidth=80
 set cursorline
@@ -119,7 +120,7 @@ nmap <leader>D :bufdo bdelete<CR>
 nmap Q gq
 
 " Clear search
-nmap <leader><cr> :nohlsearch<cr>
+nnoremap <leader><cr> :nohlsearch<bar>diffupdate<cr><c-l>
 
 " Allow gf to open non-existent files, doesn't auto-find like original gf, but
 " can use gF instead.
@@ -148,9 +149,6 @@ endif
 " Reselect visual after indenting
 vnoremap < <gv
 vnoremap > >gv
-
-" Make Y consistent
-nnoremap Y y$
 
 " Maintain cursor position when yanking visual
 vnoremap y myy`y
@@ -182,6 +180,8 @@ nnoremap <silent> g* g*zzzv
 nnoremap <silent> g# g*zzzv
 
 nmap <leader>s :%s/
+" Trim blanks
+nmap <leader>R :%s/\s\+%//
 
 " Open file in default program
 nmap <leader>x :!open %<CR><CR>
@@ -403,7 +403,7 @@ iabbrev waht what
 
 augroup FileTypeOverrides
   autocmd!
-  autocmd TermOpen * setlocal nospell
+  autocmd TermOpen * setlocal nospell nonu nornu | startinsert
   autocmd BufRead,BufNewFile *.nu set ft=nu
   autocmd Filetype help set nu rnu
   autocmd Filetype * set formatoptions=croqnjp

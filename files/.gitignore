@@ -11,8 +11,9 @@ node_modules
 # Temporary files
 *.cache
 *.tmp
-*.swp
+*.swn
 *.swo
+*.swp
 *.local
 *~
 ~*
