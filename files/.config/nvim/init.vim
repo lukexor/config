@@ -75,6 +75,9 @@ set path+=**
 set dictionary=/usr/share/dict/words
 set spellfile=~/.config/nvim/spell.utf-8.add
 
+" Highlight strings and numbers inside comments
+let c_comment_strings=1
+
 if &diff
   set diffopt+=iwhite
   " Make diffing better: https://vimways.org/2018/the-power-of-diff/
@@ -112,7 +115,8 @@ nmap <leader>d :Bdelete<CR>
 nmap <leader>D :bufdo bdelete<CR>
 
 " Disable Q for Ex mode since it's accidentally hit. gQ still works.
-nmap Q <nop>
+" Instead use it for formatting.
+nmap Q gq
 
 " Clear search
 nmap <leader><cr> :nohlsearch<cr>
@@ -136,8 +140,10 @@ nmap <leader><leader> <c-^>
 nnoremap <silent> gt <C-]>
 
 " Show diffs in a modified buffer
-command DiffOrig vert new | set bt=nofile | r ++edit # | 0d_ | diffthis
-  \ | wincmd p | diffthis
+if !exists(":DiffOrig")
+  command DiffOrig vert new | set bt=nofile | r ++edit # | 0d_ | diffthis
+    \ | wincmd p | diffthis
+endif
 
 " Reselect visual after indenting
 vnoremap < <gv
@@ -298,8 +304,6 @@ fun! s:IndTxtObj(inner)
   endif
 endfun
 
-" 
-
 " Identify syntax ID under cursor
 nnoremap <leader>i :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
   \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
@@ -412,6 +416,10 @@ augroup Init
     \ if &ft !~# 'commit\|rebase' && line("'\"") > 1 && line("'\"") <= line("$") | exe 'normal! g`"' | endif
   autocmd InsertLeave * set nopaste
   autocmd VimEnter * helptags ~/.config/nvim/doc
+  autocmd CmdwinEnter *
+      \ echohl Todo |
+      \ echo 'You discovered the command-line window! You can close it with ":q".' |
+      \ echohl None
 augroup END
 
 
