@@ -1,38 +1,30 @@
 require'fzf_lsp'.setup{}
 require'lspfuzzy'.setup{}
 
-local cmp = require'cmp'
-cmp.setup{
-  snippet = {
-    expand = function(args)
-      vim.fn["UltiSnips#Anon"](args.body)
-    end,
-  },
-  mapping = {
-    ['<Tab>'] = cmp.mapping.confirm({ select = true })
-  },
-  sources = cmp.config.sources({
-    { name = 'nvim_lsp' },
-    { name = 'ultisnips' },
-  }, {
-    { name = 'path' },
-  }),
-  experimental = {
-    ghost_text = true,
-  },
-}
-cmp.setup.cmdline('/', {
-  sources = {
-    { name = 'buffer' }
-  }
-})
-cmp.setup.cmdline(':', {
-  sources = cmp.config.sources({
-    { name = 'path' }
-  })
-})
-
 local capabilities = require'cmp_nvim_lsp'.update_capabilities(vim.lsp.protocol.make_client_capabilities())
+
+local keymap_opts = { noremap=true, silent=true }
+local g_set_keymap = function (...) vim.api.nvim_set_keymap(...) end
+
+-- Default LSP shortcuts to no-ops for non-supported file types to avoid
+-- confusion with default vim shortcuts.
+function _G.no_lsp_client()
+   vim.notify("No LSP client attached for filetype: `" .. vim.bo.filetype .. "`.", 3)
+end
+
+g_set_keymap('n', '<leader>L', '<Cmd>LspInfo<CR>', keymap_opts)
+g_set_keymap('n', 'gd', '<Cmd>lua no_lsp_client()<CR>', keymap_opts)
+g_set_keymap('n', 'gD', '<Cmd>lua no_lsp_client()<CR>', keymap_opts)
+g_set_keymap('n', 'gT', '<Cmd>lua no_lsp_client()<CR>', keymap_opts)
+g_set_keymap('n', 'gh', '<Cmd>lua no_lsp_client()<CR>', keymap_opts)
+g_set_keymap('n', 'gH', '<Cmd>lua no_lsp_client()<CR>', keymap_opts)
+g_set_keymap('n', 'gi', '<Cmd>lua no_lsp_client()<CR>', keymap_opts)
+g_set_keymap('n', 'gr', '<Cmd>lua no_lsp_client()<CR>', keymap_opts)
+g_set_keymap('n', 'gR', '<Cmd>lua no_lsp_client()<CR>', keymap_opts)
+g_set_keymap('n', 'ga', '<Cmd>lua no_lsp_client()<CR>', keymap_opts)
+g_set_keymap('n', 'gO', '<Cmd>lua no_lsp_client()<CR>', keymap_opts)
+g_set_keymap('n', 'ge', '<Cmd>lua no_lsp_client()<CR>', keymap_opts)
+g_set_keymap('n', '<localleader>f', '<Cmd>call <SID>NoLspClient()<CR>', keymap_opts)
 
 -- Use an on_attach function to only map the following keys
 -- after the language server attaches to the current buffer
@@ -40,17 +32,15 @@ local on_attach = function(client, bufnr)
   local buf_set_keymap = function (...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
   local buf_set_option = function (...) vim.api.nvim_buf_set_option(bufnr, ...) end
 
-  -- Enable completion triggered by <c-x><c-o>
+  -- Enable completion triggered by <C-x><C-o>
   buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
 
-  -- Mappings.
-  local opts = { noremap=true, silent=true }
+  vim.fn.sign_define("DiagnosticSignError", { text = "", texthl = "LspDiagnosticsSignError" })
+  vim.fn.sign_define("DiagnosticSignWarn", { text = "", texthl = "LspDiagnosticsSignWarning" })
+  vim.fn.sign_define("DiagnosticSignHint", { text = "", texthl = "LspDiagnosticsSignHint" })
+  vim.fn.sign_define("DiagnosticSignInformation", { text = "", texthl = "LspDiagnosticsSignInformation" })
 
-  vim.fn.sign_define("DiagnosticSignError", { text = "❗️", texthl = "LspDiagnosticsSignError" })
-  vim.fn.sign_define("DiagnosticSignWarn", { text = "⚠️ ", texthl = "LspDiagnosticsSignWarning" })
-  vim.fn.sign_define("DiagnosticSignHint", { text = "❔", texthl = "LspDiagnosticsSignHint" })
-  vim.fn.sign_define("DiagnosticSignInformation", { text = "ℹ️ ", texthl = "LspDiagnosticsSignInformation" })
-
+  vim.fn.sign_define('LightBulbSign', { text = "", texthl = "", linehl="", numhl="" })
   vim.api.nvim_exec([[
     augroup LspVirtualText
       autocmd!
@@ -60,20 +50,20 @@ local on_attach = function(client, bufnr)
   ]], true)
 
   -- See `:help vim.lsp.*` for documentation on any of the below functions
-  buf_set_keymap('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
-  buf_set_keymap('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
-  buf_set_keymap('n', 'gT', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
-  buf_set_keymap('n', 'gh', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
-  buf_set_keymap('n', 'gH', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
-  buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
-  buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-  buf_set_keymap('n', 'gR', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-  buf_set_keymap('n', 'ga', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
-  buf_set_keymap('n', 'gO', '<cmd>lua lsp_organize_imports()<CR>', opts)
-  buf_set_keymap('n', 'ge', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
+  buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', keymap_opts)
+  buf_set_keymap('n', 'gD', '<Cmd>lua vim.lsp.buf.declaration()<CR>', keymap_opts)
+  buf_set_keymap('n', 'gT', '<Cmd>lua vim.lsp.buf.type_definition()<CR>', keymap_opts)
+  buf_set_keymap('n', 'gh', '<Cmd>lua vim.lsp.buf.hover()<CR>', keymap_opts)
+  buf_set_keymap('n', 'gH', '<Cmd>lua vim.lsp.buf.signature_help()<CR>', keymap_opts)
+  buf_set_keymap('n', 'gi', '<Cmd>lua vim.lsp.buf.implementation()<CR>', keymap_opts)
+  buf_set_keymap('n', 'gr', '<Cmd>lua vim.lsp.buf.references()<CR>', keymap_opts)
+  buf_set_keymap('n', 'gR', '<Cmd>lua vim.lsp.buf.rename()<CR>', keymap_opts)
+  buf_set_keymap('n', 'ga', '<Cmd>lua vim.lsp.buf.code_action()<CR>', keymap_opts)
+  buf_set_keymap('n', 'gO', '<Cmd>lua lsp_organize_imports()<CR>', keymap_opts)
+  buf_set_keymap('n', 'ge', '<Cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', keymap_opts)
 
   if client.resolved_capabilities.document_formatting then
-    buf_set_keymap("n", "<localleader>f", "<cmd>lua vim.lsp.buf.formatting_sync(nil, 4000)<CR>", opts)
+    buf_set_keymap("n", "<localleader>f", "<Cmd>lua vim.lsp.buf.formatting_sync(nil, 4000)<CR>", keymap_opts)
     vim.api.nvim_exec([[
       augroup LspFormat
         autocmd! * <buffer>
@@ -90,7 +80,7 @@ local on_attach = function(client, bufnr)
   })
 end
 
-local disable_formatting = function(opts) 
+local disable_formatting = function(opts)
   opts.on_attach = function(client)
       client.resolved_capabilities.document_formatting = false
       on_attach(client)
@@ -168,6 +158,7 @@ local enhance_server_opts = {
     }
   end,
   ["kotlin_language_server"] = function(opts)
+    -- TODO: Figure out JAVA_HOME and PATH for kotlin_language_server
     local jdk_home = "/usr/local/Cellar/openjdk@11/11.0.12/libexec/openjdk.jdk/Contents/Home"
     opts.settings = {
       ["kotlin-language-server"] = {

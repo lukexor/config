@@ -1,3 +1,3 @@
 Plug 'tpope/vim-obsession'
 
-nmap <leader>O :Obsession<cr>
+nmap <leader>O :Obsession<CR>

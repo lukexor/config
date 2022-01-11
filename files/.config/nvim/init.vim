@@ -120,11 +120,11 @@ nmap <leader>D :bufdo bdelete<CR>
 nmap Q gq
 
 " Clear search
-nnoremap <leader><cr> :nohlsearch<bar>diffupdate<cr><c-l>
+nnoremap <leader><CR> :nohlsearch<Bar>diffupdate<CR><C-l>
 
 " Allow gf to open non-existent files, doesn't auto-find like original gf, but
 " can use gF instead.
-map <silent> gf :edit <cfile><cr>
+map <silent> gf :edit <cfile><CR>
 
 " Switch between windows
 nmap <silent> <C-h> <C-w>h
@@ -135,7 +135,7 @@ nmap <silent> <C-l> <C-w>l
 " Navigate buffers
 nmap <leader>h :bp<CR>
 nmap <leader>l :bn<CR>
-nmap <leader><leader> <c-^>
+nmap <leader><leader> <C-^>
 
 " Navigate to tag
 nnoremap <silent> gt <C-]>
@@ -217,8 +217,8 @@ nnoremap <Right> :vertical resize +5<CR>
 nnoremap <Up> :resize +5<CR>
 
 " cd to cwd of current file
-nnoremap cd :execute 'lcd ' fnamemodify(resolve(expand('%')), ':p:h')<CR>
-  \ :echo 'cd ' . fnamemodify(resolve(expand('%')), ':p:h')<CR>
+nnoremap <silent> cd :execute 'lcd ' fnamemodify(resolve(expand('%')), ':p:h')<CR>
+  \ :lua vim.notify('cd ' .. vim.fn.fnamemodify(vim.fn.resolve(vim.fn.expand('%')), ':p:h'))<CR>
 
 " Yank/Paste to/from clipboard
 nnoremap cy "*y
@@ -229,44 +229,44 @@ nnoremap cp "*p
 nnoremap cP "*P
 
 " Next/Last parens text-object
-onoremap in( :<c-u>normal! f(vi(<cr>
-onoremap il( :<c-u>normal! F)vi(<cr>
-onoremap an( :<c-u>normal! f(va(<cr>
-onoremap al( :<c-u>normal! F)va(<cr>
-vnoremap in( :<c-u>normal! f(vi(<cr><esc>gv
-vnoremap il( :<c-u>normal! F)vi(<cr><esc>gv
-vnoremap an( :<c-u>normal! f(va(<cr><esc>gv
-vnoremap al( :<c-u>normal! F)va(<cr><esc>gv
+onoremap in( :<C-u>normal! f(vi(<CR>
+onoremap il( :<C-u>normal! F)vi(<CR>
+onoremap an( :<C-u>normal! f(va(<CR>
+onoremap al( :<C-u>normal! F)va(<CR>
+vnoremap in( :<C-u>normal! f(vi(<CR><Esc>gv
+vnoremap il( :<C-u>normal! F)vi(<CR><Esc>gv
+vnoremap an( :<C-u>normal! f(va(<CR><Esc>gv
+vnoremap al( :<C-u>normal! F)va(<CR><Esc>gv
 
 " Next/Last brace text-object
-onoremap in{ :<c-u>normal! f{vi{<cr>
-onoremap il{ :<c-u>normal! F{vi{<cr>
-onoremap an{ :<c-u>normal! f{va{<cr>
-onoremap al{ :<c-u>normal! F{va{<cr>
-vnoremap in{ :<c-u>normal! f{vi{<cr><esc>gv
-vnoremap il{ :<c-u>normal! F{vi{<cr><esc>gv
-vnoremap an{ :<c-u>normal! f{va{<cr><esc>gv
-vnoremap al{ :<c-u>normal! F{va{<cr><esc>gv
+onoremap in{ :<C-u>normal! f{vi{<CR>
+onoremap il{ :<C-u>normal! F{vi{<CR>
+onoremap an{ :<C-u>normal! f{va{<CR>
+onoremap al{ :<C-u>normal! F{va{<CR>
+vnoremap in{ :<C-u>normal! f{vi{<CR><Esc>gv
+vnoremap il{ :<C-u>normal! F{vi{<CR><Esc>gv
+vnoremap an{ :<C-u>normal! f{va{<CR><Esc>gv
+vnoremap al{ :<C-u>normal! F{va{<CR><Esc>gv
 
 " Next/Last bracket text-object
-onoremap in[ :<c-u>normal! f[vi[<cr>
-onoremap il[ :<c-u>normal! F[vi[<cr>
-onoremap an[ :<c-u>normal! f[va[<cr>
-onoremap al[ :<c-u>normal! F[va[<cr>
-vnoremap in[ :<c-u>normal! f[vi[<cr><esc>gv
-vnoremap il[ :<c-u>normal! F[vi[<cr><esc>gv
-vnoremap an[ :<c-u>normal! f[va[<cr><esc>gv
-vnoremap al[ :<c-u>normal! F[va[<cr><esc>gv
+onoremap in[ :<C-u>normal! f[vi[<CR>
+onoremap il[ :<C-u>normal! F[vi[<CR>
+onoremap an[ :<C-u>normal! f[va[<CR>
+onoremap al[ :<C-u>normal! F[va[<CR>
+vnoremap in[ :<C-u>normal! f[vi[<CR><Esc>gv
+vnoremap il[ :<C-u>normal! F[vi[<CR><Esc>gv
+vnoremap an[ :<C-u>normal! f[va[<CR><Esc>gv
+vnoremap al[ :<C-u>normal! F[va[<CR><Esc>gv
 
 " Fold text-object
-vnoremap af :<c-u>silent! normal! [zV]z<cr>
-omap af :normal Vaf<cr>
+vnoremap af :<C-u>silent! normal! [zV]z<CR>
+omap af :normal Vaf<CR>
 
 " Indent text-object
-onoremap ai :<c-u>call <SID>IndTxtObj(0)<cr>
-onoremap ii :<c-u>call <SID>IndTxtObj(1)<cr>
-vnoremap ai :<c-u>call <SID>IndTxtObj(0)<cr><esc>gv
-vnoremap ii :<c-u>call <SID>IndTxtObj(1)<cr><esc>gv
+onoremap ai :<C-u>call <SID>IndTxtObj(0)<CR>
+onoremap ii :<C-u>call <SID>IndTxtObj(1)<CR>
+vnoremap ai :<C-u>call <SID>IndTxtObj(0)<CR><Esc>gv
+vnoremap ii :<C-u>call <SID>IndTxtObj(1)<CR><Esc>gv
 
 fun! s:IndTxtObj(inner)
   let curcol = col(".")
@@ -343,6 +343,7 @@ source ~/.config/nvim/plugins/buftabline.vim
 source ~/.config/nvim/plugins/cheatsh.vim
 source ~/.config/nvim/plugins/closetag.vim
 source ~/.config/nvim/plugins/commentary.vim
+source ~/.config/nvim/plugins/cmp.vim
 source ~/.config/nvim/plugins/dadbod.vim
 source ~/.config/nvim/plugins/dispatch.vim
 source ~/.config/nvim/plugins/dressing.vim
@@ -356,8 +357,8 @@ source ~/.config/nvim/plugins/fzf.vim
 source ~/.config/nvim/plugins/gruvbox.vim
 source ~/.config/nvim/plugins/highlightedyank.vim
 source ~/.config/nvim/plugins/illuminate.vim
-source ~/.config/nvim/plugins/lightline.vim
 source ~/.config/nvim/plugins/lsp.vim
+source ~/.config/nvim/plugins/lualine.vim
 source ~/.config/nvim/plugins/markdown-preview.vim
 source ~/.config/nvim/plugins/nerdtree.vim
 source ~/.config/nvim/plugins/notify.vim
@@ -370,6 +371,7 @@ source ~/.config/nvim/plugins/repeat.vim
 source ~/.config/nvim/plugins/rooter.vim
 source ~/.config/nvim/plugins/signature.vim
 source ~/.config/nvim/plugins/sleuth.vim
+source ~/.config/nvim/plugins/symbols-outline.vim
 source ~/.config/nvim/plugins/smooth-scroll.vim
 source ~/.config/nvim/plugins/sneak.vim
 source ~/.config/nvim/plugins/surround.vim
@@ -414,7 +416,6 @@ augroup Init
   " Jump to the last known cursor position. See |last-position-jump|.
   autocmd BufRead * autocmd FileType <buffer> ++once
     \ if &ft !~# 'commit\|rebase' && line("'\"") > 1 && line("'\"") <= line("$") | exe 'normal! g`"' | endif
-  autocmd InsertLeave * set nopaste
   autocmd VimEnter * helptags ~/.config/nvim/doc
   autocmd CmdwinEnter *
       \ echohl Todo |

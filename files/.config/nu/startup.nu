@@ -77,7 +77,7 @@ def "nu startup" [] { nvim ~/.config/nu/startup.nu }
 def "nvim init" [] { nvim ~/.config/nvim/init.vim }
 
 # Edit neovim lsp lua configuration.
-def "nvim lsp" [] { nvim ~/.config/nvim/lua/lsp.lua }
+def "nvim lsp" [] { nvim ~/.config/nvim/lua/lsp-setup.lua }
 
 # Fuzzy search for file to edit.
 def vf [] {
