@@ -1,12 +1,6 @@
 Plug 'folke/which-key.nvim'
 
-fun! s:WhichKeySetup()
-lua << EOF
-require("which-key").setup {}
-EOF
-endfun
-
 augroup WhichKeySetup
   autocmd!
-  autocmd User PlugLoaded call <SID>WhichKeySetup()
+  autocmd User PlugLoaded :lua require("which-key-setup")
 augroup END

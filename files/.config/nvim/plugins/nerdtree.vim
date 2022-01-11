@@ -1,12 +1,9 @@
 let opts = { 'on': ['NERDTree', 'NERDTreeFind', 'NERDTreeToggle'] }
+
 Plug 'preservim/nerdtree', opts
 Plug 'Xuyuanp/nerdtree-git-plugin', opts
 Plug 'ryanoasis/vim-devicons', opts
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight', opts
-
-" ==================================================================================================
-" Settings   {{{1
-" ==================================================================================================
 
 let NERDTreeShowHidden=1
 let NERDTreeMinimalUI=1
@@ -17,10 +14,6 @@ let g:NERDTreeDirArrowCollapsible = '▿'
 
 " avoid crashes when calling vim-plug functions while the cursor is on the NERDTree window
 let g:plug_window = 'noautocmd vertical topleft new'
-
-" ==================================================================================================
-" Key Maps   {{{1
-" ==================================================================================================
 
 nnoremap <expr> <leader>n exists("g:NERDTree") && g:NERDTree.IsOpen()
   \ ? ':NERDTreeClose<CR>' : @% == '' ? ':NERDTree<CR>' : ':NERDTreeFind<CR>'

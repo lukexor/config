@@ -1,4 +1,25 @@
-## Aliases
+#
+#                                    i  t
+#                                   LE  ED.
+#                                  L#E  E#K:
+#                                 G#W.  E##W;
+#                                D#K.   E#E##t
+#                               E#K.    E#ti##f
+#                             .E#E.     E#t ;##D.
+#                            .K#E       E#ELLE##K:
+#                           .K#D        E#L;;;;;;,
+#                          .W#G         E#t
+#                         :W##########WtE#t
+#                         :,,,,,,,,,,,,,.
+#
+#
+# Personal nushell startup configuration of Luke Petherbridge <me@lukeworks.tech>
+
+
+
+# =============================================================================
+# Aliases   {{{1
+# =============================================================================
 
 alias _ = sudo
 alias cb = cargo build
@@ -65,7 +86,9 @@ alias vim = nvim
 alias vimdiff = nvim -d
 
 
-## Commands
+# =============================================================================
+# Commands   {{{1
+# =============================================================================
 
 # Edit nushell configuration.
 def "nu config" [] { nvim ~/.config/nu/config.toml }
@@ -76,10 +99,7 @@ def "nu startup" [] { nvim ~/.config/nu/startup.nu }
 # Edit neovim configuration.
 def "nvim init" [] { nvim ~/.config/nvim/init.vim }
 
-# Edit neovim lsp lua configuration.
-def "nvim lsp" [] { nvim ~/.config/nvim/lua/lsp-setup.lua }
-
-# Fuzzy search for file to edit.
+# Fuzzy search a file to edit.
 def vf [] {
   let file = (fzf-tmux | wrap filename | get filename)
   if ($file | empty?) {} {
@@ -232,11 +252,10 @@ def "commands search" [] {
 }
 
 # Fuzzy search history.
-def "history search" [] { cat $nu.history-path | fzf-tmux | str trim | pbcopy; pbpaste }
 alias hs = history search
+def "history search" [] { cat $nu.history-path | fzf-tmux | str trim | pbcopy; pbpaste }
 
 alias deactivate = source ~/.config/nu/envs/deactivate.nu
-
 # Activate a virtual environment.
 def venv [
   venv_dir: string # The virtual environment directory
@@ -289,7 +308,10 @@ def init [] {
   } {}
 }
 
-## Startup
+
+# =============================================================================
+# Startup   {{{1
+# =============================================================================
 
 # Fix tmux adding 2 to the SHLVL
 let level = ($nu.env | default SHLVL 1 | get SHLVL | into int)
@@ -307,3 +329,6 @@ pathvar add ~/.cargo/bin
 pathvar add ~/bin
 
 init
+
+
+# vim: foldmethod=marker foldlevel=0

@@ -1,26 +1,25 @@
-# TODO
-# Figure out nvm usage
-# Learn vi mode for CLI editing
-# Figure out reloading of nu config
+#
+#                                    i  t
+#                                   LE  ED.
+#                                  L#E  E#K:
+#                                 G#W.  E##W;
+#                                D#K.   E#E##t
+#                               E#K.    E#ti##f
+#                             .E#E.     E#t ;##D.
+#                            .K#E       E#ELLE##K:
+#                           .K#D        E#L;;;;;;,
+#                          .W#G         E#t
+#                         :W##########WtE#t
+#                         :,,,,,,,,,,,,,.
+#
+#
+#     Personal nushell configuration of Luke Petherbridge <me@lukeworks.tech>
 
-# color, abbreviation
-# green  g
-# red    r
-# blue   u
-# black  b
-# yellow y
-# purple p
-# cyan   c
-# white  w
-# attribute, abbreviation
-# bold       b
-# underline  u
 
-# italic     i
-# dimmed     d
-# reverse    r
-# abbreviated: green bold = gb, red underline = ru, blue dimmed = ud
-# or verbose: green_bold, red_underline, blue_dimmed
+
+# =============================================================================
+# Config   {{{1
+# =============================================================================
 
 startup = [
   "mkdir ~/.cache/starship",
@@ -46,6 +45,11 @@ path = [
   "/sbin",
 ]
 
+
+# =============================================================================
+# Environment   {{{1
+# =============================================================================
+
 [env]
 EDITOR = "nvim"
 FZF_DEFAULT_OPTS = "--height 50% --layout=reverse --border --inline-info"
@@ -55,6 +59,11 @@ LESS = "-RFX"
 PAGER = "nvim +Man!"
 MANPAGER = "nvim +Man!"
 JAVA_HOME = "/usr/local/opt/openjdk@11"
+
+
+# =============================================================================
+# Colors   {{{1
+# =============================================================================
 
 [color_config]
 header_align = "l" # left|l, right|r, center|c
@@ -77,6 +86,11 @@ primitive_range = "purple"
 primitive_string = "pb"
 separator_color = "purple"
 
+
+# =============================================================================
+# Editor   {{{1
+# =============================================================================
+
 [line_editor]
 auto_add_history = true
 bell_style = "visible" # audible, none, visible
@@ -89,6 +103,11 @@ history_ignore_space = true
 max_history_size = 100000
 tab_stop = 4
 
+
+# =============================================================================
+# Text   {{{1
+# =============================================================================
+
 [textview]
 colored_output = true
 header = true
@@ -99,3 +118,29 @@ tab_width = 4
 true_color = true
 use_italics = true
 wrapping_mode = "Character" # Character, NoWrapping
+
+# =============================================================================
+# Reference   {{{1
+# =============================================================================
+
+# color, abbreviation
+# green  g
+# red    r
+# blue   u
+# black  b
+# yellow y
+# purple p
+# cyan   c
+# white  w
+# attribute, abbreviation
+# bold       b
+# underline  u
+
+# italic     i
+# dimmed     d
+# reverse    r
+# abbreviated: green bold = gb, red underline = ru, blue dimmed = ud
+# or verbose: green_bold, red_underline, blue_dimmed
+
+
+# vim: foldmethod=marker foldlevel=0

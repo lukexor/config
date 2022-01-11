@@ -1,7 +1,14 @@
 Plug 'puremourning/vimspector', { 'on': [
-      \ 'VimspectorLaunch', 'VimspectorToggleBreakpoint', 'VimspectorToggleConditionalBreakpoint'] }
+  \ 'VimspectorLaunch',
+  \ 'VimspectorToggleBreakpoint',
+  \ 'VimspectorToggleConditionalBreakpoint' ]
+  \ }
 
-let g:vimspector_install_gadgets = [ 'CodeLLDB', 'debugger-for-chrome', 'vscode-bash-debug' ]
+let g:vimspector_install_gadgets = [
+  \ 'CodeLLDB',
+  \ 'debugger-for-chrome',
+  \ 'vscode-bash-debug',
+  \ ]
 
 " mnemonic 'di' = 'debug inspect'
 nmap <localleader>dd <Plug>VimspectorLaunch

@@ -17,9 +17,9 @@
 
 
 
-" ==================================================================================================
+" =============================================================================
 " General Settings   {{{1
-" ==================================================================================================
+" =============================================================================
 
 " Use Vim settings, rather than Vi settings (much better!).
 " This must be first, because it changes other options as a side effect.
@@ -53,7 +53,7 @@ set completeopt=menu,menuone,noselect
 set nowrap
 set breakindent
 set list
-set listchars=tab:▸\ ,trail:·,extends:»,precedes:«,nbsp:+
+set listchars=tab:\ ,trail:·,extends:,precedes:,nbsp:‗
 set matchpairs+=<:>
 set scrolloff=8
 set sidescrolloff=8
@@ -92,9 +92,9 @@ if executable('rg')
 endif
 
 
-" ==================================================================================================
+" =============================================================================
 " Key Maps   {{{1
-" ==================================================================================================
+" =============================================================================
 
 let mapleader=' '
 let maplocalleader='-'
@@ -218,7 +218,7 @@ nnoremap <Up> :resize +5<CR>
 
 " cd to cwd of current file
 nnoremap <silent> cd :execute 'lcd ' fnamemodify(resolve(expand('%')), ':p:h')<CR>
-  \ :lua vim.notify('cd ' .. vim.fn.fnamemodify(vim.fn.resolve(vim.fn.expand('%')), ':p:h'))<CR>
+  \ :lua vim.notify('lcd ' .. vim.fn.fnamemodify(vim.fn.resolve(vim.fn.expand('%')), ':p:h'))<CR>
 
 " Yank/Paste to/from clipboard
 nnoremap cy "*y
@@ -321,9 +321,9 @@ fun! s:ToggleGutter()
 endfun
 
 
-" ==================================================================================================
+" =============================================================================
 " Plugins   {{{1
-" ==================================================================================================
+" =============================================================================
 
 " Auto-install vim-plug
 let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim'
@@ -345,6 +345,7 @@ source ~/.config/nvim/plugins/closetag.vim
 source ~/.config/nvim/plugins/commentary.vim
 source ~/.config/nvim/plugins/cmp.vim
 source ~/.config/nvim/plugins/dadbod.vim
+source ~/.config/nvim/plugins/digraphs.vim
 source ~/.config/nvim/plugins/dispatch.vim
 source ~/.config/nvim/plugins/dressing.vim
 source ~/.config/nvim/plugins/easy-align.vim
@@ -369,6 +370,7 @@ source ~/.config/nvim/plugins/quickfix.vim
 source ~/.config/nvim/plugins/radical.vim
 source ~/.config/nvim/plugins/repeat.vim
 source ~/.config/nvim/plugins/rooter.vim
+source ~/.config/nvim/plugins/securemodelines.vim
 source ~/.config/nvim/plugins/signature.vim
 source ~/.config/nvim/plugins/sleuth.vim
 source ~/.config/nvim/plugins/symbols-outline.vim
@@ -385,8 +387,9 @@ call plug#end()
 doautocmd User PlugLoaded
 
 
+" =============================================================================
 " Abbreviations   {{{1
-" ==================================================================================================
+" =============================================================================
 
 iabbrev .. =>
 iabbrev adn and
@@ -396,12 +399,13 @@ iabbrev pritn print
 iabbrev retrun return
 iabbrev teh the
 iabbrev tehn then
+iabbrev tihs this
 iabbrev waht what
 
 
-" ==================================================================================================
+" =============================================================================
 " Misc   {{{1
-" ==================================================================================================
+" =============================================================================
 
 augroup FileTypeOverrides
   autocmd!
