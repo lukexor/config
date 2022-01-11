@@ -21,11 +21,17 @@
 " General Settings   {{{1
 " ==================================================================================================
 
-set nocompatible " Disable VI backwards compatible settings. Must be first
+" Use Vim settings, rather than Vi settings (much better!).
+" This must be first, because it changes other options as a side effect.
+" Avoid side effects when it was already reset.
+if &compatible
+  set nocompatible
+endif
 
 " Ensure a vim-compatible shell
 set shell=/bin/bash
 let $SHELL="/bin/bash"
+let g:python3_host_prog = 'python3'
 
 " Don't use nvim as a pager within itself
 let $PAGER='less'

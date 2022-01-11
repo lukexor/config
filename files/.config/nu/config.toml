@@ -38,12 +38,12 @@ table_mode = "compact_double"
 table_pager = "less"
 
 path = [
+  "/usr/local/bin",
+  "/usr/games/",
   "/usr/bin",
   "/bin",
   "/usr/sbin",
   "/sbin",
-  "/usr/local/bin",
-  "/usr/games/",
 ]
 
 [env]
