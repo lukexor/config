@@ -4,6 +4,8 @@ TABLE OF CONTENTS                                                      *cht-toc*
 ==============================================================================
 
   VIM                                   |cht-vim|
+    Commands                            |cht-vim-commands|
+    Completion                          |cht-vim-completion|
     More                                |cht-vim-more|
     Shortcuts                           |cht-vim-shortcuts|
   BASH                                  |cht-bash|
@@ -28,6 +30,30 @@ TABLE OF CONTENTS                                                      *cht-toc*
 
 VIM                                                                    *cht-vim*
 ==============================================================================
+
+Commands~
+                                                              *cht-vim-commands*
+
+CTRL-O {cmd}        Execute normal command while in insert mode. |i_CTRL-O|
+
+Completion~
+                                                            *cht-vim-completion*
+
+CTRL-X CTRL-F       File names. |i_CTRL-X_CTRL-F|
+CTRL-X CTRL-L       Whole lines. |i_CTRL-X_CTRL-L|
+CTRL-X CTRL-D       Macro definitions. |i_CTRL-X_CTRL-D|
+CTRL-X CTRL-I       Current and included files. |i_CTRL-X_CTRL-I|
+CTRL-X CTRL-K       Dictionary words. |i_CTRL-X_CTRL-K|
+CTRL-X CTRL-T       Thesaurus words. |i_CTRL-X_CTRL-T|
+CTRL-X CTRL-]       Tags. |i_CTRL-X_CTRL-]|
+CTRL-X CTRL-V       Vim commands. |i_CTRL-X_CTRL-V|
+CTRL-X CTRL-O       Omni-complete. Only if |'omnifunc'| is set. |i_CTRL-X_CTRL-O|
+
+CTRL-A              Insert previously inserted text. |i_CTRL-A|
+CTRL-@              Insert previously inserted text and exit insert. |i_CTRL-@|
+CTRL-R {register}   Insert from register. |i_CTRL-R|
+CTRL-V              Insert special character. |i_CTRL-V|
+CTRL-K              Insert |digraph|. See |digraphs|. |i_CTRL-K|
 
 More~
                                                       |more-prompt| *cht-vim-more*
