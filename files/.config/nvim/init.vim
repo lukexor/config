@@ -71,7 +71,7 @@ set signcolumn=yes:2
 set synmaxcol=200
 set foldmethod=indent
 set foldlevelstart=99
-set foldcolumn=4
+set foldcolumn=auto:3
 set showmatch
 set path+=**
 set dictionary=/usr/share/dict/words
