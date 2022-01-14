@@ -13,7 +13,8 @@
 #                         :,,,,,,,,,,,,,.
 #
 #
-# Personal nushell startup configuration of Luke Petherbridge <me@lukeworks.tech>
+#                  Personal nushell startup configuration of
+#                    Luke Petherbridge <me@lukeworks.tech>
 
 
 
