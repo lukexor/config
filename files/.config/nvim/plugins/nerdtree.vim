@@ -23,7 +23,8 @@ nmap <leader>N :NERDTreeFind<CR>
 "   Returns: 1 if either file explorer was opened; otherwise, 0.
 fun! s:OpenFileOrExplorer(...)
   if a:0 == 0 || a:1 == ''
-    NERDTree
+    execute 'edit'
+    return 0
   elseif filereadable(a:1)
     execute 'edit '.a:1
     return 0

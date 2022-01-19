@@ -71,7 +71,6 @@ set signcolumn=yes:2
 set synmaxcol=200
 set foldmethod=indent
 set foldlevelstart=99
-set foldcolumn=auto:3
 set showmatch
 set path+=**
 set dictionary=/usr/share/dict/words
@@ -414,8 +413,6 @@ augroup FileTypeOverrides
   autocmd BufRead,BufNewFile *.nu set ft=nu
   autocmd Filetype help set nu rnu
   autocmd Filetype * set formatoptions=croqnjp
-  " Allow manual folds in otherwise indent folded files
-  autocmd BufWinEnter * if &fdm == 'indent' | setlocal foldmethod=manual | endif
 augroup END
 
 augroup Init
