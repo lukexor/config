@@ -41,6 +41,7 @@ ctags
 .nu-env
 .jrc
 .env*
+.lspconfig.lua
 
 # Misc
 *.patch

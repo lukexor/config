@@ -191,6 +191,17 @@ local enhance_server_opts = {
   end,
 }
 
+function Merge(t1, t2)
+  for k, v in pairs(t2) do
+    if (type(v) == "table") and (type(t1[k] or false) == "table") then
+      Merge(t1[k], t2[k])
+    else
+      t1[k] = v
+    end
+  end
+  return t1
+end
+
 local lsp_installer = require'nvim-lsp-installer'
 lsp_installer.on_server_ready(function(server)
   local opts = {
@@ -203,6 +214,14 @@ lsp_installer.on_server_ready(function(server)
 
   if enhance_server_opts[server.name] then
     enhance_server_opts[server.name](opts)
+  end
+
+  local config = loadfile(vim.fn.getcwd() .. '/.lspconfig.lua')
+  if config ~= nil then
+    local config_opts = config()
+    if config_opts ~= nil and config_opts[server.name] then
+      Merge(opts, config_opts[server.name])
+    end
   end
 
   server:setup(opts)
