@@ -73,9 +73,10 @@ local on_attach = function(client, bufnr)
   end
 
   require'lsp_signature'.on_attach({
-    doc_lines = 0,
+    bind = true,
+    doc_lines = 2,
     handler_opts = {
-      border = "none"
+      border = "rounded"
     },
   })
 end
@@ -200,6 +201,19 @@ function Merge(t1, t2)
     end
   end
   return t1
+end
+
+local servers = {
+  'bashls', 'cssls', 'diagnosticls', 'eslint', 'html', 'jsonls',
+  'kotlin_language_server', 'rust_analyzer', 'sumneko_lua', 'tsserver', 'vimls',
+  'yamlls'
+}
+local lsp_servers = require'nvim-lsp-installer.servers'
+for _, server in ipairs(servers) do
+  local available, requested = lsp_servers.get_server(server)
+  if available and not requested:is_installed() then
+        requested:install()
+    end
 end
 
 local lsp_installer = require'nvim-lsp-installer'

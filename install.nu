@@ -42,7 +42,7 @@ echo $cargo_packages | each { cargo install $it }
 echo $cargo_components | each { rustup component add $it }
 
 vim +PlugUpgrade +PlugInstall +PlugClean +PlugUpdate +UpdateRemotePlugins +qall
-vim -c (build-string "LspInstall " ($language_servers | str collect " ") " | echo 'Press <leader>Q when complete'")
+vim -c (build-string "LspInstall --sync " ($language_servers | str collect " ")) +qall
 python3 -m pip install --upgrade --user pip
 pip3 install --upgrade --user pip
 pip3 install --upgrade --user pynvim

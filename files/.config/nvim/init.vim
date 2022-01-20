@@ -101,7 +101,7 @@ let maplocalleader='-'
 
 " Quick edit vim files
 nmap <leader>ve :edit $MYVIMRC<CR>
-nmap <leader>vc :edit ~/.config/nvim/lua/lsp.lua<CR>
+nmap <leader>vc :edit ~/.config/nvim/lua/lsp-setup.lua<CR>
 nmap <leader>vr :source $MYVIMRC<CR>:edit<CR>
 
 " Quick save
