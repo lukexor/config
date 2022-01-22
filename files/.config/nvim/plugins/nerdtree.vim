@@ -22,16 +22,16 @@ nmap <leader>N :NERDTreeFind<CR>
 " Function to open the file or NERDTree or netrw.
 "   Returns: 1 if either file explorer was opened; otherwise, 0.
 fun! s:OpenFileOrExplorer(...)
-  if a:0 == 0 || a:1 == ''
+  if a:0 == 0
     execute 'edit'
-    return 0
-  elseif filereadable(a:1)
-    execute 'edit '.a:1
     return 0
   elseif a:1 =~? '^\(scp\|ftp\)://' " Add other protocols as needed.
     execute 'Vexplore '.a:1
   elseif isdirectory(a:1)
     execute 'NERDTree '.a:1
+  else
+    execute 'edit '.a:1
+    return 0
   endif
   return 1
 endfun

@@ -1,5 +1,7 @@
 Plug 'hrsh7th/nvim-cmp' | Plug 'hrsh7th/cmp-buffer'
-Plug 'SirVer/ultisnips' | Plug 'quangnguyen30192/cmp-nvim-ultisnips'
+Plug 'honza/vim-snippets'
+      \ | Plug 'SirVer/ultisnips'
+      \ | Plug 'quangnguyen30192/cmp-nvim-ultisnips'
 
 let g:snips_author = system('git config --get user.name | tr -d "\n"')
 let g:snips_author_email = system('git config --get user.email | tr -d "\n"')
