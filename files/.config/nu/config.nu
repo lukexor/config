@@ -193,19 +193,16 @@ let-env PATH = [
 let-env STARSHIP_SHELL = "nu"
 let-env STARSHIP_SESSION_KEY = (random chars -l 16)
 
-# FIXME: `starship init` still relies on $nu.env instead of env
-# ^mkdir -p ~/.cache/starship
-# starship init nu | save ~/.cache/starship/init.nu
-# source ~/.cache/starship/init.nu
 let-env PROMPT_COMMAND = {
   starship prompt --cmd-duration $env.CMD_DURATION_MS | decode utf8 | str find-replace -a (char newline) (char crlf)
 }
-let-env PROMPT_COMMAND_RIGHT = { "" }
-let-env PROMPT_INDICATOR = (build-string (ansi gb) ": ")
+let-env PROMPT_COMMAND_RIGHT = ""
+let-env PROMPT_INDICATOR = (build-string (ansi gb) ((version).version) " : ")
 let-env PROMPT_INDICATOR_VI_INSERT = (build-string (ansi gb) ((version).version) " ❯ ")
-let-env PROMPT_INDICATOR_MENU = (build-string (ansi gb) "≡ ")
+let-env PROMPT_INDICATOR_MENU = (build-string (ansi gb) ((version).version) " ≡ ")
 let-env PROMPT_MULTILINE_INDICATOR = (build-string (ansi y) "»» ")
 
+let-env CLICOLOR = 1
 let-env EDITOR = "nvim"
 let-env FZF_DEFAULT_OPTS = "--height 50% --layout=reverse --border --inline-info"
 let-env FZF_CTRL_T_COMMAND = "rg --files --hidden"
@@ -213,7 +210,6 @@ let-env FZF_DEFAULT_COMMAND = "rg --files --hidden"
 let-env LESS = "-RFX"
 let-env PAGER = "nvim +Man!"
 let-env MANPAGER = "nvim +Man!"
-let-env JAVA_HOME = "/usr/local/opt/openjdk@11"
 
 
 # =============================================================================
