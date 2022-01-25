@@ -22,15 +22,16 @@
 # =============================================================================
 
 startup = [
-  "mkdir ~/.cache/starship",
-  "if (ls ~/.cache/starship/ | where name =~ init | length) == 0 { starship init nu | save ~/.cache/starship/init.nu } {}",
+  "^mkdir -p ~/.cache/starship",
+  "starship init nu | save ~/.cache/starship/init.nu",
+  "source ~/.cache/starship/init.nu",
   "source ~/.config/nu/startup.nu",
 ]
 
 ctrlc_exit = false
 complete_from_path = true
 pivot_mode = "auto"
-prompt = "starship prompt"
+prompt = "build-string (starship_prompt | str collect) (ansi gb) ((version).version) ' ❯ '"
 rm_always_trash = true
 skip_welcome_message = true
 table_mode = "compact_double"

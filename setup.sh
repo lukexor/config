@@ -36,14 +36,10 @@ esac
 if command -v rustup &> /dev/null; then
     rustup update
 else
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+    curl --proto "=https" --tlsv1.2 -sSf https://sh.rustup.rs | sh
 fi
 
 $HOME/.cargo/bin/cargo install nu --features=extra
-
-config=$(nu -c 'echo $nu.config-path')
-rm -f $config
-ln -s ~/.config/nu/config.toml $config
 
 CONFLICTS=$(stow -nv files 2>&1 | awk '/\* existing target is/ {print $NF}')
 for file in ${CONFLICTS[@]}; do
