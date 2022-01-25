@@ -245,7 +245,7 @@ alias gdt = git difftool
 alias gf = git fetch origin
 alias glg = git log --graph --pretty=format:'%C(yellow)%h (%p) %ai%Cred%d %Creset%Cblue[%ae]%Creset %s (%ar). %b %N'
 alias gm = git merge
-alias gops = git push origin (git rev-parse --abbrev-ref HEAD) -u
+alias gops = git push origin (git rev-parse --abbrev-ref HEAD | decode utf8 | str trim) -u
 alias gpl = git pull
 alias gps = git push
 alias grhh = git reset HEAD --hard
