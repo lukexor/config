@@ -1,4 +1,4 @@
 let version = (if (ls -a | any? name == .jrc) { cat .jrc } { node -v })
 let-env SPRING_PROFILES_ACTIVE = "local"
-let-env JAVA_HOME = (java_home -v $version | str trim)
+let-env JAVA_HOME = (/usr/libexec/java_home -v $version | str trim)
 load-env (venv $nu.env.JAVA_HOME)
