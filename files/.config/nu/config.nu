@@ -260,9 +260,8 @@ alias k = kubectl
 alias ls = ls -s
 alias la = ls -sa
 alias ll = ls -sl
-# FIXME: sort-by Filesize/Date not implemented in engine-q yet
-# alias lc = (ls -s | sort-by modified | reverse)
-# alias lk = (ls -s | sort-by size | reverse)
+alias lc = (ls -s | sort-by modified | reverse)
+alias lk = (ls -s | sort-by size | reverse)
 alias cp = ^cp -ia
 alias myip = curl -s api.ipify.org
 alias mv = ^mv -i
@@ -332,6 +331,7 @@ def pg [search: string] {
 # Restart ssh-agent.
 def ra [] {
   pg ssh-agent | each { kill $it.pid }
+  rm -f /tmp/ssh-agent-info /tmp/ssh-agent
   let agent = (ssh-agent -s -a /tmp/ssh-agent)
   $agent | save /tmp/ssh-agent-info
   ssh-add ~/.ssh/id_rsa
@@ -340,12 +340,11 @@ def ra [] {
 # Output git branches with last commit.
 def gb-age [] {
   # substring 2, skips the currently checked out branch: "* "
-  git branch -a | lines | str substring 2, | wrap name | where name !~ HEAD | update "last commit" {
+  git branch -a | decode utf8 | str trim | lines | str substring 2, | wrap name | where name !~ HEAD | update "last commit" {
       get name | each {
           git show $it --no-patch --format=%as | decode utf8 | str trim
       }
-    # FIXME: sort-by Filesize/Date not implemented in engine-q yet
-  } # | sort-by "last commit"
+  } | sort-by "last commit"
 }
 
 # Clean old git branches.

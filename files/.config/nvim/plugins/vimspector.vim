@@ -1,7 +1,7 @@
 Plug 'puremourning/vimspector', { 'on': [
-  \ 'VimspectorLaunch',
-  \ 'VimspectorToggleBreakpoint',
-  \ 'VimspectorToggleConditionalBreakpoint' ]
+  \ '<Plug>VimspectorLaunch',
+  \ '<Plug>VimspectorToggleBreakpoint',
+  \ '<Plug>VimspectorToggleConditionalBreakpoint' ]
   \ }
 
 let g:vimspector_install_gadgets = [

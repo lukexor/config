@@ -41,7 +41,7 @@ echo $npm_packages | each { npm install -g $it }
 echo $cargo_packages | each { cargo install $it }
 echo $cargo_components | each { rustup component add $it }
 
-vim +PlugUpgrade +PlugInstall +PlugClean +PlugUpdate +UpdateRemotePlugins +qall
+vim +PlugUpgrade +PlugInstall +PlugClean +PlugUpdate +UpdateRemotePlugins +VimspectorUpdate +qall
 vim -c (build-string "LspInstall --sync " ($language_servers | str collect " ")) +qall
 python3 -m pip install --upgrade --user pip
 pip3 install --upgrade --user pip
