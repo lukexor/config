@@ -105,13 +105,12 @@ let $config = {
       ]
     }
     {
-      name: complete
+      name: hint
       modifier: control
       keycode: char_t
       mode: vi_insert
       event:[
         [{ send: historyhintcomplete }]
-        [{ send: contextmenu }]
         [{ send: menunext }]
       ]
     }
@@ -134,20 +133,13 @@ let $config = {
       ]
     }
     {
-      name: completion
-      modifier: control
-      keycode: char_p
-      mode: vi_insert
-      event: { send: contextmenu }
-    }
-    {
       name: fzf_cd
       modifier: control
       keycode: char_y
       mode: vi_insert
       event: [
         { edit: { cmd: clear } }
-        { edit: { cmd: insertString value: 'cd (ls | where type == dir | get name | str collect (char nl) | fzf | decode utf8 | str trim)' } }
+        { edit: { cmd: insertString value: 'cd (ls | where type == dir | get name | str collect (char nl) | fzf-tmux)' } }
         { send: enter }
       ]
     }
@@ -194,7 +186,7 @@ let-env STARSHIP_SHELL = "nu"
 let-env STARSHIP_SESSION_KEY = (random chars -l 16)
 
 let-env PROMPT_COMMAND = {
-  starship prompt --cmd-duration $env.CMD_DURATION_MS | decode utf8 | str find-replace -a (char newline) (char crlf)
+  starship prompt --cmd-duration $env.CMD_DURATION_MS | str collect
 }
 let-env PROMPT_COMMAND_RIGHT = ""
 let-env PROMPT_INDICATOR = (build-string (ansi gb) ((version).version) " : ")
@@ -244,7 +236,8 @@ alias gdt = git difftool
 alias gf = git fetch origin
 alias glg = git log --graph --pretty=format:'%C(yellow)%h (%p) %ai%Cred%d %Creset%Cblue[%ae]%Creset %s (%ar). %b %N'
 alias gm = git merge
-alias gops = git push origin (git rev-parse --abbrev-ref HEAD | decode utf8 | str trim) -u
+alias gops = git push origin (git rev-parse --abbrev-ref HEAD | str trim) -u
+alias gopsn = git push origin (git rev-parse --abbrev-ref HEAD | str trim) -u --no-verify
 alias gpl = git pull
 alias gps = git push
 alias grhh = git reset HEAD --hard
@@ -252,7 +245,6 @@ alias grm = git rm
 alias gsl = git --no-pager stash list
 alias gst = git status
 alias gt = git tag
-alias gtoday = git --no-pager log --graph --pretty=format:'%C(yellow)%h %ad%Cred%d %Creset%Cblue[%cn]%Creset  %s (%ar)' --date=iso --all --branches=* --remotes=* --since='23 hours ago' --author=$(git config user.email)
 alias gun = git reset HEAD --
 alias ls = ls -s
 alias la = ls -sa
@@ -265,12 +257,12 @@ alias mv = ^mv -i
 alias md = ^mkdir -p
 alias rm = ^rm -i
 alias rd = rmdir
-alias pwd = (^pwd | decode utf8 | str trim | str find-replace $nu.home-path '~')
+alias pwd = (^pwd | str find-replace $nu.home-path '~')
 alias py = python3
 alias slp = ssh caeledh@138.197.217.136
 alias sshl = ssh-add -L
-alias topc = (^ps -Arco pid,pcpu,pmem,comm | lines | str trim | skip 1 | first 10 | parse -r "(?P<pid>\d+)\s+(?P<pcpu>\d+\.\d+)\s+(?P<pmem>\d+\.\d+)\s+(?P<name>.*)")
-alias topm = (^ps -Amco pid,pcpu,pmem,comm | lines | str trim | skip 1 | first 10 | parse -r "(?P<pid>\d+)\s+(?P<pcpu>\d+\.\d+)\s+(?P<pmem>\d+\.\d+)\s+(?P<name>.*)")
+alias topc = (^ps -Arco pid,pcpu,pmem,comm | lines | skip 1 | first 10 | parse -r "(?P<pid>\d+)\s+(?P<pcpu>\d+\.\d+)\s+(?P<pmem>\d+\.\d+)\s+(?P<name>.*)")
+alias topm = (^ps -Amco pid,pcpu,pmem,comm | lines | skip 1 | first 10 | parse -r "(?P<pid>\d+)\s+(?P<pcpu>\d+\.\d+)\s+(?P<pmem>\d+\.\d+)\s+(?P<name>.*)")
 alias vi = nvim
 alias vim = nvim
 alias vimdiff = nvim -d
@@ -296,7 +288,7 @@ def "nvim init" [] { nvim ([$nu.home-path .config/nvim/init.vim] | path join) }
 
 # Fuzzy search a file to edit.
 def vf [] {
-  let file = (fzf-tmux | decode utf8 | str trim)
+  let file = (fzf-tmux)
   if ($file | empty?) {} else {
     echo $"nvim ($file)"
     echo $file | pbcopy
@@ -333,19 +325,24 @@ def ra [] {
   ssh-add ~/.ssh/id_rsa
 }
 
+# Output commits since yesterday.
+def gnew [] {
+  git --no-pager log --graph --pretty=format:'%C(yellow)%h %ad%Cred%d %Creset%Cblue[%cn]%Creset  %s (%ar)' --date=iso --all --since='23 hours ago'
+}
+
 # Output git branches with last commit.
-def gb-age [] {
+def gage [] {
   # substring 2, skips the currently checked out branch: "* "
-  git branch -a | decode utf8 | str trim | lines | str substring 2, | wrap name | where name !~ HEAD | update "last commit" {
+  git branch -a | lines | str substring 2, | wrap name | where name !~ HEAD | update "last commit" {
       get name | each {
-          git show $it --no-patch --format=%as | decode utf8 | str trim
+          git show $it --no-patch --format=%as | str collect
       }
   } | sort-by "last commit"
 }
 
 # Clean old git branches.
 def gb-clean [] {
-  git branch -vl | decode utf8 | str trim | lines | str substring 2, | split column " " branch hash status --collapse-empty | where status == '[gone]' | each { git branch -d $it.branch }
+  git branch -vl | lines | str substring 2, | split column " " branch hash status --collapse-empty | where status == '[gone]' | each { git branch -d $it.branch }
 }
 
 ## Community Commands
@@ -422,14 +419,14 @@ def "commands search" [] {
   }
 
   help (echo (help commands | each {
-    let name = ($it.name | str trim | ansi strip)
+    let name = ($it.name | ansi strip)
     $"($name)(pad-tabs $name)($it.usage)"
-  }) | str collect (char nl) | fzf-tmux | decode utf8 | split column (char tab) | get Column1 | first )
+  }) | str collect (char nl) | fzf-tmux | split column (char tab) | get Column1 | first )
 }
 
 # Fuzzy search history.
 alias hs = history search
-def "history search" [] { cat $nu.history-path | fzf-tmux | decode utf8 | str trim | pbcopy }
+def "history search" [] { cat $nu.history-path | fzf-tmux | pbcopy }
 
 alias deactivate = source ~/.config/nu/envs/deactivate-q.nu
 # Activate a virtual environment.
@@ -439,9 +436,9 @@ def venv [
   let path_sep = ":"
   let venv_abs_dir = ($venv_dir | path expand)
   let venv_name = ($venv_abs_dir | path basename)
-  let old_path = ($env.PATH | decode utf8 | str collect $path_sep)
+  let old_path = ($env.PATH | str collect $path_sep)
   let venv_path = ([$venv_dir "bin"] | path join)
-  let new_path = ($env.PATH | prepend $venv_path | decode utf8 | str collect $path_sep)
+  let new_path = ($env.PATH | prepend $venv_path | str collect $path_sep)
   [
     [name, value];
     [VENV_OLD_PATH $old_path]
@@ -452,18 +449,18 @@ def venv [
 
 # Print out personalized ASCII logo.
 def init [] {
-  if ($env.SHLVL | into int) == 1 {
+  if ($env.SHLVL | into int) == 0 {
     let load = (uptime | parse -r "averages: (?P<avg>.*)" | get avg)
     let sys = (sys)
     let macos = $sys.host.name =~ Darwin
     let os = (if $macos {
-      let vers = (sw_vers | parse -r "(?P<name>\w+):(?P<value>.*)" | str trim | transpose -r)
-      $"($vers.ProductName) ($vers.ProductVersion)"
+      let vers = (sw_vers | parse -r "(?P<name>\w+):(?P<value>.*)" | transpose -r | str trim)
+      $"($vers.ProductName | str collect) ($vers.ProductVersion | str collect)"
     } else {
-      uname -srm | str trim
+      uname -srm
     })
     let cpu = (if $macos {
-      sysctl -n machdep.cpu.brand_string | decode utf8 | str trim
+      sysctl -n machdep.cpu.brand_string | str trim
     } else {
       cat /proc/cpuinfo | rg "model name\s+: (.*)" -r '$1' | uniq | str trim
     })
@@ -475,7 +472,7 @@ def init [] {
            D#K.   E#E##t        Memory......: ($sys.mem.free) [Free] / ($sys.mem.total) [Total]
           E#K.    E#ti##f       CPU.........: ($cpu)
         .E#E.     E#t ;##D.     Load........: ($load) [1, 5, 15 min]
-       .K#E       E#ELLE##K:    IP Address..: (ifconfig en0 | rg 'inet (([0-9]{1,3}+.){4})' -or '$1' | decode utf8 | str trim)
+       .K#E       E#ELLE##K:    IP Address..: (ifconfig en0 | rg 'inet (([0-9]{1,3}+.){4})' -or '$1' | str trim)
       .K#D        E#L;;;;;;,
      .W#G         E#t
     :W##########WtE#t
