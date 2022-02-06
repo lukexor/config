@@ -1,4 +1,4 @@
-priority -50
+priority -40
 
 snippet fn "fn" b
 fn ${1:name}($2)${3/..*/ -> /}$3 {
@@ -134,8 +134,16 @@ impl From<${1:type}> for ${2:type} {
 endsnippet
 
 snippet idbg "impl Debug" b
-impl std::fmt::Debug for ${1:type} {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+impl fmt::Debug for ${1:type} {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        ${VISUAL}$0
+    }
+}
+endsnippet
+
+snippet idis "impl Display" b
+impl fmt::Display for ${1:type} {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         ${VISUAL}$0
     }
 }

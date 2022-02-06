@@ -5,6 +5,7 @@ Plug 'honza/vim-snippets'
 
 let g:snips_author = system('git config --get user.name | tr -d "\n"')
 let g:snips_author_email = system('git config --get user.email | tr -d "\n"')
+let g:snips_github = "https://github.com/lukexor"
 
 " Fixes Ctrl-X Ctrl-K
 " https://github.com/SirVer/ultisnips/blob/master/doc/UltiSnips.txt#L264

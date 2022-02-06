@@ -288,8 +288,8 @@ def "nvim init" [] { nvim ([$nu.home-path .config/nvim/init.vim] | path join) }
 
 # Fuzzy search a file to edit.
 def vf [] {
-  let file = (fzf-tmux)
-  if ($file | empty?) {} else {
+  let file = (fzf-tmux | str trim)
+  if ($file | empty? | first) {} else {
     echo $"nvim ($file)"
     echo $file | pbcopy
     nvim $file
