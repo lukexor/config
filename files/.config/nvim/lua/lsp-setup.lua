@@ -61,6 +61,8 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', 'ga', '<Cmd>lua vim.lsp.buf.code_action()<CR>', keymap_opts)
   buf_set_keymap('n', 'gO', '<Cmd>lua lsp_organize_imports()<CR>', keymap_opts)
   buf_set_keymap('n', 'ge', '<Cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', keymap_opts)
+  buf_set_keymap('n', 'gp', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', keymap_opts)
+  buf_set_keymap('n', 'gn', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', keymap_opts)
 
   if client.resolved_capabilities.document_formatting then
     buf_set_keymap("n", "<localleader>f", "<Cmd>lua vim.lsp.buf.formatting_sync(nil, 4000)<CR>", keymap_opts)

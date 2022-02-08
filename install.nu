@@ -48,12 +48,10 @@ pip3 install --upgrade --user pip
 pip3 install --upgrade --user pynvim
 
 # macOS has a different config-path
-^rm -f $nu.config-path
-^rm -f $nu.keybinding-path
-# FIXME: $nu.home-dir renamed to $nu.home-path in engine-q
-# FIXME: config.nu, keybindings removed when engine-q lands
-ln -s ([$nu.home-dir .config/nu/config.toml] | path join) ($nu.config-path)
-ln -s ([$nu.home-dir .config/nu/keybindings.yml] | path join) ($nu.keybinding-path)
+if ((sys).host.name =~ Darwin) {
+  ^rm -f $nu.config-path
+  ln -s ([$nu.home-path .config/nu/config.toml] | path join) ($nu.config-path)
+}
 exec nu
 
 echo "

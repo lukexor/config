@@ -12,6 +12,18 @@ pub fn ${1:name}($2)${3/..*/ -> /}$3 {
 }
 endsnippet
 
+snippet pfc "pub(crate) fn" b
+pub(crate) fn ${1:name}($2)${3/..*/ -> /}$3 {
+    ${VISUAL}$0
+}
+endsnippet
+
+snippet pfs "pub(super) fn" b
+pub(super) fn ${1:name}($2)${3/..*/ -> /}$3 {
+    ${VISUAL}$0
+}
+endsnippet
+
 snippet afn "async fn" b
 async fn ${1:name}($2)${3/..*/ -> /}$3 {
     ${VISUAL}$0

@@ -186,12 +186,15 @@ let-env STARSHIP_SHELL = "nu"
 let-env STARSHIP_SESSION_KEY = (random chars -l 16)
 
 let-env PROMPT_COMMAND = {
-  starship prompt --cmd-duration $env.CMD_DURATION_MS | str collect
+  let starship = (starship prompt --cmd-duration $env.CMD_DURATION_MS | str collect)
+  let version = ((version).version)
+  build-string $starship (ansi ub) "v" $version (ansi gb) " "
 }
 let-env PROMPT_COMMAND_RIGHT = ""
-let-env PROMPT_INDICATOR = (build-string (ansi gb) ((version).version) " : ")
-let-env PROMPT_INDICATOR_VI_INSERT = (build-string (ansi gb) ((version).version) " ❯ ")
-let-env PROMPT_INDICATOR_MENU = (build-string (ansi gb) ((version).version) " ≡ ")
+let-env PROMPT_INDICATOR = ": "
+let-env PROMPT_INDICATOR_VI_NORMAL = ": "
+let-env PROMPT_INDICATOR_VI_INSERT = "❯ "
+let-env PROMPT_INDICATOR_MENU = "≡ "
 let-env PROMPT_MULTILINE_INDICATOR = (build-string (ansi y) "»» ")
 
 let-env CLICOLOR = 1
@@ -246,11 +249,10 @@ alias gsl = git --no-pager stash list
 alias gst = git status
 alias gt = git tag
 alias gun = git reset HEAD --
-alias ls = ls -s
-alias la = ls -sa
-alias ll = ls -sl
-alias lc = (ls -s | sort-by modified | reverse)
-alias lk = (ls -s | sort-by size | reverse)
+alias la = ls -a
+alias ll = ls -l
+alias lc = (ls | sort-by modified | reverse)
+alias lk = (ls | sort-by size | reverse)
 alias cp = ^cp -ia
 alias myip = curl -s api.ipify.org
 alias mv = ^mv -i
@@ -286,6 +288,21 @@ def "nu startup" [] { nvim ([$nu.home-path .config/nu/startup.nu] | path join) }
 # Edit neovim configuration.
 def "nvim init" [] { nvim ([$nu.home-path .config/nvim/init.vim] | path join) }
 
+# List installed Node versions.
+def "nvm list" [] {
+  bash -ic "nvm list"
+}
+
+# Install Node version via nvm.
+def "nvm install" [version?: string] {
+  bash -ic $"nvm install ($version)"
+}
+
+# Uninstall Node version via nvm.
+def "nvm uninstall" [version?: string] {
+  bash -ic $"nvm uninstall ($version)"
+}
+
 # Fuzzy search a file to edit.
 def vf [] {
   let file = (fzf-tmux | str trim)
@@ -304,11 +321,6 @@ def gl [count: int] {
 # Output last N history commands.
 def hl [count: int] {
   history | first $count
-}
-
-# Output history containing given text.
-def hs [search: string] {
-  history | where ($it | str contains $search)
 }
 
 # Search process list for a given string.
@@ -362,9 +374,8 @@ def dict [
 }
 
 # Print a sorted list of the largest directories.
-# FIXME: Pending `ls --du` flag, sort-by filesize not implemented
 def filesizes [] {
-  # ls -d | where type == dir | sort-by size | reverse | format filesize size MB
+  ls -d | where type == dir | sort-by size | reverse
 }
 
 # Extract a packaged file.
@@ -428,28 +439,23 @@ def "commands search" [] {
 alias hs = history search
 def "history search" [] { cat $nu.history-path | fzf-tmux | pbcopy }
 
-alias deactivate = source ~/.config/nu/envs/deactivate-q.nu
+alias deactivate = (source ~/.config/nu/envs/deactivate.nu)
 # Activate a virtual environment.
 def venv [
   venv_dir: string # The virtual environment directory
 ] {
-  let path_sep = ":"
-  let venv_abs_dir = ($venv_dir | path expand)
-  let venv_name = ($venv_abs_dir | path basename)
-  let old_path = ($env.PATH | str collect $path_sep)
+  let venv_name = ($venv_dir | path expand | path basename)
   let venv_path = ([$venv_dir "bin"] | path join)
-  let new_path = ($env.PATH | prepend $venv_path | str collect $path_sep)
-  [
-    [name, value];
-    [VENV_OLD_PATH $old_path]
-    [VIRTUAL_ENV $venv_name]
-    [PATH $new_path]
-  ]
+  {
+    VENV_OLD_PATH: $env.PATH,
+    VIRTUAL_ENV: $venv_name,
+    PATH: ($env.PATH | prepend $venv_path)
+  }
 }
 
 # Print out personalized ASCII logo.
 def init [] {
-  if ($env.SHLVL | into int) == 0 {
+  if ($env.SHLVL | into int) == 1 {
     let load = (uptime | parse -r "averages: (?P<avg>.*)" | get avg)
     let sys = (sys)
     let macos = $sys.host.name =~ Darwin
@@ -486,17 +492,15 @@ def init [] {
 # Startup   {{{1
 # =============================================================================
 
-# Fix tmux adding 2 to the SHLVL
 let level = if (env | any? name == SHLVL) { $env.SHLVL | into int } else { 1 }
 let-env SHLVL = (if (env | any? name == TMUX) && $level >= 3 {
-    $level - 3
+    $level - 2
   } else {
     $level
   }
 )
 
 init
-
 
 # =============================================================================
 # Reference   {{{1
