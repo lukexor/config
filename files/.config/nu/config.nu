@@ -111,6 +111,7 @@ let $config = {
       mode: vi_insert
       event:[
         [{ send: historyhintcomplete }]
+        [{ send: menu name: context_menu }]
         [{ send: menunext }]
       ]
     }
@@ -220,6 +221,7 @@ alias cdoc = cargo doc
 alias cdoco = cargo doc --open
 alias cfg = cd ~/config
 alias cr = cargo run
+alias crd = cargo run --profile dev-opt
 alias cre = cargo run --example
 alias crr = cargo run --release
 alias ct = cargo test
@@ -311,6 +313,13 @@ def vf [] {
     echo $file | pbcopy
     nvim $file
   }
+}
+
+# Fuzzy search a file to edit.
+def ff [] {
+  let file = (fzf-tmux | str trim)
+  echo $file
+  echo $file | pbcopy
 }
 
 # Output last N git commits.

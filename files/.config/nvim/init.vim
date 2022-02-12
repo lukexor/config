@@ -418,8 +418,10 @@ augroup END
 augroup Init
   autocmd!
   " Jump to the last known cursor position. See |last-position-jump|.
-  autocmd BufRead * autocmd FileType <buffer> ++once
-    \ if &ft !~# 'commit\|rebase' && line("'\"") > 1 && line("'\"") <= line("$") | exe 'normal! g`"' | endif
+  autocmd BufReadPost *
+    \ if &ft !~# 'commit\|rebase' && line("'\"") > 1 && line("'\"") <= line("$") |
+    \   exe 'normal! g`"' |
+    \ endif
   autocmd VimEnter * helptags ~/.config/nvim/doc
   autocmd CmdwinEnter *
       \ echohl Todo |

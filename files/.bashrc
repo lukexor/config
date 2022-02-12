@@ -16,6 +16,7 @@ export WHITE=$(tput setaf 7)
 export RESET=$(tput sgr0)
 
 export PS1="\[$CYAN\]\w \[$YELLOW\][\A] \[$GREEN\]❯\[$RESET\] "
+export PROMPT_COMMAND=""
 
 alias rm="rm -i"
 alias cp="cp -ia"
