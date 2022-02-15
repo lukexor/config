@@ -267,6 +267,7 @@ alias slp = ssh caeledh@138.197.217.136
 alias sshl = ssh-add -L
 alias topc = (^ps -Arco pid,pcpu,pmem,comm | lines | skip 1 | first 10 | parse -r "(?P<pid>\d+)\s+(?P<pcpu>\d+\.\d+)\s+(?P<pmem>\d+\.\d+)\s+(?P<name>.*)")
 alias topm = (^ps -Amco pid,pcpu,pmem,comm | lines | skip 1 | first 10 | parse -r "(?P<pid>\d+)\s+(?P<pcpu>\d+\.\d+)\s+(?P<pmem>\d+\.\d+)\s+(?P<name>.*)")
+alias v = nvim
 alias vi = nvim
 alias vim = nvim
 alias vimdiff = nvim -d
@@ -313,6 +314,14 @@ def vf [] {
     echo $file | pbcopy
     nvim $file
   }
+}
+
+let log_file = ([$nu.home-path .activity_log.txt] | path join);
+alias ll = (open $log_file | lines | last 10)
+# Log activity
+def al [...rest] {
+  touch $log_file
+  open $log_file | append (build-string (date format "[%Y-%m-%d %H:%M]: ") ($rest | str collect " ") (char nl)) | str collect | save $log_file
 }
 
 # Fuzzy search a file to edit.
