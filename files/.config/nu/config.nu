@@ -285,9 +285,6 @@ def fbroken [path: string] {
 # Edit nushell configuration.
 def "nu config" [] { nvim ([$nu.home-path .config/nu/config.nu] | path join) }
 
-# Edit nushell startup script.
-def "nu startup" [] { nvim ([$nu.home-path .config/nu/startup.nu] | path join) }
-
 # Edit neovim configuration.
 def "nvim init" [] { nvim ([$nu.home-path .config/nvim/init.vim] | path join) }
 
@@ -348,7 +345,7 @@ def pg [search: string] {
 
 # Restart ssh-agent.
 def ra [] {
-  pg ssh-agent | each { kill $it.pid }
+  pg ssh-agent | each { |p| kill $p.pid }
   rm -f /tmp/ssh-agent-info /tmp/ssh-agent
   let agent = (ssh-agent -s -a /tmp/ssh-agent)
   $agent | save /tmp/ssh-agent-info
@@ -364,15 +361,13 @@ def gnew [] {
 def gage [] {
   # substring 2, skips the currently checked out branch: "* "
   git branch -a | lines | str substring 2, | wrap name | where name !~ HEAD | update "last commit" {
-      get name | each {
-          git show $it --no-patch --format=%as | str collect
-      }
+      get name | each { |commit| git show $commit --no-patch --format=%as | str collect }
   } | sort-by "last commit"
 }
 
 # Clean old git branches.
 def gb-clean [] {
-  git branch -vl | lines | str substring 2, | split column " " branch hash status --collapse-empty | where status == '[gone]' | each { git branch -d $it.branch }
+  git branch -vl | lines | str substring 2, | split column " " branch hash st      atus --collapse-empty | where status == '[gone]' | each { |line| git branch -d $line.branch }
 }
 
 ## Community Commands
@@ -438,7 +433,7 @@ alias cs = commands search
 def "commands search" [] {
   # calculate required tabs/spaces to get a nicely aligned table
   let tablen = 8
-  let max_len = (help commands | each { $it.name | str length } | math max)
+  let max_len = (help commands | each { |cmd| $cmd.name | str length } | math max)
   let max_indent = ($max_len / $tablen | into int)
 
   def pad-tabs [input-name] {
@@ -447,9 +442,9 @@ def "commands search" [] {
     "" | str rpad -l $required_tabs -c (char tab)
   }
 
-  help (echo (help commands | each {
-    let name = ($it.name | ansi strip)
-    $"($name)(pad-tabs $name)($it.usage)"
+  help (echo (help commands | each { |cmd|
+    let name = ($cmd.name | ansi strip)
+    $"($name)(pad-tabs $name)($cmd.usage)"
   }) | str collect (char nl) | fzf-tmux | split column (char tab) | get Column1 | first )
 }
 
