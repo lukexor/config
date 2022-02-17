@@ -317,7 +317,7 @@ def vf [] {
 }
 
 let log_file = ([$nu.home-path .activity_log.txt] | path join);
-alias ll = (open $log_file | lines | last 10)
+alias lal = (open $log_file | lines | last 10)
 # Log activity
 def al [...rest] {
   touch $log_file
