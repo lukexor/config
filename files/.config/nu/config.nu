@@ -49,12 +49,6 @@ let $config = {
   float_precision: 2
   use_ansi_coloring: $true
   filesize_format: "auto"
-  env_conversions: {
-    "PATH": {
-        from_string: { |s| $s | split row (char esep) }
-        to_string: { |v| $v | str collect (char esep) }
-    }
-  }
   edit_mode: vi
   max_history_size: 10000
   log_level: error
@@ -182,6 +176,13 @@ let-env PATH = [
   /usr/sbin
   /sbin
 ]
+
+let-env ENV_CONVERSIONS = {
+  "PATH": {
+    from_string: { |s| $s | split row (char esep) }
+    to_string: { |v| $v | str collect (char esep) }
+  }
+}
 
 let-env STARSHIP_SHELL = "nu"
 let-env STARSHIP_SESSION_KEY = (random chars -l 16)
