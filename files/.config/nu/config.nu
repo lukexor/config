@@ -346,7 +346,7 @@ def pg [search: string] {
 # Restart ssh-agent.
 def ra [] {
   pg ssh-agent | each { |p| kill $p.pid }
-  rm -f /tmp/ssh-agent-info /tmp/ssh-agent
+  ^rm -f /tmp/ssh-agent-info /tmp/ssh-agent
   let agent = (ssh-agent -s -a /tmp/ssh-agent)
   $agent | save /tmp/ssh-agent-info
   ssh-add ~/.ssh/id_rsa
