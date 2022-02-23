@@ -21,30 +21,63 @@
 # Config   {{{1
 # =============================================================================
 
+let $theme = {
+    separator: yellow_dimmed
+    leading_trailing_space_bg: white_bold
+    header: cyan_bold
+    empty: yellow_bold
+    bool: purple
+    int: green
+    filesize: yellow
+    duration: blue
+    date: blue
+    range: green
+    float: green
+    string: white
+    nothing: yellow_bold
+    binary: cyan
+    cellpath: cyan
+    row_index: red_dimmed
+    record: white
+    list: white
+    block: white
+    hints: dark_gray
+
+    # shapes are used to change the cli syntax highlighting
+    shape_garbage: { fg: "#FFFFFF" bg: "#FF0000" attr: b}
+    shape_bool: light_cyan
+    shape_int: purple_bold
+    shape_float: purple_bold
+    shape_range: yellow_bold
+    shape_internalcall: cyna_bold
+    shape_external: cyan
+    shape_externalarg: green_bold
+    shape_literal: blue
+    shape_operator: yellow
+    shape_signature: green_bold
+    shape_string: green
+    shape_string_interpolation: cyan_bold
+    shape_list: cyan_bold
+    shape_table: blue_bold
+    shape_record: cyan_bold
+    shape_block: blue_bold
+    shape_filepath: cyan
+    shape_globpattern: cyan_bold
+    shape_variable: purple
+    shape_flag: blue_bold
+    shape_custom: green
+    shape_nothing: light_cyan
+}
+
 let $config = {
   filesize_metric: $true
   table_mode: rounded
   use_ls_colors: $true
-  color_config: {
-    separator: yellow_dimmed
-    leading_trailing_space_bg: white
-    header: cyan_bold
-    date: white
-    filesize: yellow
-    row_index: red_dimmed
-    hints: dark_gray
-    bool: green
-    int: green
-    duration: blue
-    range: purple
-    float: red
-    string: purple_bold
-    nothing: red
-    binary: cyan
-    cellpath: cyan
-  }
+  rm_always_trash: $true
+  color_config: $theme
   use_grid_icons: $true
   footer_mode: "30"
+  quick_completions: $true
   animate_prompt: $false
   float_precision: 2
   use_ansi_coloring: $true
@@ -52,6 +85,20 @@ let $config = {
   edit_mode: vi
   max_history_size: 10000
   log_level: error
+  menu_config: {
+    columns: 4
+    col_padding: 2
+    text_style: green
+    selected_text_style: green_reverse
+    marker: "≡ "
+  }
+  history_config: {
+    page_size: 10
+    selector: ":"
+    text_style: green
+    selected_text_style: green_reverse
+    marker: "? "
+  }
   keybindings: [
     {
       name: backspaceword
@@ -182,6 +229,10 @@ let-env ENV_CONVERSIONS = {
     from_string: { |s| $s | split row (char esep) }
     to_string: { |v| $v | str collect (char esep) }
   }
+  "Path": {
+    from_string: { |s| $s | split row (char esep) }
+    to_string: { |v| $v | str collect (char esep) }
+  }
 }
 
 let-env STARSHIP_SHELL = "nu"
@@ -193,11 +244,10 @@ let-env PROMPT_COMMAND = {
   build-string $starship (ansi ub) "v" $version (ansi gb) " "
 }
 let-env PROMPT_COMMAND_RIGHT = ""
-let-env PROMPT_INDICATOR = ": "
+let-env PROMPT_INDICATOR = "❯ "
 let-env PROMPT_INDICATOR_VI_NORMAL = ": "
 let-env PROMPT_INDICATOR_VI_INSERT = "❯ "
-let-env PROMPT_INDICATOR_MENU = "≡ "
-let-env PROMPT_MULTILINE_INDICATOR = (build-string (ansi y) "»» ")
+let-env PROMPT_MULTILINE_INDICATOR = "::: "
 
 let-env CLICOLOR = 1
 let-env EDITOR = "nvim"
@@ -208,6 +258,14 @@ let-env LESS = "-RFX"
 let-env PAGER = "nvim +Man!"
 let-env MANPAGER = "nvim +Man!"
 
+
+# =============================================================================
+# Completions   {{{1
+# =============================================================================
+
+source ~/.config/nu/completions/git.nu
+source ~/.config/nu/completions/cargo.nu
+source ~/.config/nu/completions/npm.nu
 
 # =============================================================================
 # Aliases   {{{1
@@ -221,17 +279,22 @@ alias cca = cargo clippy --all-targets
 alias cdoc = cargo doc
 alias cdoco = cargo doc --open
 alias cfg = cd ~/config
-alias cr = cargo run
-alias crd = cargo run --profile dev-opt
-alias cre = cargo run --example
-alias crr = cargo run --release
+# FIXME: Completion support in progress
+alias cr = ^cargo run
+alias crd = ^cargo run --profile dev-opt
+alias cre = ^cargo run --example
+alias crr = ^cargo run --release
 alias ct = cargo test
+alias ni = npm i
+alias nci = npm ci
+alias ns = npm start
+alias nr = npm run
 alias da = (date now | date format '%Y-%m-%d %H:%M:%S')
 alias ga = git add
-alias gb = git --no-pager branch -v
+alias gb = git branch -v
 alias gba = git branch -a
-alias gbm = git --no-pager branch -v --merged
-alias gbnm = git --no-pager branch -v --no-merged
+alias gbm = git branch -v --merged
+alias gbnm = git branch -v --no-merged
 alias gc = git commit
 alias gcam = git commit --amend
 alias gcb = git checkout -b
@@ -248,7 +311,7 @@ alias gpl = git pull
 alias gps = git push
 alias grhh = git reset HEAD --hard
 alias grm = git rm
-alias gsl = git --no-pager stash list
+alias gsl = git stash list
 alias gst = git status
 alias gt = git tag
 alias gun = git reset HEAD --
@@ -329,9 +392,9 @@ def ff [] {
   echo $file | pbcopy
 }
 
-# Output last N git commits.
+# Output last N ^git commits.
 def gl [count: int] {
-  git log --pretty=%h»¦«%s»¦«%aN»¦«%aD | lines | first $count | split column "»¦«" commit message name date | update date { get date | into datetime }
+  ^git log --pretty="%h»¦«%s»¦«%aN»¦«%aD" | lines | first $count | split column "»¦«" commit message name date | update date { get date | into datetime }
 }
 
 # Output last N history commands.
@@ -355,20 +418,20 @@ def ra [] {
 
 # Output commits since yesterday.
 def gnew [] {
-  git --no-pager log --graph --pretty=format:'%C(yellow)%h %ad%Cred%d %Creset%Cblue[%cn]%Creset  %s (%ar)' --date=iso --all --since='23 hours ago'
+  ^git --no-pager log --graph --pretty=format:'%C(yellow)%h %ad%Cred%d %Creset%Cblue[%cn]%Creset  %s (%ar)' --date=iso --all --since='23 hours ago'
 }
 
-# Output git branches with last commit.
+# Output ^git branches with last commit.
 def gage [] {
   # substring 2, skips the currently checked out branch: "* "
-  git branch -a | lines | str substring 2, | wrap name | where name !~ HEAD | update "last commit" {
-      get name | each { |commit| git show $commit --no-patch --format=%as | str collect }
+  ^git branch -a | lines | str substring 2, | wrap name | where name !~ HEAD | update "last commit" {
+      get name | each { |commit| ^git show $commit --no-patch --format=%as | str collect }
   } | sort-by "last commit"
 }
 
-# Clean old git branches.
+# Clean old ^git branches.
 def gb-clean [] {
-  git branch -vl | lines | str substring 2, | split column " " branch hash st      atus --collapse-empty | where status == '[gone]' | each { |line| git branch -d $line.branch }
+  ^git branch -vl | lines | str substring 2, | split column " " branch hash st      atus --collapse-empty | where status == '[gone]' | each { |line| ^git branch -d $line.branch }
 }
 
 ## Community Commands
