@@ -3,7 +3,7 @@ def "nu-complete npm scripts" [] {
 }
 
 extern "npm run" [
-  script: string@"nu-complete npm scripts"       # script to run
+  script?: string@"nu-complete npm scripts"       # script to run
   --workspace(-w): string                        # run command in target workspace
   --workspaces                                   # run command in all workspaces
   --include-workspace-root                       # include workspace root
