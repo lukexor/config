@@ -45,7 +45,7 @@ local on_attach = function(client, bufnr)
     augroup LspVirtualText
       autocmd!
       autocmd CursorHold,CursorHoldI * lua require'nvim-lightbulb'.update_lightbulb()
-      autocmd CursorHold,CursorHoldI *.rs lua require'lsp_extensions'.inlay_hints{ highlight = "VirtualTextInfo", prefix = " ▸ ", only_current_line = true, enabled = {"TypeHint", "ChainingHint", "ParameterHint"} }
+      autocmd CursorHold,CursorHoldI *.rs lua require'lsp_extensions'.inlay_hints{ highlight = "VirtualTextInfo", prefix = " ▸ ", enabled = {"TypeHint", "ChainingHint"} }
     augroup END
   ]], true)
 
@@ -69,7 +69,7 @@ local on_attach = function(client, bufnr)
     vim.api.nvim_exec([[
       augroup LspFormat
         autocmd! * <buffer>
-        autocmd BufWrite <buffer> lua vim.lsp.buf.formatting_sync(nil, 1000)
+        autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting_sync(nil, 1000)
       augroup END
     ]], true)
   end
