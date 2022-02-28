@@ -146,6 +146,44 @@ let $config = {
       ]
     }
     {
+      name: completion_menu
+      modifier: none
+      keycode: tab
+      mode: vi_insert
+      event: {
+        until: [
+          { send: menu name: completion_menu }
+          { send: menunext }
+        ]
+      }
+    }
+    {
+      name: completion_previous
+      modifier: shift
+      keycode: backtab
+      mode: vi_insert
+      event: { send: menuprevious }
+    }
+     {
+      name: history_menu
+      modifier: control
+      keycode: char_x
+      mode: vi_insert
+      event: {
+        until: [
+          { send: menu name: history_menu }
+          { send: menupagenext }
+        ]
+      }
+    }
+    {
+      name: history_previous
+      modifier: "control | shift"
+      keycode: char_x
+      mode: vi_insert
+      event: { send: menupageprevious }
+    }
+    {
       name: hint
       modifier: control
       keycode: char_t
@@ -315,8 +353,9 @@ alias gsl = git stash list
 alias gst = git status
 alias gt = git tag
 alias gun = git reset HEAD --
-alias la = ls -a
-alias ll = ls -l
+alias ls = ls -s
+alias la = ls -as
+alias ll = ls -ls
 alias lc = (ls | sort-by modified | reverse)
 alias lk = (ls | sort-by size | reverse)
 alias cp = ^cp -ia
