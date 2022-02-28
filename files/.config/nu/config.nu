@@ -301,9 +301,10 @@ let-env MANPAGER = "nvim +Man!"
 # Completions   {{{1
 # =============================================================================
 
-source ~/.config/nu/completions/git.nu
-source ~/.config/nu/completions/cargo.nu
-source ~/.config/nu/completions/npm.nu
+# FIXME: Completions conflict with aliases at present https://github.com/nushell/nushell/issues/4618
+# source ~/.config/nu/completions/git.nu
+# source ~/.config/nu/completions/cargo.nu
+# source ~/.config/nu/completions/npm.nu
 
 # =============================================================================
 # Aliases   {{{1
