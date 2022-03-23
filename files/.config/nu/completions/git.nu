@@ -1,9 +1,9 @@
 def "nu-complete git branches" [] {
-  ^git branch | lines | each { |line| $line | str find-replace "\* " "" | str trim }
+  ^git branch | lines | each { |line| $line | str find-replace '\* ' "" | str trim }
 }
 
 def "nu-complete git all branches" [] {
-  ^git branch -a | lines | each { |line| $line | str find-replace "\* " "" | str trim }
+  ^git branch -a | lines | each { |line| $line | str find-replace '\* ' "" | str trim }
 }
 
 def "nu-complete git remotes" [] {

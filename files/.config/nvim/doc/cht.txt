@@ -10,6 +10,8 @@ TABLE OF CONTENTS                                                      *cht-toc*
     More                                |cht-vim-more|
     Shortcuts                           |cht-vim-shortcuts|
   BASH                                  |cht-bash|
+  GIT                                   |cht-git|
+    Commits                             |cht-git-commits|
   PLUGINS                               |cht-plugins|
     Database                            |cht-plugins-db|
     Debug                               |cht-plugins-debug|
@@ -112,6 +114,21 @@ echo "Script's PID: $$"
 echo "Number of arguments passed to script: $#"
 echo "All arguments passed to script: $@"
 echo "Script's arguments separated into different variables: $1 $2..."
+
+GIT                                                                    *cht-git*
+==============================================================================
+
+Commits~
+                                                               *cht-git-commits*
+
+`fix[(scope)]:`       Bug fix, correlating to a `PATCH` version increment,
+                    with an optional `scope`.
+`feat[(scope)]:`      New feature, correlating to a `MINOR` version increment,
+                    with an optional `scope`.
+`!:`                  Introduces a `BREAKING CHANGE:` footer, correlating to a
+                    `MAJOR` version increment. Can be applied to any commit.
+
+Other types: `build:`, `chore:`, `ci:`, `docs:`, `style:`, `refactor:`, `perf:`, `test:`
 
 PLUGINS                                                            *cht-plugins*
 ==============================================================================

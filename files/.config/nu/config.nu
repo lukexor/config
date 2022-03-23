@@ -70,17 +70,17 @@ let $theme = {
 }
 
 let $config = {
-  filesize_metric: $true
+  filesize_metric: true
   table_mode: rounded
-  use_ls_colors: $true
-  rm_always_trash: $true
+  use_ls_colors: true
+  rm_always_trash: true
   color_config: $theme
-  use_grid_icons: $true
+  use_grid_icons: true
   footer_mode: "30"
-  quick_completions: $true
-  animate_prompt: $false
+  quick_completions: true
+  animate_prompt: false
   float_precision: 2
-  use_ansi_coloring: $true
+  use_ansi_coloring: true
   filesize_format: "auto"
   edit_mode: vi
   max_history_size: 10000
@@ -106,7 +106,7 @@ let $config = {
       keycode: char_w
       mode: vi_insert
       event: [
-        { edit: { cmd: backspaceword } }
+        { edit: backspaceword }
       ]
     }
     {
@@ -115,7 +115,7 @@ let $config = {
       keycode: char_b
       mode: vi_insert
       event: [
-        { edit: { cmd: movewordleft } }
+        { edit: movewordleft }
       ]
     }
     {
@@ -124,7 +124,7 @@ let $config = {
       keycode: char_f
       mode: vi_insert
       event: [
-        { edit: { cmd: movewordright } }
+        { edit: movewordright }
       ]
     }
     {
@@ -133,7 +133,7 @@ let $config = {
       keycode: char_o
       mode: vi_insert
       event: [
-        { edit: { cmd: movetolinestart } }
+        { edit: movetolinestart }
       ]
     }
     {
@@ -142,7 +142,7 @@ let $config = {
       keycode: char_e
       mode: vi_insert
       event: [
-        { edit: { cmd: movetolineend } }
+        { edit: movetolineend }
       ]
     }
     {
@@ -218,8 +218,8 @@ let $config = {
       keycode: char_y
       mode: vi_insert
       event: [
-        { edit: { cmd: clear } }
-        { edit: { cmd: insertString value: 'cd (ls | where type == dir | get name | str collect (char nl) | fzf-tmux)' } }
+        { edit: clear }
+        { edit: insertString value: 'cd (ls | where type == dir | get name | str collect (char nl) | fzf-tmux)' }
         { send: enter }
       ]
     }
@@ -229,8 +229,8 @@ let $config = {
       keycode: char_s
       mode: vi_insert
       event: [
-        { edit: { cmd: clear } }
-        { edit: { cmd: insertString value: 'vf' } }
+        { edit: clear }
+        { edit: insertString value: 'vf' }
         { send: enter }
       ]
     }
@@ -301,59 +301,58 @@ let-env MANPAGER = "nvim +Man!"
 # Completions   {{{1
 # =============================================================================
 
-# FIXME: Completions conflict with aliases at present https://github.com/nushell/nushell/issues/4618
-# source ~/.config/nu/completions/git.nu
-# source ~/.config/nu/completions/cargo.nu
-# source ~/.config/nu/completions/npm.nu
+use ~/.config/nu/completions/git.nu
+use ~/.config/nu/completions/cargo.nu
+use ~/.config/nu/completions/npm.nu
 
 # =============================================================================
 # Aliases   {{{1
 # =============================================================================
 
 alias _ = sudo
-alias cb = cargo build
-alias cbr = cargo build --release
-alias cc = cargo clippy
-alias cca = cargo clippy --all-targets
-alias cdoc = cargo doc
-alias cdoco = cargo doc --open
-alias cfg = cd ~/config
 # FIXME: Completion support in progress
+alias cb = ^cargo build
+alias cbr = ^cargo build --release
+alias cc = ^cargo clippy
+alias cca = ^cargo clippy --all-targets
+alias cdoc = ^cargo doc
+alias cdoco = ^cargo doc --open
+alias cfg = cd ~/config
 alias cr = ^cargo run
 alias crd = ^cargo run --profile dev-opt
 alias cre = ^cargo run --example
 alias crr = ^cargo run --release
-alias ct = cargo test
-alias ni = npm i
-alias nci = npm ci
-alias ns = npm start
-alias nr = npm run
+alias ct = ^cargo test
+alias ni = ^npm i
+alias nci = ^npm ci
+alias ns = ^npm start
+alias nr = ^npm run
 alias da = (date now | date format '%Y-%m-%d %H:%M:%S')
-alias ga = git add
-alias gb = git branch -v
-alias gba = git branch -a
-alias gbm = git branch -v --merged
-alias gbnm = git branch -v --no-merged
-alias gc = git commit
-alias gcam = git commit --amend
-alias gcb = git checkout -b
-alias gco = git checkout
-alias gcp = git cherry-pick
-alias gd = git diff
-alias gdt = git difftool
-alias gf = git fetch origin
-alias glg = git log --graph --pretty=format:'%C(yellow)%h (%p) %ai%Cred%d %Creset%Cblue[%ae]%Creset %s (%ar). %b %N'
-alias gm = git merge
-alias gops = git push origin (git rev-parse --abbrev-ref HEAD | str trim) -u
-alias gopsn = git push origin (git rev-parse --abbrev-ref HEAD | str trim) -u --no-verify
-alias gpl = git pull
-alias gps = git push
-alias grhh = git reset HEAD --hard
-alias grm = git rm
-alias gsl = git stash list
-alias gst = git status
-alias gt = git tag
-alias gun = git reset HEAD --
+alias ga = ^git add
+alias gb = ^git branch -v
+alias gba = ^git branch -a
+alias gbm = ^git branch -v --merged
+alias gbnm = ^git branch -v --no-merged
+alias gc = ^git commit
+alias gcam = ^git commit --amend
+alias gcb = ^git checkout -b
+alias gco = ^git checkout
+alias gcp = ^git cherry-pick
+alias gd = ^git diff
+alias gdt = ^git difftool
+alias gf = ^git fetch origin
+alias glg = ^git log --graph --pretty=format:'%C(yellow)%h (%p) %ai%Cred%d %Creset%Cblue[%ae]%Creset %s (%ar). %b %N'
+alias gm = ^git merge
+alias gops = ^git push origin (git rev-parse --abbrev-ref HEAD | str trim) -u
+alias gopsn = ^git push origin (git rev-parse --abbrev-ref HEAD | str trim) -u --no-verify
+alias gpl = ^git pull
+alias gps = ^git push
+alias grhh = ^git reset HEAD --hard
+alias grm = ^git rm
+alias gsl = ^git stash list
+alias gst = ^git status
+alias gt = ^git tag
+alias gun = ^git reset HEAD --
 alias ls = ls -s
 alias la = ls -as
 alias ll = ls -ls
@@ -394,17 +393,17 @@ def "nvim init" [] { nvim ([$nu.home-path .config/nvim/init.vim] | path join) }
 
 # List installed Node versions.
 def "nvm list" [] {
-  bash -ic "nvm list"
+  bash -ic "nvm list || exit"
 }
 
 # Install Node version via nvm.
 def "nvm install" [version?: string] {
-  bash -ic $"nvm install ($version)"
+  bash -ic $"nvm install ($version) || exit"
 }
 
 # Uninstall Node version via nvm.
 def "nvm uninstall" [version?: string] {
-  bash -ic $"nvm uninstall ($version)"
+  bash -ic $"nvm uninstall ($version) || exit"
 }
 
 # Fuzzy search a file to edit.
@@ -434,7 +433,7 @@ def ff [] {
 
 # Output last N ^git commits.
 def gl [count: int] {
-  ^git log --pretty="%h»¦«%s»¦«%aN»¦«%aD" | lines | first $count | split column "»¦«" commit message name date | update date { get date | into datetime }
+  ^git log --pretty=%h»¦«%s»¦«%aN»¦«%aD | lines | first $count | split column "»¦«" commit message name date | update date { get date | into datetime }
 }
 
 # Output last N history commands.
@@ -464,9 +463,9 @@ def gnew [] {
 # Output ^git branches with last commit.
 def gage [] {
   # substring 2, skips the currently checked out branch: "* "
-  ^git branch -a | lines | str substring 2, | wrap name | where name !~ HEAD | update "last commit" {
+  ^git branch -a | lines | str substring 2, | wrap name | where name !~ HEAD | insert "last commit" {
       get name | each { |commit| ^git show $commit --no-patch --format=%as | str collect }
-  } | sort-by "last commit"
+  } | sort-by "last commit" | first 10
 }
 
 # Clean old ^git branches.
@@ -577,7 +576,7 @@ def init [] {
     let sys = (sys)
     let macos = $sys.host.name =~ Darwin
     let os = (if $macos {
-      let vers = (sw_vers | parse -r "(?P<name>\w+):(?P<value>.*)" | transpose -r | str trim)
+      let vers = (sw_vers | parse -r '(?P<name>\w+):(?P<value>.*)' | transpose -r | str trim)
       $"($vers.ProductName | str collect) ($vers.ProductVersion | str collect)"
     } else {
       uname -srm
@@ -609,11 +608,11 @@ def init [] {
 # Startup   {{{1
 # =============================================================================
 
-let level = if (env | any? name == SHLVL) { $env.SHLVL | into int } else { 1 }
+let level = if (env | any? name == SHLVL) { $env.SHLVL | into int } else { 0 }
 let-env SHLVL = (if (env | any? name == TMUX) && $level >= 3 {
     $level - 2
   } else {
-    $level
+    $level + 1
   }
 )
 
