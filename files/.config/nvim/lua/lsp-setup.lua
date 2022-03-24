@@ -90,6 +90,17 @@ local disable_formatting = function(opts)
   end
 end
 
+function Merge(t1, t2)
+  for k, v in pairs(t2) do
+    if (type(v) == "table") and (type(t1[k] or false) == "table") then
+      Merge(t1[k], t2[k])
+    else
+      t1[k] = v
+    end
+  end
+  return t1
+end
+
 local enhance_server_opts = {
   ["jsonls"] = function(opts)
     -- Range formatting for entire document
@@ -155,19 +166,18 @@ local enhance_server_opts = {
       ["rust-analyzer"] = {
         assist = {
           importGroup = false,
+          importPrefix = "by_crate",
         },
         checkOnSave = { command = "clippy" },
       }
     }
   end,
   ["kotlin_language_server"] = function(opts)
-    -- TODO: Figure out JAVA_HOME and PATH for kotlin_language_server
-    local jdk_home = "/usr/local/Cellar/openjdk@11/11.0.12/libexec/openjdk.jdk/Contents/Home"
     opts.settings = {
       ["kotlin-language-server"] = {
         cmd_env = {
-          PATH = jdk_home .. "/bin:" .. vim.env.PATH,
-          JAVA_HOME = jdk_home,
+          PATH = vim.env.JAVA_HOME .. "/bin:" .. vim.env.PATH,
+          JAVA_HOME = vim.env.JAVA_HOME,
         }
       }
     }
@@ -193,17 +203,6 @@ local enhance_server_opts = {
     end
   end,
 }
-
-function Merge(t1, t2)
-  for k, v in pairs(t2) do
-    if (type(v) == "table") and (type(t1[k] or false) == "table") then
-      Merge(t1[k], t2[k])
-    else
-      t1[k] = v
-    end
-  end
-  return t1
-end
 
 local servers = {
   'bashls', 'cssls', 'diagnosticls', 'eslint', 'html', 'jsonls',
@@ -234,9 +233,9 @@ lsp_installer.on_server_ready(function(server)
 
   local config = loadfile(vim.fn.getcwd() .. '/.lspconfig.lua')
   if config ~= nil then
-    local config_opts = config()
-    if config_opts ~= nil and config_opts[server.name] then
-      Merge(opts, config_opts[server.name])
+    local config_enhance_opts = config()
+    if config_enhance_opts ~= nil and config_enhance_opts[server.name] then
+      config_enhance_opts[server.name](opts)
     end
   end
 

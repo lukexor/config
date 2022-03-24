@@ -61,12 +61,16 @@ format!("$1"${2/..*/, /}$2);
 endsnippet
 
 snippet st "Struct definition"
+#[derive(Debug, Clone)]
+#[must_use]
 struct ${1:`!p snip.rv = ''.join(word.title() for word in snip.basename.split('_'))`} {
     ${VISUAL}$0
 }
 endsnippet
 
 snippet stn "Struct with new constructor"
+#[derive(Debug, Clone)]
+#[must_use]
 pub struct ${1:`!p snip.rv = ''.join(word.title() for word in snip.basename.split('_'))`} {
     ${VISUAL}$0
 }
@@ -79,6 +83,8 @@ impl$2 $1$2 {
 endsnippet
 
 snippet pst "Pub struct definition"
+#[derive(Debug, Clone)]
+#[must_use]
 pub struct ${1:`!p snip.rv = ''.join(word.title() for word in snip.basename.split('_'))`} {
     ${VISUAL}$0
 }
@@ -89,25 +95,29 @@ snippet ty "Type alias"
 type ${1:Type} = $0;
 endsnippet
 
-snippet enum "enum"
+snippet en "enum"
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[must_use]
 enum ${1:Name} {
     ${VISUAL}$0
 }
 endsnippet
 
-snippet penum "pub enum"
+snippet pen "pub enum"
+#[must_use]
+#[must_use]
 pub enum ${1:Name} {
     ${VISUAL}$0
 }
 endsnippet
 
-snippet trait "trait"
+snippet tr "trait"
 trait ${1:Name} {
     ${VISUAL}$0
 }
 endsnippet
 
-snippet ptrait "pub trait"
+snippet pt "pub trait"
 pub trait ${1:Name} {
     ${VISUAL}$0
 }

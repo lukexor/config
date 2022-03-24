@@ -114,6 +114,7 @@ nmap <leader>q :q<CR>
 nmap <leader>Q :qall<CR>
 nmap <leader>d :Bdelete<CR>
 nmap <leader>D :bufdo bdelete<CR>
+nmap <leader>o :%bd\|e#<cr>
 
 " Disable Q for Ex mode since it's accidentally hit. gQ still works.
 " Instead use it for formatting.

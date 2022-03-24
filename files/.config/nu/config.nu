@@ -261,6 +261,7 @@ let-env PATH = [
   /usr/sbin
   /sbin
 ]
+let-env JAVA_HOME = "/usr/local/opt/openjdk"
 
 let-env ENV_CONVERSIONS = {
   "PATH": {
@@ -427,8 +428,16 @@ def al [...rest] {
 # Fuzzy search a file to edit.
 def ff [] {
   let file = (fzf-tmux | str trim)
-  echo $file
   echo $file | pbcopy
+  echo $file
+}
+
+# Fuzzy search a file to edit, including .gitignore.
+def ffi [] {
+  let-env FZF_DEFAULT_COMMAND = "rg --files --hidden --no-ignore"
+  let file = (fzf-tmux | str trim)
+  echo $file | pbcopy
+  echo $file
 }
 
 # Output last N ^git commits.
