@@ -302,9 +302,9 @@ let-env MANPAGER = "nvim +Man!"
 # Completions   {{{1
 # =============================================================================
 
-use ~/.config/nu/completions/git.nu
-use ~/.config/nu/completions/cargo.nu
-use ~/.config/nu/completions/npm.nu
+source ~/.config/nu/completions/git.nu
+source ~/.config/nu/completions/cargo.nu
+source ~/.config/nu/completions/npm.nu
 
 # =============================================================================
 # Aliases   {{{1
