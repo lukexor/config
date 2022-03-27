@@ -26,6 +26,8 @@ alias grep="rg"
 alias ls="ls"
 alias ll="ls -lh"
 alias la="ls -alh"
+alias vim="nvim"
+alias vimdiff="nvim -d"
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 export NVM_DIR="/usr/local/opt/nvm"
