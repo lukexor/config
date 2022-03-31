@@ -302,9 +302,9 @@ let-env MANPAGER = "nvim +Man!"
 # Completions   {{{1
 # =============================================================================
 
-source ~/.config/nu/completions/git.nu
-source ~/.config/nu/completions/cargo.nu
-source ~/.config/nu/completions/npm.nu
+use ~/.config/nu/completions/git.nu *
+use ~/.config/nu/completions/cargo.nu *
+use ~/.config/nu/completions/npm.nu *
 
 # =============================================================================
 # Aliases   {{{1
@@ -369,8 +369,8 @@ alias pwd = (^pwd | str find-replace $nu.home-path '~')
 alias py = python3
 alias slp = ssh caeledh@138.197.217.136
 alias sshl = ssh-add -L
-alias topc = (^ps -Arco pid,pcpu,pmem,comm | lines | skip 1 | first 10 | parse -r "(?P<pid>\d+)\s+(?P<pcpu>\d+\.\d+)\s+(?P<pmem>\d+\.\d+)\s+(?P<name>.*)")
-alias topm = (^ps -Amco pid,pcpu,pmem,comm | lines | skip 1 | first 10 | parse -r "(?P<pid>\d+)\s+(?P<pcpu>\d+\.\d+)\s+(?P<pmem>\d+\.\d+)\s+(?P<name>.*)")
+alias topc = (^ps -Arco pid,pcpu,pmem,comm | lines | skip 1 | first 10 | parse -r '(?P<pid>\d+)\s+(?P<pcpu>\d+\.\d+)\s+(?P<pmem>\d+\.\d+)\s+(?P<name>.*)')
+alias topm = (^ps -Amco pid,pcpu,pmem,comm | lines | skip 1 | first 10 | parse -r '(?P<pid>\d+)\s+(?P<pcpu>\d+\.\d+)\s+(?P<pmem>\d+\.\d+)\s+(?P<name>.*)')
 alias v = nvim
 alias vi = nvim
 alias vim = nvim

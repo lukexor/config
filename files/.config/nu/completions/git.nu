@@ -14,7 +14,7 @@ def "nu-complete git files" [] {
   ^git ls-files | lines
 }
 
-extern "git merge" [
+export extern "git merge" [
   branch?: string@"nu-complete git all branches"# name of the branch to merge
   -n                                            # do not show a diffstat at the end of the merge
   --stat                                        # show a diffstat at the end of the merge
@@ -46,7 +46,7 @@ extern "git merge" [
   --no-verify                                   # bypass pre-merge-commit and commit-msg hooks
 ]
 
-extern "git branch" [
+export extern "git branch" [
   branch?: string@"nu-complete git branches"  # name of the branch to target
   new-branch?: string                         # name of the new branch
   --verbose(-v)                               # show hash and subject, give twice for upstream branch
@@ -80,7 +80,7 @@ extern "git branch" [
   --format: string                            # format to use for the output
 ]
 
-extern "git checkout" [
+export extern "git checkout" [
   branch?: string@"nu-complete git all branches"# name of the branch to checkout
   file?: string                                 # name of the file to checkout
   -b: string                                    # create and checkout a new branch
@@ -106,7 +106,7 @@ extern "git checkout" [
   --pathspec-from-file: string                  # read pathspec from file
 ]
 
-extern "git push" [
+export extern "git push" [
   remote?: string@"nu-complete git remotes",  # the name of the remote
   refspec?: string@"nu-complete git branches" # the branch / refspec
   --verbose(-v)                               # be more verbose

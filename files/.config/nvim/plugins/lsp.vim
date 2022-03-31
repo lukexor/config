@@ -1,6 +1,6 @@
 Plug 'kosayoda/nvim-lightbulb'
 " Has other uses, but currently only using rust inlay feature
-Plug 'nvim-lua/lsp_extensions.nvim', { 'for': 'rust' }
+Plug 'simrat39/rust-tools.nvim'
 Plug 'ray-x/lsp_signature.nvim'
 Plug 'neovim/nvim-lspconfig' | Plug 'williamboman/nvim-lsp-installer'
 Plug 'hrsh7th/cmp-nvim-lsp'

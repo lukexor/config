@@ -1,9 +1,17 @@
-def "nu-complete npm scripts" [] {
-  open package.json | get scripts | transpose | get column0
+def "nu-complete npm" [] {
+  ^npm -l | lines | find 'Run "' | str trim | split column -c ' ' | get column4 | str find-replace '"' ''
 }
 
-extern "npm run" [
-  script?: string@"nu-complete npm scripts"       # script to run
+def "nu-complete npm scripts" [] {
+  open package.json | get scripts | columns
+}
+
+export extern "npm" [
+  command: string@"nu-complete npm"
+]
+
+export extern "npm run" [
+  script?: string@"nu-complete npm scripts"      # script to run
   --workspace(-w): string                        # run command in target workspace
   --workspaces                                   # run command in all workspaces
   --include-workspace-root                       # include workspace root

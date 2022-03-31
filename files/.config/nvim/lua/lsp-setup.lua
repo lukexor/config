@@ -45,7 +45,7 @@ local on_attach = function(client, bufnr)
     augroup LspVirtualText
       autocmd!
       autocmd CursorHold,CursorHoldI * lua require'nvim-lightbulb'.update_lightbulb()
-      autocmd CursorHold,CursorHoldI *.rs lua require'lsp_extensions'.inlay_hints{ highlight = "VirtualTextInfo", prefix = " ▸ ", enabled = {"TypeHint", "ChainingHint"} }
+      autocmd BufEnter *.rs :RustSetInlayHint
     augroup END
   ]], true)
 
@@ -60,9 +60,9 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', 'gR', '<Cmd>lua vim.lsp.buf.rename()<CR>', keymap_opts)
   buf_set_keymap('n', 'ga', '<Cmd>lua vim.lsp.buf.code_action()<CR>', keymap_opts)
   buf_set_keymap('n', 'gO', '<Cmd>lua lsp_organize_imports()<CR>', keymap_opts)
-  buf_set_keymap('n', 'ge', '<Cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', keymap_opts)
-  buf_set_keymap('n', 'gp', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', keymap_opts)
-  buf_set_keymap('n', 'gn', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', keymap_opts)
+  buf_set_keymap('n', 'ge', '<Cmd>lua vim.diagnostic.open_float()<CR>', keymap_opts)
+  buf_set_keymap('n', 'gp', '<cmd>lua vim.diagnostic.goto_prev()<CR>', keymap_opts)
+  buf_set_keymap('n', 'gn', '<cmd>lua vim.diagnostic.goto_next()<CR>', keymap_opts)
 
   if client.resolved_capabilities.document_formatting then
     buf_set_keymap("n", "<localleader>f", "<Cmd>lua vim.lsp.buf.formatting_sync(nil, 4000)<CR>", keymap_opts)
@@ -88,17 +88,6 @@ local disable_formatting = function(opts)
       client.resolved_capabilities.document_formatting = false
       on_attach(client)
   end
-end
-
-function Merge(t1, t2)
-  for k, v in pairs(t2) do
-    if (type(v) == "table") and (type(t1[k] or false) == "table") then
-      Merge(t1[k], t2[k])
-    else
-      t1[k] = v
-    end
-  end
-  return t1
 end
 
 local enhance_server_opts = {
@@ -239,5 +228,22 @@ lsp_installer.on_server_ready(function(server)
     end
   end
 
-  server:setup(opts)
+  if server.name == "rust_analyzer" then
+    require'rust-tools'.setup({
+      tools = {
+        inlay_hints = {
+          only_current_line_autocmd = "CursorHold,CursorHoldI",
+          highlight = "VirtualTextInfo",
+          parameter_hints_prefix = " ← ",
+          other_hints_prefix = " ▸ ",
+        },
+      },
+      server = vim.tbl_deep_extend("force", server:get_default_options(), opts, {
+        standalone = false,
+      }),
+    })
+    server:attach_buffers()
+  else
+    server:setup(opts)
+  end
 end)
