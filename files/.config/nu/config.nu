@@ -447,7 +447,7 @@ def gl [count: int] {
 
 # Output last N history commands.
 def hl [count: int] {
-  history | first $count
+  history | last $count
 }
 
 # Search process list for a given string.
