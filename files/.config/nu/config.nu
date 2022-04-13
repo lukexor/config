@@ -69,6 +69,11 @@ let $theme = {
     shape_nothing: light_cyan
 }
 
+let menu_style = {
+  text: green
+  selected_text: green_reverse
+  description_text: yellow
+}
 let $config = {
   filesize_metric: true
   table_mode: rounded
@@ -85,20 +90,59 @@ let $config = {
   edit_mode: vi
   max_history_size: 10000
   log_level: error
-  menu_config: {
-    columns: 4
-    col_padding: 2
-    text_style: green
-    selected_text_style: green_reverse
-    marker: "≡ "
-  }
-  history_config: {
-    page_size: 10
-    selector: ":"
-    text_style: green
-    selected_text_style: green_reverse
-    marker: "? "
-  }
+  menus: [
+    {
+      name: completion_menu
+      only_buffer_difference: false
+      marker: "≡ "
+      type: {
+        layout: columnar
+        columns: 4
+        col_padding: 2
+      }
+      style: $menu_style
+    }
+    {
+      name: history_menu
+      only_buffer_difference: true
+      marker: "? "
+      type: {
+        layout: list
+        page_size: 10
+      }
+      style: $menu_style
+    }
+    {
+      name: help_menu
+      only_buffer_difference: true
+      marker: "? "
+      type: {
+        layout: description
+        columns: 4
+        col_padding: 2
+        selection_rows: 4
+        description_rows: 10
+      }
+      style: $menu_style
+    }
+    {
+      name: commands_menu
+      only_buffer_difference: false
+      marker: "# "
+      type: {
+        layout: columnar
+        columns: 4
+        col_width: 20
+        col_padding: 2
+      }
+      style: $menu_style
+      source: { |buffer, position|
+          $nu.scope.commands
+          | where command =~ $buffer
+          | each { |it| {value: $it.command description: $it.usage} }
+      }
+    }
+  ]
   keybindings: [
     {
       name: backspaceword
@@ -167,7 +211,7 @@ let $config = {
      {
       name: history_menu
       modifier: control
-      keycode: char_x
+      keycode: char_r
       mode: vi_insert
       event: {
         until: [
@@ -179,7 +223,7 @@ let $config = {
     {
       name: history_previous
       modifier: "control | shift"
-      keycode: char_x
+      keycode: char_r
       mode: vi_insert
       event: { send: menupageprevious }
     }
@@ -190,7 +234,7 @@ let $config = {
       mode: vi_insert
       event:[
         [{ send: historyhintcomplete }]
-        [{ send: menu name: context_menu }]
+        [{ send: menu name: commands_menu }]
         [{ send: menunext }]
       ]
     }
@@ -247,58 +291,6 @@ let $config = {
 }
 
 # =============================================================================
-# Environment   {{{1
-# =============================================================================
-
-let-env PATH = [
-  ([$nu.home-path bin] | path join)
-  ([$nu.home-path .cargo/bin] | path join)
-  ([$nu.home-path .fzf/bin] | path join)
-  /usr/local/bin
-  /usr/games
-  /usr/bin
-  /bin
-  /usr/sbin
-  /sbin
-]
-let-env JAVA_HOME = "/usr/local/opt/openjdk"
-
-let-env ENV_CONVERSIONS = {
-  "PATH": {
-    from_string: { |s| $s | split row (char esep) }
-    to_string: { |v| $v | str collect (char esep) }
-  }
-  "Path": {
-    from_string: { |s| $s | split row (char esep) }
-    to_string: { |v| $v | str collect (char esep) }
-  }
-}
-
-let-env STARSHIP_SHELL = "nu"
-let-env STARSHIP_SESSION_KEY = (random chars -l 16)
-
-let-env PROMPT_COMMAND = {
-  let starship = (starship prompt --cmd-duration $env.CMD_DURATION_MS | str collect)
-  let version = ((version).version)
-  build-string $starship (ansi ub) "v" $version (ansi gb) " "
-}
-let-env PROMPT_COMMAND_RIGHT = ""
-let-env PROMPT_INDICATOR = "❯ "
-let-env PROMPT_INDICATOR_VI_NORMAL = ": "
-let-env PROMPT_INDICATOR_VI_INSERT = "❯ "
-let-env PROMPT_MULTILINE_INDICATOR = "::: "
-
-let-env CLICOLOR = 1
-let-env EDITOR = "nvim"
-let-env FZF_DEFAULT_OPTS = "--height 50% --layout=reverse --border --inline-info"
-let-env FZF_CTRL_T_COMMAND = "rg --files --hidden"
-let-env FZF_DEFAULT_COMMAND = "rg --files --hidden"
-let-env LESS = "-RFX"
-let-env PAGER = "nvim +Man!"
-let-env MANPAGER = "nvim +Man!"
-
-
-# =============================================================================
 # Completions   {{{1
 # =============================================================================
 
@@ -324,6 +316,7 @@ alias crd = ^cargo run --profile dev-opt
 alias cre = ^cargo run --example
 alias crr = ^cargo run --release
 alias ct = ^cargo test
+alias open = ^open
 alias ni = ^npm i
 alias nci = ^npm ci
 alias ns = ^npm start
@@ -354,9 +347,9 @@ alias gsl = ^git stash list
 alias gst = ^git status
 alias gt = ^git tag
 alias gun = ^git reset HEAD --
-alias ls = ls -s
-alias la = ls -as
-alias ll = ls -ls
+alias ls = ls
+alias la = ls -a
+alias ll = ls -l
 alias lc = (ls | sort-by modified | reverse)
 alias lk = (ls | sort-by size | reverse)
 alias cp = ^cp -ia
@@ -365,7 +358,7 @@ alias mv = ^mv -i
 alias md = ^mkdir -p
 alias rm = ^rm -i
 alias rd = rmdir
-alias pwd = (^pwd | str find-replace $nu.home-path '~')
+alias pwd = (^pwd | str replace $nu.home-path '~')
 alias py = python3
 alias slp = ssh caeledh@138.197.217.136
 alias sshl = ssh-add -L
@@ -489,7 +482,7 @@ def dict [
   ...word # word(s) to query the dictionary API but they have to make sense together like "martial law", not "cats dogs"
 ] {
   let query = ($word | str collect %20)
-  let link = (build-string 'https://api.dictionaryapi.dev/api/v2/entries/en/' ($query | str find-replace ' ' '%20'))
+  let link = (build-string 'https://api.dictionaryapi.dev/api/v2/entries/en/' ($query | str replace ' ' '%20'))
   let output = (fetch $link)
   if ($output | any? title == "No Definitions Found") {
     echo $output.title

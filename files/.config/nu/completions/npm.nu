@@ -1,5 +1,5 @@
 def "nu-complete npm" [] {
-  ^npm -l | lines | find 'Run "' | str trim | split column -c ' ' | get column4 | str find-replace '"' ''
+  ^npm -l | lines | find 'Run "' | str trim | split column -c ' ' | get column4 | str replace '"' ''
 }
 
 def "nu-complete npm scripts" [] {

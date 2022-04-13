@@ -47,10 +47,12 @@ python3 -m pip install --upgrade --user pip
 pip3 install --upgrade --user pip
 pip3 install --upgrade --user pynvim
 
-# macOS has a different config-path
+# macOS has different paths
 if ((sys).host.name =~ Darwin) {
   ^rm -f $nu.config-path
-  ln -s ([$nu.home-path .config/nu/config.toml] | path join) ($nu.config-path)
+  ln -s ([$nu.home-path .config/nu/config.nu] | path join) ($nu.config-path)
+  ^rm -f $nu.env-path
+  ln -s ([$nu.home-path .config/nu/env.nu] | path join) ($nu.env-path)
 }
 exec nu
 

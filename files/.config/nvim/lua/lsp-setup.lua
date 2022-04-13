@@ -233,6 +233,7 @@ lsp_installer.on_server_ready(function(server)
       tools = {
         inlay_hints = {
           only_current_line_autocmd = "CursorHold,CursorHoldI",
+          show_parameter_hints = false,
           highlight = "VirtualTextInfo",
           parameter_hints_prefix = " ← ",
           other_hints_prefix = " ▸ ",
