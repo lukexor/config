@@ -303,50 +303,49 @@ use ~/.config/nu/completions/npm.nu *
 # =============================================================================
 
 alias _ = sudo
-# FIXME: Completion support in progress
-alias cb = ^cargo build
-alias cbr = ^cargo build --release
-alias cc = ^cargo clippy
-alias cca = ^cargo clippy --all-targets
-alias cdoc = ^cargo doc
-alias cdoco = ^cargo doc --open
+alias cb = cargo build
+alias cbr = cargo build --release
+alias cc = cargo clippy
+alias cca = cargo clippy --all-targets
+alias cdoc = cargo doc
+alias cdoco = cargo doc --open
 alias cfg = cd ~/config
 alias cr = ^cargo run
 alias crd = ^cargo run --profile dev-opt
-alias cre = ^cargo run --example
-alias crr = ^cargo run --release
-alias ct = ^cargo test
+alias cre = cargo run --example
+alias crr = cargo run --release
+alias ct = cargo test
 alias open = ^open
-alias ni = ^npm i
-alias nci = ^npm ci
-alias ns = ^npm start
-alias nr = ^npm run
+alias ni = npm i
+alias nci = npm ci
+alias ns = npm start
+alias nr = npm run
 alias da = (date now | date format '%Y-%m-%d %H:%M:%S')
-alias ga = ^git add
-alias gb = ^git branch -v
-alias gba = ^git branch -a
-alias gbm = ^git branch -v --merged
-alias gbnm = ^git branch -v --no-merged
-alias gc = ^git commit
-alias gcam = ^git commit --amend
-alias gcb = ^git checkout -b
-alias gco = ^git checkout
-alias gcp = ^git cherry-pick
-alias gd = ^git diff
-alias gdt = ^git difftool
-alias gf = ^git fetch origin
-alias glg = ^git log --graph --pretty=format:'%C(yellow)%h (%p) %ai%Cred%d %Creset%Cblue[%ae]%Creset %s (%ar). %b %N'
-alias gm = ^git merge
-alias gops = ^git push origin (git rev-parse --abbrev-ref HEAD | str trim) -u
-alias gopsn = ^git push origin (git rev-parse --abbrev-ref HEAD | str trim) -u --no-verify
+alias ga = git add
+alias gb = git branch -v
+alias gba = git branch -a
+alias gbm = git branch -v --merged
+alias gbnm = git branch -v --no-merged
+alias gc = git commit
+alias gcam = git commit --amend
+alias gcb = git checkout -b
+alias gco = git checkout
+alias gcp = git cherry-pick
+alias gd = git diff
+alias gdt = git difftool
+alias gf = git fetch origin
+alias glg = git log --graph --pretty=format:'%C(yellow)%h (%p) %ai%Cred%d %Creset%Cblue[%ae]%Creset %s (%ar). %b %N'
+alias gm = git merge
+alias gops = git push origin (git rev-parse --abbrev-ref HEAD | str trim) -u
+alias gopsn = git push origin (git rev-parse --abbrev-ref HEAD | str trim) -u --no-verify
 alias gpl = ^git pull
-alias gps = ^git push
-alias grhh = ^git reset HEAD --hard
-alias grm = ^git rm
-alias gsl = ^git stash list
-alias gst = ^git status
-alias gt = ^git tag
-alias gun = ^git reset HEAD --
+alias gps = git push
+alias grhh = git reset HEAD --hard
+alias grm = git rm
+alias gsl = git stash list
+alias gst = git status
+alias gt = git tag
+alias gun = git reset HEAD --
 alias ls = ls
 alias la = ls -a
 alias ll = ls -l
@@ -404,9 +403,20 @@ def "nvm uninstall" [version?: string] {
 def vf [] {
   let file = (fzf-tmux | str trim)
   if ($file | empty? | first) {} else {
-    echo $"nvim ($file)"
+    echo $"vim ($file)"
     echo $file | pbcopy
     nvim $file
+  }
+}
+
+# Fuzzy cargo run a file.
+def crf [] {
+  let-env FZF_DEFAULT_COMMAND = "rg --files --hidden --no-ignore"
+  let file = (fzf-tmux | str trim)
+  if ($file | empty? | first) {} else {
+    echo $"crd ($file)"
+    echo $file | pbcopy
+    crd $file
   }
 }
 

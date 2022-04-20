@@ -15,123 +15,121 @@ def "nu-complete git files" [] {
 }
 
 export extern "git merge" [
-  branch?: string@"nu-complete git all branches"# name of the branch to merge
-  -n                                            # do not show a diffstat at the end of the merge
-  --stat                                        # show a diffstat at the end of the merge
-  --summary                                     # (synonym to --stat)
-  --log: number                                 # add (at most <n>) entries from shortlog to merge commit message
-  --squash                                      # create a single commit instead of doing a merge
-  --commit                                      # perform a commit if the merge succeeds (default)
-  --edit(-e)                                    # edit message before committing
-  --cleanup: string                             # how to strip spaces and #comments from message
-  --ff                                          # allow fast-forward (default)
-  --ff-only                                     # abort if fast-forward is not possible
-  --rerere-autoupdate                           # update the index with reused conflict resolution if possible
-  --verify-signatures                           # verify that the named commit has a valid GPG signature
-  --strategy(-s): string                        # merge strategy to use
-  --strategy-option(-X): string                 # string option for selected merge strategy
-  --message(-m): string                         # merge commit message (for a non-fast-forward merge)
-  --file(-F): string                            # read message from file
-  --verbose(-v)                                 # be more verbose
-  --quiet(-q)                                   # be more quiet
-  --abort                                       # abort the current in-progress merge
-  --quit                                        # --abort but leave index and working tree alone
-  --continue                                    # continue the current in-progress merge
-  --allow-unrelated-histories                   # allow merging unrelated histories
-  --progress                                    # force progress reporting
-  --gpg-sign(-S): string                        # GPG sign commit
-  --autostash                                   # automatically stash/stash pop before and after
-  --overwrite-ignore                            # update ignored files (default)
-  --signoff                                     # add a Signed-off-by trailer
-  --no-verify                                   # bypass pre-merge-commit and commit-msg hooks
+  branch?: string@"nu-complete git all branches" # name of the branch to merge
+  --abort                                        # abort the current in-progress merge
+  --allow-unrelated-histories                    # allow merging unrelated histories
+  --autostash                                    # automatically stash/stash pop before and after
+  --cleanup: string                              # how to strip spaces and #comments from message
+  --commit                                       # perform a commit if the merge succeeds (default)
+  --continue                                     # continue the current in-progress merge
+  --edit(-e)                                     # edit message before committing
+  --ff                                           # allow fast-forward (default)
+  --ff-only                                      # abort if fast-forward is not possible
+  --file(-F): string                             # read message from file
+  --gpg-sign(-S): string                         # GPG sign commit
+  --log: number                                  # add (at most <n>) entries from shortlog to merge commit message
+  --message(-m): string                          # merge commit message (for a non-fast-forward merge)
+  --no-verify                                    # bypass pre-merge-commit and commit-msg hooks
+  --overwrite-ignore                             # update ignored files (default)
+  --progress                                     # force progress reporting
+  --quiet(-q)                                    # be more quiet
+  --quit                                         # --abort but leave index and working tree alone
+  --rerere-autoupdate                            # update the index with reused conflict resolution if possible
+  --signoff                                      # add a Signed-off-by trailer
+  --squash                                       # create a single commit instead of doing a merge
+  --stat                                         # show a diffstat at the end of the merge
+  --strategy(-s): string                         # merge strategy to use
+  --strategy-option(-X): string                  # string option for selected merge strategy
+  --summary                                      # (synonym to --stat)
+  --verbose(-v)                                  # be more verbose
+  --verify-signatures                            # verify that the named commit has a valid GPG signature
+  -n                                             # do not show a diffstat at the end of the merge
 ]
 
 export extern "git branch" [
-  branch?: string@"nu-complete git branches"  # name of the branch to target
-  new-branch?: string                         # name of the new branch
-  --verbose(-v)                               # show hash and subject, give twice for upstream branch
-  --quiet(-q)                                 # suppress informational messages
-  --track(-t)                                 # set up tracking mode (see git-pull(1))
-  --set-upstream-to(-u): string               # change the upstream info
-  --unset-upstream                            # unset the upstream info
-  --color: string                             # use colored output
-  --remotes(-r)                               # act on remote-tracking branches
-  --contains: string                          # print only branches that contain the commit
-  --no-contains: string                       # print only branches that don't contain the commit
-  --abbrev: number                            # use <n> digits to display object names
-  --all(-a)                                   # list both remote-tracking and local branches
-  --delete(-d)                                # delete fully merged branch
-  -D                                          # delete branch (even if not merged)
-  --move(-m)                                  # move/rename a branch and its reflog
-  -M                                          # move/rename a branch, even if target exists
-  --copy(-c)                                  # copy a branch and its reflog
-  -C                                          # copy a branch, even if target exists
-  --list(-l)                                  # list branch names
-  --show-current                              # show current branch name
-  --create-reflog                             # create the branch's reflog
-  --edit-description                          # edit the description for the branch
-  --force(-f)                                 # force creation, move/rename, deletion
-  --merged: string                            # print only branches that are merged
-  --no-merged: string                         # print only branches that are not merged
-  --column: string                            # list branches in columns
-  --sort: string                              # field name to sort on
-  --points-at: string                         # print only branches of the object
-  --ignore-case(-i)                           # sorting and filtering are case insensitive
-  --format: string                            # format to use for the output
+  ...targets?: string@"nu-complete git branches" # name of the branch to target
+  --abbrev: number                               # use <n> digits to display object names
+  --all(-a)                                      # list both remote-tracking and local branches
+  --color: string                                # use colored output
+  --column: string                               # list branches in columns
+  --contains: string                             # print only branches that contain the commit
+  --copy(-c)                                     # copy a branch and its reflog
+  --create-reflog                                # create the branch's reflog
+  --delete(-d)                                   # delete fully merged branch
+  --edit-description                             # edit the description for the branch
+  --force(-f)                                    # force creation, move/rename, deletion
+  --format: string                               # format to use for the output
+  --ignore-case(-i)                              # sorting and filtering are case insensitive
+  --list(-l)                                     # list branch names
+  --merged: string                               # print only branches that are merged
+  --move(-m)                                     # move/rename a branch and its reflog
+  --no-contains: string                          # print only branches that don't contain the commit
+  --no-merged: string                            # print only branches that are not merged
+  --points-at: string                            # print only branches of the object
+  --quiet(-q)                                    # suppress informational messages
+  --remotes(-r)                                  # act on remote-tracking branches
+  --set-upstream-to(-u): string                  # change the upstream info
+  --show-current                                 # show current branch name
+  --sort: string                                 # field name to sort on
+  --track(-t)                                    # set up tracking mode (see git-pull(1))
+  --unset-upstream                               # unset the upstream info
+  --verbose(-v)                                  # show hash and subject, give twice for upstream branch
+  -C                                             # copy a branch, even if target exists
+  -D                                             # delete branch (even if not merged)
+  -M                                             # move/rename a branch, even if target exists
 ]
 
 export extern "git checkout" [
-  branch?: string@"nu-complete git all branches"# name of the branch to checkout
-  file?: string                                 # name of the file to checkout
-  -b: string                                    # create and checkout a new branch
-  -B: string                                    # create/reset and checkout a branch
-  -l                                            # create reflog for new branch
-  --guess                                       # second guess 'git checkout <no-such-branch>' (default)
-  --overlay                                     # use overlay mode (default)
-  --quiet(-q)                                   # suppress progress reporting
-  --recurse-submodules: string                  # control recursive updating of submodules
-  --progress                                    # force progress reporting
-  --merge(-m)                                   # perform a 3-way merge with the new branch
-  --conflict: string                            # conflict style (merge or diff3)
-  --detach(-d)                                  # detach HEAD at named commit
-  --track(-t)                                   # set upstream info for new branch
-  --force(-f)                                   # force checkout (throw away local modifications)
-  --orphan: string                              # new unparented branch
-  --overwrite-ignore                            # update ignored files (default)
-  --ignore-other-worktrees                      # do not check if another worktree is holding the given ref
-  --ours(-2)                                    # checkout our version for unmerged files
-  --theirs(-3)                                  # checkout their version for unmerged files
-  --patch(-p)                                   # select hunks interactively
-  --ignore-skip-worktree-bits                   # do not limit pathspecs to sparse entries only
-  --pathspec-from-file: string                  # read pathspec from file
+  ...targets?: string@"nu-complete git all branches" # name of the branch to checkout
+  --conflict: string                                 # conflict style (merge or diff3)
+  --detach(-d)                                       # detach HEAD at named commit
+  --force(-f)                                        # force checkout (throw away local modifications)
+  --guess                                            # second guess 'git checkout <no-such-branch>' (default)
+  --ignore-other-worktrees                           # do not check if another worktree is holding the given ref
+  --ignore-skip-worktree-bits                        # do not limit pathspecs to sparse entries only
+  --merge(-m)                                        # perform a 3-way merge with the new branch
+  --orphan: string                                   # new unparented branch
+  --ours(-2)                                         # checkout our version for unmerged files
+  --overlay                                          # use overlay mode (default)
+  --overwrite-ignore                                 # update ignored files (default)
+  --patch(-p)                                        # select hunks interactively
+  --pathspec-from-file: string                       # read pathspec from file
+  --progress                                         # force progress reporting
+  --quiet(-q)                                        # suppress progress reporting
+  --recurse-submodules: string                       # control recursive updating of submodules
+  --theirs(-3)                                       # checkout their version for unmerged files
+  --track(-t)                                        # set upstream info for new branch
+  -B: string                                         # create/reset and checkout a branch
+  -b: string                                         # create and checkout a new branch
+  -l                                                 # create reflog for new branch
 ]
 
 export extern "git push" [
-  remote?: string@"nu-complete git remotes",  # the name of the remote
-  refspec?: string@"nu-complete git branches" # the branch / refspec
-  --verbose(-v)                               # be more verbose
-  --quiet(-q)                                 # be more quiet
-  --repo: string                              # repository
+  remote?: string@"nu-complete git remotes"   # the name of the remote
+  ...refs?: string@"nu-complete git branches" # the branch / refspec
   --all                                       # push all refs
-  --mirror                                    # mirror all refs
+  --atomic                                    # request atomic transaction on remote side
   --delete(-d)                                # delete refs
-  --tags                                      # push tags (can't be used with --all or --mirror)
   --dry-run(-n)                               # dry run
-  --porcelain                                 # machine-readable output
+  --exec: string                              # receive pack program
+  --follow-tags                               # push missing but relevant tags
   --force(-f)                                 # force updates
   --force-with-lease: string                  # require old value of ref to be at this value
-  --recurse-submodules: string                # control recursive pushing of submodules
-  --thin                                      # use thin pack
-  --receive-pack: string                      # receive pack program
-  --exec: string                              # receive pack program
-  --set-upstream(-u)                          # set upstream for git pull/status
-  --progress                                  # force progress reporting
-  --prune                                     # prune locally removed refs
-  --no-verify                                 # bypass pre-push hook
-  --follow-tags                               # push missing but relevant tags
-  --signed: string                            # GPG sign the push
-  --atomic                                    # request atomic transaction on remote side
-  --push-option(-o): string                   # option to transmit
   --ipv4(-4)                                  # use IPv4 addresses only
   --ipv6(-6)                                  # use IPv6 addresses only
+  --mirror                                    # mirror all refs
+  --no-verify                                 # bypass pre-push hook
+  --porcelain                                 # machine-readable output
+  --progress                                  # force progress reporting
+  --prune                                     # prune locally removed refs
+  --push-option(-o): string                   # option to transmit
+  --quiet(-q)                                 # be more quiet
+  --receive-pack: string                      # receive pack program
+  --recurse-submodules: string                # control recursive pushing of submodules
+  --repo: string                              # repository
+  --set-upstream(-u)                          # set upstream for git pull/status
+  --signed: string                            # GPG sign the push
+  --tags                                      # push tags (can't be used with --all or --mirror)
+  --thin                                      # use thin pack
+  --verbose(-v)                               # be more verbose
 ]

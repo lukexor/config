@@ -1,6 +1,11 @@
 require'fzf_lsp'.setup{}
 require'lspfuzzy'.setup{}
 
+local cmp = require'cmp'
+cmp.setup {
+  preselect = cmp.PreselectMode.None
+}
+
 local capabilities = require'cmp_nvim_lsp'.update_capabilities(vim.lsp.protocol.make_client_capabilities())
 
 local keymap_opts = { noremap=true, silent=true }

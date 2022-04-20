@@ -29,6 +29,8 @@ alias la="ls -alh"
 alias vim="nvim"
 alias vimdiff="nvim -d"
 
+alias crd="cargo run --profile dev-opt"
+
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 export NVM_DIR="/usr/local/opt/nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
