@@ -23,7 +23,7 @@ TABLE OF CONTENTS                                                      *cht-toc*
     Marks                               |cht-plugins-marks|
     Math                                |cht-plugins-math|
     Navigation                          |cht-plugins-navigation|
-    Projects                            |cht-plugins-projects|
+    Projects                            |cht-plugins-project|
     Search                              |cht-plugins-search|
     Sessions                            |cht-plugins-sessions|
     Surround                            |cht-plugins-surround|

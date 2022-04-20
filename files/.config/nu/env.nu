@@ -39,10 +39,12 @@ let-env STARSHIP_SESSION_KEY = (random chars -l 16)
 # Path   {{{1
 # =============================================================================
 
+let-env JAVA_HOME = "/usr/local/opt/openjdk"
 let-env PATH = [
   ([$nu.home-path bin] | path join)
   ([$nu.home-path .cargo/bin] | path join)
   ([$nu.home-path .fzf/bin] | path join)
+  ([$env.JAVA_HOME bin] | path join)
   /usr/local/bin
   /usr/games
   /usr/bin
@@ -50,7 +52,6 @@ let-env PATH = [
   /usr/sbin
   /sbin
 ]
-let-env JAVA_HOME = "/usr/local/opt/openjdk"
 
 # Specifies how environment variables are:
 # - converted from a string to a value on Nushell startup (from_string)

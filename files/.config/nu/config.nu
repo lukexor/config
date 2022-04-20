@@ -427,7 +427,7 @@ def ff [] {
 
 # Fuzzy search a file to edit, including .gitignore.
 def ffi [] {
-  let-env FZF_DEFAULT_COMMAND = "rg --files --hidden --no-ignore"
+  let-env FZF_DEFAULT_COMMAND = "rg --files --hidden --no-ignore-vcs"
   let file = (fzf-tmux | str trim)
   echo $file | pbcopy
   echo $file
@@ -467,7 +467,7 @@ def gage [] {
   # substring 2, skips the currently checked out branch: "* "
   ^git branch -a | lines | str substring 2, | wrap name | where name !~ HEAD | insert "last commit" {
       get name | each { |commit| ^git show $commit --no-patch --format=%as | str collect }
-  } | sort-by "last commit" | first 10
+  } | sort-by "last commit"
 }
 
 # Clean old ^git branches.

@@ -8,10 +8,12 @@ def "nu-complete npm scripts" [] {
 
 export extern "npm" [
   command: string@"nu-complete npm"
+  ...args: any
 ]
 
 export extern "npm run" [
   script?: string@"nu-complete npm scripts"      # script to run
+  ...args: any
   --workspace(-w): string                        # run command in target workspace
   --workspaces                                   # run command in all workspaces
   --include-workspace-root                       # include workspace root

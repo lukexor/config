@@ -87,7 +87,7 @@ if &diff
 endif
 
 if executable('rg')
-  set grepprg=rg\ --no-heading\ --vimgrep\ -.\ --ignore-file\ .git/
+  set grepprg=rg\ --no-heading\ --vimgrep\ --no-ignore-vcs\ -.
   set grepformat=%f:%l:%c:%m
 endif
 
@@ -110,10 +110,10 @@ nmap <leader>w :w<CR>
 nmap <leader>W :noa w<CR>
 
 " Quick quit
-nmap <leader>q :q<CR>
-nmap <leader>Q :qall<CR>
-nmap <leader>d :Bdelete<CR>
-nmap <leader>D :bufdo bdelete<CR>
+nmap <leader>q :confirm q<CR>
+nmap <leader>Q :confirm qall<CR>
+nmap <leader>d :confirm Bdelete<CR>
+nmap <leader>D :confirm bufdo delete<CR>
 nmap <leader>o :%bd\|e#<cr>
 
 " Disable Q for Ex mode since it's accidentally hit. gQ still works.
