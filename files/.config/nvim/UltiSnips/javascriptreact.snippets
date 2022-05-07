@@ -1,3 +1,5 @@
+priority 10
+
 snippet rfc "react functional component" b
 const ${1:`!p snip.rv = snip.basename`} = (${2}) => {
   return <>${3}</>
@@ -16,23 +18,23 @@ const useStyles = makeStyles((theme) => ({
 export default useStyles;
 endsnippet
 
-snippet uses "useState" b
+snippet useS "useState" b
 const [${1}, set`!p snip.rv=t[1].title()`] = useState(${3});
 endsnippet
 
-snippet usee "useEffect" b
+snippet useE "useEffect" b
 useEffect(() => {
   ${VISUAL}$0
 }, [${2}]);
 endsnippet
 
-snippet usec "useCallback" b
+snippet useC "useCallback" b
 const ${1:callback} = useCallback((${2}) => ${3:{
   ${VISUAL}$0
 }}, [${4}]);
 endsnippet
 
-snippet usem "useMemo" b
+snippet useM "useMemo" b
 const ${1:value} = useMemo(() => ${2:{
   ${VISUAL}$0
 }}, [${3}]);

@@ -74,7 +74,7 @@ let menu_style = {
   selected_text: green_reverse
   description_text: yellow
 }
-let $config = {
+let-env config = {
   filesize_metric: true
   table_mode: rounded
   use_ls_colors: true
@@ -310,12 +310,13 @@ alias cca = cargo clippy --all-targets
 alias cdoc = cargo doc
 alias cdoco = cargo doc --open
 alias cfg = cd ~/config
-alias cr = ^cargo run
-alias crd = ^cargo run --profile dev-opt
-alias cre = cargo run --example
-alias crr = cargo run --release
+alias cr = ^cargo run --quiet
+alias crd = ^cargo run --quiet --profile dev-opt
+alias cre = cargo run --quiet --example
+alias crr = cargo run --quiet --release
 alias ct = cargo test
 alias open = ^open
+alias find = ^find
 alias ni = npm i
 alias nci = npm ci
 alias ns = npm start
@@ -596,7 +597,7 @@ def init [] {
     let cpu = (if $macos {
       sysctl -n machdep.cpu.brand_string | str trim
     } else {
-      cat /proc/cpuinfo | rg "model name\s+: (.*)" -r '$1' | uniq | str trim
+      cat /proc/cpuinfo | rg 'model name\s+: (.*)' -r '$1' | uniq | str trim
     })
     echo $"
                i  t             (date now | date format '%Y-%m-%d %H:%M:%S')
