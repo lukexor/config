@@ -382,6 +382,9 @@ def fbroken [path: string] {
 # Edit nushell configuration.
 def "nu config" [] { nvim ([$nu.home-path .config/nu/config.nu] | path join) }
 
+# Edit nushell env.
+def "nu env" [] { nvim ([$nu.home-path .config/nu/env.nu] | path join) }
+
 # Edit neovim configuration.
 def "nvim init" [] { nvim ([$nu.home-path .config/nvim/init.vim] | path join) }
 
@@ -628,6 +631,9 @@ let-env SHLVL = (if (env | any? name == TMUX) && $level >= 3 {
     $level + 1
   }
 )
+
+# Stick to node 16.10.0 for now since 17.7.1 seems to break some network things
+load-env (venv /usr/local/opt/nvm/versions/node/v16.10.0)
 
 init
 

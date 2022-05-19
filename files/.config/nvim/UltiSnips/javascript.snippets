@@ -100,6 +100,16 @@ do {
 } while (${1});
 endsnippet
 
+snippet test "test" b
+import { ${1:render} } from "@testing-library/react";
+
+describe("${2:descripton}", () => {
+  it("${3:description}", async () => {
+    ${VISUAL}$0
+  });
+});
+endsnippet
+
 snippet desc "describe" b
 describe("${1:descripton}", () => {
   ${VISUAL}$0
@@ -145,7 +155,13 @@ it.skip("${1:description}", async () => {${VISUAL}$0});
 endsnippet
 
 snippet act "act" b
-await act(() => {
+await act(async () => {
+  ${VISUAL}$0
+});
+endsnippet
+
+snippet wait "waitFor" b
+await waitFor(async () => {
   ${VISUAL}$0
 });
 endsnippet

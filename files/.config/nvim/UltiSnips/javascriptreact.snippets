@@ -2,7 +2,16 @@ priority 10
 
 snippet rfc "react functional component" b
 const ${1:`!p snip.rv = snip.basename`} = (${2}) => {
-  return <>${3}</>
+  ${3}
+  return null;
+};
+
+export default $1;
+endsnippet
+
+snippet rh "react hook" b
+const ${1:`!p snip.rv = snip.basename`} = (${2}) => {
+  ${3}
 };
 
 export default $1;
