@@ -19,8 +19,8 @@ let apt_packages = [
 ]
 let npm_packages = [eslint_d]
 let cargo_packages = [
-  cargo-asm cargo-expand cargo-generate cargo-outdated cargo-readme cargo-tree
-  cargo-watch flamegraph ripgrep wasm-pack
+  cargo-asm cargo-count cargo-expand cargo-generate cargo-outdated cargo-readme
+  cargo-tree cargo-watch flamegraph ripgrep wasm-pack fnm
 ]
 let cargo_components = [clippy rust-analysis]
 let language_servers = [

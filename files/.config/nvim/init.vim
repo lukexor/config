@@ -45,7 +45,6 @@ set relativenumber
 set number
 set termguicolors
 set undofile
-set spell
 set title
 set incsearch
 set wildmode=longest:full,full

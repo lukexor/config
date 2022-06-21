@@ -307,6 +307,7 @@ alias cb = cargo build
 alias cbr = cargo build --release
 alias cc = cargo clippy
 alias cca = cargo clippy --all-targets
+alias cd = fnmcd
 alias cdoc = cargo doc
 alias cdoco = cargo doc --open
 alias cfg = cd ~/config
@@ -585,6 +586,14 @@ def venv [
   }
 }
 
+# CD using `fnm` which manages node versions
+def-env fnmcd [path: string] {
+  let-env PWD = ($path | path expand)
+  if (['.node-version' '.nvmrc'] | any? ($env.PWD | path join $it | path exists)) {
+     fnm use --silent-if-unchanged
+  }
+}
+
 # Print out personalized ASCII logo.
 def init [] {
   if ($env.SHLVL | into int) == 1 {
@@ -632,8 +641,17 @@ let-env SHLVL = (if (env | any? name == TMUX) && $level >= 3 {
   }
 )
 
-# Stick to node 16.10.0 for now since 17.7.1 seems to break some network things
-load-env (venv /usr/local/opt/nvm/versions/node/v16.10.0)
+load-env (
+  fnm env --shell bash
+    | lines
+    | str replace 'export ' ''
+    | str replace -a '"' ''
+    | split column =
+    | rename name value
+    | where name != "FNM_ARCH" && name != "PATH"
+    | reduce -f {} { |it, acc| $acc | upsert $it.name $it.value }
+)
+let-env PATH = ($env.PATH | prepend $"($env.FNM_MULTISHELL_PATH)/bin")
 
 init
 
