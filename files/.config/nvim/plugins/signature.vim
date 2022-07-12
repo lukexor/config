@@ -1,1 +1,0 @@
-Plug 'kshenoy/vim-signature'

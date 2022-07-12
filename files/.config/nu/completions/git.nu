@@ -1,53 +1,73 @@
-def "nu-complete git branches" [] {
+def "nu-comp git branches" [] {
   ^git branch | lines | each { |line| $line | str replace '\* ' "" | str trim }
 }
 
-def "nu-complete git all branches" [] {
-  ^git branch -a | lines | wrap name | where name !~ HEAD | get name | each { |line| $line | str replace '\* ' "" | | str replace "remotes/origin/" "" | str trim }
+def "nu-comp git all branches" [] {
+  ^git branch -a | lines | wrap name | where name !~ HEAD | get name | each { |line| $line | str replace '\* ' "" | | str replace "remotes/origin/" "" | str trim } | uniq
 }
 
-def "nu-complete git remotes" [] {
+def "nu-comp git remotes" [] {
   ^git remote | lines | each { |line| $line | str trim }
 }
 
-def "nu-complete git files" [] {
+def "nu-comp git files" [] {
   ^git ls-files | lines
 }
 
+def "nu-comp files" [] {
+  ^ls
+}
+
+def "nu-comp cleanup mode" [] {
+  [strip whitespace verbatim scissors default]
+}
+
+def "nu-comp merge strategies" [] {
+  [ort recursive resolve octopus ours subtree]
+}
+
+def "nu-comp merge strategy-options" [] {
+  [ours theirs ignore-space-change ignore-all-space ignore-space-at-eol
+  ignore-cr-at-eol renormalize no-renormalize find-renames rename-threshold
+  subtree patience diff-algorithm no-renames]
+}
+
 export extern "git merge" [
-  branch?: string@"nu-complete git all branches" # name of the branch to merge
-  --abort                                        # abort the current in-progress merge
-  --allow-unrelated-histories                    # allow merging unrelated histories
-  --autostash                                    # automatically stash/stash pop before and after
-  --cleanup: string                              # how to strip spaces and #comments from message
-  --commit                                       # perform a commit if the merge succeeds (default)
-  --continue                                     # continue the current in-progress merge
-  --edit(-e)                                     # edit message before committing
-  --ff                                           # allow fast-forward (default)
-  --ff-only                                      # abort if fast-forward is not possible
-  --file(-F): string                             # read message from file
-  --gpg-sign(-S): string                         # GPG sign commit
-  --log: number                                  # add (at most <n>) entries from shortlog to merge commit message
-  --message(-m): string                          # merge commit message (for a non-fast-forward merge)
-  --no-verify                                    # bypass pre-merge-commit and commit-msg hooks
-  --overwrite-ignore                             # update ignored files (default)
-  --progress                                     # force progress reporting
-  --quiet(-q)                                    # be more quiet
-  --quit                                         # --abort but leave index and working tree alone
-  --rerere-autoupdate                            # update the index with reused conflict resolution if possible
-  --signoff                                      # add a Signed-off-by trailer
-  --squash                                       # create a single commit instead of doing a merge
-  --stat                                         # show a diffstat at the end of the merge
-  --strategy(-s): string                         # merge strategy to use
-  --strategy-option(-X): string                  # string option for selected merge strategy
-  --summary                                      # (synonym to --stat)
-  --verbose(-v)                                  # be more verbose
-  --verify-signatures                            # verify that the named commit has a valid GPG signature
-  -n                                             # do not show a diffstat at the end of the merge
+  ...commits?: string@"nu-comp git all branches"    # name of the branch to merge
+  -n                                                # do not show a diffstat at the end of the merge
+  --stat                                            # show a diffstat at the end of the merge
+  --summary                                         # (synonym to --stat)
+  --log: number                                     # add (at most <n>) entries from shortlog to merge commit message
+  --squash                                          # create a single commit instead of doing a merge
+  --commit                                          # perform a commit if the merge succeeds (default)
+  --no-commit                                       # perform the merge and stop just before creating the merge commit
+  --edit(-e)                                        # edit message before committing
+  --no-edit                                         # accept the auto-generated message
+  --cleanup: string@"nu-comp cleanup mode"          # how to strip spaces and #comments from message
+  --ff                                              # allow fast-forward (default)
+  --ff-only                                         # abort if fast-forward is not possible
+  --rerere-autoupdate                               # update the index with reused conflict resolution if possible
+  --verify-signatures                               # verify that the named commit has a valid GPG signature
+  --strategy(-s): string@"nu-comp merge strategies" # merge strategy to use
+  --strategy-option(-X): string@"nu-comp merge strategy-options" # option for selected merge strategy
+  --message(-m): string                             # merge commit message (for a non-fast-forward merge)
+  --file(-F): string@"nu-comp files"                # read message from file
+  --verbose(-v)                                     # be more verbose
+  --quiet(-q)                                       # be more quiet
+  --abort                                           # abort the current in-progress merge
+  --quit                                            # --abort but leave index and working tree alone
+  --continue                                        # continue the current in-progress merge
+  --allow-unrelated-histories                       # allow merging unrelated histories
+  --progress                                        # force progress reporting
+  --gpg-sign(-S): string                            # GPG sign commit
+  --autostash                                       # automatically stash/stash pop before and after
+  --overwrite-ignore                                # update ignored files (default)
+  --signoff                                         # add a Signed-off-by trailer
+  --no-verify                                       # bypass pre-merge-commit and commit-msg hooks
 ]
 
 export extern "git branch" [
-  ...targets?: string@"nu-complete git branches" # name of the branch to target
+  ...targets?: string@"nu-comp git branches"     # name of the branch to target
   --abbrev: number                               # use <n> digits to display object names
   --all(-a)                                      # list both remote-tracking and local branches
   --color: string                                # use colored output
@@ -80,7 +100,7 @@ export extern "git branch" [
 ]
 
 export extern "git checkout" [
-  ...targets?: string@"nu-complete git all branches" # name of the branch to checkout
+  ...targets?: string@"nu-comp git all branches"     # name of the branch to checkout
   --conflict: string                                 # conflict style (merge or diff3)
   --detach(-d)                                       # detach HEAD at named commit
   --force(-f)                                        # force checkout (throw away local modifications)
@@ -105,8 +125,8 @@ export extern "git checkout" [
 ]
 
 export extern "git push" [
-  remote?: string@"nu-complete git remotes"   # the name of the remote
-  ...refs?: string@"nu-complete git branches" # the branch / refspec
+  remote?: string@"nu-comp git remotes"       # the name of the remote
+  ...refs?: string@"nu-comp git branches"     # the branch / refspec
   --all                                       # push all refs
   --atomic                                    # request atomic transaction on remote side
   --delete(-d)                                # delete refs

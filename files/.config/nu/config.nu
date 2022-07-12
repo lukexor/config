@@ -348,7 +348,6 @@ alias gsl = git stash list
 alias gst = git status
 alias gt = git tag
 alias gun = git reset HEAD --
-alias ls = ls
 alias la = ls -a
 alias ll = ls -l
 alias lc = (ls | sort-by modified | reverse)
@@ -380,14 +379,8 @@ def fbroken [path: string] {
   ^find $path -maxdepth 1 -type l ! -exec test -e '{}' ';' -print
 }
 
-# Edit nushell configuration.
-def "nu config" [] { nvim ([$nu.home-path .config/nu/config.nu] | path join) }
-
-# Edit nushell env.
-def "nu env" [] { nvim ([$nu.home-path .config/nu/env.nu] | path join) }
-
 # Edit neovim configuration.
-def "nvim init" [] { nvim ([$nu.home-path .config/nvim/init.vim] | path join) }
+def "init nvim" [] { nvim ([$nu.home-path .config/nvim/init.lua] | path join) }
 
 # List installed Node versions.
 def "nvm list" [] {
@@ -565,7 +558,7 @@ def "commands search" [] {
   help (echo (help commands | each { |cmd|
     let name = ($cmd.name | ansi strip)
     $"($name)(pad-tabs $name)($cmd.usage)"
-  }) | str collect (char nl) | fzf-tmux | split column (char tab) | get Column1 | first )
+  }) | str collect (char nl) | fzf-tmux | split column (char tab) | get column1 | first )
 }
 
 # Fuzzy search history.
@@ -592,6 +585,7 @@ def-env fnmcd [path: string] {
   if (['.node-version' '.nvmrc'] | any? ($env.PWD | path join $it | path exists)) {
      fnm use --silent-if-unchanged
   }
+  ^cd $env.PWD
 }
 
 # Print out personalized ASCII logo.

@@ -1,20 +1,20 @@
-def "nu-complete npm" [] {
+def "nu-comp npm" [] {
   ^npm -l | lines | find 'Run "' | str trim | split column -c ' ' | get column4 | str replace '"' ''
 }
 
-def "nu-complete npm scripts" [] {
+def "nu-comp npm scripts" [] {
   open package.json | get scripts | columns
 }
 
 export extern "npm" [
-  command: string@"nu-complete npm"
+  command: string@"nu-comp npm"
   ...args: any
   --version(-v)                                  # display version
   -l                                             # display usage info for all commands
 ]
 
 export extern "npm run" [
-  script?: string@"nu-complete npm scripts"      # script to run
+  script?: string@"nu-comp npm scripts"          # script to run
   ...args: any
   --workspace(-w): string                        # run command in target workspace
   --workspaces                                   # run command in all workspaces

@@ -1,1 +1,0 @@
-Plug 'udalov/kotlin-vim'
