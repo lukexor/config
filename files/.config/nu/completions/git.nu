@@ -67,7 +67,8 @@ export extern "git merge" [
 ]
 
 export extern "git branch" [
-  ...targets?: string@"nu-comp git branches"     # name of the branch to target
+  branch-or-old?: string@"nu-comp git branches"  # name of the branch to target or old branch
+  new-branch?: string@"nu-comp git branches"     # name of the new branch
   --abbrev: number                               # use <n> digits to display object names
   --all(-a)                                      # list both remote-tracking and local branches
   --color: string                                # use colored output
@@ -79,6 +80,7 @@ export extern "git branch" [
   --edit-description                             # edit the description for the branch
   --force(-f)                                    # force creation, move/rename, deletion
   --format: string                               # format to use for the output
+  --help(-h)                                     # help
   --ignore-case(-i)                              # sorting and filtering are case insensitive
   --list(-l)                                     # list branch names
   --merged: string                               # print only branches that are merged
@@ -100,7 +102,8 @@ export extern "git branch" [
 ]
 
 export extern "git checkout" [
-  ...targets?: string@"nu-comp git all branches"     # name of the branch to checkout
+  ...branch?: string@"nu-comp git all branches"     # name of the branch to checkout
+  ...files?: any
   --conflict: string                                 # conflict style (merge or diff3)
   --detach(-d)                                       # detach HEAD at named commit
   --force(-f)                                        # force checkout (throw away local modifications)

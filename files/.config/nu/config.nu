@@ -303,6 +303,7 @@ use ~/.config/nu/completions/npm.nu *
 # =============================================================================
 
 alias _ = sudo
+alias cat = bat
 alias cb = cargo build
 alias cbr = cargo build --release
 alias cc = cargo clippy
@@ -317,7 +318,7 @@ alias cre = cargo run --quiet --example
 alias crr = cargo run --quiet --release
 alias ct = cargo test
 alias open = ^open
-alias find = ^find
+alias find = ^fd
 alias ni = npm i
 alias nci = npm ci
 alias ns = npm start
@@ -348,6 +349,7 @@ alias gsl = git stash list
 alias gst = git status
 alias gt = git tag
 alias gun = git reset HEAD --
+alias ls = exa
 alias la = ls -a
 alias ll = ls -l
 alias lc = (ls | sort-by modified | reverse)
@@ -359,11 +361,12 @@ alias md = ^mkdir -p
 alias rm = ^rm -i
 alias rd = rmdir
 alias pwd = (^pwd | str replace $nu.home-path '~')
+alias pc = procs
 alias py = python3
 alias slp = ssh caeledh@138.197.217.136
 alias sshl = ssh-add -L
-alias topc = (^ps -Arco pid,pcpu,pmem,comm | lines | skip 1 | first 10 | parse -r '(?P<pid>\d+)\s+(?P<pcpu>\d+\.\d+)\s+(?P<pmem>\d+\.\d+)\s+(?P<name>.*)')
-alias topm = (^ps -Amco pid,pcpu,pmem,comm | lines | skip 1 | first 10 | parse -r '(?P<pid>\d+)\s+(?P<pcpu>\d+\.\d+)\s+(?P<pmem>\d+\.\d+)\s+(?P<name>.*)')
+alias topc = (ps | sort-by -r cpu | first 10)
+alias topm = (ps | sort-by -r mem | first 10)
 alias v = nvim
 alias vi = nvim
 alias vim = nvim
@@ -375,7 +378,7 @@ alias vimdiff = nvim -d
 # =============================================================================
 
 # Find broken symlinks
-def fbroken [path: string] {
+def fbroken [path: path] {
   ^find $path -maxdepth 1 -type l ! -exec test -e '{}' ';' -print
 }
 
@@ -580,7 +583,7 @@ def venv [
 }
 
 # CD using `fnm` which manages node versions
-def-env fnmcd [path: string] {
+def-env fnmcd [path: path] {
   let-env PWD = ($path | path expand)
   if (['.node-version' '.nvmrc'] | any? ($env.PWD | path join $it | path exists)) {
      fnm use --silent-if-unchanged

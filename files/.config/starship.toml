@@ -1,3 +1,5 @@
+command_timeout = 1000
+
 [[battery.display]]
 threshold = 15
 style = "bold red"

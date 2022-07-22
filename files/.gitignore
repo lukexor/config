@@ -44,4 +44,4 @@ ctags
 .lspconfig.lua
 
 # Misc
-*.patch
+# *.patch

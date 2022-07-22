@@ -9,6 +9,7 @@ def "nu-comp npm scripts" [] {
 export extern "npm" [
   command: string@"nu-comp npm"
   ...args: any
+  --help(-h)                                     # help
   --version(-v)                                  # display version
   -l                                             # display usage info for all commands
 ]
@@ -16,6 +17,7 @@ export extern "npm" [
 export extern "npm run" [
   script?: string@"nu-comp npm scripts"          # script to run
   ...args: any
+  --help(-h)                                     # help
   --workspace(-w): string                        # run command in target workspace
   --workspaces                                   # run command in all workspaces
   --include-workspace-root                       # include workspace root
@@ -27,6 +29,7 @@ export extern "npm run" [
 
 export extern "npm i" [
   ...packages: any
+  --help(-h)                                     # help
   --save(-S)
   --no-save
   --save-prod
@@ -53,6 +56,7 @@ export extern "npm i" [
 
 export extern "npm install" [
   ...packages: any
+  --help(-h)                                     # help
   --save(-S)
   --no-save
   --save-prod

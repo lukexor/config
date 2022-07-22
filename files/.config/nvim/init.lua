@@ -110,8 +110,10 @@ local silent = { silent = true }
 local remap = { remap = true }
 
 local set_keymap = function(...) vim.keymap.set(...) end
+local del_keymap = function(...) vim.keymap.del(...) end
 local map = function(lhs, rhs, opts) set_keymap("", lhs, rhs, opts) end
 local nmap = function(lhs, rhs, opts) set_keymap("n", lhs, rhs, opts) end
+local nunmap = function(lhs, opts) del_keymap("n", lhs, opts) end
 local vmap = function(lhs, rhs, opts) set_keymap("v", lhs, rhs, opts) end
 local xmap = function(lhs, rhs, opts) set_keymap("x", lhs, rhs, opts) end
 local imap = function(lhs, rhs, opts) set_keymap("i", lhs, rhs, opts) end
@@ -123,7 +125,7 @@ nmap("<leader>vr", ":source $MYVIMRC<CR>:edit<CR>")
 
 -- Quick save
 nmap("<leader>w", ":w<CR>")
--- Save but don"t run autocmds which might format
+-- Save but don"t run aus which might format
 nmap("<leader>W", ":noa w<CR>")
 
 -- Quick quit
@@ -157,9 +159,7 @@ nmap("<leader><leader>", "<C-^>")
 nmap("gt", "gt <C-]>", silent)
 
 -- Show diffs in a modified buffer
-if not vim.fn.exists(":DiffOrig") then
-  vim.cmd("command DiffOrig vert new | set bt=nofile | r ++edit # | 0d_ | diffthis | wincmd p | diffthis")
-end
+vim.cmd("command! DiffOrig vert new | set bt=nofile | r ++edit # | 0d_ | diffthis | wincmd p | diffthis")
 
 -- Reselect visual after indenting
 vmap("<", "<gv")
@@ -185,6 +185,9 @@ vmap("K", ":m '<-2<CR>gv=gv")
 nmap("<leader>j", ":m .+1<CR>==", silent)
 nmap("<leader>k", ":m .-2<CR>==", silent)
 
+-- Toggle wrapping text
+nmap("<localleader>w", [[ (&fo =~ 't' ? ":set fo-=t<CR>" : ":set fo+=t<CR>") ]], { silent = true, expr = true })
+
 -- Keep cursor centered
 nmap("n", "nzzzv")
 nmap("N", "Nzzzv")
@@ -208,10 +211,8 @@ imap("<C-c>", "<Esc>")
 -- Easy insert trailing punctuation from insert mode
 nmap(";;", "A;<Esc>")
 nmap(",,", "A,<Esc>")
-nmap("..", "A.<Esc>")
 imap(";;", "<Esc>A;<Esc>")
 imap(",,", "<Esc>A,<Esc>")
-imap("..", "<Esc>A.<Esc>")
 
 -- Add breaks in undo chain when typing punctuation
 imap(".", ".<C-g>u")
@@ -221,8 +222,8 @@ imap("?", "?<C-g>u")
 
 -- Add relative jumps of more than 5 lines to jump list
 -- Move by terminal rows, not lines, unless count is provided
-nmap("j", [[(v:count > 0 ? "m'" . v:count . 'j' : "gj")]], { silent = true, expr = true })
-nmap("k", [[(v:count > 0 ? "m'" . v:count . 'k' : "gk")]], { silent = true, expr = true })
+nmap("j", [[ (v:count > 0 ? "m'" . v:count . 'j' : "gj") ]], { silent = true, expr = true })
+nmap("k", [[ (v:count > 0 ? "m'" . v:count . 'k' : "gk") ]], { silent = true, expr = true })
 
 -- Maximize window
 nmap("<leader>-", ":wincmd _<CR>:wincmd \\|<CR>")
@@ -236,7 +237,7 @@ nmap("<Right>", ":vertical resize +5<CR>")
 nmap("<Up>", ":resize +5<CR>")
 
 -- cd to cwd of current file
-nmap("cd", ":execute 'lcd ' fnamemodify(resolve(expand('%')), ':p:h')<CR>"
+nmap("cd", ":exe 'lcd ' fnamemodify(resolve(expand('%')), ':p:h')<CR>"
   .. ":lua vim.notify('lcd ' .. vim.fn.fnamemodify(vim.fn.resolve(vim.fn.expand('%')), ':p:h'))<CR>",
   silent
 )
@@ -367,6 +368,11 @@ end
 -- Toggle gutter and signs
 nmap("<leader>\\", ":lua ToggleGutter()<CR>")
 
+--- Ascii Art
+nmap("<leader>tb", ":.!toilet -w 200 -f term -F border<CR>")
+nmap("<leader>ts", ":.!figlet -w 200 -f standard<CR>")
+nmap("<leader>tS", ":.!figlet -w 200 -f small<CR>")
+
 
 -- =============================================================================
 -- Plugins
@@ -375,13 +381,13 @@ nmap("<leader>\\", ":lua ToggleGutter()<CR>")
 -- Auto-install vim-plug
 local data_dir = vim.fn.stdpath('data') .. "/site"
 if vim.fn.empty(vim.fn.glob(data_dir .. "/autoload/plug.vim")) then
-  local install_cmd = "silent execute '!curl -fLo %s/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'"
+  local install_cmd = "silent exe '!curl -fLo %s/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'"
   vim.cmd(install_cmd:format(data_dir))
 end
 
 -- Run PlugInstall if there are missing plugins
 vim.cmd([[
-  autocmd VimEnter * if len(filter(values(g:plugs), '!isdirectory(v:val.dir)'))
+  au VimEnter * if len(filter(values(g:plugs), '!isdirectory(v:val.dir)'))
     \| PlugInstall --sync | source $MYVIMRC
     \| endif
 ]])
@@ -402,6 +408,7 @@ Plug("famiu/bufdelete.nvim", {
 })
 -- Better buffer management
 Plug("ap/vim-buftabline", {
+  except = { "vpm" },
   config = function()
     vim.g.buftabline_show = 1 -- only when >= 2 buffers
     vim.g.buftabline_numbers = 2 -- ordinal numbers
@@ -564,6 +571,14 @@ Plug("glts/vim-radical", {
     nmap("crb", "<Plug>RadicalCoerceToBinary")
   end
 })
+Plug("zirrostig/vim-schlepp", {
+  config = function()
+    vmap("K", "<Plug>SchleppUp")
+    vmap("J", "<Plug>SchleppDown")
+    vmap("H", "<Plug>SchleppLeft")
+    vmap("L", "<Plug>SchleppRight")
+  end
+})
 
 -- -----------------------------------------------------------------------------
 -- System Integration
@@ -584,8 +599,8 @@ Plug("voldikss/vim-floaterm", {
     vim.g.floaterm_title = "nvim $1/$2"
     vim.g.floaterm_keymap_new = "<C-y>"
     vim.g.floaterm_keymap_toggle = "<C-t>"
-    vim.g.floaterm_keymap_prev = "<C-[>"
-    vim.g.floaterm_keymap_next = "<C-]>"
+    vim.g.floaterm_keymap_prev = "<C-p>"
+    vim.g.floaterm_keymap_next = "<C-n>"
     vim.g.floaterm_gitcommit = "floaterm"
     vim.g.floaterm_autoinsert = 1
     vim.g.floaterm_width = 0.8
@@ -618,14 +633,14 @@ Plug("preservim/nerdtree", {
     vim.cmd([[
       fun! s:OpenFileOrExplorer(...)
         if a:0 == 0
-          execute 'edit'
+          exe 'edit'
           return 0
         elseif a:1 =~? '^\(scp\|ftp\)://' " Add other protocols as needed.
-          execute 'Vexplore '.a:1
+          exe 'Vexplore '.a:1
         elseif isdirectory(a:1)
-          execute 'NERDTree '.a:1
+          exe 'NERDTree '.a:1
         else
-          execute 'edit '.a:1
+          exe 'edit '.a:1
           return 0
         endif
         return 1
@@ -636,19 +651,19 @@ Plug("preservim/nerdtree", {
     ]])
 
     vim.cmd([[
-      augroup NERDTree
-        autocmd!
+      aug NERDTree
+        au!
         " Start NERDTree when Vim starts with a directory argument.
-        autocmd StdinReadPre * let s:std_in=1
-        autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists('s:std_in') |
-          \ if <SID>OpenFileOrExplorer(argv()[0]) | wincmd p | enew | bd 1 | execute 'cd '.argv()[0] | wincmd p | endif | endif
+        au StdinReadPre * let s:std_in=1
+        au VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists('s:std_in') |
+          \ if <SID>OpenFileOrExplorer(argv()[0]) | wincmd p | enew | bd 1 | exe 'lcd '.argv()[0] | wincmd p | endif | endif
 
         " Closes if NERDTree is the only open window
-        autocmd BufEnter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+        au BufEnter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
         " If another buffer tries to replace NERDTree, put it in the other window, and bring back NERDTree.
-        autocmd BufEnter * if bufname('#') =~ 'NERD_tree_\d\+' && bufname('%') !~ 'NERD_tree_\d\+' && winnr('$') > 1 |
-          \ let buf=bufnr() | buffer# | execute "normal! \<C-W>w" | execute 'buffer'.buf | endif
-      augroup END
+        au BufEnter * if bufname('#') =~ 'NERD_tree_\d\+' && bufname('%') !~ 'NERD_tree_\d\+' && winnr('$') > 1 |
+          \ let buf=bufnr() | buffer# | exe "normal! \<C-W>w" | exe 'buffer'.buf | endif
+      aug END
     ]])
   end,
   config = function()
@@ -658,7 +673,7 @@ Plug("preservim/nerdtree", {
     vim.g.NERDTreeDirArrowExpandable = '▹'
     vim.g.NERDTreeDirArrowCollapsible = '▿'
     -- avoid crashes when calling vim-plug functions while the cursor is on the NERDTree window
-    vim.g.plug_window = 'noautocmd vertical topleft new'
+    vim.g.plug_window = 'noau vertical topleft new'
   end
 })
 Plug("Xuyuanp/nerdtree-git-plugin", nerdtree_opts)
@@ -708,6 +723,7 @@ Plug("aserebryakov/vim-todo-lists", {
     -- This plugin is great but takes too many liberties with mappings
     vim.g.vimtodolists_plugin = 1
 
+    -- TODO: Convert to lua
     vim.cmd([[
       fun! TodoListsSetNormalMode()
         setlocal indentexpr=b:pindentexpr
@@ -751,10 +767,10 @@ Plug("aserebryakov/vim-todo-lists", {
     ]])
 
     vim.cmd([[
-      augroup TodoLists
-        autocmd!
-        autocmd BufRead,BufNewFile *.todo.md call TodoListsInit()
-      augroup end
+      aug TodoLists
+        au!
+        au BufRead,BufNewFile *.todo.md call TodoListsInit()
+      aug end
     ]])
   end
 })
@@ -763,14 +779,14 @@ Plug("yardnsm/vim-import-cost", {
   run = "npm install --production",
   config = function()
     vim.g.import_cost_virtualtext_prefix = " ▸ "
-    vim.cmd("hi! link ImportCostVirtualText VirtualTextInfo")
     vim.cmd([[
-      augroup ImportCost
-        autocmd!
-        autocmd InsertLeave *.js,*.jsx,*.ts,*.tsx ImportCost
-        autocmd BufEnter *.js,*.jsx,*.ts,*.tsx ImportCost
-        autocmd CursorHold *.js,*.jsx,*.ts,*.tsx ImportCost
-      augroup END
+      aug ImportCost
+        au!
+        au InsertLeave *.js,*.jsx,*.ts,*.tsx ImportCost
+        au BufEnter *.js,*.jsx,*.ts,*.tsx ImportCost
+        au BufEnter *.js,*.jsx,*.ts,*.tsx hi! link ImportCostVirtualText VirtualTextInfo
+        au CursorHold *.js,*.jsx,*.ts,*.tsx ImportCost
+      aug END
     ]])
   end
 })
@@ -779,7 +795,7 @@ Plug("yardnsm/vim-import-cost", {
 -- Windowing/Theme
 -- -----------------------------------------------------------------------------
 
-Plug("kyazdani42/nvim-web-devicons")
+Plug("ryanoasis/vim-devicons")
 Plug("stevearc/dressing.nvim") -- Window UI enhancements
 Plug("sainnhe/gruvbox-material", {
   config = function()
@@ -792,48 +808,47 @@ Plug("sainnhe/gruvbox-material", {
     vim.g.gruvbox_material_menu_selection_background = "green"
     vim.g.gruvbox_material_ui_contrast = "high"
 
+    vim.cmd([[
+      aug ColorOverrides
+        au!
+        au ColorScheme gruvbox-material hi! Comment ctermfg=208 guifg=#e78a4e
+        au ColorScheme gruvbox-material hi! SpecialComment ctermfg=108 guifg=#89b482 guisp=#89b482
+        au ColorScheme gruvbox-material hi! ColorColumn ctermbg=237 guibg=#333333
+        au ColorScheme gruvbox-material hi! FloatermBorder ctermbg=none guibg=none
+        au ColorScheme gruvbox-material hi! link Whitespace DiffDelete
+        au InsertEnter * hi! CursorLine ctermbg=237 guibg=#333e34
+        au InsertLeave * hi! CursorLine ctermbg=235 guibg=#282828
+      aug END
+    ]])
+
     vim.opt.background = "dark"
     vim.cmd("colorscheme gruvbox-material")
-
-    vim.cmd([[
-      hi! Comment ctermfg=208 guifg=#e78a4e
-      hi! SpecialComment ctermfg=108 guifg=#89b482 guisp=#89b482
-      hi! ColorColumn ctermbg=237 guibg=#333333
-      hi! FloatermBorder ctermbg=none guibg=none
-      hi! link Whitespace DiffDelete
-    ]])
-
-    vim.cmd([[
-      augroup InsCursorLine
-        autocmd!
-        autocmd InsertEnter * hi! CursorLine ctermbg=237 guibg=#333e34
-        autocmd InsertLeave * hi! CursorLine ctermbg=235 guibg=#282828
-      augroup END
-    ]])
   end
 })
 Plug("nvim-lualine/lualine.nvim", {
   config = function()
-    require('lualine').setup {
+    require("lualine").setup {
       options = {
         icons_enabled = true,
-        theme = 'gruvbox',
-        component_separators = { left = ' ', right = ' ' },
-        section_separators = { left = ' ', right = ' ' },
+        theme = "gruvbox",
+        component_separators = { left = " ", right = " " },
+        section_separators = { left = " ", right = " " },
         disabled_filetypes = {},
         always_divide_middle = true,
       },
       sections = {
-        lualine_a = { 'mode' },
-        lualine_b = { 'branch', 'diff', 'diagnostics' },
-        lualine_c = { { 'filename', path = 1 } },
-        lualine_x = { 'SleuthIndicator', 'ObsessionStatus', 'filetype' },
-        lualine_y = { 'progress' },
-        lualine_z = { 'location' },
+        lualine_a = { "mode" },
+        lualine_b = { "branch", "diff", "diagnostics" },
+        lualine_c = { { "filename", path = 1 } },
+        lualine_x = { "SleuthIndicator", "ObsessionStatus", "filetype" },
+        lualine_y = { "progress" },
+        lualine_z = { "location" },
       }
     }
   end
 })
+Plug("junegunn/goyo.vim") -- Distraction free writing
+Plug("junegunn/limelight.vim") -- Dim non-active paragraphs
 
 -- -----------------------------------------------------------------------------
 -- LSP
@@ -847,7 +862,7 @@ Plug("antoinemadec/FixCursorHold.nvim") -- Dependency for nvim-lightbulb
 Plug("kosayoda/nvim-lightbulb", {
   config = function()
     vim.fn.sign_define("LightBulbSign", { text = "", texthl = "", linehl = "", numhl = "" })
-    require("nvim-lightbulb").setup { autocmd = { enabled = true } }
+    require("nvim-lightbulb").setup { au = { enabled = true } }
   end
 })
 Plug("simrat39/rust-tools.nvim") -- Rust LSP library
@@ -864,7 +879,10 @@ Plug("neovim/nvim-lspconfig", {
     end
     local buf_set_option = function(bufnr, ...) vim.api.nvim_buf_set_option(bufnr, ...) end
 
-    nmap("<leader>L", ":LspInfo<CR>", silent)
+    nmap("<leader>Li", ":LspInfo<CR>", silent)
+    nmap("<leader>Ls", ":LspStart<CR>", silent)
+    nmap("<leader>LS", ":LspStop<CR>", silent)
+    nmap("<leader>Lr", ":LspRestart<CR>", silent)
     nmap("gd", NoLspClient, silent)
     nmap("gD", NoLspClient, silent)
     nmap("gh", NoLspClient, silent)
@@ -910,10 +928,10 @@ Plug("neovim/nvim-lspconfig", {
       if client.resolved_capabilities.document_formatting then
         buf_nmap(bufnr, "<localleader>f", function() vim.lsp.buf.formatting_sync(nil, 4000) end, silent)
         vim.cmd([[
-          augroup LspFormat
-            autocmd! * <buffer>
-            autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting_sync(nil, 1000)
-          augroup END
+          aug LspFormat
+            au! * <buffer>
+            au BufWritePre <buffer> lua vim.lsp.buf.formatting_sync(nil, 1000)
+          aug END
         ]])
       end
 
@@ -927,7 +945,7 @@ Plug("neovim/nvim-lspconfig", {
       })
     end
 
-    vim.cmd("autocmd! DiagnosticChanged * lua vim.diagnostic.setqflist({ open = false })")
+    vim.cmd("au! DiagnosticChanged * lua vim.diagnostic.setqflist({ open = false })")
 
     local capabilities = require("cmp_nvim_lsp").update_capabilities(vim.lsp.protocol.make_client_capabilities())
     local diag_filetypes = {
@@ -936,6 +954,8 @@ Plug("neovim/nvim-lspconfig", {
       typescript = "eslint",
       typescriptreact = "eslint",
       markdown = "markdownlint",
+      css = "",
+      html = "",
     }
     local server_opts = {
       bashls = {
@@ -943,7 +963,10 @@ Plug("neovim/nvim-lspconfig", {
         capabilities = capabilities,
       },
       cssls = {
-        on_attach = on_attach,
+        on_attach = function(client, ...)
+          client.resolved_capabilities.document_formatting = false
+          on_attach(client, ...)
+        end,
         capabilities = capabilities,
       },
       diagnosticls = {
@@ -957,7 +980,7 @@ Plug("neovim/nvim-lspconfig", {
               command = "eslint_d",
               rootPatterns = { "package.json" },
               debounce = 150,
-              args = { "--stdin", "--stdin-filename", "%filepath", "--format", "json" },
+              args = { "--debug", "--stdin", "--stdin-filename", "%filepath", "--format", "json" },
               parseJson = {
                 errorsRoot = "[0].messages",
                 line = "line",
@@ -1002,7 +1025,10 @@ Plug("neovim/nvim-lspconfig", {
         capabilities = capabilities,
       },
       jsonls = {
-        on_attach = on_attach,
+        on_attach = function(client, ...)
+          client.resolved_capabilities.document_formatting = false
+          on_attach(client, ...)
+        end,
         capabilities = capabilities,
         -- Range formatting for entire document
         commands = {
@@ -1058,15 +1084,6 @@ Plug("neovim/nvim-lspconfig", {
       },
       tsserver = {
         on_attach = function(client, bufnr, ...)
-          function OrganizeImports()
-            vim.lsp.buf.execute_command({
-              command = "_typescript.organizeImports",
-              arguments = { vim.api.nvim_buf_get_name(0) },
-              title = ""
-            })
-          end
-
-          buf_nmap(bufnr, "gO", OrganizeImports, silent)
           client.resolved_capabilities.document_formatting = false
           on_attach(client, bufnr, ...)
         end,
@@ -1106,7 +1123,7 @@ Plug("neovim/nvim-lspconfig", {
           server = opts,
           tools = {
             inlay_hints = {
-              only_current_line_autocmd = "CursorHold,CursorHoldI",
+              only_current_line_au = "CursorHold,CursorHoldI",
               show_parameter_hints = false,
               highlight = "VirtualTextInfo",
               parameter_hints_prefix = " ← ",
@@ -1187,7 +1204,7 @@ Plug("hrsh7th/nvim-cmp", {
           sources = cmp.config.sources({
             { name = "path" }
           }, {
-            { name = 'cmdline' }
+            { name = "cmdline" }
           })
         },
       },
@@ -1201,9 +1218,8 @@ Plug("SirVer/ultisnips", {
   config = function()
     -- Fixes Ctrl-X Ctrl-K https://github.com/SirVer/ultisnips/blob/master/doc/UltiSnips.txt#L263
     imap("<C-x><C-k>", "<C-x><C-k>")
+    nmap("<leader>es", ":UltiSnipsEdit<CR>")
     vim.g.UltiSnipsExpandTrigger = "<Plug>(ultisnips_expand)"
-    vim.g.UltiSnipsJumpForwardTrigger = "<Plug>(ultisnips_jump_forward)"
-    vim.g.UltiSnipsJumpBackwardTrigger = "<Plug>(ultisnips_jump_backward)"
     vim.g.UltiSnipsListSnippets = "<c-x><c-s>"
     vim.g.UltiSnipsRemoveSelectModeMappings = 0
     vim.g.UltiSnipsEnableSnipMate = 0
@@ -1238,15 +1254,14 @@ Plug("rcarriga/nvim-notify", { -- Prettier notifications
 })
 Plug("nvim-telescope/telescope.nvim", { -- Fuzzy finder
   config = function()
-    local telescope = require('telescope')
+    local telescope = require("telescope")
     telescope.setup {}
     telescope.load_extension("notify")
-    telescope.load_extension('ultisnips')
-    telescope.load_extension('fzf')
+    telescope.load_extension("ultisnips")
+    telescope.load_extension("fzf")
 
     nmap("<leader>f", ":Telescope find_files<CR>")
-    nmap("<leader>F", ":Telescope find_files find_command=rg,--files,--hidden,--no-ignore,--glob,!.git<CR>")
-    nmap("<leader>G", ":Telescope git_files<CR>")
+    nmap("<leader>A", ":Telescope find_files find_command=rg,--files,--hidden,--no-ignore,--glob,!.git<CR>")
     nmap("<leader>b", ":Telescope buffers<CR>")
     nmap("<leader>B", ":Telescope current_buffer_fuzzy_find<CR>")
     nmap("<leader>C", ":Telescope commands<CR>")
@@ -1257,6 +1272,7 @@ Plug("nvim-telescope/telescope.nvim", { -- Fuzzy finder
     nmap("<leader>M", ":Telescope marks<CR>")
     nmap("<leader>K", ":Telescope keymaps<CR>")
     nmap("<leader>r", ":Telescope live_grep<CR>")
+    nmap("<leader>F", ":Telescope git_files<CR>")
     nmap("<leader>gb", ":Telescope git_branches<CR>")
     nmap("<leader>gc", ":Telescope git_commits<CR>")
     nmap("<leader>gC", ":Telescope git_bcommits<CR>")
@@ -1285,9 +1301,9 @@ Plug("sheerun/vim-polyglot", {
     -- TOML:       cespare/vim-toml
     -- Typescript: HerringtonDarkholme/yats.vim
     vim.g.rustfmt_autosave = 1
-    vim.g.rust_clip_command = 'pbcopy'
+    vim.g.rust_clip_command = "pbcopy"
     -- Lua GetLuaIndent is not accurate
-    vim.cmd("autocmd BufEnter *.lua set indentexpr= smartindent")
+    vim.cmd("au BufEnter *.lua set indentexpr= smartindent")
   end
 })
 Plug("stephpy/vim-yaml") -- Not provided by vim-polyglot
@@ -1322,6 +1338,11 @@ Plug("puremourning/vimspector", {
     "<Plug>VimspectorToggleBreakpoint",
     "<Plug>VimspectorToggleConditionalBreakpoint"
   },
+  preload = function()
+    nmap("<localleader>dd", "<Plug>VimspectorLaunch")
+    nmap("<localleader>db", "<Plug>VimspectorToggleBreakpoint")
+    nmap("<localleader>dB", "<Plug>VimspectorToggleConditionalBreakpoint")
+  end,
   config = function()
     vim.g.vimspector_install_gadgets = {
       "CodeLLDB",
@@ -1330,12 +1351,9 @@ Plug("puremourning/vimspector", {
     }
 
     -- mnemonic di = debug inspect
-    nmap("<localleader>dd", "<Plug>VimspectorLaunch")
     nmap("<localleader>dc", "<Plug>VimspectorContinue")
     nmap("<localleader>dp", "<Plug>VimspectorPause")
     nmap("<localleader>dq", "<Plug>VimspectorStop")
-    nmap("<localleader>db", "<Plug>VimspectorToggleBreakpoint")
-    nmap("<localleader>dB", "<Plug>VimspectorToggleConditionalBreakpoint")
     nmap("<localleader>do", "<Plug>VimspectorStepOver")
     nmap("<localleader>di", "<Plug>VimspectorStepInto")
     nmap("<localleader>dO", "<Plug>VimspectorStepOut")
@@ -1407,14 +1425,14 @@ function ToggleDigraphs()
   }
 
   if vim.g.digraphs_enabled == 1 then
-    local cmd = ':execute ":iunabbrev %s"'
+    local cmd = 'exe ":iunabbrev %s"'
     for abbr, _ in pairs(digraphs) do
       vim.cmd(cmd:format(abbr))
     end
     vim.g.digraphs_enabled = 0
     vim.notify("Digraphs Disabled")
   else
-    local cmd = ':execute ":iabbrev %s %s"'
+    local cmd = 'exe ":iabbrev %s %s"'
     for abbr, symbol in pairs(digraphs) do
       vim.cmd(cmd:format(abbr, symbol))
     end
@@ -1426,32 +1444,120 @@ end
 nmap("<leader>I", ":lua ToggleDigraphs()<CR>", silent)
 
 -- =============================================================================
--- Misc
+-- Autocommands
 -- =============================================================================
 
 vim.cmd([[
-  augroup FileTypeOverrides
-    autocmd!
-    autocmd TermOpen * setlocal nospell nonu nornu | startinsert
-    autocmd BufRead,BufNewFile *.nu set ft=nu
-    autocmd Filetype help set nu rnu
-    autocmd Filetype * set formatoptions=croqnjp
-  augroup END
+  aug FileTypeOverrides
+    au!
+    au TermOpen * setlocal nospell nonu nornu | startinsert
+    au BufRead,BufNewFile *.nu set ft=nu
+    au Filetype help set nu rnu
+    au Filetype * set formatoptions=croqnjp
+  aug END
+]])
+
+function GoyoEnter()
+  vim.fn.system("tmux set status off")
+
+  vim.opt.showmode = false
+  vim.opt.showcmd = false
+  vim.opt.list = false
+  vim.opt.scrolloff = 999
+  vim.opt.showtabline = 0
+
+  vim.g.gruvbox_material_show_eob = 0
+  vim.cmd("colorscheme gruvbox-material")
+  vim.cmd("SignatureToggleSigns")
+end
+
+function GoyoLeave()
+  vim.fn.system("tmux set status on")
+
+  vim.opt.showmode = true
+  vim.opt.showcmd = true
+  vim.opt.list = true
+  vim.opt.scrolloff = 8
+  vim.opt.showtabline = 1
+
+  vim.g.gruvbox_material_show_eob = 1
+  vim.cmd("colorscheme gruvbox-material")
+  vim.cmd("SignatureToggleSigns")
+end
+
+vim.cmd([[
+  aug Goyo
+    au!
+    au User GoyoEnter nested lua GoyoEnter()
+    au User GoyoLeave nested lua GoyoLeave()
+  aug END
+]])
+
+function FindExecCmd()
+  local line = vim.fn.search("^!!:.*")
+  if line > 0 then
+    local command = vim.fn.substitute(vim.fn.getline(line), "^!!:", "", "")
+    vim.cmd(("silent !%s"):format(command))
+    vim.cmd("normal gg0")
+    vim.cmd("redraw!")
+  end
+end
+
+function TogglePresentMode()
+  if vim.fn.exists("#goyo") ~= 0 then
+    PresentLeave()
+  else
+    PresentEnter()
+  end
+end
+
+function PresentEnter()
+  nmap("l", ":n<CR>gg0", { silent = true })
+  nmap("h", ":N<CR>gg0", { silent = true })
+  nmap("<leader>E", ":lua FindExecCmd()<CR>")
+  nmap("<leader>P", ":lua TogglePresentMode()<CR>")
+
+  vim.opt.textwidth = 140
+  vim.opt.colorcolumn = "138"
+  vim.opt.splitbelow = false
+  vim.opt.splitright = false
+  vim.cmd("Goyo 145x40")
+  vim.cmd("normal gg0")
+end
+
+function PresentLeave()
+  nunmap("l")
+  nunmap("h")
+
+  vim.cmd("Goyo!")
+  vim.cmd("hi! ColorColumn ctermbg=238 guibg=#333333")
+  vim.opt.splitbelow = true
+  vim.opt.splitright = true
+end
+
+vim.cmd([[
+  aug PresentationMode
+    au!
+    au BufRead,BufNewFile *.vpm set ft=vpm
+    au BufRead *.vpm lua FindExecCmd()
+    au BufRead *.vpm if filereadable('syntax.vim') | source syntax.vim | endif
+    au VimEnter *.vpm lua PresentEnter()
+  aug END
 ]])
 
 vim.cmd([[
-  augroup Init
-    autocmd!
+  aug Init
+    au!
     " Jump to the last known cursor position. See |last-position-jump|.
-    autocmd BufReadPost *
+    au BufReadPost *
       \ if &ft !~# 'commit\|rebase' && line("'\"") > 1 && line("'\"") <= line("$") |
       \   exe 'normal! g`"' |
       \ endif
-    autocmd VimEnter * helptags ~/.config/nvim/doc
-    autocmd CmdwinEnter *
+    au VimEnter * helptags ~/.config/nvim/doc
+    au CmdwinEnter *
         \ echohl Todo |
         \ echo 'You discovered the command-line window! You can close it with ":q".' |
         \ echohl None
-    autocmd TextYankPost * silent! lua vim.highlight.on_yank { higroup="Search", timeout=300, on_visual=false }
-  augroup END
+    au TextYankPost * silent! lua vim.highlight.on_yank { higroup="Search", timeout=300, on_visual=false }
+  aug END
 ]])

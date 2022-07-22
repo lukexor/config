@@ -24,6 +24,15 @@ local plug_name = function(src)
   return src:match("^[%w-]+/([%w-_.]+)$")
 end
 
+function table.contains(tbl, value)
+  for _, val in pairs(tbl) do
+    if val == value then
+      return true
+    end
+  end
+  return false
+end
+
 local meta = {
   __call = function(_, src, opts)
     opts = opts or vim.empty_dict()
@@ -36,6 +45,10 @@ local meta = {
       opts.preload()
     end
 
+    if opts.except then
+      opts["for"] = {}
+    end
+
     vim.call("plug#", src, opts)
 
     if type(opts.config) == "function" then
@@ -44,6 +57,22 @@ local meta = {
         configs.start[plugin] = opts.config
       else
         configs.lazy[plugin] = opts.config
+
+        if opts.except then
+          function LoadPlugin()
+            local ft = vim.fn.expand("<amatch>")
+            if not table.contains(opts.except, ft) then
+              vim.call("plug#load", plugin)
+            end
+          end
+
+          local load_cmd = [[
+            augroup plug_x%s
+              autocmd FileType * ++once lua LoadPlugin()
+            augroup END
+          ]]
+          vim.cmd(load_cmd:format(plugin))
+        end
 
         local user_cmd = [[ autocmd! User %s ++once lua VimPlugApplyConfig('%s') ]]
         vim.cmd(user_cmd:format(plugin, plugin))

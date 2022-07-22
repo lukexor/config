@@ -3,10 +3,15 @@ priority 10
 snippet rfc "react functional component" b
 const ${1:`!p snip.rv = snip.basename`} = (${2}) => {
   ${3}
-  return null;
 };
 
 export default $1;
+endsnippet
+
+snippet rfcd "react functional component (decl)" b
+export default function ${1:`!p snip.rv = snip.basename`}(${2}) {
+  ${3}
+}
 endsnippet
 
 snippet rh "react hook" b
@@ -17,33 +22,29 @@ const ${1:`!p snip.rv = snip.basename`} = (${2}) => {
 export default $1;
 endsnippet
 
-snippet msty "makeStyles" b
-import { makeStyles } from "@material-ui/core";
-
-const useStyles = makeStyles((theme) => ({
-  $0
-}));
-
-export default useStyles;
+snippet rhd "react hook (decl)" b
+export default function ${1:`!p snip.rv = snip.basename`}(${2}) {
+  ${3}
+}
 endsnippet
 
-snippet useS "useState" b
+snippet uses "useState" b
 const [${1}, set`!p snip.rv=t[1].title()`] = useState(${3});
 endsnippet
 
-snippet useE "useEffect" b
+snippet usee "useEffect" b
 useEffect(() => {
   ${VISUAL}$0
 }, [${2}]);
 endsnippet
 
-snippet useC "useCallback" b
+snippet usec "useCallback" b
 const ${1:callback} = useCallback((${2}) => ${3:{
   ${VISUAL}$0
 }}, [${4}]);
 endsnippet
 
-snippet useM "useMemo" b
+snippet usem "useMemo" b
 const ${1:value} = useMemo(() => ${2:{
   ${VISUAL}$0
 }}, [${3}]);

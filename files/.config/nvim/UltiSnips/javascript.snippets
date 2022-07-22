@@ -1,19 +1,25 @@
 priority 10
 
-snippet cfn "function (const)" b
+snippet fn "function (expr)" b
 const ${1:name} = (${2}) => {
   ${VISUAL}$0
 };
 endsnippet
 
-snippet ecfn "export function (const)" b
+snippet efn "export function (expr)" b
 export const ${1:name} = (${2}) => {
   ${VISUAL}$0
 };
 endsnippet
 
-snippet fn "function (named)" b
+snippet fnd "function (decl)" b
 function ${1:name}(${2}) => {
+  ${VISUAL}$0
+}
+endsnippet
+
+snippet efnd "export function (decl)" b
+export function ${1:name}(${2}) => {
   ${VISUAL}$0
 }
 endsnippet
@@ -155,6 +161,12 @@ it.skip("${1:description}", async () => {${VISUAL}$0});
 endsnippet
 
 snippet act "act" b
+act(() => {
+  ${VISUAL}$0
+});
+endsnippet
+
+snippet acta "act (async)" b
 await act(async () => {
   ${VISUAL}$0
 });
@@ -164,10 +176,6 @@ snippet wait "waitFor" b
 await waitFor(async () => {
   ${VISUAL}$0
 });
-endsnippet
-
-snippet dcy "cy.dataCy" b
-cy.dataCy("${1:selector}")${2:.as("${3:alias}")};
 endsnippet
 
 snippet bef "before" b
@@ -211,9 +219,9 @@ expect(${1})${0};
 endsnippet
 
 snippet timeout "setTimeout" b
-setTimeout(() => {
+const ${1:timer} = setTimeout(() => {
   ${VISUAL}$0
-}, ${1:1000});
+}, ${2:1000});
 endsnippet
 
 snippet interval "setInterval" b
@@ -222,26 +230,26 @@ const ${1:interval} = setInterval(() => {
 }, ${2:1000});
 endsnippet
 
-snippet cl "console.log" b
+snippet log "console.log" b
 console.log(${0});
 endsnippet
 
-snippet cd "console.debug" b
+snippet dbg "console.debug" b
 console.debug(${0});
 endsnippet
 
-snippet ce "console.error" b
+snippet err "console.error" b
 console.error(${0});
 endsnippet
 
-snippet cw "console.warn" b
+snippet warn "console.warn" b
 console.warn(${0});
 endsnippet
 
-snippet ci "console.info" b
+snippet info "console.info" b
 console.info(${0});
 endsnippet
 
-snippet ct "console.trace" b
+snippet trace "console.trace" b
 console.trace(${0});
 endsnippet
