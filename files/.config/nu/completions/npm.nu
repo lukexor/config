@@ -29,6 +29,8 @@ export extern "npm run" [
 
 export extern "npm i" [
   ...packages: any
+  --legacy-peer-deps
+  --force(-f)
   --help(-h)                                     # help
   --save(-S)
   --no-save

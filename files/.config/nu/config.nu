@@ -303,7 +303,7 @@ use ~/.config/nu/completions/npm.nu *
 # =============================================================================
 
 alias _ = sudo
-alias cat = bat
+alias cat = bat -P
 alias cb = cargo build
 alias cbr = cargo build --release
 alias cc = cargo clippy
@@ -584,11 +584,16 @@ def venv [
 
 # CD using `fnm` which manages node versions
 def-env fnmcd [path: path] {
-  let-env PWD = ($path | path expand)
-  if (['.node-version' '.nvmrc'] | any? ($env.PWD | path join $it | path exists)) {
-     fnm use --silent-if-unchanged
+  let path = ($path | path expand)
+  let-env PWD = (if ($path | path exists) {
+    $path
+  } else {
+    $env.PWD
+  })
+  if (['.node-version' '.nvmrc'] | any? ($path | path join $it | path exists)) {
+    fnm use --silent-if-unchanged
   }
-  ^cd $env.PWD
+  ^cd $path
 }
 
 # Print out personalized ASCII logo.

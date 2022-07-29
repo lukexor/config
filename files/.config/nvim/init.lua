@@ -897,6 +897,8 @@ Plug("neovim/nvim-lspconfig", {
     nmap("gn", vim.diagnostic.goto_next, silent)
     nmap("<localleader>f", NoLspClient, silent)
 
+    vim.cmd("au! DiagnosticChanged * lua vim.diagnostic.setqflist({ open = false })")
+
     -- Use an on_attach function to only map the following keys
     -- after the language server attaches to the current buffer
     local on_attach = function(client, bufnr)
@@ -938,48 +940,59 @@ Plug("neovim/nvim-lspconfig", {
       require("illuminate").on_attach(client)
       require("lsp_signature").on_attach({
         bind = true,
-        doc_lines = 2,
+        doc_lines = 10,
+        floating_window_above_cur_line = false,
         handler_opts = {
           border = "rounded"
         },
       })
     end
-
-    vim.cmd("au! DiagnosticChanged * lua vim.diagnostic.setqflist({ open = false })")
-
     local capabilities = require("cmp_nvim_lsp").update_capabilities(vim.lsp.protocol.make_client_capabilities())
-    local diag_filetypes = {
-      javascript = "eslint",
-      javascriptreact = "eslint",
-      typescript = "eslint",
-      typescriptreact = "eslint",
-      markdown = "markdownlint",
-      css = "",
-      html = "",
-    }
+
+    local disable_formatting = function(opts)
+      local orig_on_attach = opts.on_attach
+      opts.on_attach = function(client, ...)
+        client.resolved_capabilities.document_formatting = false
+        orig_on_attach(client, ...)
+      end
+      return opts
+    end
+
+    local get_options = function(enhance)
+      local opts = {
+        on_attach = on_attach,
+        capabilities = capabilities,
+        flags = {
+          debounce_text_changes = 200,
+        }
+      }
+      if type(enhance) == "function" then
+        enhance(opts)
+      end
+      return opts
+    end
+
     local server_opts = {
-      bashls = {
-        on_attach = on_attach,
-        capabilities = capabilities,
-      },
-      cssls = {
-        on_attach = function(client, ...)
-          client.resolved_capabilities.document_formatting = false
-          on_attach(client, ...)
-        end,
-        capabilities = capabilities,
-      },
-      diagnosticls = {
-        on_attach = on_attach,
-        capabilities = capabilities,
-        filetypes = vim.tbl_keys(diag_filetypes),
-        init_options = {
+      bashls = get_options(),
+      cssls = get_options(disable_formatting),
+      diagnosticls = get_options(function(opts)
+        local diag_filetypes = {
+          javascript = "eslint",
+          javascriptreact = "eslint",
+          typescript = "eslint",
+          typescriptreact = "eslint",
+          markdown = "markdownlint",
+          css = "",
+          html = "",
+        }
+        opts.filetypes = vim.tbl_keys(diag_filetypes)
+        opts.init_options = {
           linters = {
             eslint = {
               sourceName = "eslint",
               command = "eslint_d",
               rootPatterns = { "package.json" },
-              debounce = 150,
+              debounce = 500,
               args = { "--debug", "--stdin", "--stdin-filename", "%filepath", "--format", "json" },
               parseJson = {
                 errorsRoot = "[0].messages",
@@ -1012,37 +1025,22 @@ Plug("neovim/nvim-lspconfig", {
             typescriptreact = "prettier"
           }
         }
-      },
-      eslint = {
-        on_attach = on_attach,
-        capabilities = capabilities,
-      },
-      html = {
-        on_attach = function(client, ...)
-          client.resolved_capabilities.document_formatting = false
-          on_attach(client, ...)
-        end,
-        capabilities = capabilities,
-      },
-      jsonls = {
-        on_attach = function(client, ...)
-          client.resolved_capabilities.document_formatting = false
-          on_attach(client, ...)
-        end,
-        capabilities = capabilities,
+      end),
+      eslint = get_options(),
+      html = get_options(disable_formatting),
+      jsonls = get_options(function(opts)
+        disable_formatting(opts)
         -- Range formatting for entire document
-        commands = {
+        opts.commands = {
           Format = {
             function()
               vim.lsp.buf.range_formatting({}, { 0, 0 }, { vim.fn.line("$"), 0 })
             end
           }
         }
-      },
-      kotlin_language_server = {
-        on_attach = on_attach,
-        capabilities = capabilities,
-        settings = {
+      end),
+      kotlin_language_server = get_options(function(opts)
+        opts.settings = {
           ["kotlin-language-server"] = {
             cmd_env = {
               PATH = vim.env.JAVA_HOME .. "/bin:" .. vim.env.PATH,
@@ -1050,11 +1048,9 @@ Plug("neovim/nvim-lspconfig", {
             }
           }
         }
-      },
-      rust_analyzer = {
-        on_attach = on_attach,
-        capabilities = capabilities,
-        settings = {
+      end),
+      rust_analyzer = get_options(function(opts)
+        opts.settings = {
           ["rust-analyzer"] = {
             assist = {
               importgroup = false,
@@ -1064,11 +1060,9 @@ Plug("neovim/nvim-lspconfig", {
             checkonsave = { command = "clippy" },
           }
         }
-      },
-      sumneko_lua = {
-        on_attach = on_attach,
-        capabilities = capabilities,
-        settings = {
+      end),
+      sumneko_lua = get_options(function(opts)
+        opts.settings = {
           Lua = {
             diagnostics = {
               globals = { "vim" }
@@ -1081,22 +1075,10 @@ Plug("neovim/nvim-lspconfig", {
             }
           }
         }
-      },
-      tsserver = {
-        on_attach = function(client, bufnr, ...)
-          client.resolved_capabilities.document_formatting = false
-          on_attach(client, bufnr, ...)
-        end,
-        capabilities = capabilities,
-      },
-      vimls = {
-        on_attach = on_attach,
-        capabilities = capabilities,
-      },
-      yamlls = {
-        on_attach = on_attach,
-        capabilities = capabilities,
-      },
+      end),
+      tsserver = get_options(disable_formatting),
+      vimls = get_options(),
+      yamlls = get_options(),
     }
 
     require("nvim-lsp-installer").setup {
@@ -1454,6 +1436,7 @@ vim.cmd([[
     au BufRead,BufNewFile *.nu set ft=nu
     au Filetype help set nu rnu
     au Filetype * set formatoptions=croqnjp
+    au Filetype markdown set comments=
   aug END
 ]])
 

@@ -40,8 +40,9 @@ ctags
 .settings
 .nu-env
 .jrc
-.env*
+.env.local
 .lspconfig.lua
 
 # Misc
 # *.patch
+njs
