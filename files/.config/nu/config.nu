@@ -76,6 +76,8 @@ let menu_style = {
 }
 let-env config = {
   filesize_metric: true
+  # TODO: "%" causes a crash https://github.com/nushell/nushell/issues/5958
+  # history_file_format: "sqlite"
   table_mode: rounded
   use_ls_colors: true
   rm_always_trash: true
@@ -149,45 +151,35 @@ let-env config = {
       modifier: control
       keycode: char_w
       mode: vi_insert
-      event: [
-        { edit: backspaceword }
-      ]
+      event: { edit: backspaceword }
     }
     {
       name: movewordleft
       modifier: control
       keycode: char_b
       mode: vi_insert
-      event: [
-        { edit: movewordleft }
-      ]
+      event:{ edit: movewordleft }
     }
     {
       name: movewordright
       modifier: control
       keycode: char_f
       mode: vi_insert
-      event: [
-        { edit: movewordright }
-      ]
+      event: { edit: movewordright }
     }
     {
       name: movetolinestart
       modifier: control
       keycode: char_o
       mode: vi_insert
-      event: [
-        { edit: movetolinestart }
-      ]
+      event: { edit: movetolinestart }
     }
     {
       name: movetolineend
       modifier: control
       keycode: char_e
       mode: vi_insert
-      event: [
-        { edit: movetolineend }
-      ]
+      event: { edit: movetolineend }
     }
     {
       name: completion_menu
@@ -243,29 +235,24 @@ let-env config = {
       modifier: control
       keycode: char_n
       mode: vi_insert
-      event: [
-        { send: historyhintwordcomplete }
-      ]
+      event: { send: historyhintwordcomplete }
     }
     {
       name: clearscreen
       modifier: control
       keycode: char_l
       mode: vi_insert
-      event: [
-        { send: clearscreen }
-      ]
+      event: { send: clearscreen }
     }
     {
       name: fzf_cd
       modifier: control
       keycode: char_y
       mode: vi_insert
-      event: [
-        { edit: clear }
-        { edit: insertString value: 'cd (ls | where type == dir | get name | str collect (char nl) | fzf-tmux)' }
-        { send: enter }
-      ]
+      event: {
+        send: executehostcommand
+        cmd: "cd (ls | where type == dir | get name | str collect (char nl) | fzf-tmux)" }
+      }
     }
     {
       name: fzf_edit
@@ -273,9 +260,10 @@ let-env config = {
       keycode: char_s
       mode: vi_insert
       event: [
-        { edit: clear }
-        { edit: insertString value: 'vf' }
-        { send: enter }
+        {
+          send: executehostcommand
+          cmd: "vf"
+        }
       ]
     }
     {
@@ -283,9 +271,7 @@ let-env config = {
       modifier: control
       keycode: char_d
       mode: vi_insert
-      event: [
-        { send: ctrld }
-      ]
+      event: { send: ctrld }
     }
   ]
 }
@@ -349,7 +335,6 @@ alias gsl = git stash list
 alias gst = git status
 alias gt = git tag
 alias gun = git reset HEAD --
-alias ls = exa
 alias la = ls -a
 alias ll = ls -l
 alias lc = (ls | sort-by modified | reverse)
@@ -406,7 +391,7 @@ def vf [] {
   if ($file | empty? | first) {} else {
     echo $"vim ($file)"
     echo $file | pbcopy
-    nvim $file
+    vim $file
   }
 }
 

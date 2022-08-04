@@ -14,6 +14,18 @@ export extern "npm" [
   -l                                             # display usage info for all commands
 ]
 
+export extern "npm ls" [
+  ...args: any
+  --help(-h)                                     # help
+  --all(-a)
+  --json
+  --long(-l)
+  --parseable(-p)
+  --global(-g)
+  --depth: number
+  --omit: string
+]
+
 export extern "npm run" [
   script?: string@"nu-comp npm scripts"          # script to run
   ...args: any

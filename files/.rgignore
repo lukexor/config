@@ -28,3 +28,4 @@ ctags
 .project
 .settings
 *.patch
+package-lock.json

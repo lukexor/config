@@ -779,13 +779,11 @@ Plug("yardnsm/vim-import-cost", {
   run = "npm install --production",
   config = function()
     vim.g.import_cost_virtualtext_prefix = " ▸ "
+    nmap("<localleader>C", ":ImportCost<CR>");
     vim.cmd([[
       aug ImportCost
         au!
-        au InsertLeave *.js,*.jsx,*.ts,*.tsx ImportCost
-        au BufEnter *.js,*.jsx,*.ts,*.tsx ImportCost
-        au BufEnter *.js,*.jsx,*.ts,*.tsx hi! link ImportCostVirtualText VirtualTextInfo
-        au CursorHold *.js,*.jsx,*.ts,*.tsx ImportCost
+        au ColorScheme gruvbox-material hi! link ImportCostVirtualText VirtualTextInfo
       aug END
     ]])
   end
@@ -866,6 +864,9 @@ Plug("kosayoda/nvim-lightbulb", {
   end
 })
 Plug("simrat39/rust-tools.nvim") -- Rust LSP library
+Plug("jose-elias-alvarez/null-ls.nvim", {
+  run = "npm install -g eslint_d @fsouza/prettierd markdownlint",
+})
 Plug("neovim/nvim-lspconfig", {
   config = function()
     -- Default LSP shortcuts to no-ops for non-supported file types to avoid
@@ -875,6 +876,9 @@ Plug("neovim/nvim-lspconfig", {
     end
 
     local buf_nmap = function(bufnr, lhs, rhs, opts) set_keymap("n", lhs, rhs,
+        Merge({ buffer = bufnr }, opts))
+    end
+    local buf_xmap = function(bufnr, lhs, rhs, opts) set_keymap("x", lhs, rhs,
         Merge({ buffer = bufnr }, opts))
     end
     local buf_set_option = function(bufnr, ...) vim.api.nvim_buf_set_option(bufnr, ...) end
@@ -929,6 +933,7 @@ Plug("neovim/nvim-lspconfig", {
 
       if client.resolved_capabilities.document_formatting then
         buf_nmap(bufnr, "<localleader>f", function() vim.lsp.buf.formatting_sync(nil, 4000) end, silent)
+        buf_xmap(bufnr, "<localleader>f", function() vim.lsp.buf.range_formatting(nil, 4000) end, silent)
         vim.cmd([[
           aug LspFormat
             au! * <buffer>
@@ -949,6 +954,25 @@ Plug("neovim/nvim-lspconfig", {
     end
     local capabilities = require("cmp_nvim_lsp").update_capabilities(vim.lsp.protocol.make_client_capabilities())
 
+    local null_ls = require("null-ls")
+    null_ls.setup {
+      on_attach = on_attach,
+      sources = {
+        null_ls.builtins.diagnostics.eslint_d,
+        null_ls.builtins.code_actions.eslint_d,
+        null_ls.builtins.formatting.prettierd,
+        null_ls.builtins.code_actions.refactoring,
+        null_ls.builtins.code_actions.shellcheck,
+        null_ls.builtins.diagnostics.jsonlint,
+        null_ls.builtins.diagnostics.ktlint,
+        null_ls.builtins.diagnostics.markdownlint,
+        null_ls.builtins.diagnostics.pylint,
+        null_ls.builtins.diagnostics.stylelint,
+        null_ls.builtins.diagnostics.tidy,
+        null_ls.builtins.diagnostics.yamllint,
+      }
+    }
+
     local disable_formatting = function(opts)
       local orig_on_attach = opts.on_attach
       opts.on_attach = function(client, ...)
@@ -963,7 +987,7 @@ Plug("neovim/nvim-lspconfig", {
         on_attach = on_attach,
         capabilities = capabilities,
         flags = {
-          debounce_text_changes = 200,
+          debounce_text_changes = 250,
         }
       }
       if type(enhance) == "function" then
@@ -975,58 +999,6 @@ Plug("neovim/nvim-lspconfig", {
     local server_opts = {
       bashls = get_options(),
       cssls = get_options(disable_formatting),
-      diagnosticls = get_options(function(opts)
-        local diag_filetypes = {
-          javascript = "eslint",
-          javascriptreact = "eslint",
-          typescript = "eslint",
-          typescriptreact = "eslint",
-          markdown = "markdownlint",
-          css = "",
-          html = "",
-        }
-        opts.filetypes = vim.tbl_keys(diag_filetypes)
-        opts.init_options = {
-          linters = {
-            eslint = {
-              sourceName = "eslint",
-              command = "eslint_d",
-              rootPatterns = { "package.json" },
-              debounce = 500,
-              args = { "--debug", "--stdin", "--stdin-filename", "%filepath", "--format", "json" },
-              parseJson = {
-                errorsRoot = "[0].messages",
-                line = "line",
-                column = "column",
-                endLine = "endLine",
-                endColumn = "endColumn",
-                message = "${message} [${ruleId}]",
-                security = "severity"
-              },
-              securities = {
-                [2] = "error",
-                [1] = "warning"
-              }
-            }
-          },
-          formatters = {
-            prettier = {
-              command = "prettier",
-              args = { "--stdin-filepath", "%filename" }
-            }
-          },
-          filetypes = diag_filetypes,
-          formatFiletypes = {
-            css = "prettier",
-            javascript = "prettier",
-            javascriptreact = "prettier",
-            json = "prettier",
-            typescript = "prettier",
-            typescriptreact = "prettier"
-          }
-        }
-      end),
-      eslint = get_options(),
       html = get_options(disable_formatting),
       jsonls = get_options(function(opts)
         disable_formatting(opts)
@@ -1242,8 +1214,8 @@ Plug("nvim-telescope/telescope.nvim", { -- Fuzzy finder
     telescope.load_extension("ultisnips")
     telescope.load_extension("fzf")
 
-    nmap("<leader>f", ":Telescope find_files<CR>")
-    nmap("<leader>A", ":Telescope find_files find_command=rg,--files,--hidden,--no-ignore,--glob,!.git<CR>")
+    nmap("<leader>f", ":Telescope fd<CR>")
+    nmap("<leader>A", ":Telescope fd find_command=rg,--files,--hidden,--no-ignore,--glob,!.git<CR>")
     nmap("<leader>b", ":Telescope buffers<CR>")
     nmap("<leader>B", ":Telescope current_buffer_fuzzy_find<CR>")
     nmap("<leader>C", ":Telescope commands<CR>")
