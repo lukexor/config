@@ -410,7 +410,7 @@ Plug("famiu/bufdelete.nvim", {
 Plug("ap/vim-buftabline", {
   except = { "vpm" },
   config = function()
-    vim.g.buftabline_show = 1 -- only when >= 2 buffers
+    vim.g.buftabline_show = 2 -- always
     vim.g.buftabline_numbers = 2 -- ordinal numbers
     vim.g.buftabline_indicators = 1
     vim.g.buftabline_separators = 1
@@ -864,9 +864,7 @@ Plug("kosayoda/nvim-lightbulb", {
   end
 })
 Plug("simrat39/rust-tools.nvim") -- Rust LSP library
-Plug("jose-elias-alvarez/null-ls.nvim", {
-  run = "npm install -g eslint_d @fsouza/prettierd markdownlint",
-})
+Plug("jose-elias-alvarez/null-ls.nvim")
 Plug("neovim/nvim-lspconfig", {
   config = function()
     -- Default LSP shortcuts to no-ops for non-supported file types to avoid
@@ -958,18 +956,16 @@ Plug("neovim/nvim-lspconfig", {
     null_ls.setup {
       on_attach = on_attach,
       sources = {
-        null_ls.builtins.diagnostics.eslint_d,
         null_ls.builtins.code_actions.eslint_d,
-        null_ls.builtins.formatting.prettierd,
-        null_ls.builtins.code_actions.refactoring,
         null_ls.builtins.code_actions.shellcheck,
+        null_ls.builtins.diagnostics.eslint_d,
         null_ls.builtins.diagnostics.jsonlint,
-        null_ls.builtins.diagnostics.ktlint,
         null_ls.builtins.diagnostics.markdownlint,
-        null_ls.builtins.diagnostics.pylint,
+        null_ls.builtins.diagnostics.shellcheck,
         null_ls.builtins.diagnostics.stylelint,
         null_ls.builtins.diagnostics.tidy,
         null_ls.builtins.diagnostics.yamllint,
+        null_ls.builtins.formatting.prettierd,
       }
     }
 
@@ -986,9 +982,6 @@ Plug("neovim/nvim-lspconfig", {
       local opts = {
         on_attach = on_attach,
         capabilities = capabilities,
-        flags = {
-          debounce_text_changes = 250,
-        }
       }
       if type(enhance) == "function" then
         enhance(opts)
