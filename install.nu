@@ -18,7 +18,7 @@ let apt_packages = [
   libsdl2-ttf-2.0-0 sqlite stow tmux tree vim watchman wget
 ]
 let npm_packages = [
-  eslint_d @fsouza/prettierd markdownlint jsonlint stylelint
+  eslint_d @fsouza/prettierd markdownlint markdownlint-cli jsonlint stylelint
   stylelint-config-standard
 ]
 let cargo_packages = [

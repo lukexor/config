@@ -302,7 +302,7 @@ alias crd = ^cargo run --quiet --profile dev-opt
 alias cre = cargo run --quiet --example
 alias crr = cargo run --quiet --release
 alias ct = cargo test
-alias open = ^open
+alias sopen = ^open
 alias find = ^fd
 alias ni = npm i
 alias nci = npm ci
@@ -385,7 +385,6 @@ def "nvm uninstall" [version?: string] {
 }
 
 def "tag_version" [semver?: string] {
-  hide open
   let old_version = (open Cargo.toml | get package.version)
   let new_version = if $semver == "major" {
     ($old_version | inc --major)

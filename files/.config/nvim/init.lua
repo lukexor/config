@@ -599,8 +599,8 @@ Plug("voldikss/vim-floaterm", {
     vim.g.floaterm_title = "nvim $1/$2"
     vim.g.floaterm_keymap_new = "<C-y>"
     vim.g.floaterm_keymap_toggle = "<C-t>"
-    vim.g.floaterm_keymap_prev = "<C-p>"
-    vim.g.floaterm_keymap_next = "<C-n>"
+    vim.g.floaterm_keymap_prev = "<C-[>"
+    vim.g.floaterm_keymap_next = "<C-]>"
     vim.g.floaterm_gitcommit = "floaterm"
     vim.g.floaterm_autoinsert = 1
     vim.g.floaterm_width = 0.8
