@@ -1089,11 +1089,13 @@ Plug("neovim/nvim-lspconfig", {
 -- Auto-Completion
 -- -----------------------------------------------------------------------------
 
+
 Plug("hrsh7th/cmp-nvim-lsp") -- LSP completion source
 Plug("hrsh7th/cmp-buffer") -- Buffer completion source
 Plug("hrsh7th/cmp-path") -- Path completion source
 Plug("hrsh7th/cmp-cmdline") -- Command completion source
 Plug("quangnguyen30192/cmp-nvim-ultisnips") -- Ultisnips completion source
+-- Plug("github/copilot.vim") -- Maybe someday
 -- Auto-completion library
 Plug("hrsh7th/nvim-cmp", {
   config = function()

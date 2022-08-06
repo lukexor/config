@@ -85,7 +85,6 @@ let-env config = {
   use_grid_icons: true
   footer_mode: "30"
   quick_completions: true
-  animate_prompt: false
   float_precision: 2
   use_ansi_coloring: true
   filesize_format: "auto"
@@ -383,6 +382,25 @@ def "nvm install" [version?: string] {
 # Uninstall Node version via nvm.
 def "nvm uninstall" [version?: string] {
   bash -ic $"nvm uninstall ($version) || exit"
+}
+
+def "tag_version" [semver?: string] {
+  hide open
+  let old_version = (open Cargo.toml | get package.version)
+  let new_version = if $semver == "major" {
+    ($old_version | inc --major)
+  } else if $semver == "minor" {
+    ($old_version | inc --minor)
+  } else if $semver == null || $semver == "patch" {
+    ($old_version | inc --patch)
+  } else if $semver != null {
+    echo "invalid semver - major | minor | patch"
+    return
+  }
+  perl -i -pe $"s/^version = \"($old_version)\"/version = \"($new_version)\"/" Cargo.toml
+  cargo update -w
+  git commit -m $"Released v$new_version"
+  git tag -a $new_version -m $"Release v$new_version"
 }
 
 # Fuzzy search a file to edit.
