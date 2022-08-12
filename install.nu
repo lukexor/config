@@ -5,13 +5,13 @@ Installing Packages...
 "
 
 let brew_packages = [
-  bat bash cc65 cmake coreutils docker fd cfzf git gnutls hexedit llvm neovim
+  bash cc65 cmake coreutils docker cfzf git gnutls hexedit llvm neovim
   node openjdk openjdk@11 openssl postgresql prettier python python3 sdl2
   sdl2_gfx sdl2_image sdl2_mixer sdl2_ttf shellcheck sqlite stow tidy-html5 tmux
   tree vim watchman wget yamllint
 ]
 let apt_packages = [
-  bat bash cc65 cmake coreutils docker fd fzf git hexedit llvm neovim nodejs npm
+  bash cc65 cmake coreutils docker fzf git hexedit llvm neovim nodejs npm
   openjdk-11-jdk openssl postgresql prettier pip python python3 libsdl2-2.0-0
   libsdl2-gfx-1.0-0 libsdl2-image-2.0-0 libsdl2-mixer-2.0-0 libsdl2-ttf-2.0-0
   sqlite stow tmux tree vim watchman wget
