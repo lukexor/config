@@ -7,8 +7,10 @@ local Plug = {
   begin = vim.fn["plug#begin"],
   ends = function()
     vim.call("plug#end")
-    for _, config in pairs(configs.start) do
-      config()
+    for plug_name, config in pairs(configs.start) do
+      if not pcall(config) then
+        vim.notify("failed to load config for " .. plug_name)
+      end
     end
   end
 }
@@ -41,8 +43,11 @@ local meta = {
     opts["for"] = opts.ft
     opts.ft = nil
 
+    local plugin = opts.as or plug_name(src)
     if type(opts.preload) == "function" then
-      opts.preload()
+      if not pcall(opts.preload) then
+        vim.notify("failed to preload " .. plugin)
+      end
     end
 
     if opts.except then
@@ -52,7 +57,6 @@ local meta = {
     vim.call("plug#", src, opts)
 
     if type(opts.config) == "function" then
-      local plugin = opts.as or plug_name(src)
       if opts["for"] == nil and opts.on == nil then
         configs.start[plugin] = opts.config
       else

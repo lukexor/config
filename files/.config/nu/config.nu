@@ -297,10 +297,10 @@ alias cd = fnmcd
 alias cdoc = cargo doc
 alias cdoco = cargo doc --open
 alias cfg = cd ~/config
-alias cr = ^cargo run --quiet
-alias crd = ^cargo run --quiet --profile dev-opt
-alias cre = cargo run --quiet --example
-alias crr = cargo run --quiet --release
+alias cr = ^cargo run
+alias crd = ^cargo run --profile dev-opt
+alias cre = cargo run --example
+alias crr = cargo run --release
 alias ct = cargo test
 alias sopen = ^open
 alias find = ^fd
@@ -334,6 +334,7 @@ alias gsl = git stash list
 alias gst = git status
 alias gt = git tag
 alias gun = git reset HEAD --
+alias flg = CARGO_PROFILE_RELEASE_DEBUG=true cargo flamegraph --root
 alias la = ls -a
 alias ll = ls -l
 alias lc = (ls | sort-by modified | reverse)
@@ -601,19 +602,19 @@ def-env fnmcd [path: path] {
 # Print out personalized ASCII logo.
 def init [] {
   if ($env.SHLVL | into int) == 1 {
-    let load = (uptime | parse -r "averages: (?P<avg>.*)" | get avg)
+    let load = (uptime | parse -r "averages?: (?P<avg>.*)" | get avg)
     let sys = (sys)
     let macos = $sys.host.name =~ Darwin
     let os = (if $macos {
       let vers = (sw_vers | parse -r '(?P<name>\w+):(?P<value>.*)' | transpose -r | str trim)
       $"($vers.ProductName | str collect) ($vers.ProductVersion | str collect)"
     } else {
-      uname -srm
+      uname -srm | str trim
     })
     let cpu = (if $macos {
       sysctl -n machdep.cpu.brand_string | str trim
     } else {
-      cat /proc/cpuinfo | rg 'model name\s+: (.*)' -r '$1' | uniq | str trim
+      cat /proc/cpuinfo | rg 'model name\s+: (.*)' -r '$1' | uniq | str trim | lines | first
     })
     echo $"
                i  t             (date now | date format '%Y-%m-%d %H:%M:%S')
