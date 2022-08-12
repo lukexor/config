@@ -479,7 +479,7 @@ def gnew [] {
 def gage [] {
   # substring 2, skips the currently checked out branch: "* "
   ^git branch -a | lines | str substring 2, | wrap name | where name !~ HEAD | insert "last commit" {
-      get name | each { |commit| ^git show $commit --no-patch --format=%as | str collect }
+      get name | each { |commit| ^git show $commit --no-patch --format=%as | str collect | str trim }
   } | sort-by "last commit"
 }
 
