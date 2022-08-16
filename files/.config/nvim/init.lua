@@ -845,7 +845,90 @@ Plug("nvim-lualine/lualine.nvim", {
     }
   end
 })
-Plug("junegunn/goyo.vim") -- Distraction free writing
+-- Distraction free writing
+Plug("junegunn/goyo.vim", {
+  config = function()
+    function GoyoEnter()
+      vim.fn.system("tmux set status off")
+
+      vim.opt.showmode = false
+      vim.opt.showcmd = false
+      vim.opt.list = false
+      vim.opt.scrolloff = 999
+      vim.opt.showtabline = 0
+
+      vim.g.gruvbox_material_show_eob = 0
+      vim.cmd("colorscheme gruvbox-material")
+      vim.cmd("SignatureToggleSigns")
+      require('lualine').hide()
+    end
+
+    function GoyoLeave()
+      vim.fn.system("tmux set status on")
+
+      vim.opt.showmode = true
+      vim.opt.showcmd = true
+      vim.opt.list = true
+      vim.opt.scrolloff = 8
+      vim.opt.showtabline = 1
+
+      vim.g.gruvbox_material_show_eob = 1
+      vim.cmd("colorscheme gruvbox-material")
+      vim.cmd("SignatureToggleSigns")
+      require('lualine').hide({ unhide = true })
+    end
+
+    vim.cmd([[
+      aug Goyo
+        au!
+        au User GoyoEnter nested lua GoyoEnter()
+        au User GoyoLeave nested lua GoyoLeave()
+      aug END
+    ]])
+
+    function TogglePresentMode()
+      if vim.fn.exists("#goyo") ~= 0 then
+        PresentLeave()
+      else
+        PresentEnter()
+      end
+    end
+
+    function PresentEnter()
+      nmap("l", ":n<CR>gg0", { silent = true })
+      nmap("h", ":N<CR>gg0", { silent = true })
+      nmap("<leader>E", ":lua FindExecCmd()<CR>")
+      nmap("<leader>P", ":lua TogglePresentMode()<CR>")
+
+      vim.opt.textwidth = 140
+      vim.opt.colorcolumn = "138"
+      vim.opt.splitbelow = false
+      vim.opt.splitright = false
+      vim.cmd("Goyo 145x40")
+      vim.cmd("normal gg0")
+    end
+
+    function PresentLeave()
+      nunmap("l")
+      nunmap("h")
+
+      vim.cmd("Goyo!")
+      vim.cmd("hi! ColorColumn ctermbg=238 guibg=#333333")
+      vim.opt.splitbelow = true
+      vim.opt.splitright = true
+    end
+
+    vim.cmd([[
+  aug PresentationMode
+    au!
+    au BufRead,BufNewFile *.vpm set ft=vpm
+    au BufRead *.vpm lua FindExecCmd()
+    au BufRead *.vpm if filereadable('syntax.vim') | source syntax.vim | endif
+    au VimEnter *.vpm lua PresentEnter()
+  aug END
+]]   )
+  end
+})
 Plug("junegunn/limelight.vim") -- Dim non-active paragraphs
 
 -- -----------------------------------------------------------------------------
@@ -950,7 +1033,8 @@ Plug("neovim/nvim-lspconfig", {
         },
       })
     end
-    local capabilities = require("cmp_nvim_lsp").update_capabilities(vim.lsp.protocol.make_client_capabilities())
+    local capabilities = vim.lsp.protocol.make_client_capabilities()
+    -- local capabilities = require("cmp_nvim_lsp").update_capabilities(vim.lsp.protocol.make_client_capabilities())
 
     local null_ls = require("null-ls")
     null_ls.setup {
@@ -1103,6 +1187,8 @@ Plug("hrsh7th/nvim-cmp", {
     local next_item = function(fallback)
       if cmp.visible() then
         cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
+      elseif vim.fn["UltiSnips#CanJumpForwards"]() == 1 then
+        vim.fn["UltiSnips#JumpForwards"]()
       else
         fallback()
       end
@@ -1110,6 +1196,8 @@ Plug("hrsh7th/nvim-cmp", {
     local prev_item = function(fallback)
       if cmp.visible() then
         cmp.select_prev_item({ behavior = cmp.SelectBehavior.Select })
+      elseif vim.fn["UltiSnips#CanJumpBackwards"]() == 1 then
+        vim.fn["UltiSnips#JumpBackwards"]()
       else
         fallback()
       end
@@ -1125,7 +1213,19 @@ Plug("hrsh7th/nvim-cmp", {
         documentation = cmp.config.window.bordered(),
       },
       mapping = {
-        ["<Tab>"] = cmp.mapping.confirm({ select = true }),
+        ["<Tab>"] = cmp.mapping(function(fallback)
+          if cmp.visible() then
+            local entry = cmp.get_selected_entry()
+            if not entry then
+              cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
+            else
+              cmp.confirm()
+            end
+          else
+            fallback()
+          end
+        end, { "i", "s", "c" }
+        ),
         ["<C-n>"] = cmp.mapping({
           c = next_item,
           i = next_item,
@@ -1136,8 +1236,8 @@ Plug("hrsh7th/nvim-cmp", {
         }),
       },
       sources = cmp.config.sources({
-        { name = "nvim_lsp" },
-        { name = "ultisnips" },
+        { name = "ultisnips", priority = 1 },
+        { name = "nvim_lsp", priority = 2 }
       }, {
         { name = "path" },
       }, {
@@ -1407,42 +1507,6 @@ vim.cmd([[
   aug END
 ]])
 
-function GoyoEnter()
-  vim.fn.system("tmux set status off")
-
-  vim.opt.showmode = false
-  vim.opt.showcmd = false
-  vim.opt.list = false
-  vim.opt.scrolloff = 999
-  vim.opt.showtabline = 0
-
-  vim.g.gruvbox_material_show_eob = 0
-  vim.cmd("colorscheme gruvbox-material")
-  vim.cmd("SignatureToggleSigns")
-end
-
-function GoyoLeave()
-  vim.fn.system("tmux set status on")
-
-  vim.opt.showmode = true
-  vim.opt.showcmd = true
-  vim.opt.list = true
-  vim.opt.scrolloff = 8
-  vim.opt.showtabline = 1
-
-  vim.g.gruvbox_material_show_eob = 1
-  vim.cmd("colorscheme gruvbox-material")
-  vim.cmd("SignatureToggleSigns")
-end
-
-vim.cmd([[
-  aug Goyo
-    au!
-    au User GoyoEnter nested lua GoyoEnter()
-    au User GoyoLeave nested lua GoyoLeave()
-  aug END
-]])
-
 function FindExecCmd()
   local line = vim.fn.search("^!!:.*")
   if line > 0 then
@@ -1452,48 +1516,6 @@ function FindExecCmd()
     vim.cmd("redraw!")
   end
 end
-
-function TogglePresentMode()
-  if vim.fn.exists("#goyo") ~= 0 then
-    PresentLeave()
-  else
-    PresentEnter()
-  end
-end
-
-function PresentEnter()
-  nmap("l", ":n<CR>gg0", { silent = true })
-  nmap("h", ":N<CR>gg0", { silent = true })
-  nmap("<leader>E", ":lua FindExecCmd()<CR>")
-  nmap("<leader>P", ":lua TogglePresentMode()<CR>")
-
-  vim.opt.textwidth = 140
-  vim.opt.colorcolumn = "138"
-  vim.opt.splitbelow = false
-  vim.opt.splitright = false
-  vim.cmd("Goyo 145x40")
-  vim.cmd("normal gg0")
-end
-
-function PresentLeave()
-  nunmap("l")
-  nunmap("h")
-
-  vim.cmd("Goyo!")
-  vim.cmd("hi! ColorColumn ctermbg=238 guibg=#333333")
-  vim.opt.splitbelow = true
-  vim.opt.splitright = true
-end
-
-vim.cmd([[
-  aug PresentationMode
-    au!
-    au BufRead,BufNewFile *.vpm set ft=vpm
-    au BufRead *.vpm lua FindExecCmd()
-    au BufRead *.vpm if filereadable('syntax.vim') | source syntax.vim | endif
-    au VimEnter *.vpm lua PresentEnter()
-  aug END
-]])
 
 vim.cmd([[
   aug Init

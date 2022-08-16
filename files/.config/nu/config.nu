@@ -592,7 +592,7 @@ def-env fnmcd [path: path] {
   } else {
     $env.PWD
   })
-  if (['.node-version' '.nvmrc'] | any? ($path | path join $it | path exists)) {
+  if (echo .nvmrc | path exists) {
     fnm use --silent-if-unchanged
   }
   ^cd $path
