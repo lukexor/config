@@ -303,6 +303,7 @@ CTRL-0                Open new terminal.
 CTRL-T                Toggle terminal.
 CTRL-[                Previous terminal.
 CTRL-]                Next terminal.
+CTRL-\ CTRL-N         Enter Normal mode to scroll.
 
 Test~
                                                          |test| *cht-plugins-test*
