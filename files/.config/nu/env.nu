@@ -80,7 +80,6 @@ let-env FZF_DEFAULT_COMMAND = "rg --files --hidden"
 let-env LESS = "-RFX"
 let-env PAGER = "nvim +Man!"
 let-env MANPAGER = "nvim +Man!"
-let-env RUST_BACKTRACE = 1
 let-env CARGO_TARGET_DIR = ([$nu.home-path ~/.cargo-target] | path join)
 
 # Directories to search for scripts when calling source or use

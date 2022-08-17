@@ -75,6 +75,7 @@ let menu_style = {
   description_text: yellow
 }
 let-env config = {
+  show_banner: false
   filesize_metric: true
   # TODO: "%" causes a crash https://github.com/nushell/nushell/issues/5958
   # history_file_format: "sqlite"
@@ -555,8 +556,8 @@ def "commands search" [] {
   let max_len = (help commands | each { |cmd| $cmd.name | str length } | math max)
   let max_indent = ($max_len / $tablen | into int)
 
-  def pad-tabs [input-name] {
-    let input_length = ($input-name | str length)
+  def pad-tabs [input_name] {
+    let input_length = ($input_name | str length)
     let required_tabs = $max_indent - ($"($input_length / $tablen | into int)" | into int)
     "" | str rpad -l $required_tabs -c (char tab)
   }
@@ -616,6 +617,7 @@ def init [] {
     } else {
       cat /proc/cpuinfo | rg 'model name\s+: (.*)' -r '$1' | uniq | str trim | lines | first
     })
+    let iface = (if $macos { "en0" } else { "eth0" })
     echo $"
                i  t             (date now | date format '%Y-%m-%d %H:%M:%S')
               LE  ED.           ($os)
@@ -624,7 +626,7 @@ def init [] {
            D#K.   E#E##t        Memory......: ($sys.mem.free) [Free] / ($sys.mem.total) [Total]
           E#K.    E#ti##f       CPU.........: ($cpu)
         .E#E.     E#t ;##D.     Load........: ($load) [1, 5, 15 min]
-       .K#E       E#ELLE##K:    IP Address..: (ifconfig en0 | rg 'inet (([0-9]{1,3}+.){4})' -or '$1' | str trim)
+       .K#E       E#ELLE##K:    IP Address..: (ifconfig ($iface) | rg 'inet (([0-9]{1,3}+.){4})' -or '$1' | str trim)
       .K#D        E#L;;;;;;,
      .W#G         E#t
     :W##########WtE#t

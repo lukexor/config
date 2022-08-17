@@ -33,7 +33,7 @@ def "nu-comp merge strategy-options" [] {
 }
 
 export extern "git merge" [
-  ...commits?: string@"nu-comp git all branches"    # name of the branch to merge
+  ...commits: string@"nu-comp git all branches"     # name of the branch to merge
   -n                                                # do not show a diffstat at the end of the merge
   --stat                                            # show a diffstat at the end of the merge
   --summary                                         # (synonym to --stat)
@@ -67,8 +67,8 @@ export extern "git merge" [
 ]
 
 export extern "git branch" [
-  branch-or-old?: string@"nu-comp git branches"  # name of the branch to target or old branch
-  new-branch?: string@"nu-comp git branches"     # name of the new branch
+  branch_or_old: string@"nu-comp git branches"   # name of the branch to target or old branch
+  new_branch: string@"nu-comp git branches"      # name of the new branch
   --abbrev: number                               # use <n> digits to display object names
   --all(-a)                                      # list both remote-tracking and local branches
   --color: string                                # use colored output
@@ -102,8 +102,7 @@ export extern "git branch" [
 ]
 
 export extern "git checkout" [
-  ...branch?: string@"nu-comp git all branches"     # name of the branch to checkout
-  ...files?: any
+  ...branch: string@"nu-comp git all branches"       # name of the branch to checkout
   --conflict: string                                 # conflict style (merge or diff3)
   --detach(-d)                                       # detach HEAD at named commit
   --force(-f)                                        # force checkout (throw away local modifications)
@@ -128,8 +127,8 @@ export extern "git checkout" [
 ]
 
 export extern "git push" [
-  remote?: string@"nu-comp git remotes"       # the name of the remote
-  ...refs?: string@"nu-comp git branches"     # the branch / refspec
+  remote: string@"nu-comp git remotes"        # the name of the remote
+  ...refs: string@"nu-comp git branches"      # the branch / refspec
   --all                                       # push all refs
   --atomic                                    # request atomic transaction on remote side
   --delete(-d)                                # delete refs
