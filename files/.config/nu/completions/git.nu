@@ -67,8 +67,8 @@ export extern "git merge" [
 ]
 
 export extern "git branch" [
-  branch_or_old: string@"nu-comp git branches"   # name of the branch to target or old branch
-  new_branch: string@"nu-comp git branches"      # name of the new branch
+  branch_or_old?: string@"nu-comp git branches"   # name of the branch to target or old branch
+  new_branch?: string@"nu-comp git branches"      # name of the new branch
   --abbrev: number                               # use <n> digits to display object names
   --all(-a)                                      # list both remote-tracking and local branches
   --color: string                                # use colored output
@@ -127,7 +127,7 @@ export extern "git checkout" [
 ]
 
 export extern "git push" [
-  remote: string@"nu-comp git remotes"        # the name of the remote
+  remote?: string@"nu-comp git remotes"        # the name of the remote
   ...refs: string@"nu-comp git branches"      # the branch / refspec
   --all                                       # push all refs
   --atomic                                    # request atomic transaction on remote side
