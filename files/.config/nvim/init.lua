@@ -57,7 +57,6 @@ vim.opt.updatecount = 50 -- Save more often than 200 characters typed.
 vim.opt.redrawtime = 10000 -- Allow more time for loading syntax on large files
 vim.opt.textwidth = 80
 vim.opt.cursorline = true
-vim.opt.colorcolumn = "80"
 vim.opt.signcolumn = "yes:2"
 vim.opt.synmaxcol = 200
 vim.opt.foldmethod = "indent"
@@ -74,7 +73,7 @@ vim.g.c_comment_strings = 1
 vim.opt.diffopt:append { "iwhite", "algorithm:patience", "indent-heuristic" }
 
 if vim.fn.executable("rg") then
-  vim.opt.grepprg = "rg\\ --no-heading\\ --vimgrep\\ --no-ignore-vcs\\ -."
+  vim.opt.grepprg = "rg --no-heading --vimgrep --smart-case"
   vim.opt.grepformat = "%f:%l:%c:%m"
 end
 
@@ -197,6 +196,7 @@ nmap("#", "#zzzv", silent)
 nmap("g*", "g*zzzv", silent)
 nmap("g#", "g*zzzv", silent)
 
+nmap("<leader>G", ":silent lgrep ")
 nmap("<leader>s", ":%s/")
 -- Trim blanks
 nmap("<leader>R", ":%s/\\s\\+$//<CR>")
@@ -811,11 +811,11 @@ Plug("sainnhe/gruvbox-material", {
         au!
         au ColorScheme gruvbox-material hi! Comment ctermfg=208 guifg=#e78a4e
         au ColorScheme gruvbox-material hi! SpecialComment ctermfg=108 guifg=#89b482 guisp=#89b482
-        au ColorScheme gruvbox-material hi! ColorColumn ctermbg=237 guibg=#333333
         au ColorScheme gruvbox-material hi! FloatermBorder ctermbg=none guibg=none
         au ColorScheme gruvbox-material hi! link Whitespace DiffDelete
+        au ColorScheme gruvbox-material hi! CursorLine ctermbg=none guibg=none
         au InsertEnter * hi! CursorLine ctermbg=237 guibg=#333e34
-        au InsertLeave * hi! CursorLine ctermbg=235 guibg=#282828
+        au InsertLeave * hi! CursorLine ctermbg=none guibg=none
       aug END
     ]])
 
@@ -830,7 +830,7 @@ Plug("nvim-lualine/lualine.nvim", {
         icons_enabled = true,
         theme = "gruvbox",
         component_separators = { left = " ", right = " " },
-        section_separators = { left = " ", right = " " },
+        section_separators = { left = " ", right = " " },
         disabled_filetypes = {},
         always_divide_middle = true,
       },
@@ -849,8 +849,6 @@ Plug("nvim-lualine/lualine.nvim", {
 Plug("junegunn/goyo.vim", {
   config = function()
     function GoyoEnter()
-      vim.fn.system("tmux set status off")
-
       vim.opt.showmode = false
       vim.opt.showcmd = false
       vim.opt.list = false
@@ -864,8 +862,6 @@ Plug("junegunn/goyo.vim", {
     end
 
     function GoyoLeave()
-      vim.fn.system("tmux set status on")
-
       vim.opt.showmode = true
       vim.opt.showcmd = true
       vim.opt.list = true
@@ -901,7 +897,6 @@ Plug("junegunn/goyo.vim", {
       nmap("<leader>P", ":lua TogglePresentMode()<CR>")
 
       vim.opt.textwidth = 140
-      vim.opt.colorcolumn = "138"
       vim.opt.splitbelow = false
       vim.opt.splitright = false
       vim.cmd("Goyo 145x40")

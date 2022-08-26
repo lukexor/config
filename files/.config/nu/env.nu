@@ -44,6 +44,7 @@ let-env PATH = [
   ([$nu.home-path bin] | path join)
   ([$nu.home-path .cargo/bin] | path join)
   ([$nu.home-path .fzf/bin] | path join)
+  /Applications/kitty.app/Contents/MacOS
   ([$env.JAVA_HOME bin] | path join)
   /usr/local/bin
   /usr/games
@@ -80,7 +81,7 @@ let-env FZF_DEFAULT_COMMAND = "rg --files --hidden"
 let-env LESS = "-RFX"
 let-env PAGER = "nvim +Man!"
 let-env MANPAGER = "nvim +Man!"
-let-env CARGO_TARGET_DIR = ([$nu.home-path ~/.cargo-target] | path join)
+let-env CARGO_TARGET_DIR = ([$nu.home-path .cargo-target] | path join)
 
 # Directories to search for scripts when calling source or use
 #
