@@ -392,10 +392,13 @@ local disabled_built_ins = {
   "netrwPlugin",
   "netrwSettings",
   "netrwFileHandlers",
+  "man",
   "matchit",
   "matchparen",
   "tar",
   "tarPlugin",
+  "tutor",
+  "rplugin",
   "rrhelper",
   "vimball",
   "vimballPlugin",
@@ -474,9 +477,13 @@ Plug("terryma/vim-smooth-scroll", {
 -- Documentation
 -- -----------------------------------------------------------------------------
 
-Plug("sudormrfbin/cheatsheet.nvim") -- Cheatsheet Search
+-- Cheatsheet Search
+Plug("sudormrfbin/cheatsheet.nvim", {
+  on = { "Cheatsheet", "CheatsheetEdit" }
+})
 -- Online Cheat.sh lookup
 Plug("dbeniamine/cheat.sh-vim", {
+  on = { "Cheat" },
   config = function()
     vim.g.CheatSheetStayInOrigBuf = 0
     vim.g.CheatSheetDoNotMap = 1
@@ -515,6 +522,10 @@ Plug("folke/which-key.nvim", {
 
 -- Auto-close HTML/JSX tags
 Plug("windwp/nvim-ts-autotag", {
+  ft = {
+    "html",
+    "typescriptreact",
+  },
   config = function()
     require("nvim-treesitter.configs").setup {
       autotag = {
@@ -564,14 +575,26 @@ Plug("tpope/vim-surround", {
 })
 -- Make aligning rows easier
 Plug("junegunn/vim-easy-align", {
+  on = { "<Plug>(EasyAlign)" },
   config = function()
     xmap("<leader>a", "<Plug>(EasyAlign)")
     nmap("<leader>a", "<Plug>(EasyAlign)")
   end
 })
-Plug("glts/vim-magnum") -- Dependency for glts/vim-radical
+local vim_radical_on = {
+  "<Plug>RadicalView",
+  "<Plug>RadicalCoerceToDecimal",
+  "<Plug>RadicalCoerceToHex",
+  "<Plug>RadicalCoerceToOctal",
+  "<Plug>RadicalCoerceToBinary",
+}
+-- Dependency for glts/vim-radical
+Plug("glts/vim-magnum", {
+  on = vim_radical_on,
+})
 -- Number conversions
 Plug("glts/vim-radical", {
+  on = vim_radical_on,
   config = function()
     nmap("gA", "<Plug>RadicalView")
     xmap("gA", "<Plug>RadicalView")
@@ -582,6 +605,12 @@ Plug("glts/vim-radical", {
   end
 })
 Plug("zirrostig/vim-schlepp", {
+  on = {
+    "<Plug>SchleppUp",
+    "<Plug>SchleppDown",
+    "<Plug>SchleppLeft",
+    "<Plug>SchleppRight",
+  },
   config = function()
     vmap("K", "<Plug>SchleppUp")
     vmap("J", "<Plug>SchleppDown")
@@ -643,8 +672,12 @@ Plug("preservim/nerdtree", {
     vim.g.plug_window = 'noau vertical topleft new'
   end
 })
-Plug("Xuyuanp/nerdtree-git-plugin", nerdtree_opts)
-Plug("tiagofumo/vim-nerdtree-syntax-highlight", nerdtree_opts)
+Plug("Xuyuanp/nerdtree-git-plugin", {
+  on = nerdtree_opts.on,
+})
+Plug("tiagofumo/vim-nerdtree-syntax-highlight", {
+  on = nerdtree_opts.on,
+})
 
 -- -----------------------------------------------------------------------------
 -- Project Management
@@ -661,6 +694,7 @@ Plug("airblade/vim-rooter", {
 -- Javascrpt import sizes
 Plug("yardnsm/vim-import-cost", {
   run = "npm install --production",
+  ft = { "typescript", "typescriptreact" },
   config = function()
     vim.g.import_cost_virtualtext_prefix = " ▸ "
     nmap("<localleader>C", ":ImportCost<CR>");
@@ -744,7 +778,10 @@ Plug("kosayoda/nvim-lightbulb", {
     require("nvim-lightbulb").setup { au = { enabled = true } }
   end
 })
-Plug("simrat39/rust-tools.nvim") -- Rust LSP library
+-- Rust LSP library
+Plug("simrat39/rust-tools.nvim", {
+  ft = { "rust" },
+})
 Plug("jose-elias-alvarez/null-ls.nvim")
 Plug("neovim/nvim-lspconfig", {
   config = function()
@@ -1189,7 +1226,10 @@ Plug("sheerun/vim-polyglot", {
     vim.cmd("au BufEnter *.lua set indentexpr= smartindent")
   end
 })
-Plug("stephpy/vim-yaml") -- Not provided by vim-polyglot
+-- Not provided by vim-polyglot
+Plug("stephpy/vim-yaml", {
+  ft = { "yaml" },
+})
 
 -- -----------------------------------------------------------------------------
 -- Testing/Debugging
