@@ -603,53 +603,10 @@ def-env fnmcd [path: path] {
   ^cd $path
 }
 
-# Print out personalized ASCII logo.
-def init [] {
-  if ($env.SHLVL | into int) == 1 {
-    let load = (uptime | parse -r "averages?: (?P<avg>.*)" | get avg)
-    let sys = (sys)
-    let macos = $sys.host.name =~ Darwin
-    let os = (if $macos {
-      let vers = (sw_vers | parse -r '(?P<name>\w+):(?P<value>.*)' | transpose -r | str trim)
-      $"($vers.ProductName | str collect) ($vers.ProductVersion | str collect)"
-    } else {
-      uname -srm | str trim
-    })
-    let cpu = (if $macos {
-      sysctl -n machdep.cpu.brand_string | str trim
-    } else {
-      cat /proc/cpuinfo | rg 'model name\s+: (.*)' -r '$1' | uniq | str trim | lines | first
-    })
-    let iface = (if $macos { "en0" } else { "eth0" })
-    echo $"
-               i  t             (date now | date format '%Y-%m-%d %H:%M:%S')
-              LE  ED.           ($os)
-             L#E  E#K:
-            G#W.  E##W;         Uptime......: ($sys.host.uptime)
-           D#K.   E#E##t        Memory......: ($sys.mem.free) [Free] / ($sys.mem.total) [Total]
-          E#K.    E#ti##f       CPU.........: ($cpu)
-        .E#E.     E#t ;##D.     Load........: ($load) [1, 5, 15 min]
-       .K#E       E#ELLE##K:    IP Address..: (ifconfig ($iface) | rg 'inet (([0-9]{1,3}+.){4})' -or '$1' | str trim)
-      .K#D        E#L;;;;;;,
-     .W#G         E#t
-    :W##########WtE#t
-    :,,,,,,,,,,,,,.
-" | lolcat
-  }
-}
-
 
 # =============================================================================
 # Startup   {{{1
 # =============================================================================
-
-let level = if (env | any? name == SHLVL) { $env.SHLVL | into int } else { 0 }
-let-env SHLVL = (if (env | any? name == TMUX) && $level >= 3 {
-    $level - 2
-  } else {
-    $level + 1
-  }
-)
 
 load-env (
   fnm env --shell bash
@@ -663,30 +620,4 @@ load-env (
 )
 let-env PATH = ($env.PATH | prepend $"($env.FNM_MULTISHELL_PATH)/bin")
 
-init
-
 # =============================================================================
-# Reference   {{{1
-# =============================================================================
-
-# color, abbreviation
-# green  g
-# red    r
-# blue   u
-# black  b
-# yellow y
-# purple p
-# cyan   c
-# white  w
-# attribute, abbreviation
-# bold       b
-# underline  u
-
-# italic     i
-# dimmed     d
-# reverse    r
-# abbreviated: green bold = gb, red underline = ru, blue dimmed = ud
-# or verbose: green_bold, red_underline, blue_dimmed
-
-
-# vim: foldmethod=marker foldlevel=0

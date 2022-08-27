@@ -1,4 +1,28 @@
-command_timeout = 1000
+command_timeout = 2000
+
+format = """
+$directory\
+$git_branch\
+$git_commit\
+$git_state\
+$git_status\
+$c\
+$golang\
+$kotlin\
+$lua\
+$nodejs\
+$python\
+$rust\
+$cmd_duration\
+$line_break\
+$line_break\
+$battery\
+$status"""
+
+[time]
+disabled = false
+format = '[\[$time\]]($style) '
+time_format = "%H:%M"
 
 [[battery.display]]
 threshold = 15
@@ -9,19 +33,9 @@ discharging_symbol = "💀 "
 threshold = 30
 style = "bold yellow"
 
-[time]
-disabled = false
-format = '[\[$time\]]($style) '
-time_format = "%H:%M"
-
 [directory]
 truncate_to_repo = false
 truncation_symbol = "../"
 
 [python]
 python_binary = "python3"
-disabled = true
-
-# Rely on nushell instead
-[character]
-disabled = true

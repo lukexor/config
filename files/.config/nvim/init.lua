@@ -378,19 +378,41 @@ nmap("<leader>tS", ":.!figlet -w 200 -f small<CR>")
 -- Plugins
 -- =============================================================================
 
--- Auto-install vim-plug
-local data_dir = vim.fn.stdpath('data') .. "/site"
-if vim.fn.empty(vim.fn.glob(data_dir .. "/autoload/plug.vim")) then
-  local install_cmd = "silent exe '!curl -fLo %s/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'"
-  vim.cmd(install_cmd:format(data_dir))
+-- -----------------------------------------------------------------------------
+-- Disable built-in plugins
+-- -----------------------------------------------------------------------------
+
+local disabled_built_ins = {
+  "2html_plugin",
+  "getscript",
+  "getscriptPlugin",
+  "gzip",
+  "logipat",
+  "netrw",
+  "netrwPlugin",
+  "netrwSettings",
+  "netrwFileHandlers",
+  "matchit",
+  "matchparen",
+  "tar",
+  "tarPlugin",
+  "rrhelper",
+  "vimball",
+  "vimballPlugin",
+  "zip",
+  "zipPlugin",
+}
+
+for _, plugin in pairs(disabled_built_ins) do
+  vim.g["loaded_" .. plugin] = 1
 end
 
--- Run PlugInstall if there are missing plugins
-vim.cmd([[
-  au VimEnter * if len(filter(values(g:plugs), '!isdirectory(v:val.dir)'))
-    \| PlugInstall --sync | source $MYVIMRC
-    \| endif
-]])
+-- Auto-install vim-plug
+local data_dir = vim.fn.stdpath('data') .. "/site"
+-- if vim.fn.empty(vim.fn.glob(data_dir .. "/autoload/plug.vim")) then
+--   local install_cmd = "silent exe '!curl -fLo %s/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'"
+--   vim.cmd(install_cmd:format(data_dir))
+-- end
 
 local Plug = require("vimplug")
 
@@ -400,6 +422,12 @@ Plug.begin(data_dir .. "/plugged")
 -- VIM Enhancements
 -- -----------------------------------------------------------------------------
 
+-- Cache lua plugins
+Plug("lewis6991/impatient.nvim", {
+  config = function()
+    require("impatient")
+  end
+})
 -- Keep window layout when deleting buffers
 Plug("famiu/bufdelete.nvim", {
   config = function()
@@ -427,26 +455,8 @@ Plug("ap/vim-buftabline", {
     nmap("<leader>0", "<Plug>BufTabLine.Go(-1)")
   end
 })
--- Easier vim session management
-Plug("tpope/vim-obsession", {
-  on = { "Obsession" },
-  preload = function()
-    nmap("<leader>O", ":Obsession<CR>")
-  end,
-  config = function()
-  end
-})
 Plug("tpope/vim-repeat") -- Repeat with "."
 Plug("tpope/vim-sleuth") -- Smart buffer options based on contents
-Plug("tpope/vim-unimpaired") -- Bracket motions
--- Better searching
-Plug("justinmk/vim-sneak", {
-  config = function()
-    vim.g["sneak#s_next"] = 1
-    omap("z", "<Plug>Sneak_s")
-    omap("Z", "<Plug>Sneak_S")
-  end
-})
 Plug("ypcrts/securemodelines") -- Safe modelines
 Plug("editorconfig/editorconfig-vim") -- Parses .editorconfig
 Plug("kshenoy/vim-signature") -- Show marks in gutter
@@ -584,30 +594,11 @@ Plug("zirrostig/vim-schlepp", {
 -- System Integration
 -- -----------------------------------------------------------------------------
 
-Plug("tpope/vim-dadbod") -- Database access
-Plug("tpope/vim-dispatch") -- Async builder/dispatcher
 Plug("tpope/vim-eunuch", {
   on = { "Remove", "Delete", "Move", "Rename", "Copy", "Mkdir", "Wall", "SudoWrite", "SudoEdit" }
 })
 Plug("tpope/vim-fugitive", {
   on = { "Git", "Gdiffsplit", "Gvdiffsplit", "GMove", "GBrowse", "GDelete" }
-})
-Plug("tpope/vim-rhubarb", { on = { "GBrowse" } }) -- Browse github urls
-Plug("voldikss/vim-floaterm", {
-  config = function()
-    vim.g.floaterm_shell = "nu"
-    vim.g.floaterm_title = "nvim $1/$2"
-    vim.g.floaterm_keymap_new = "<C-y>"
-    vim.g.floaterm_keymap_toggle = "<C-t>"
-    vim.g.floaterm_keymap_prev = "<C-[>"
-    vim.g.floaterm_keymap_next = "<C-]>"
-    vim.g.floaterm_gitcommit = "floaterm"
-    vim.g.floaterm_autoinsert = 1
-    vim.g.floaterm_width = 0.8
-    vim.g.floaterm_height = 0.8
-    vim.g.floaterm_wintitle = 0
-    vim.g.floaterm_autoclose = 1
-  end
 })
 Plug("iamcco/markdown-preview.nvim", {
   run = vim.fn["mkdp#util#install"],
@@ -628,35 +619,11 @@ Plug("preservim/nerdtree", {
     )
     nmap("<leader>N", ":NERDTreeFind<CR>")
 
-    -- Function to open the file or NERDTree or netrw.
-    --   Returns: 1 if either file explorer was opened; otherwise, 0.
-    vim.cmd([[
-      fun! s:OpenFileOrExplorer(...)
-        if a:0 == 0
-          exe 'edit'
-          return 0
-        elseif a:1 =~? '^\(scp\|ftp\)://' " Add other protocols as needed.
-          exe 'Vexplore '.a:1
-        elseif isdirectory(a:1)
-          exe 'NERDTree '.a:1
-        else
-          exe 'edit '.a:1
-          return 0
-        endif
-        return 1
-      endfun
-
-      command! -n=? -complete=file -bar Edit :call <SID>OpenFileOrExplorer('<args>')
-      cnoreabbrev e Edit
-    ]])
-
     vim.cmd([[
       aug NERDTree
         au!
         " Start NERDTree when Vim starts with a directory argument.
         au StdinReadPre * let s:std_in=1
-        au VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists('s:std_in') |
-          \ if <SID>OpenFileOrExplorer(argv()[0]) | wincmd p | enew | bd 1 | exe 'lcd '.argv()[0] | wincmd p | endif | endif
 
         " Closes if NERDTree is the only open window
         au BufEnter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
@@ -683,34 +650,6 @@ Plug("tiagofumo/vim-nerdtree-syntax-highlight", nerdtree_opts)
 -- Project Management
 -- -----------------------------------------------------------------------------
 
--- Add project commands
-Plug("tpope/vim-projectionist", {
-  config = function()
-    vim.g.projectionist_heuristics = {
-      ["package.json"] = {
-        ["*"] = {
-          start = "npm start",
-          make = "npm run lint",
-        },
-        ["*.ts"] = {
-          type = "source",
-          alternate = "{}.test.ts",
-        },
-        ["*.tsx"] = {
-          type = "source",
-          alternate = "{}.test.tsx",
-        }
-      },
-      ["Cargo.toml"] = {
-        ["*"] = {
-          start = "cargo run",
-          make = "cargo clippy --all-targets",
-          console = "nu -c 'start https://play.rust-lang.org/' > /dev/null 2>&1; exit",
-        },
-      },
-    }
-  end
-})
 -- Find the root project folder
 Plug("airblade/vim-rooter", {
   config = function()
@@ -718,62 +657,7 @@ Plug("airblade/vim-rooter", {
     vim.g.rooter_resolve_links = 1
   end
 })
-Plug("aserebryakov/vim-todo-lists", {
-  config = function()
-    -- This plugin is great but takes too many liberties with mappings
-    vim.g.vimtodolists_plugin = 1
-
-    -- TODO: Convert to lua
-    vim.cmd([[
-      fun! TodoListsSetNormalMode()
-        setlocal indentexpr=b:pindentexpr
-        setlocal formatoptions=b:pformatoptions
-        nunmap <buffer> o
-        nunmap <buffer> O
-        iunmap <buffer> <CR>
-        noremap <buffer> <leader>te :silent call TodoListsSetItemMode()<CR>
-      endfun
-    ]])
-
-    vim.cmd([[
-      fun! TodoListsSetItemMode()
-        let b:pindentexpr=&indentexpr
-        let b:pformatoptions=&formatoptions
-        setlocal indentexpr=
-        setlocal formatoptions-=ro
-        nnoremap <buffer><silent> o :silent call VimTodoListsCreateNewItemBelow()<CR>
-        nnoremap <buffer><silent> O :silent call VimTodoListsCreateNewItemAbove()<CR>
-        inoremap <buffer><silent> <CR> <ESC>:silent call VimTodoListsCreateNewItemBelow()<CR>
-        noremap <buffer><silent> <leader>te :silent call TodoListsSetNormalMode()<CR>
-      endfun
-    ]])
-
-    vim.cmd([[
-      fun! TodoListsInit()
-        let g:VimTodoListsKeepSameIndent = 0
-        let g:VimTodoListsUndoneItem = '- [ ]'
-        let g:VimTodoListsDoneItem = '- [x]'
-        let g:VimTodoListsMoveItems = 0
-
-        call VimTodoListsInitializeTokens()
-        call VimTodoListsInitializeSyntax()
-
-        nnoremap <buffer> <leader>tt :silent call VimTodoListsToggleItem()<CR>
-        nnoremap <buffer> <leader>tn :silent call VimTodoListsCreateNewItem()<CR>
-        nnoremap <buffer> <leader>tO :silent call VimTodoListsCreateNewItemAbove()<CR>
-        nnoremap <buffer> <leader>to :silent call VimTodoListsCreateNewItemBelow()<CR>
-        noremap <buffer> <leader>te :silent call TodoListsSetItemMode()<CR>
-      endfun
-    ]])
-
-    vim.cmd([[
-      aug TodoLists
-        au!
-        au BufRead,BufNewFile *.todo.md call TodoListsInit()
-      aug end
-    ]])
-  end
-})
+-- TODO: Create TODO list shortcuts
 -- Javascrpt import sizes
 Plug("yardnsm/vim-import-cost", {
   run = "npm install --production",
@@ -794,7 +678,7 @@ Plug("yardnsm/vim-import-cost", {
 -- -----------------------------------------------------------------------------
 
 Plug("ryanoasis/vim-devicons")
-Plug("stevearc/dressing.nvim") -- Window UI enhancements
+Plug("stevearc/dressing.nvim") -- Window UI enhancements, popups, input, etc
 Plug("sainnhe/gruvbox-material", {
   config = function()
     vim.g.gruvbox_material_transparent_background = 1
@@ -845,92 +729,11 @@ Plug("nvim-lualine/lualine.nvim", {
     }
   end
 })
--- Distraction free writing
-Plug("junegunn/goyo.vim", {
-  config = function()
-    function GoyoEnter()
-      vim.opt.showmode = false
-      vim.opt.showcmd = false
-      vim.opt.list = false
-      vim.opt.scrolloff = 999
-      vim.opt.showtabline = 0
-
-      vim.g.gruvbox_material_show_eob = 0
-      vim.cmd("colorscheme gruvbox-material")
-      vim.cmd("SignatureToggleSigns")
-      require('lualine').hide()
-    end
-
-    function GoyoLeave()
-      vim.opt.showmode = true
-      vim.opt.showcmd = true
-      vim.opt.list = true
-      vim.opt.scrolloff = 8
-      vim.opt.showtabline = 1
-
-      vim.g.gruvbox_material_show_eob = 1
-      vim.cmd("colorscheme gruvbox-material")
-      vim.cmd("SignatureToggleSigns")
-      require('lualine').hide({ unhide = true })
-    end
-
-    vim.cmd([[
-      aug Goyo
-        au!
-        au User GoyoEnter nested lua GoyoEnter()
-        au User GoyoLeave nested lua GoyoLeave()
-      aug END
-    ]])
-
-    function TogglePresentMode()
-      if vim.fn.exists("#goyo") ~= 0 then
-        PresentLeave()
-      else
-        PresentEnter()
-      end
-    end
-
-    function PresentEnter()
-      nmap("l", ":n<CR>gg0", { silent = true })
-      nmap("h", ":N<CR>gg0", { silent = true })
-      nmap("<leader>E", ":lua FindExecCmd()<CR>")
-      nmap("<leader>P", ":lua TogglePresentMode()<CR>")
-
-      vim.opt.textwidth = 140
-      vim.opt.splitbelow = false
-      vim.opt.splitright = false
-      vim.cmd("Goyo 145x40")
-      vim.cmd("normal gg0")
-    end
-
-    function PresentLeave()
-      nunmap("l")
-      nunmap("h")
-
-      vim.cmd("Goyo!")
-      vim.cmd("hi! ColorColumn ctermbg=238 guibg=#333333")
-      vim.opt.splitbelow = true
-      vim.opt.splitright = true
-    end
-
-    vim.cmd([[
-  aug PresentationMode
-    au!
-    au BufRead,BufNewFile *.vpm set ft=vpm
-    au BufRead *.vpm lua FindExecCmd()
-    au BufRead *.vpm if filereadable('syntax.vim') | source syntax.vim | endif
-    au VimEnter *.vpm lua PresentEnter()
-  aug END
-]]   )
-  end
-})
-Plug("junegunn/limelight.vim") -- Dim non-active paragraphs
 
 -- -----------------------------------------------------------------------------
 -- LSP
 -- -----------------------------------------------------------------------------
 
-Plug("RRethy/vim-illuminate") -- Highlights nearby uses of words on hover
 Plug("ray-x/lsp_signature.nvim") -- Shows function signatures as you type
 Plug("williamboman/nvim-lsp-installer")
 Plug("antoinemadec/FixCursorHold.nvim") -- Dependency for nvim-lightbulb
@@ -1018,7 +821,6 @@ Plug("neovim/nvim-lspconfig", {
         ]])
       end
 
-      require("illuminate").on_attach(client)
       require("lsp_signature").on_attach({
         bind = true,
         doc_lines = 10,
@@ -1361,9 +1163,14 @@ Plug("nvim-telescope/telescope.nvim", { -- Fuzzy finder
 -- Language Support
 -- -----------------------------------------------------------------------------
 
+Plug("nathom/filetype.nvim")
 Plug("sheerun/vim-polyglot", {
   preload = function()
-    vim.g.polyglot_disabled = { "autoindent" } -- Let vim-sleuth do it
+    vim.g.polyglot_disabled = { "autoindent", "sensible" } -- Let vim-sleuth do it
+    vim.g.polyglot_enable_extra_features = 0
+    vim.g.markdown_fenced_languages = { "javascript", "js=javascript", "json=javascript", "rust" }
+    vim.g.rustfmt_autosave = 1
+    vim.g.rust_clip_command = "pbcopy"
   end,
   config = function()
     -- HTML:       othree/html5.vim
@@ -1378,8 +1185,6 @@ Plug("sheerun/vim-polyglot", {
     -- Swift:      keith/swift.vim
     -- TOML:       cespare/vim-toml
     -- Typescript: HerringtonDarkholme/yats.vim
-    vim.g.rustfmt_autosave = 1
-    vim.g.rust_clip_command = "pbcopy"
     -- Lua GetLuaIndent is not accurate
     vim.cmd("au BufEnter *.lua set indentexpr= smartindent")
   end
@@ -1414,7 +1219,8 @@ Plug("puremourning/vimspector", {
   on = {
     "<Plug>VimspectorLaunch",
     "<Plug>VimspectorToggleBreakpoint",
-    "<Plug>VimspectorToggleConditionalBreakpoint"
+    "<Plug>VimspectorToggleConditionalBreakpoint",
+    "VimspectorUpdate"
   },
   preload = function()
     nmap("<localleader>dd", "<Plug>VimspectorLaunch")
@@ -1554,7 +1360,6 @@ vim.cmd([[
       \ if &ft !~# 'commit\|rebase' && line("'\"") > 1 && line("'\"") <= line("$") |
       \   exe 'normal! g`"' |
       \ endif
-    au VimEnter * helptags ~/.config/nvim/doc
     au CmdwinEnter *
         \ echohl Todo |
         \ echo 'You discovered the command-line window! You can close it with ":q".' |

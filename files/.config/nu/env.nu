@@ -16,15 +16,39 @@
 #    Personal nushell env configuration of Luke Petherbridge <me@lukeworks.tech>
 
 
+# =============================================================================
+# Reference   {{{1
+# =============================================================================
+
+# color, abbreviation
+# green  g
+# red    r
+# blue   u
+# black  b
+# yellow y
+# purple p
+# cyan   c
+# white  w
+# attribute, abbreviation
+# bold       b
+# underline  u
+
+# italic     i
+# dimmed     d
+# reverse    r
+# abbreviated: green bold = gb, red underline = ru, blue dimmed = ud
+# or verbose: green_bold, red_underline, blue_dimmed
+
+
+# vim: foldmethod=marker foldlevel=0
 
 # =============================================================================
 # Prompt   {{{1
 # =============================================================================
 
 let-env PROMPT_COMMAND = {
-  let starship = (starship prompt --cmd-duration $env.CMD_DURATION_MS | str collect)
-  let version = ((version).version)
-  build-string $starship (ansi ub) "v" $version (ansi gb) " "
+  let width = (term size -c | get columns | into string)
+  starship prompt $"--cmd-duration=($env.CMD_DURATION_MS)" $"--status=($env.LAST_EXIT_CODE)" $"--terminal-width=($width)"
 }
 let-env PROMPT_COMMAND_RIGHT = ""
 let-env PROMPT_INDICATOR = "❯ "
