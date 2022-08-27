@@ -8,7 +8,7 @@ let brew_packages = [
   bash cc65 cmake coreutils docker fzf git gnutls hexedit llvm neovim
   node openjdk openjdk@11 openssl postgresql prettier python python3 sdl2
   sdl2_gfx sdl2_image sdl2_mixer sdl2_ttf shellcheck sqlite stow tidy-html5 tmux
-  tree vim watchman wget yamllint starship lolcat stow
+  tree vim watchman wget yamllint starship stow
 ]
 let npm_packages = [
   eslint_d @fsouza/prettierd markdownlint markdownlint-cli jsonlint stylelint
@@ -53,6 +53,13 @@ pip3 install --upgrade --user pip pynvim
 ln -s ([$nu.home-path .config/nu/config.nu] | path join) ($nu.config-path)
 ^rm -f $nu.env-path
 ln -s ([$nu.home-path .config/nu/env.nu] | path join) ($nu.env-path)
+
+# https://github.com/jaseg/lolcat
+git clone https://github.com/jaseg/lolcat
+enter lolcat
+make lolcat
+cp lolcat /usr/local/bin/
+exit
 
 exec nu
 

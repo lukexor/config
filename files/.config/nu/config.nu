@@ -620,4 +620,35 @@ load-env (
 )
 let-env PATH = ($env.PATH | prepend $"($env.FNM_MULTISHELL_PATH)/bin")
 
+# Print out personalized ASCII logo.
+let level = if (env | any? name == SHLVL) { $env.SHLVL | into int } else { 0 }
+let-env SHLVL = (if (env | any? name == TMUX) && $level >= 3 {
+    $level - 2
+  } else {
+    $level + 1
+  }
+)
+def init [] {
+  if ($env.SHLVL | into int) == 1 {
+    echo $"
+               i  t
+              LE  ED.
+             L#E  E#K
+            G#W.  E##W;
+           D#K.   E#E##t
+          E#K.    E#ti##f
+        .E#E.     E#t ;##D.
+       .K#E       E#ELLE##K:
+      .K#D        E#L;;;;;;,
+     .W#G         E#t
+    :W##########WtE#t
+    :,,,,,,,,,,,,,.
+
+    (uptime)
+" | lolcat
+  }
+}
+
+init
+
 # =============================================================================
