@@ -673,6 +673,10 @@ Plug("preservim/nerdtree", {
   end
 })
 Plug("Xuyuanp/nerdtree-git-plugin", {
+  preload = function()
+    -- Fixes issue with visual select being cancelled when NERDTree is open
+    vim.g.NERDTreeGitStatusUpdateOnCursorHold = 0
+  end,
   on = nerdtree_opts.on,
 })
 Plug("tiagofumo/vim-nerdtree-syntax-highlight", {
@@ -858,6 +862,12 @@ Plug("neovim/nvim-lspconfig", {
         ]])
       end
 
+      vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
+        vim.lsp.diagnostic.on_publish_diagnostics, {
+        update_in_insert = false,
+      }
+      )
+
       require("lsp_signature").on_attach({
         bind = true,
         doc_lines = 10,
@@ -899,6 +909,9 @@ Plug("neovim/nvim-lspconfig", {
       local opts = {
         on_attach = on_attach,
         capabilities = capabilities,
+        flags = {
+          debounce_text_changes = 200,
+        }
       }
       if type(enhance) == "function" then
         enhance(opts)
@@ -1165,7 +1178,7 @@ Plug("nvim-telescope/telescope-fzf-native.nvim", { run = "make" }) -- Search dep
 Plug("fhill2/telescope-ultisnips.nvim")
 Plug("rcarriga/nvim-notify", { -- Prettier notifications
   config = function()
-    require("notify").setup({ background_colour = "#000000" })
+    require("notify").setup({ background_colour = "#000000", timeout = 1000 })
     vim.notify = require("notify")
   end
 })
