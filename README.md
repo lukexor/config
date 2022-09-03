@@ -1,3 +1,6 @@
+# Config
+
+```text
                i  t
               LE  ED.
              L#E  E#K:
@@ -10,8 +13,7 @@
      .W#G         E#t
     :W##########WtE#t
     :,,,,,,,,,,,,,.
-
-# Config
+```
 
 This is my system configuration for macOS and Linux machines, formerly known as
 `dotfiles`.
@@ -46,7 +48,7 @@ The file tree is pretty straight forward:
 Each file/directory in the `files` folder gets symlinked into the `$HOME`
 directory using [stow](https://www.gnu.org/software/stow/).
 
-# Setup
+## Setup
 
 The `setup.sh` is a bash script that installs the necessary dependencies based
 on operating system to get nushell installed. From there, `install.nu` is
@@ -60,10 +62,10 @@ the system, additional repositories may need to be added.
 To get up and running on a new system:
 
 ```sh
-# cd ~/
-# git clone https://github.com/lukexor/config.git
-# cd config/
-# ./setup.sh
+cd ~/
+git clone https://github.com/lukexor/config.git
+cd config/
+./setup.sh
 ```
 
 Then follow any prompts for customizing the setup & installation.
