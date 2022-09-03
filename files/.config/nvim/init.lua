@@ -1172,6 +1172,11 @@ Plug("nvim-treesitter/nvim-treesitter", { -- AST Parser and highlighter
     }
   end
 })
+Plug("nvim-treesitter/nvim-treesitter-context", {
+  config = function()
+    require("treesitter-context").setup {}
+  end
+})
 Plug("nvim-lua/plenary.nvim") -- Async library for other plugins
 Plug("nvim-lua/popup.nvim")
 Plug("nvim-telescope/telescope-fzf-native.nvim", { run = "make" }) -- Search dependency of telescope
