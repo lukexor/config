@@ -100,8 +100,8 @@ let-env ENV_CONVERSIONS = {
 let-env CLICOLOR = 1
 let-env EDITOR = "nvim"
 let-env FZF_DEFAULT_OPTS = "--height 50% --layout=reverse --border --inline-info"
-let-env FZF_CTRL_T_COMMAND = "rg --files --hidden"
-let-env FZF_DEFAULT_COMMAND = "rg --files --hidden"
+let-env FZF_CTRL_T_COMMAND = "rg --files --hidden --no-ignore --glob !.git"
+let-env FZF_DEFAULT_COMMAND = "rg --files --hidden --no-ignore --glob !.git"
 let-env LESS = "-RFX"
 let-env PAGER = "nvim +Man!"
 let-env MANPAGER = "nvim +Man!"

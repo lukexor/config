@@ -70,6 +70,8 @@ export extern "npm i" [
 
 export extern "npm install" [
   ...packages: any
+  --legacy-peer-deps
+  --force(-f)
   --help(-h)                                     # help
   --save(-S)
   --no-save

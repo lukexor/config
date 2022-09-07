@@ -251,7 +251,7 @@ let-env config = {
       mode: vi_insert
       event: {
         send: executehostcommand
-        cmd: "cd (ls | where type == dir | get name | str collect (char nl) | fzf-tmux)" }
+        cmd: "cd (ls | where type == dir | get name | str collect (char nl) | fzf)" }
       }
     }
     {
@@ -262,7 +262,7 @@ let-env config = {
       event: [
         {
           send: executehostcommand
-          cmd: "vf"
+          cmd: "do { |$file| if (not ($file | empty?)) { echo $file; echo $'vim ($file)' | pbcopy; vim $file } } (fzf | str trim)"
         }
       ]
     }
@@ -313,6 +313,7 @@ alias da = (date now | date format '%Y-%m-%d %H:%M:%S')
 alias ga = git add
 alias gb = git branch -v
 alias gba = git branch -a
+alias gbd = git branch -d
 alias gbm = git branch -v --merged
 alias gbnm = git branch -v --no-merged
 alias gc = git commit
@@ -409,18 +410,13 @@ def "tag_version" [semver?: string] {
 
 # Fuzzy search a file to edit.
 def vf [] {
-  let file = (fzf-tmux | str trim)
-  if ($file | empty? | first) {} else {
-    echo $"vim ($file)"
-    echo $file | pbcopy
-    vim $file
-  }
+  echo "use ctrl+s"
 }
 
 # Fuzzy cargo run a file.
 def crf [] {
   let-env FZF_DEFAULT_COMMAND = "rg --files --hidden --no-ignore"
-  let file = (fzf-tmux | str trim)
+  let file = (fzf | str trim)
   if ($file | empty? | first) {} else {
     echo $"crd ($file)"
     echo $file | pbcopy
@@ -438,7 +434,7 @@ def al [...rest] {
 
 # Fuzzy search a file to edit.
 def ff [] {
-  let file = (fzf-tmux | str trim)
+  let file = (fzf | str trim)
   echo $file | pbcopy
   echo $file
 }
@@ -446,7 +442,7 @@ def ff [] {
 # Fuzzy search a file to edit, including .gitignore.
 def ffi [] {
   let-env FZF_DEFAULT_COMMAND = "rg --files --hidden --no-ignore-vcs"
-  let file = (fzf-tmux | str trim)
+  let file = (fzf | str trim)
   echo $file | pbcopy
   echo $file
 }
@@ -568,12 +564,12 @@ def "commands search" [] {
   help (echo (help commands | each { |cmd|
     let name = ($cmd.name | ansi strip)
     $"($name)(pad-tabs $name)($cmd.usage)"
-  }) | str collect (char nl) | fzf-tmux | split column (char tab) | get column1 | first )
+  }) | str collect (char nl) | fzf | split column (char tab) | get column1 | first )
 }
 
 # Fuzzy search history.
 alias hs = history search
-def "history search" [] { cat $nu.history-path | fzf-tmux | pbcopy }
+def "history search" [] { cat $nu.history-path | fzf | pbcopy }
 
 alias deactivate = (source ~/.config/nu/envs/deactivate.nu)
 # Activate a virtual environment.

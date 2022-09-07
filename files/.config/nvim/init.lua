@@ -460,6 +460,7 @@ Plug("ap/vim-buftabline", {
 })
 Plug("tpope/vim-repeat") -- Repeat with "."
 Plug("tpope/vim-sleuth") -- Smart buffer options based on contents
+Plug("tpope/vim-unimpaired") -- Bracket motions
 Plug("ypcrts/securemodelines") -- Safe modelines
 Plug("editorconfig/editorconfig-vim") -- Parses .editorconfig
 Plug("kshenoy/vim-signature") -- Show marks in gutter
