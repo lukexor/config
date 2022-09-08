@@ -5,7 +5,7 @@ Installing Packages...
 "
 
 let brew_packages = [
-  bash cc65 cmake coreutils docker fzf git gnutls hexedit llvm neovim
+  bash cc65 cmake coreutils docker exercism fzf git gnutls hexedit llvm neovim
   node openjdk openjdk@11 openssl postgresql prettier python python3 sdl2
   sdl2_gfx sdl2_image sdl2_mixer sdl2_ttf shellcheck sqlite stow tidy-html5 tmux
   tree vim watchman wget yamllint starship stow
@@ -15,7 +15,7 @@ let npm_packages = [
   stylelint-config-standard
 ]
 let cargo_packages = [
-  bat cargo-asm cargo-count cargo-expand cargo-generate cargo-outdated
+  bat cargo-asm cargo-bloat cargo-count cargo-expand cargo-generate cargo-outdated
   cargo-tree cargo-watch exa flamegraph fnm procs ripgrep tealdeer tokei
   wasm-pack fd-find
 ]

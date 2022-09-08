@@ -29,7 +29,7 @@ vim.g.python3_host_prog = "python3"
 vim.env.PAGER = "less"
 
 vim.opt.shiftwidth = 2
-vim.opt.tabstop = 2
+vim.opt.tabstop = 4
 vim.opt.expandtab = true
 vim.opt.shiftround = true
 vim.opt.virtualedit = "block"
@@ -44,7 +44,7 @@ vim.opt.completeopt = "menu,menuone,noselect"
 vim.opt.wrap = false
 vim.opt.breakindent = true
 vim.opt.list = true
-vim.opt.listchars = "tab:\\ ,trail:·,extends:,precedes:,nbsp:‗"
+vim.opt.listchars = "tab:│ ,trail:+,extends:,precedes:,nbsp:‗"
 vim.opt.matchpairs:append { "<:>" }
 vim.opt.scrolloff = 8
 vim.opt.sidescrolloff = 8
@@ -735,8 +735,8 @@ Plug("sainnhe/gruvbox-material", {
         au ColorScheme gruvbox-material hi! Comment ctermfg=208 guifg=#e78a4e
         au ColorScheme gruvbox-material hi! SpecialComment ctermfg=108 guifg=#89b482 guisp=#89b482
         au ColorScheme gruvbox-material hi! FloatermBorder ctermbg=none guibg=none
-        au ColorScheme gruvbox-material hi! link Whitespace DiffDelete
         au ColorScheme gruvbox-material hi! CursorLine ctermbg=none guibg=none
+        au ColorScheme gruvbox-material hi! link Search IncSearch
         au InsertEnter * hi! CursorLine ctermbg=237 guibg=#333e34
         au InsertLeave * hi! CursorLine ctermbg=none guibg=none
       aug END
@@ -923,6 +923,7 @@ Plug("neovim/nvim-lspconfig", {
     local server_opts = {
       bashls = get_options(),
       cssls = get_options(disable_formatting),
+      gopls = get_options(),
       html = get_options(disable_formatting),
       jsonls = get_options(function(opts)
         disable_formatting(opts)
