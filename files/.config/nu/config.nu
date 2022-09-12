@@ -370,7 +370,7 @@ def fbroken [path: path] {
 }
 
 # Edit neovim configuration.
-def "init nvim" [] { nvim ([$nu.home-path .config/nvim/init.lua] | path join) }
+def "config nvim" [] { nvim ([$nu.home-path .config/nvim/init.lua] | path join) }
 
 # Edit kitty configuration.
 def "config kitty" [] { nvim ([$nu.home-path .config/kitty/kitty.conf] | path join) }
