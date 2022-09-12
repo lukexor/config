@@ -47,7 +47,7 @@ curl -fLo ([$nu.home-path .local/share/nvim/site/autoload/plug.vim] | path join)
 vim +PlugUpgrade +PlugInstall +PlugClean +PlugUpdate +UpdateRemotePlugins +VimspectorUpdate +qall
 vim -c (build-string "LspInstall --sync " ($language_servers | str collect " ")) +qall
 python3 -m pip install --upgrade --user pip
-pip3 install --upgrade --user pip pynvim
+pip3 install --upgrade --user pip pynvim pytest pylint
 
 ^rm -f $nu.config-path
 ln -s ([$nu.home-path .config/nu/config.nu] | path join) ($nu.config-path)

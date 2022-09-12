@@ -889,6 +889,7 @@ Plug("neovim/nvim-lspconfig", {
         null_ls.builtins.diagnostics.eslint_d,
         null_ls.builtins.diagnostics.jsonlint,
         null_ls.builtins.diagnostics.markdownlint,
+        null_ls.builtins.diagnostics.pylint,
         null_ls.builtins.diagnostics.shellcheck,
         null_ls.builtins.diagnostics.stylelint,
         null_ls.builtins.diagnostics.tidy,
@@ -946,6 +947,7 @@ Plug("neovim/nvim-lspconfig", {
           }
         }
       end),
+      pylsp = get_options(),
       rust_analyzer = get_options(function(opts)
         opts.settings = {
           ["rust-analyzer"] = {
