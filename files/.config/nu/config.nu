@@ -262,7 +262,7 @@ let-env config = {
       event: [
         {
           send: executehostcommand
-          cmd: "do { |$file| if (not ($file | empty?)) { echo $file; echo $'vim ($file)' | pbcopy; vim $file } } (fzf | str trim)"
+          cmd: "do { |$file| if (not ($file | is-empty)) { echo $file; echo $'vim ($file)' | pbcopy; vim $file } } (fzf | str trim)"
         }
       ]
     }
@@ -417,7 +417,7 @@ def vf [] {
 def crf [] {
   let-env FZF_DEFAULT_COMMAND = "rg --files --hidden --no-ignore"
   let file = (fzf | str trim)
-  if ($file | empty? | first) {} else {
+  if ($file | is-empty | first) {} else {
     echo $"crd ($file)"
     echo $file | pbcopy
     crd $file
@@ -498,7 +498,7 @@ def dict [
   let query = ($word | str collect %20)
   let link = (build-string 'https://api.dictionaryapi.dev/api/v2/entries/en/' ($query | str replace ' ' '%20'))
   let output = (fetch $link)
-  if ($output | any? title == "No Definitions Found") {
+  if ($output | any title == "No Definitions Found") {
     echo $output.title
   } else {
     echo $output | get meanings.definitions | flatten | flatten | select definition example
@@ -538,7 +538,7 @@ def x [
     ['.zip' 'unzip']
   ]
   let command = ($exten | where $name =~ $it.ex | first)
-  if ($command|empty?) {
+  if ($command | is-empty) {
     echo 'Error! Unsupported file extension'
   } else {
     nu -c (build-string $command.com ' ' $name)
@@ -617,8 +617,8 @@ load-env (
 let-env PATH = ($env.PATH | prepend $"($env.FNM_MULTISHELL_PATH)/bin")
 
 # Print out personalized ASCII logo.
-let level = if (env | any? name == SHLVL) { $env.SHLVL | into int } else { 0 }
-let-env SHLVL = (if (env | any? name == TMUX) && $level >= 3 {
+let level = if (env | any name == SHLVL) { $env.SHLVL | into int } else { 0 }
+let-env SHLVL = (if (env | any name == TMUX) && $level >= 3 {
     $level - 2
   } else {
     $level + 1

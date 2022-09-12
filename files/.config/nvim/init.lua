@@ -133,6 +133,10 @@ nmap("<leader>Q", ":confirm qall<CR>")
 nmap("<leader>D", ":confirm bufdo bdelete<CR>")
 nmap("<leader>o", ":%bd|e#|bd#<CR>")
 
+-- Send x to blackhole register
+nmap("x", '"_x')
+nmap("X", '"_X')
+
 -- Disable Q for Ex mode since it's accidentally hit often. gQ still works.
 nmap("Q", "")
 
