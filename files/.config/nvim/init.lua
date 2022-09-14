@@ -875,11 +875,11 @@ Plug("neovim/nvim-lspconfig", {
 
       require("lsp_signature").on_attach({
         bind = true,
-        doc_lines = 10,
-        floating_window_above_cur_line = false,
+        doc_lines = 5,
         handler_opts = {
           border = "rounded"
         },
+        toggle_key = "<C-x>",
       })
     end
     local capabilities = require("cmp_nvim_lsp").update_capabilities(vim.lsp.protocol.make_client_capabilities())
@@ -1412,6 +1412,9 @@ vim.cmd([[
     au Filetype help set nu rnu
     au Filetype * set formatoptions=croqnjp
     au Filetype markdown set comments=
+    au FileType c,cpp,rust,go,java,kotlin,javascript,typescript,typescriptreact set comments-=:// comments +=f://
+    au FileType python,bash,sh set comments-=:# comments +=f:#
+    au FileType lua set comments-=:-- comments +=f:--
   aug END
 ]])
 
