@@ -1198,7 +1198,14 @@ Plug("rcarriga/nvim-notify", { -- Prettier notifications
 Plug("nvim-telescope/telescope.nvim", { -- Fuzzy finder
   config = function()
     local telescope = require("telescope")
-    telescope.setup {}
+    telescope.setup {
+      defaults = {
+        preview = {
+          filesize_limit = 40,
+          timeout = 500,
+        }
+      }
+    }
     telescope.load_extension("notify")
     telescope.load_extension("ultisnips")
     telescope.load_extension("fzf")

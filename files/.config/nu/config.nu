@@ -322,6 +322,7 @@ alias gcb = git checkout -b
 alias gco = git checkout
 alias gcp = git cherry-pick
 alias gd = git diff
+alias gdc = git diff --cached
 alias gdt = git difftool
 alias gf = git fetch origin
 alias glg = git log --graph --pretty=format:'%C(yellow)%h (%p) %ai%Cred%d %Creset%Cblue[%ae]%Creset %s (%ar). %b %N'
