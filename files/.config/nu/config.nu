@@ -587,8 +587,8 @@ def venv [
 }
 
 # CD using `fnm` which manages node versions
-def-env fnmcd [path: path] {
-  let path = ($path | path expand)
+def-env fnmcd [path?: path] {
+  let path = if ($path | is-empty) { $env.HOME } else { ($path | path expand) }
   let-env PWD = (if ($path | path exists) {
     $path
   } else {

@@ -7,6 +7,7 @@ build
 dist
 target
 node_modules
+*.spv
 
 # Temporary files
 *.cache

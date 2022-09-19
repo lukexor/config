@@ -234,11 +234,16 @@ nmap("<leader>-", ":wincmd _<CR>:wincmd \\|<CR>")
 -- Equalize window sizes
 nmap("<leader>=", ":wincmd =<CR>")
 
+nmap("<Down>", "<nop>")
+nmap("<Left>", "<nop>")
+nmap("<Right>", "<nop>")
+nmap("<Up>", "<nop>")
+
 -- Resize windows
-nmap("<Down>", ":resize -5<CR>")
-nmap("<Left>", ":vertical resize -5<CR>")
-nmap("<Right>", ":vertical resize +5<CR>")
-nmap("<Up>", ":resize +5<CR>")
+nmap("<localleader>h", ":vertical resize +5<CR>")
+nmap("<localleader>j", ":resize +5<CR>")
+nmap("<localleader>k", ":resize -5<CR>")
+nmap("<localleader>l", ":vertical resize -5<CR>")
 
 -- cd to cwd of current file
 nmap("cd", ":exe 'lcd ' fnamemodify(resolve(expand('%')), ':p:h')<CR>"
@@ -396,7 +401,6 @@ local disabled_built_ins = {
   "netrwPlugin",
   "netrwSettings",
   "netrwFileHandlers",
-  "man",
   "matchit",
   "matchparen",
   "tar",
@@ -465,6 +469,13 @@ Plug("ap/vim-buftabline", {
 Plug("tpope/vim-repeat") -- Repeat with "."
 Plug("tpope/vim-sleuth") -- Smart buffer options based on contents
 Plug("tpope/vim-unimpaired") -- Bracket motions
+Plug("justinmk/vim-sneak", {
+  config = function()
+    vim.g["sneak#s_next"] = 1
+    omap("z", "<Plug>Sneak_s")
+    omap("Z", "<Plug>Sneak_S")
+  end
+})
 Plug("ypcrts/securemodelines") -- Safe modelines
 Plug("editorconfig/editorconfig-vim") -- Parses .editorconfig
 Plug("kshenoy/vim-signature") -- Show marks in gutter
@@ -1084,8 +1095,6 @@ Plug("hrsh7th/nvim-cmp", {
           i = function(fallback)
             if cmp.visible() then
               cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
-            elseif vim.fn["UltiSnips#CanJumpForwards"]() == 1 then
-              vim.fn["UltiSnips#JumpForwards"]()
             else
               fallback()
             end
@@ -1102,7 +1111,37 @@ Plug("hrsh7th/nvim-cmp", {
           i = function(fallback)
             if cmp.visible() then
               cmp.select_prev_item({ behavior = cmp.SelectBehavior.Select })
-            elseif vim.fn["UltiSnips#CanJumpBackwards"]() == 1 then
+            else
+              fallback()
+            end
+          end,
+          s = function(fallback)
+            if vim.fn["UltiSnips#CanJumpBackwards"]() == 1 then
+              vim.api.nvim_feedkeys(t("<Plug>(ultisnips_jump_backward)"), 'm', true)
+            else
+              fallback()
+            end
+          end
+        }),
+        ["<C-j>"] = cmp.mapping({
+          i = function(fallback)
+            if vim.fn["UltiSnips#CanJumpForwards"]() == 1 then
+              vim.fn["UltiSnips#JumpForwards"]()
+            else
+              fallback()
+            end
+          end,
+          s = function(fallback)
+            if vim.fn["UltiSnips#CanJumpForwards"]() == 1 then
+              vim.api.nvim_feedkeys(t("<Plug>(ultisnips_jump_forward)"), 'm', true)
+            else
+              fallback()
+            end
+          end
+        }),
+        ["<C-k>"] = cmp.mapping({
+          i = function(fallback)
+            if vim.fn["UltiSnips#CanJumpBackwards"]() == 1 then
               vim.fn["UltiSnips#JumpBackwards"]()
             else
               fallback()
@@ -1409,12 +1448,10 @@ vim.cmd([[
     au!
     au TermOpen * setlocal nospell nonu nornu | startinsert
     au BufRead,BufNewFile *.nu set ft=nu
+    au BufRead,BufNewFile *.vert,*.frag set ft=glsl
     au Filetype help set nu rnu
     au Filetype * set formatoptions=croqnjp
     au Filetype markdown set comments=
-    au FileType c,cpp,rust,go,java,kotlin,javascript,typescript,typescriptreact set comments-=:// comments +=f://
-    au FileType python,bash,sh set comments-=:# comments +=f:#
-    au FileType lua set comments-=:-- comments +=f:--
   aug END
 ]])
 
