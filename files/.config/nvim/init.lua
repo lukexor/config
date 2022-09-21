@@ -379,8 +379,8 @@ nmap("<leader>\\", ":lua ToggleGutter()<CR>")
 
 --- Ascii Art
 nmap("<leader>tb", ":.!toilet -w 200 -f term -F border<CR>")
-nmap("<leader>ts", ":.!figlet -w 200 -f standard<CR>")
-nmap("<leader>tS", ":.!figlet -w 200 -f small<CR>")
+nmap("<leader>ta", ":.!figlet -w 200 -f standard<CR>")
+nmap("<leader>tA", ":.!figlet -w 200 -f small<CR>")
 
 
 -- =============================================================================
@@ -511,7 +511,7 @@ Plug("dbeniamine/cheat.sh-vim", {
 Plug("simrat39/symbols-outline.nvim", {
   on = { "SymbolsOutline" },
   preload = function()
-    nmap("<leader>to", ":SymbolsOutline<CR>")
+    nmap("<leader>ts", ":SymbolsOutline<CR>")
   end,
   config = function()
     vim.g.symbols_outline = {
@@ -732,6 +732,7 @@ Plug("yardnsm/vim-import-cost", {
 -- -----------------------------------------------------------------------------
 
 Plug("ryanoasis/vim-devicons")
+Plug("kyazdani42/nvim-web-devicons")
 Plug("stevearc/dressing.nvim") -- Window UI enhancements, popups, input, etc
 Plug("sainnhe/gruvbox-material", {
   config = function()
@@ -878,10 +879,19 @@ Plug("neovim/nvim-lspconfig", {
         ]])
       end
 
-      vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
-        vim.lsp.diagnostic.on_publish_diagnostics, {
-        update_in_insert = false,
+      local filtered_diagnostics = {
+        [80001] = true -- File is a CommonJS module; it may be converted to an ES module.
       }
+
+      vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
+        function(err, result, ctx, config)
+          for i, diagnostic in pairs(result.diagnostics) do
+            if filtered_diagnostics[diagnostic.code] ~= nil then
+              table.remove(result.diagnostics, i)
+            end
+          end
+          vim.lsp.diagnostic.on_publish_diagnostics(err, result, ctx, config)
+        end, { update_in_insert = false }
       )
 
       require("lsp_signature").on_attach({
@@ -1033,6 +1043,17 @@ Plug("neovim/nvim-lspconfig", {
     end
   end
 })
+Plug("folke/trouble.nvim", {
+  config = function()
+    require("trouble").setup {}
+
+    map("<leader>tt", ":TroubleToggle<CR>")
+    map("<leader>tw", ":TroubleToggle workspace_diagnostics<CR>")
+    map("<leader>td", ":TroubleToggle document_diagnostics<CR>")
+    map("<leader>tq", ":TroubleToggle quickfix<CR>")
+    map("<leader>tl", ":TroubleToggle loclist<CR>")
+  end
+})
 
 -- -----------------------------------------------------------------------------
 -- Auto-Completion
@@ -1160,13 +1181,19 @@ Plug("hrsh7th/nvim-cmp", {
         ['<C-e>'] = cmp.mapping({ i = cmp.mapping.close(), c = cmp.mapping.close() }),
       }),
       sources = cmp.config.sources({
-        { name = "ultisnips", priority = 1 },
-        { name = "nvim_lsp", priority = 2 }
+        { name = "ultisnips", priority = 2 },
+        { name = "nvim_lsp", priority = 1 }
       }, {
         { name = "path" },
       }, {
         { name = "buffer" },
       }),
+      view = {
+        entries = {
+          name = "custom",
+          selection_order = "near_cursor",
+        },
+      },
       cmdline = {
         ["/"] = {
           mapping = cmp.mapping.preset.cmdline(),
