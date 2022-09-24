@@ -130,7 +130,6 @@ nmap("<leader>W", ":noa w<CR>")
 -- Quick quit
 nmap("<leader>q", ":confirm q<CR>")
 nmap("<leader>Q", ":confirm qall<CR>")
-nmap("<leader>D", ":confirm bufdo bdelete<CR>")
 nmap("<leader>o", ":%bd|e#|bd#<CR>")
 
 -- Send x to blackhole register
@@ -442,7 +441,7 @@ Plug("lewis6991/impatient.nvim", {
 -- Keep window layout when deleting buffers
 Plug("famiu/bufdelete.nvim", {
   config = function()
-    nmap("<leader>d", ":confirm Bdelete<CR>")
+    nmap("<leader>D", ":confirm Bdelete<CR>")
   end
 })
 -- Better buffer management
@@ -508,15 +507,16 @@ Plug("dbeniamine/cheat.sh-vim", {
   end
 })
 -- File symbol outline to TagBar
-Plug("simrat39/symbols-outline.nvim", {
-  on = { "SymbolsOutline" },
+Plug("stevearc/aerial.nvim", {
   preload = function()
-    nmap("<leader>ts", ":SymbolsOutline<CR>")
+    nmap("<leader>ts", ":AerialToggle<CR>")
   end,
   config = function()
-    vim.g.symbols_outline = {
-      width = 40,
-      highlight_hovered_item = false,
+    require("aerial").setup {
+      min_width = 40,
+      layout = {
+        default_direction = "prefer_right"
+      }
     }
   end
 })
@@ -791,6 +791,8 @@ Plug("nvim-lualine/lualine.nvim", {
 
 Plug("ray-x/lsp_signature.nvim") -- Shows function signatures as you type
 Plug("williamboman/nvim-lsp-installer")
+-- TODO: Fixed in https://github.com/neovim/neovim/pull/20198 whenever it gets
+-- released
 Plug("antoinemadec/FixCursorHold.nvim") -- Dependency for nvim-lightbulb
 -- Lightbulb next to code actions
 Plug("kosayoda/nvim-lightbulb", {
@@ -821,6 +823,7 @@ Plug("neovim/nvim-lspconfig", {
     local buf_set_option = function(bufnr, ...) vim.api.nvim_buf_set_option(bufnr, ...) end
 
     nmap("<leader>Li", ":LspInfo<CR>", silent)
+    nmap("<leader>LI", ":LspInstallInfo<CR>", silent)
     nmap("<leader>Ls", ":LspStart<CR>", silent)
     nmap("<leader>LS", ":LspStop<CR>", silent)
     nmap("<leader>Lr", ":LspRestart<CR>", silent)
@@ -894,6 +897,7 @@ Plug("neovim/nvim-lspconfig", {
         end, { update_in_insert = false }
       )
 
+      require("aerial").on_attach(client, bufnr)
       require("lsp_signature").on_attach({
         bind = true,
         doc_lines = 5,
@@ -1351,6 +1355,15 @@ Plug("vim-test/vim-test", {
     nmap("<leader>Ts", ":TestSuite<CR>")
     nmap("<leader>Tl", ":TestLast<CR>")
     nmap("<leader>Tv", ":TestVisit<CR>")
+
+    vim.cmd([[
+      function! JestStrategy(cmd)
+        echo a:cmd
+        let testName = matchlist(a:cmd, '\v -t ''(.*)''')[1]
+        call vimspector#LaunchWithSettings( #{ configuration: 'Launch Jest', TestName: testName } )
+      endfunction
+      let g:test#custom_strategies = {'jest': function('JestStrategy')}
+    ]])
   end
 })
 -- Debugger
@@ -1359,31 +1372,37 @@ Plug("puremourning/vimspector", {
     "<Plug>VimspectorLaunch",
     "<Plug>VimspectorToggleBreakpoint",
     "<Plug>VimspectorToggleConditionalBreakpoint",
-    "VimspectorUpdate"
+    "VimspectorUpdate",
   },
   preload = function()
-    nmap("<localleader>dd", "<Plug>VimspectorLaunch")
-    nmap("<localleader>db", "<Plug>VimspectorToggleBreakpoint")
-    nmap("<localleader>dB", "<Plug>VimspectorToggleConditionalBreakpoint")
-  end,
-  config = function()
     vim.g.vimspector_install_gadgets = {
-      "CodeLLDB",
-      "debugger-for-chrome",
+      "CodeLLDB", -- C/C++/Rust
       "vscode-bash-debug",
+      "vscode-node-debug2",
+      "local-lua-debugger-vscode",
+      "debugger-for-chrome",
+      "debugpy",
+      "delve", -- For Golang
     }
 
-    -- mnemonic di = debug inspect
-    nmap("<localleader>dc", "<Plug>VimspectorContinue")
-    nmap("<localleader>dp", "<Plug>VimspectorPause")
-    nmap("<localleader>dq", "<Plug>VimspectorStop")
-    nmap("<localleader>do", "<Plug>VimspectorStepOver")
-    nmap("<localleader>di", "<Plug>VimspectorStepInto")
-    nmap("<localleader>dO", "<Plug>VimspectorStepOut")
-    nmap("<localleader>dr", "<Plug>VimspectorRunToCursor")
-    nmap("<localleader>dR", "<Plug>VimspectorRestart")
-    nmap("<localleader>de", "<Plug>VimspectorBalloonEval")
-    xmap("<localleader>de", "<Plug>VimspectorBalloonEval")
+    nmap("<leader>dd", "<Plug>VimspectorLaunch")
+    nmap("<leader>db", "<Plug>VimspectorToggleBreakpoint")
+    nmap("<leader>dc", "<Plug>VimspectorToggleConditionalBreakpoint")
+  end,
+  config = function()
+    nmap("<leader>dl", "<Plug>VimspectorBreakpoints")
+    nmap("<leader>dc", "call vimspector#ClearBreakpoints()")
+    nmap("<leader>/", "<Plug>VimspectorContinue")
+    nmap("<leader>?", "<Plug>VimspectorPause")
+    nmap("<leader>ds", ":VimspectorReset<CR>")
+    nmap("<leader>dS", "<Plug>VimspectorStop")
+    nmap("<leader>'", "<Plug>VimspectorStepOver")
+    nmap("<leader>;", "<Plug>VimspectorStepInto")
+    nmap("<leader>:", "<Plug>VimspectorStepOut")
+    nmap("<leader>dr", "<Plug>VimspectorRunToCursor")
+    nmap("<leader>dR", "<Plug>VimspectorRestart")
+    nmap("<leader>de", "<Plug>VimspectorBalloonEval")
+    xmap("<leader>de", "<Plug>VimspectorBalloonEval")
   end
 })
 

@@ -1,0 +1,160 @@
+{
+  "$schema": "https://puremourning.github.io/vimspector/schema/vimspector.schema.json",
+  "configurations": {
+    "Chrome": {
+      "adapter": "chrome",
+      "filetypes": [
+        "javascript",
+        "javascriptreact",
+        "typescript",
+        "typescriptreact",
+        "html",
+        "css"
+      ],
+      "breakpoints": {
+        "exception": {
+          "all": "N",
+          "uncaught": "Y"
+        }
+      },
+      "configuration": {
+        "request": "launch",
+        "cwd": "${PWD}",
+        "url": "http://localhost:${port:8080}",
+        "webRoot": "${cwd}/public"
+      }
+    },
+    "Node": {
+      "adapter": "vscode-node",
+      "filetypes": [
+        "javascript",
+        "javascriptreact",
+        "typescript",
+        "typescriptreact"
+      ],
+      "breakpoints": {
+        "exception": {
+          "all": "N",
+          "uncaught": "Y"
+        }
+      },
+      "configuration": {
+        "request": "launch",
+        "type": "node",
+        "cwd": "${PWD}",
+        "protocol": "auto",
+        "console": "integratedTerminal",
+        "program": "${file}"
+      }
+    },
+    "Node (Attach)": {
+      "extends": "Node",
+      "filetypes": [
+        "javascript",
+        "javascriptreact",
+        "typescript",
+        "typescriptreact"
+      ],
+      "configuration": {
+        "request": "attach",
+        "port": "${port:9229}",
+        "!program": ""
+      }
+    },
+    "Jest": {
+      "extends": "Node",
+      "filetypes": [
+        "javascript",
+        "javascriptreact",
+        "typescript",
+        "typescriptreact"
+      ],
+      "configuration": {
+        "request": "launch",
+        "program": "${cwd}/node_modules/.bin/jest",
+        "args": ["${file}", "-t", "${TestName}"],
+        "skipFiles": ["*/<node_internals>/**/*.js", "node_modules/**/*.js"]
+      }
+    },
+    "Lua": {
+      "adapter": "lua-local",
+      "filetypes": ["lua"],
+      "configuration": {
+        "request": "launch",
+        "type": "lua-local",
+        "cwd": "${PWD}",
+        "program": {
+          "lua": "lua",
+          "file": "${file}"
+        }
+      }
+    },
+    "LuaJIT": {
+      "extends": "Lua",
+      "filetypes": ["lua"],
+      "configuration": {
+        "request": "launch",
+        "program": {
+          "lua": "luajit"
+        }
+      }
+    },
+    "Rust": {
+      "adapter": "CodeLLDB",
+      "filetypes": ["rust"],
+      "breakpoints": {
+        "exception": {
+          "cpp_throw": "Y",
+          "cpp_catch": "N"
+        }
+      },
+      "variables": {
+        "Binary": {
+          "shell": ["${HOME}/bin/get_crate_name"]
+        }
+      },
+      "configuration": {
+        "request": "launch",
+        "sourceLanguages": ["rust"],
+        "stopAtEntry": true,
+        "program": "${CARGO_TARGET_DIR}/debug/${binary:${Binary\\}}"
+      }
+    },
+    "Rust (Attach)": {
+      "extends": "Rust",
+      "filetypes": ["rust"],
+      "configuration": {
+        "request": "attach",
+        "cwd": "${PWD}",
+        "processId": "${processId}"
+      }
+    },
+    "Go": {
+      "adapter": "delve",
+      "filetypes": ["go"],
+      "configuration": {
+        "request": "launch",
+        "cwd": "${PWD}",
+        "program": "${fileDirName}",
+        "mode": "debug"
+      }
+    },
+    "Python": {
+      "adapter": "debugpy",
+      "filetypes": ["python"],
+      "breakpoints": {
+        "exception": {
+          "raised": "N",
+          "exceptions": "Y",
+          "userUnhandled": "N"
+        }
+      },
+      "configuration": {
+        "request": "launch",
+        "type": "python",
+        "cwd": "${PWD}",
+        "program": "${file}"
+      }
+    }
+  }
+}

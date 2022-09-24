@@ -365,6 +365,15 @@ alias vimdiff = nvim -d
 # Commands   {{{1
 # =============================================================================
 
+# Pull latest develop and merge it into the current branch
+def gmd [] {
+  let current_branch = (git rev-parse --abbrev-ref HEAD | str trim)
+  gco develop
+  gpl
+  gco $current_branch
+  gm develop
+}
+
 # Find broken symlinks
 def fbroken [path: path] {
   ^find $path -maxdepth 1 -type l ! -exec test -e '{}' ';' -print
