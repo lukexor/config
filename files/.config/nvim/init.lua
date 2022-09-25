@@ -84,7 +84,7 @@ end
 -- =============================================================================
 
 vim.g.mapleader = " "
-vim.g.maplocalleader = "-"
+vim.g.maplocalleader = ","
 
 function MergeR(t1, t2)
   for k, v in pairs(t2) do
@@ -109,10 +109,10 @@ local silent = { silent = true }
 local remap = { remap = true }
 
 local set_keymap = function(...) vim.keymap.set(...) end
-local del_keymap = function(...) vim.keymap.del(...) end
+-- local del_keymap = function(...) vim.keymap.del(...) end
 local map = function(lhs, rhs, opts) set_keymap("", lhs, rhs, opts) end
 local nmap = function(lhs, rhs, opts) set_keymap("n", lhs, rhs, opts) end
-local nunmap = function(lhs, opts) del_keymap("n", lhs, opts) end
+-- local nunmap = function(lhs, opts) del_keymap("n", lhs, opts) end
 local vmap = function(lhs, rhs, opts) set_keymap("v", lhs, rhs, opts) end
 local xmap = function(lhs, rhs, opts) set_keymap("x", lhs, rhs, opts) end
 local imap = function(lhs, rhs, opts) set_keymap("i", lhs, rhs, opts) end
@@ -130,7 +130,7 @@ nmap("<leader>W", ":noa w<CR>")
 -- Quick quit
 nmap("<leader>q", ":confirm q<CR>")
 nmap("<leader>Q", ":confirm qall<CR>")
-nmap("<leader>o", ":%bd|e#|bd#<CR>")
+nmap("<leader>O", ":%bd|e#|bd#<CR>")
 
 -- Send x to blackhole register
 nmap("x", '"_x')
@@ -187,7 +187,7 @@ vmap("K", ":m '<-2<CR>gv=gv")
 nmap("<leader>j", ":m .+1<CR>==", silent)
 nmap("<leader>k", ":m .-2<CR>==", silent)
 
--- Toggle wrapping text
+-- Toggle auto-text wrapping
 nmap("<localleader>w", [[ (&fo =~ 't' ? ":set fo-=t<CR>" : ":set fo+=t<CR>") ]], { silent = true, expr = true })
 
 -- Keep cursor centered
@@ -205,7 +205,7 @@ nmap("<leader>s", ":%s/")
 nmap("<leader>R", ":%s/\\s\\+$//<CR>")
 
 -- Open file in default program
-nmap("<leader>x", ":!open %<CR><CR>")
+nmap("<localleader>x", ":!open %<CR><CR>")
 
 -- Escape insert mode
 imap("jj", "<Esc>")
@@ -229,10 +229,11 @@ nmap("j", [[ (v:count > 0 ? "m'" . v:count . 'j' : "gj") ]], { silent = true, ex
 nmap("k", [[ (v:count > 0 ? "m'" . v:count . 'k' : "gk") ]], { silent = true, expr = true })
 
 -- Maximize window
-nmap("<leader>-", ":wincmd _<CR>:wincmd \\|<CR>")
+nmap("<leader>-", ":wincmd _<CR>:wincmd |<CR>")
 -- Equalize window sizes
 nmap("<leader>=", ":wincmd =<CR>")
 
+-- Disable arrow keys
 nmap("<Down>", "<nop>")
 nmap("<Left>", "<nop>")
 nmap("<Right>", "<nop>")
@@ -360,7 +361,7 @@ xmap("ai", ":<C-u>lua IndentTextObj(false)<CR><Esc>gv", silent)
 xmap("ii", ":<C-u>lua IndentTextObj(true)<CR><Esc>gv", silent)
 
 -- Identify syntax ID under cursor
-nmap("<leader>i", ":echo 'hi<' . synIDattr(synID(line('.'),col('.'),1),'name') . '> trans<'"
+nmap("<localleader>i", ":echo 'hi<' . synIDattr(synID(line('.'),col('.'),1),'name') . '> trans<'"
   .. " . synIDattr(synID(line('.'),col('.'),0),'name') . '> lo<'"
   .. " . synIDattr(synIDtrans(synID(line('.'),col('.'),1)),'name') . '>'<CR>"
 )
@@ -377,9 +378,9 @@ end
 nmap("<leader>\\", ":lua ToggleGutter()<CR>")
 
 --- Ascii Art
-nmap("<leader>tb", ":.!toilet -w 200 -f term -F border<CR>")
-nmap("<leader>ta", ":.!figlet -w 200 -f standard<CR>")
-nmap("<leader>tA", ":.!figlet -w 200 -f small<CR>")
+nmap("<localleader>ab", ":.!toilet -w 200 -f term -F border<CR>")
+nmap("<localleader>as", ":.!figlet -w 200 -f standard<CR>")
+nmap("<localleader>aS", ":.!figlet -w 200 -f small<CR>")
 
 
 -- =============================================================================
@@ -447,12 +448,13 @@ Plug("famiu/bufdelete.nvim", {
 -- Better buffer management
 Plug("ap/vim-buftabline", {
   except = { "vpm" },
-  config = function()
+  preload = function()
     vim.g.buftabline_show = 2 -- always
     vim.g.buftabline_numbers = 2 -- ordinal numbers
     vim.g.buftabline_indicators = 1
     vim.g.buftabline_separators = 1
-
+  end,
+  config = function()
     nmap("<leader>1", "<Plug>BufTabLine.Go(1)")
     nmap("<leader>2", "<Plug>BufTabLine.Go(2)")
     nmap("<leader>3", "<Plug>BufTabLine.Go(3)")
@@ -469,8 +471,11 @@ Plug("tpope/vim-repeat") -- Repeat with "."
 Plug("tpope/vim-sleuth") -- Smart buffer options based on contents
 Plug("tpope/vim-unimpaired") -- Bracket motions
 Plug("justinmk/vim-sneak", {
-  config = function()
+  preload = function()
     vim.g["sneak#s_next"] = 1
+  end,
+  config = function()
+    -- Operator-mode - e.g. dzab - delete until `ab`
     omap("z", "<Plug>Sneak_s")
     omap("Z", "<Plug>Sneak_S")
   end
@@ -494,15 +499,20 @@ Plug("terryma/vim-smooth-scroll", {
 
 -- Cheatsheet Search
 Plug("sudormrfbin/cheatsheet.nvim", {
-  on = { "Cheatsheet", "CheatsheetEdit" }
+  on = { "Cheatsheet", "CheatsheetEdit" },
+  preload = function()
+    nmap("<leader>C", ":Cheatsheet")
+    nmap("<localleader>C", ":CheatsheetEdit ")
+  end
 })
 -- Online Cheat.sh lookup
 Plug("dbeniamine/cheat.sh-vim", {
   on = { "Cheat" },
-  config = function()
+  preload = function()
     vim.g.CheatSheetStayInOrigBuf = 0
     vim.g.CheatSheetDoNotMap = 1
     vim.g.CheatDoNotReplaceKeywordPrg = 1
+
     nmap("<leader>cs", ":Cheat ")
   end
 })
@@ -579,7 +589,7 @@ Plug("tpope/vim-surround", {
     vmap("<leader>`", "gS`", remap)
     vmap("<leader>{", "gS{", remap)
     vmap("<leader>}", "gS}", remap)
-    vmap("<leader><Bar>", "gS|", remap)
+    vmap("<leader>|", "gS|", remap)
 
     nmap("<localleader>[", "ysip[", remap)
     nmap("<localleader>]", "ysip]", remap)
@@ -591,10 +601,10 @@ Plug("tpope/vim-surround", {
 })
 -- Make aligning rows easier
 Plug("junegunn/vim-easy-align", {
-  on = { "<Plug>(EasyAlign)" },
-  config = function()
-    xmap("<leader>a", "<Plug>(EasyAlign)")
-    nmap("<leader>a", "<Plug>(EasyAlign)")
+  on = { "EasyAlign" },
+  preload = function()
+    xmap("<leader>a", ":EasyAlign<CR>")
+    nmap("<leader>a", ":EasyAlign<CR>")
   end
 })
 local vim_radical_on = {
@@ -611,7 +621,7 @@ Plug("glts/vim-magnum", {
 -- Number conversions
 Plug("glts/vim-radical", {
   on = vim_radical_on,
-  config = function()
+  preload = function()
     nmap("gA", "<Plug>RadicalView")
     xmap("gA", "<Plug>RadicalView")
     nmap("crd", "<Plug>RadicalCoerceToDecimal")
@@ -627,7 +637,7 @@ Plug("zirrostig/vim-schlepp", {
     "<Plug>SchleppLeft",
     "<Plug>SchleppRight",
   },
-  config = function()
+  preload = function()
     vmap("K", "<Plug>SchleppUp")
     vmap("J", "<Plug>SchleppDown")
     vmap("H", "<Plug>SchleppLeft")
@@ -647,8 +657,8 @@ Plug("tpope/vim-fugitive", {
 })
 Plug("iamcco/markdown-preview.nvim", {
   run = vim.fn["mkdp#util#install"],
-  ft = { "markdown", "vim-plug" },
-  config = function()
+  on = { "MarkdownPreview" },
+  preload = function()
     vim.g.mkdp_echo_preview_url = 1
   end
 })
@@ -656,6 +666,14 @@ local nerdtree_opts = { on = { "NERDTree", "NERDTreeFind", "NERDTreeToggle" } }
 Plug("preservim/nerdtree", {
   on = nerdtree_opts.on,
   preload = function()
+    vim.g.NERDTreeShowHidden = 1
+    vim.g.NERDTreeMinimalUI = 1
+    vim.g.NERDTreeWinSize = 35
+    vim.g.NERDTreeDirArrowExpandable = '▹'
+    vim.g.NERDTreeDirArrowCollapsible = '▿'
+    -- avoid crashes when calling vim-plug functions while the cursor is on the NERDTree window
+    vim.g.plug_window = 'noau vertical topleft new'
+
     nmap(
       "<leader>n",
       "exists('g:NERDTree') && g:NERDTree.IsOpen() ? ':NERDTreeClose<CR>' : @% == ''"
@@ -678,22 +696,13 @@ Plug("preservim/nerdtree", {
       aug END
     ]])
   end,
-  config = function()
-    vim.g.NERDTreeShowHidden = 1
-    vim.g.NERDTreeMinimalUI = 1
-    vim.g.NERDTreeWinSize = 35
-    vim.g.NERDTreeDirArrowExpandable = '▹'
-    vim.g.NERDTreeDirArrowCollapsible = '▿'
-    -- avoid crashes when calling vim-plug functions while the cursor is on the NERDTree window
-    vim.g.plug_window = 'noau vertical topleft new'
-  end
 })
 Plug("Xuyuanp/nerdtree-git-plugin", {
+  on = nerdtree_opts.on,
   preload = function()
     -- Fixes issue with visual select being cancelled when NERDTree is open
     vim.g.NERDTreeGitStatusUpdateOnCursorHold = 0
   end,
-  on = nerdtree_opts.on,
 })
 Plug("tiagofumo/vim-nerdtree-syntax-highlight", {
   on = nerdtree_opts.on,
@@ -705,7 +714,7 @@ Plug("tiagofumo/vim-nerdtree-syntax-highlight", {
 
 -- Find the root project folder
 Plug("airblade/vim-rooter", {
-  config = function()
+  preload = function()
     vim.g.rooter_cd_cmd = "lcd"
     vim.g.rooter_resolve_links = 1
   end
@@ -714,10 +723,14 @@ Plug("airblade/vim-rooter", {
 -- Javascrpt import sizes
 Plug("yardnsm/vim-import-cost", {
   run = "npm install --production",
+  on = { "ImportCost" },
   ft = { "typescript", "typescriptreact" },
-  config = function()
+  preload = function()
     vim.g.import_cost_virtualtext_prefix = " ▸ "
+
     nmap("<localleader>C", ":ImportCost<CR>");
+  end,
+  config = function()
     vim.cmd([[
       aug ImportCost
         au!
@@ -735,7 +748,7 @@ Plug("ryanoasis/vim-devicons")
 Plug("kyazdani42/nvim-web-devicons")
 Plug("stevearc/dressing.nvim") -- Window UI enhancements, popups, input, etc
 Plug("sainnhe/gruvbox-material", {
-  config = function()
+  preload = function()
     vim.g.gruvbox_material_transparent_background = 1
     vim.g.gruvbox_material_background = "hard"
     vim.g.gruvbox_material_enable_italic = 1
@@ -744,7 +757,9 @@ Plug("sainnhe/gruvbox-material", {
     vim.g.gruvbox_material_visual = "reverse"
     vim.g.gruvbox_material_menu_selection_background = "green"
     vim.g.gruvbox_material_ui_contrast = "high"
-
+    vim.opt.background = "dark"
+  end,
+  config = function()
     vim.cmd([[
       aug ColorOverrides
         au!
@@ -758,7 +773,6 @@ Plug("sainnhe/gruvbox-material", {
       aug END
     ]])
 
-    vim.opt.background = "dark"
     vim.cmd("colorscheme gruvbox-material")
   end
 })
@@ -801,10 +815,7 @@ Plug("kosayoda/nvim-lightbulb", {
     require("nvim-lightbulb").setup { au = { enabled = true } }
   end
 })
--- Rust LSP library
-Plug("simrat39/rust-tools.nvim", {
-  ft = { "rust" },
-})
+Plug("simrat39/rust-tools.nvim")
 Plug("jose-elias-alvarez/null-ls.nvim")
 Plug("neovim/nvim-lspconfig", {
   config = function()
@@ -1026,6 +1037,9 @@ Plug("neovim/nvim-lspconfig", {
         end
       end
       if server == "rust_analyzer" then
+        nmap("<leader>R", ":Make run<CR>");
+        nmap("<leader>M", ":Make build<CR>");
+        nmap("<leader>C", ":Make clippy<CR>");
         require("rust-tools").setup {
           -- We don't want to call lspconfig.rust_analyzer.setup() when using
           -- rust-tools. See
@@ -1048,14 +1062,16 @@ Plug("neovim/nvim-lspconfig", {
   end
 })
 Plug("folke/trouble.nvim", {
+  on = { "TroubleToggle" },
+  preload = function()
+    nmap("<leader>tt", ":TroubleToggle<CR>")
+    nmap("<leader>tw", ":TroubleToggle workspace_diagnostics<CR>")
+    nmap("<leader>td", ":TroubleToggle document_diagnostics<CR>")
+    nmap("<leader>tq", ":TroubleToggle quickfix<CR>")
+    nmap("<leader>tl", ":TroubleToggle loclist<CR>")
+  end,
   config = function()
     require("trouble").setup {}
-
-    map("<leader>tt", ":TroubleToggle<CR>")
-    map("<leader>tw", ":TroubleToggle workspace_diagnostics<CR>")
-    map("<leader>td", ":TroubleToggle document_diagnostics<CR>")
-    map("<leader>tq", ":TroubleToggle quickfix<CR>")
-    map("<leader>tl", ":TroubleToggle loclist<CR>")
   end
 })
 
@@ -1221,20 +1237,22 @@ Plug("hrsh7th/nvim-cmp", {
   end
 })
 Plug("SirVer/ultisnips", {
-  config = function()
-    -- Fixes Ctrl-X Ctrl-K https://github.com/SirVer/ultisnips/blob/master/doc/UltiSnips.txt#L263
-    imap("<C-x><C-k>", "<C-x><C-k>")
-    nmap("<leader>es", ":UltiSnipsEdit<CR>")
+  preload = function()
     vim.g.UltiSnipsExpandTrigger = "<Plug>(ultisnips_expand)"
     vim.g.UltiSnipsJumpForwardTrigger = "<Plug>(ultisnips_jump_forward)"
     vim.g.UltiSnipsJumpBackwardTrigger = "<Plug>(ultisnips_jump_backward)"
     vim.g.UltiSnipsListSnippets = "<c-x><c-s>"
     vim.g.UltiSnipsRemoveSelectModeMappings = 0
     vim.g.UltiSnipsEnableSnipMate = 0
-  end
+  end,
+  config = function()
+    -- Fixes Ctrl-X Ctrl-K https://github.com/SirVer/ultisnips/blob/master/doc/UltiSnips.txt#L263
+    imap("<C-x><C-k>", "<C-x><C-k>")
+    nmap("<leader>es", ":UltiSnipsEdit<CR>")
+  end,
 })
 Plug("honza/vim-snippets", {
-  config = function()
+  preload = function()
     vim.g.snips_author = vim.fn.system("git config --get user.name | tr -d '\n'")
     vim.g.snips_author_email = vim.fn.system("git config --get user.email | tr -d '\n'")
     vim.g.snips_github = "https://github.com/lukexor"
@@ -1284,12 +1302,10 @@ Plug("nvim-telescope/telescope.nvim", { -- Fuzzy finder
     nmap("<leader>A", ":Telescope fd find_command=rg,--files,--hidden,--no-ignore,--glob,!.git<CR>")
     nmap("<leader>b", ":Telescope buffers<CR>")
     nmap("<leader>B", ":Telescope current_buffer_fuzzy_find<CR>")
-    nmap("<leader>C", ":Telescope commands<CR>")
     nmap("<leader>H", ":Telescope oldfiles<CR>")
-    nmap("<leader>T", ":Telescope help_tags<CR>")
+    nmap("<leader>Th", ":Telescope help_tags<CR>")
     nmap("<leader>S", ":Telescope lsp_document_symbols<CR>")
     nmap("<leader>U", ":Telescope ultisnips<CR>")
-    nmap("<leader>M", ":Telescope marks<CR>")
     nmap("<leader>K", ":Telescope keymaps<CR>")
     nmap("<leader>r", ":Telescope live_grep<CR>")
     nmap("<leader>F", ":Telescope git_files<CR>")
@@ -1311,8 +1327,7 @@ Plug("sheerun/vim-polyglot", {
     vim.g.markdown_fenced_languages = { "javascript", "js=javascript", "json=javascript", "rust" }
     vim.g.rustfmt_autosave = 1
     vim.g.rust_clip_command = "pbcopy"
-  end,
-  config = function()
+
     -- HTML:       othree/html5.vim
     -- Javascript: pangloss/vim-javascript
     -- JSON:       elzr/vim-json
@@ -1330,9 +1345,7 @@ Plug("sheerun/vim-polyglot", {
   end
 })
 -- Not provided by vim-polyglot
-Plug("stephpy/vim-yaml", {
-  ft = { "yaml" },
-})
+Plug("stephpy/vim-yaml")
 
 -- -----------------------------------------------------------------------------
 -- Testing/Debugging
@@ -1340,7 +1353,8 @@ Plug("stephpy/vim-yaml", {
 
 -- Tame the quickfix window
 Plug("romainl/vim-qf", {
-  config = function()
+  on = { "<Plug>(qf_qf_toggle)", "<Plug>(qf_qf_next)", "<Plug>(qf_qf_previous)" },
+  preload = function()
     nmap("[q", "<Plug>(qf_qf_previous)")
     nmap("]q", "<Plug>(qf_qf_next)")
     nmap("<leader>ct", "<Plug>(qf_qf_toggle)")
@@ -1349,23 +1363,22 @@ Plug("romainl/vim-qf", {
   end
 })
 Plug("vim-test/vim-test", {
-  config = function()
+  on = { "TestNearest", "TestFile", "TestSuite", "TestLast", "TestVisit" },
+  preload = function()
     nmap("<leader>Tn", ":TestNearest<CR>")
     nmap("<leader>Tf", ":TestFile<CR>")
     nmap("<leader>Ts", ":TestSuite<CR>")
     nmap("<leader>Tl", ":TestLast<CR>")
     nmap("<leader>Tv", ":TestVisit<CR>")
-
-    vim.cmd([[
-      function! JestStrategy(cmd)
-        echo a:cmd
-        let testName = matchlist(a:cmd, '\v -t ''(.*)''')[1]
-        call vimspector#LaunchWithSettings( #{ configuration: 'Launch Jest', TestName: testName } )
-      endfunction
-      let g:test#custom_strategies = {'jest': function('JestStrategy')}
-    ]])
   end
 })
+local dispatch_on = { "Make", "Dispatch" }
+Plug("tpope/vim-dispatch", {
+  on = dispatch_on
+});
+Plug("radenling/vim-dispatch-neovim", {
+  on = dispatch_on
+});
 -- Debugger
 Plug("puremourning/vimspector", {
   on = {
@@ -1393,7 +1406,7 @@ Plug("puremourning/vimspector", {
     nmap("<leader>dl", "<Plug>VimspectorBreakpoints")
     nmap("<leader>dc", "call vimspector#ClearBreakpoints()")
     nmap("<leader>/", "<Plug>VimspectorContinue")
-    nmap("<leader>?", "<Plug>VimspectorPause")
+    nmap("<leader>!", "<Plug>VimspectorPause")
     nmap("<leader>ds", ":VimspectorReset<CR>")
     nmap("<leader>dS", "<Plug>VimspectorStop")
     nmap("<leader>'", "<Plug>VimspectorStepOver")
@@ -1403,6 +1416,8 @@ Plug("puremourning/vimspector", {
     nmap("<leader>dR", "<Plug>VimspectorRestart")
     nmap("<leader>de", "<Plug>VimspectorBalloonEval")
     xmap("<leader>de", "<Plug>VimspectorBalloonEval")
+    xmap("<leader>dw", ":VimspectorWatch ")
+    xmap("<leader>dE", ":VimspectorEval ")
   end
 })
 
