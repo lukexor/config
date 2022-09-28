@@ -200,9 +200,8 @@ nmap("g*", "g*zzzv", silent)
 nmap("g#", "g*zzzv", silent)
 
 nmap("<leader>G", ":silent lgrep ")
-nmap("<leader>s", ":%s/")
 -- Trim blanks
-nmap("<leader>R", ":%s/\\s\\+$//<CR>")
+nmap("<leader>Tb", ":%s/\\s\\+$//<CR>")
 
 -- Open file in default program
 nmap("<localleader>x", ":!open %<CR><CR>")
@@ -1301,14 +1300,14 @@ Plug("nvim-telescope/telescope.nvim", { -- Fuzzy finder
     nmap("<leader>f", ":Telescope fd<CR>")
     nmap("<leader>A", ":Telescope fd find_command=rg,--files,--hidden,--no-ignore,--glob,!.git<CR>")
     nmap("<leader>b", ":Telescope buffers<CR>")
-    nmap("<leader>B", ":Telescope current_buffer_fuzzy_find<CR>")
     nmap("<leader>H", ":Telescope oldfiles<CR>")
     nmap("<leader>Th", ":Telescope help_tags<CR>")
     nmap("<leader>S", ":Telescope lsp_document_symbols<CR>")
     nmap("<leader>U", ":Telescope ultisnips<CR>")
     nmap("<leader>K", ":Telescope keymaps<CR>")
     nmap("<leader>r", ":Telescope live_grep<CR>")
-    nmap("<leader>F", ":Telescope git_files<CR>")
+    nmap("<leader>s", ":Telescope current_buffer_fuzzy_find<CR>")
+    nmap("<leader>gf", ":Telescope git_files<CR>")
     nmap("<leader>gb", ":Telescope git_branches<CR>")
     nmap("<leader>gc", ":Telescope git_commits<CR>")
     nmap("<leader>gC", ":Telescope git_bcommits<CR>")
