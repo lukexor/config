@@ -705,6 +705,9 @@ Plug("Xuyuanp/nerdtree-git-plugin", {
 })
 Plug("tiagofumo/vim-nerdtree-syntax-highlight", {
   on = nerdtree_opts.on,
+  preload = function()
+    vim.g.NERDTreeLimitedSyntax = 1
+  end
 })
 
 -- -----------------------------------------------------------------------------
@@ -733,7 +736,7 @@ Plug("yardnsm/vim-import-cost", {
     vim.cmd([[
       aug ImportCost
         au!
-        au ColorScheme gruvbox-material hi! link ImportCostVirtualText VirtualTextInfo
+        au ColorScheme * hi! link ImportCostVirtualText VirtualTextInfo
       aug END
     ]])
   end
@@ -765,10 +768,9 @@ Plug("sainnhe/gruvbox-material", {
         au ColorScheme gruvbox-material hi! Comment ctermfg=208 guifg=#e78a4e
         au ColorScheme gruvbox-material hi! SpecialComment ctermfg=108 guifg=#89b482 guisp=#89b482
         au ColorScheme gruvbox-material hi! FloatermBorder ctermbg=none guibg=none
-        au ColorScheme gruvbox-material hi! CursorLine ctermbg=none guibg=none
         au ColorScheme gruvbox-material hi! link Search IncSearch
         au InsertEnter * hi! CursorLine ctermbg=237 guibg=#333e34
-        au InsertLeave * hi! CursorLine ctermbg=none guibg=none
+        au InsertLeave * hi! CursorLine ctermbg=235 guibg=#282828
       aug END
     ]])
 
@@ -827,9 +829,6 @@ Plug("neovim/nvim-lspconfig", {
     local buf_nmap = function(bufnr, lhs, rhs, opts) set_keymap("n", lhs, rhs,
         Merge({ buffer = bufnr }, opts))
     end
-    local buf_xmap = function(bufnr, lhs, rhs, opts) set_keymap("x", lhs, rhs,
-        Merge({ buffer = bufnr }, opts))
-    end
     local buf_set_option = function(bufnr, ...) vim.api.nvim_buf_set_option(bufnr, ...) end
 
     nmap("<leader>Li", ":LspInfo<CR>", silent)
@@ -852,6 +851,19 @@ Plug("neovim/nvim-lspconfig", {
     nmap("<localleader>f", NoLspClient, silent)
 
     vim.cmd("au! DiagnosticChanged * lua vim.diagnostic.setqflist({ open = false })")
+
+    local lsp_format_augroup = vim.api.nvim_create_augroup("LspFormat", {})
+    local lsp_format = function(bufnr)
+      vim.lsp.buf.format({
+        bufnr = bufnr,
+        filter = function(client)
+          return client.name ~= "ccls" and
+              client.name ~= "html" and
+              client.name ~= "jsonls" and
+              client.name ~= "tsserver"
+        end,
+      })
+    end
 
     -- Use an on_attach function to only map the following keys
     -- after the language server attaches to the current buffer
@@ -881,15 +893,15 @@ Plug("neovim/nvim-lspconfig", {
       buf_nmap(bufnr, "ga", vim.lsp.buf.code_action, silent)
       buf_nmap(bufnr, "ge", vim.diagnostic.open_float, silent)
 
-      if client.resolved_capabilities.document_formatting then
-        buf_nmap(bufnr, "<localleader>f", function() vim.lsp.buf.formatting_sync(nil, 4000) end, silent)
-        buf_xmap(bufnr, "<localleader>f", function() vim.lsp.buf.range_formatting(nil, 4000) end, silent)
-        vim.cmd([[
-          aug LspFormat
-            au! * <buffer>
-            au BufWritePre <buffer> lua vim.lsp.buf.formatting_sync(nil, 1000)
-          aug END
-        ]])
+      if client.supports_method("textDocument/formatting") then
+        buf_nmap(bufnr, "<localleader>f", function() lsp_format(bufnr) end, silent)
+
+        vim.api.nvim_clear_autocmds({ group = lsp_format_augroup, buffer = bufnr })
+        vim.api.nvim_create_autocmd("BufWritePre", {
+          group = lsp_format_augroup,
+          buffer = bufnr,
+          callback = function() lsp_format(bufnr) end,
+        })
       end
 
       local filtered_diagnostics = {
@@ -937,15 +949,6 @@ Plug("neovim/nvim-lspconfig", {
       }
     }
 
-    local disable_formatting = function(opts)
-      local orig_on_attach = opts.on_attach
-      opts.on_attach = function(client, ...)
-        client.resolved_capabilities.document_formatting = false
-        orig_on_attach(client, ...)
-      end
-      return opts
-    end
-
     local get_options = function(enhance)
       local opts = {
         on_attach = on_attach,
@@ -962,11 +965,10 @@ Plug("neovim/nvim-lspconfig", {
 
     local server_opts = {
       bashls = get_options(),
-      cssls = get_options(disable_formatting),
+      cssls = get_options(),
       gopls = get_options(),
-      html = get_options(disable_formatting),
+      html = get_options(),
       jsonls = get_options(function(opts)
-        disable_formatting(opts)
         -- Range formatting for entire document
         opts.commands = {
           Format = {
@@ -1015,7 +1017,7 @@ Plug("neovim/nvim-lspconfig", {
           }
         }
       end),
-      tsserver = get_options(disable_formatting),
+      tsserver = get_options(),
       vimls = get_options(),
       yamlls = get_options(),
     }
@@ -1259,7 +1261,7 @@ Plug("honza/vim-snippets", {
   end
 })
 Plug("nvim-treesitter/nvim-treesitter", { -- AST Parser and highlighter
-  run = vim.fn[":TSUpdate"],
+  run = function() vim.cmd(":TSUpdate") end,
   config = function()
     require("nvim-treesitter.configs").setup {
       ensure_installed = { "javascript", "lua", "rust" },
