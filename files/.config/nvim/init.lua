@@ -987,6 +987,7 @@ Plug("neovim/nvim-lspconfig", {
         }
       end),
       pylsp = get_options(),
+      ccls = get_options(),
       rust_analyzer = get_options(function(opts)
         opts.settings = {
           ["rust-analyzer"] = {
