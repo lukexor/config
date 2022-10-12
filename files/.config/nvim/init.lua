@@ -850,7 +850,6 @@ Plug("neovim/nvim-lspconfig", {
     nmap("gr", NoLspClient, silent)
     nmap("gR", NoLspClient, silent)
     nmap("ga", NoLspClient, silent)
-    nmap("gO", NoLspClient, silent)
     nmap("ge", vim.diagnostic.open_float, silent)
     nmap("gp", vim.diagnostic.goto_prev, silent)
     nmap("gn", vim.diagnostic.goto_next, silent)
