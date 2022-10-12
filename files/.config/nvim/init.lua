@@ -105,194 +105,155 @@ function Merge(a, b)
   return MergeR(MergeR({}, a or {}), b or {})
 end
 
-local silent = { silent = true }
-local remap = { remap = true }
-
 local set_keymap = function(...) vim.keymap.set(...) end
--- local del_keymap = function(...) vim.keymap.del(...) end
 local map = function(lhs, rhs, opts) set_keymap("", lhs, rhs, opts) end
 local nmap = function(lhs, rhs, opts) set_keymap("n", lhs, rhs, opts) end
--- local nunmap = function(lhs, opts) del_keymap("n", lhs, opts) end
 local vmap = function(lhs, rhs, opts) set_keymap("v", lhs, rhs, opts) end
-local xmap = function(lhs, rhs, opts) set_keymap("x", lhs, rhs, opts) end
 local imap = function(lhs, rhs, opts) set_keymap("i", lhs, rhs, opts) end
 local omap = function(lhs, rhs, opts) set_keymap("o", lhs, rhs, opts) end
 
--- Quick edit vim files
-nmap("<leader>ve", ":edit $MYVIMRC<CR>")
-nmap("<leader>vr", ":source $MYVIMRC<CR>:edit<CR>")
+nmap("<leader>ve", ":edit $MYVIMRC<CR>", { desc = "edit init.lua" })
+nmap("<leader>vr", ":source $MYVIMRC<CR>:edit<CR>", { desc = "reload init.lua" })
 
--- Quick save
-nmap("<leader>w", ":w<CR>")
--- Save but don"t run aus which might format
-nmap("<leader>W", ":noa w<CR>")
+nmap("<leader>w", ":w<CR>", { desc = "write buffer" })
+nmap("<leader>W", ":noa w<CR>", { desc = "write without autocommands" })
 
--- Quick quit
-nmap("<leader>q", ":confirm q<CR>")
-nmap("<leader>Q", ":confirm qall<CR>")
-nmap("<leader>O", ":%bd|e#|bd#<CR>")
+nmap("<leader>q", ":confirm q<CR>", { desc = "close window/exit vim" })
+nmap("<leader>Q", ":confirm qall<CR>", { desc = "exit vim" })
+nmap("<leader>O", ":%bd|e#|bd#<CR>", { desc = "close all but current" })
 
--- Send x to blackhole register
-nmap("x", '"_x')
-nmap("X", '"_X')
+nmap("x", '"_x', { desc = "del character(s) under/after cursor into blackhole" })
+nmap("X", '"_X', { desc = "del character(s) before cursor into blackhole" })
 
--- Disable Q for Ex mode since it's accidentally hit often. gQ still works.
-nmap("Q", "")
+nmap("Q", "<nop>", { desc = "disable Q for ExMode, use gQ instead" })
 
--- Clear search
-nmap("<leader><CR>", ":nohlsearch<Bar>diffupdate<CR><C-l>")
+nmap("<leader><CR>", ":nohlsearch<Bar>diffupdate<CR><C-l>", { desc = "clear search highlighting" })
 
--- Allow gf to open non-existent files, doesn"t auto-find like original gf, but
--- can use gF instead.
-map("gf", ":edit <cfile><CR>", silent)
+nmap("ef", ":edit <cfile><CR>", { desc = "edit file" })
+nmap("gt", "<C-]>", { desc = "go to tag" })
 
--- Switch between windows
-map("<C-h>", "<C-w>h", silent)
-map("<C-j>", "<C-w>j", silent)
-map("<C-k>", "<C-w>k", silent)
-map("<C-l>", "<C-w>l", silent)
+map("<C-h>", "<C-w>h", { desc = "go to Nth left window" })
+map("<C-j>", "<C-w>j", { desc = "go to Nth below window" })
+map("<C-k>", "<C-w>k", { desc = "go to Nth above window" })
+map("<C-l>", "<C-w>l", { desc = "go to Nth right window" })
 
--- Navigate buffers
-nmap("<leader>h", ":bp<CR>")
-nmap("<leader>l", ":bn<CR>")
-nmap("<leader><leader>", "<C-^>")
+nmap("<leader>-", "<C-w>_<C-w>|", { desc = "maximize window" })
+nmap("<leader>=", "<C-w>=", { desc = "make all windows equal size" })
 
--- Navigate to tag
-nmap("gt", "gt <C-]>", silent)
+nmap("<leader>h", ":bp<CR>", { silent = true, desc = "go to previous buffer" })
+nmap("<leader>l", ":bn<CR>", { silent = true, desc = "go to next buffer" })
+nmap("<leader><leader>", "<C-^>", { desc = "alternate buffer" })
 
 -- Show diffs in a modified buffer
-vim.cmd("command! DiffOrig vert new | set bt=nofile | r ++edit # | 0d_ | diffthis | wincmd p | diffthis")
+vim.api.nvim_create_user_command("DiffOrig",
+  "vert new | set bt=nofile | r ++edit # | 0d_ | diffthis | wincmd p | diffthis", {})
 
 -- Reselect visual after indenting
-vmap("<", "<gv")
-vmap(">", ">gv")
+vmap("<", "<gv", { desc = "shift {motion} lines leftwards" })
+vmap(">", ">gv", { desc = "shift {motion} lines rightwards" })
 
--- Maintain cursor position when yanking visual
-vmap("y", "myy`y")
-vmap("Y", "myY`y")
+vmap("p", '"_dP', { desc = "replace selection without yanking" })
+nmap("+", 'V"_dP', { desc = "replace current line with yank" })
 
--- Paste replace visual selection without copying it
-vmap("<leader>p", '"_dP')
+-- "==" honors indent
+nmap("<leader>j", ":m .+1<CR>==", { silent = true, desc = "move line upwards" })
+nmap("<leader>k", ":m .-2<CR>==", { silent = true, desc = "move line downwards" })
 
--- Deletes the current line and replaces it with the previously yanked value
-nmap("+", 'V"_dP')
-
--- Move selections up/down
--- gv restores visual mode selection, = ensures indent is honored
-vmap("J", ":m '>+1<CR>gv=gv")
-vmap("K", ":m '<-2<CR>gv=gv")
-
--- Move line up/down
--- == honors indent
-nmap("<leader>j", ":m .+1<CR>==", silent)
-nmap("<leader>k", ":m .-2<CR>==", silent)
-
--- Toggle auto-text wrapping
-nmap("<localleader>w", [[ (&fo =~ 't' ? ":set fo-=t<CR>" : ":set fo+=t<CR>") ]], { silent = true, expr = true })
+nmap("<localleader>w", [[&fo =~ 't' ? ":set fo-=t<CR>" : ":set fo+=t<CR>"]],
+  { expr = true, desc = "toggle text auto-wrap" })
 
 -- Keep cursor centered
-nmap("n", "nzzzv")
-nmap("N", "Nzzzv")
-nmap("J", "mzJ`z")
-nmap("*", "*zzzv", silent)
-nmap("#", "#zzzv", silent)
-nmap("g*", "g*zzzv", silent)
-nmap("g#", "g*zzzv", silent)
+nmap("n", "nzzzv", { desc = "repeat latest / or ?" })
+nmap("N", "Nzzzv", { desc = "repeat latest / or ? in reverse" })
+nmap("J", "mzJ`z", { desc = "join lines" })
+nmap("*", "*zzzv", { desc = "search forward" })
+nmap("#", "#zzzv", { desc = "search backwards" })
+nmap("g*", "g*zzzv", { desc = "search forwards without word boundary" })
+nmap("g#", "g*zzzv", { desc = "search backwards without word boundary" })
 
-nmap("<leader>G", ":silent lgrep ")
--- Trim blanks
-nmap("<leader>Tb", ":%s/\\s\\+$//<CR>")
+nmap("<leader>G", ":silent lgrep ", { desc = "grep" })
+nmap("<localleader>Tb", ":%s/\\s\\+$//<CR>", { desc = "trim trailing blanks" })
 
--- Open file in default program
-nmap("<localleader>x", ":!open %<CR><CR>")
+nmap("<localleader>x", function()
+  if vim.fn.has("linux") == 1 then
+    vim.cmd("!xdg-open %")
+  elseif vim.fn.has("mac") == 1 then
+    vim.cmd("!open %")
+  else
+    vim.notify("unable to open file", vim.log.levels.ERROR, { title = "open external file" })
+  end
+end, { expr = true, desc = "open external file" })
 
--- Escape insert mode
-imap("jj", "<Esc>")
-imap("<C-c>", "<Esc>")
+imap("jj", "<Esc>", { desc = "escape" })
+imap("<C-c>", "<Esc>", { desc = "escape" })
 
--- Easy insert trailing punctuation from insert mode
-nmap(";;", "A;<Esc>")
-nmap(",,", "A,<Esc>")
-imap(";;", "<Esc>A;<Esc>")
-imap(",,", "<Esc>A,<Esc>")
+nmap(";;", "A;<Esc>", { desc = "append ;" })
+nmap(",,", "A,<Esc>", { desc = "append ," })
+imap(";;", "<Esc>A;<Esc>", { desc = "append ;" })
+imap(",,", "<Esc>A,<Esc>", { desc = "append ," })
 
 -- Add breaks in undo chain when typing punctuation
-imap(".", ".<C-g>u")
-imap(",", ",<C-g>u")
-imap("!", "!<C-g>u")
-imap("?", "?<C-g>u")
+imap(".", ".<C-g>u", { desc = "." })
+imap(",", ",<C-g>u", { desc = "," })
+imap("!", "!<C-g>u", { desc = "!" })
+imap("?", "?<C-g>u", { desc = "?" })
 
 -- Add relative jumps of more than 5 lines to jump list
 -- Move by terminal rows, not lines, unless count is provided
-nmap("j", [[ (v:count > 0 ? "m'" . v:count . 'j' : "gj") ]], { silent = true, expr = true })
-nmap("k", [[ (v:count > 0 ? "m'" . v:count . 'k' : "gk") ]], { silent = true, expr = true })
+nmap("j", [[v:count > 0 ? "m'" . v:count . 'j' : "gj"]], { expr = true, desc = "go down a line" })
+nmap("k", [[v:count > 0 ? "m'" . v:count . 'k' : "gk"]], { expr = true, desc = "go up a line" })
 
--- Maximize window
-nmap("<leader>-", ":wincmd _<CR>:wincmd |<CR>")
--- Equalize window sizes
-nmap("<leader>=", ":wincmd =<CR>")
+nmap("<Down>", ":resize -5<CR>", { desc = "shrink window height" })
+nmap("<Up>", ":resize +5<CR>", { desc = "increase window height" })
+nmap("<Left>", ":vertical resize +5<CR>", { desc = "shrink window width" })
+nmap("<Right>", ":vertical resize -5<CR>", { desc = "increase window width" })
 
--- Disable arrow keys
-nmap("<Down>", "<nop>")
-nmap("<Left>", "<nop>")
-nmap("<Right>", "<nop>")
-nmap("<Up>", "<nop>")
-
--- Resize windows
-nmap("<localleader>h", ":vertical resize +5<CR>")
-nmap("<localleader>j", ":resize +5<CR>")
-nmap("<localleader>k", ":resize -5<CR>")
-nmap("<localleader>l", ":vertical resize -5<CR>")
-
--- cd to cwd of current file
-nmap("cd", ":exe 'lcd ' fnamemodify(resolve(expand('%')), ':p:h')<CR>"
-  .. ":lua vim.notify('lcd ' .. vim.fn.fnamemodify(vim.fn.resolve(vim.fn.expand('%')), ':p:h'))<CR>",
-  silent
+nmap("cd",
+  function()
+    local pathname = vim.fs.dirname(vim.api.nvim_buf_get_name(0))
+    vim.cmd(("lcd %s"):format(pathname))
+    vim.notify(("lcd %s"):format(pathname))
+  end,
+  { desc = "cd to current file path" }
 )
 
--- Yank/Paste to/from clipboard
-nmap("cy", '"*y')
-nmap("cY", '"*Y')
-nmap("cyy", '"*yy')
-vmap("cy", '"*y')
-nmap("cp", '"*p')
-nmap("cP", '"*P')
+nmap("cy", '"*y', { desc = "yank to clipboard" })
+nmap("cY", '"*Y', { desc = "yank line to clipboard" })
+nmap("cyy", '"*yy', { desc = "yank line to clipbard" })
+vmap("cy", '"*y', { desc = "yank selection to clipboard" })
+nmap("cp", '"*p', { desc = "paste from clipboard after cursor" })
+nmap("cP", '"*P', { desc = "paste from clipboard before cursor" })
 
--- Next/Last parens text-object
-omap("in(", ":<C-u>normal! f(vi(<CR>")
-omap("il(", ":<C-u>normal! F)vi(<CR>")
-omap("an(", ":<C-u>normal! f(va(<CR>")
-omap("al(", ":<C-u>normal! F)va(<CR>")
-vmap("in(", ":<C-u>normal! f(vi(<CR><Esc>gv")
-vmap("il(", ":<C-u>normal! F)vi(<CR><Esc>gv")
-vmap("an(", ":<C-u>normal! f(va(<CR><Esc>gv")
-vmap("al(", ":<C-u>normal! F)va(<CR><Esc>gv")
+omap("in(", ":<C-u>normal! f(vi(<CR>", { silent = true, desc = "inner next () block" })
+omap("il(", ":<C-u>normal! F)vi(<CR>", { silent = true, desc = "inner last () block" })
+omap("an(", ":<C-u>normal! f(va(<CR>", { silent = true, desc = "around next () block" })
+omap("al(", ":<C-u>normal! F)va(<CR>", { silent = true, desc = "around last () block" })
+vmap("in(", ":<C-u>normal! f(vi(<CR><Esc>gv", { silent = true, desc = "inner next () block" })
+vmap("il(", ":<C-u>normal! F)vi(<CR><Esc>gv", { silent = true, desc = "inner last () block" })
+vmap("an(", ":<C-u>normal! f(va(<CR><Esc>gv", { silent = true, desc = "around next () block" })
+vmap("al(", ":<C-u>normal! F)va(<CR><Esc>gv", { silent = true, desc = "around last () block" })
 
--- Next/Last brace text-object
-omap("in{", ":<C-u>normal! f{vi{<CR>")
-omap("il{", ":<C-u>normal! F{vi{<CR>")
-omap("an{", ":<C-u>normal! f{va{<CR>")
-omap("al{", ":<C-u>normal! F{va{<CR>")
-vmap("in{", ":<C-u>normal! f{vi{<CR><Esc>gv")
-vmap("il{", ":<C-u>normal! F{vi{<CR><Esc>gv")
-vmap("an{", ":<C-u>normal! f{va{<CR><Esc>gv")
-vmap("al{", ":<C-u>normal! F{va{<CR><Esc>gv")
+omap("in{", ":<C-u>normal! f{vi{<CR>", { silent = true, desc = "inner next {} block" })
+omap("il{", ":<C-u>normal! F{vi{<CR>", { silent = true, desc = "inner last {} block" })
+omap("an{", ":<C-u>normal! f{va{<CR>", { silent = true, desc = "around next {} block" })
+omap("al{", ":<C-u>normal! F{va{<CR>", { silent = true, desc = "around last {} block" })
+vmap("in{", ":<C-u>normal! f{vi{<CR><Esc>gv", { silent = true, desc = "inner next {} block" })
+vmap("il{", ":<C-u>normal! F{vi{<CR><Esc>gv", { silent = true, desc = "inner last {} block" })
+vmap("an{", ":<C-u>normal! f{va{<CR><Esc>gv", { silent = true, desc = "around next {} block" })
+vmap("al{", ":<C-u>normal! F{va{<CR><Esc>gv", { silent = true, desc = "around last {} block" })
 
--- Next/Last bracket text-object
-omap("in[", ":<C-u>normal! f[vi[<CR>")
-omap("il[", ":<C-u>normal! F[vi[<CR>")
-omap("an[", ":<C-u>normal! f[va[<CR>")
-omap("al[", ":<C-u>normal! F[va[<CR>")
-vmap("in[", ":<C-u>normal! f[vi[<CR><Esc>gv")
-vmap("il[", ":<C-u>normal! F[vi[<CR><Esc>gv")
-vmap("an[", ":<C-u>normal! f[va[<CR><Esc>gv")
-vmap("al[", ":<C-u>normal! F[va[<CR><Esc>gv")
+omap("in[", ":<C-u>normal! f[vi[<CR>", { silent = true, desc = "inner next [] block" })
+omap("il[", ":<C-u>normal! F[vi[<CR>", { silent = true, desc = "inner last [] block" })
+omap("an[", ":<C-u>normal! f[va[<CR>", { silent = true, desc = "around next [] block" })
+omap("al[", ":<C-u>normal! F[va[<CR>", { silent = true, desc = "around last [] block" })
+vmap("in[", ":<C-u>normal! f[vi[<CR><Esc>gv", { silent = true, desc = "inner next [] block" })
+vmap("il[", ":<C-u>normal! F[vi[<CR><Esc>gv", { silent = true, desc = "inner last [] block" })
+vmap("an[", ":<C-u>normal! f[va[<CR><Esc>gv", { silent = true, desc = "around next [] block" })
+vmap("al[", ":<C-u>normal! F[va[<CR><Esc>gv", { silent = true, desc = "around last [] block" })
 
--- Fold text-object
-vmap("af", ":<C-u>silent! normal! [zV]z<CR>")
-omap("af", ":normal Vaf<CR>")
+vmap("af", ":<C-u>silent! normal! [zV]z<CR>", { silent = true, desc = "around fold" })
+omap("af", ":normal Vaf<CR>", { silent = true, desc = "around fold" })
 
--- Indent text-object
 function IndentTextObj(around)
   local curcol = vim.fn.col(".")
   local curline = vim.fn.line(".")
@@ -354,32 +315,31 @@ function IndentTextObj(around)
   end
 end
 
-omap("ai", ":<C-u>lua IndentTextObj(false)<CR>", silent)
-omap("ii", ":<C-u>lua IndentTextObj(true)<CR>", silent)
-xmap("ai", ":<C-u>lua IndentTextObj(false)<CR><Esc>gv", silent)
-xmap("ii", ":<C-u>lua IndentTextObj(true)<CR><Esc>gv", silent)
+omap("ii", ":<C-u>lua IndentTextObj(true)<CR>", { silent = true, desc = "inner indent" })
+omap("ai", ":<C-u>lua IndentTextObj(false)<CR>", { silent = true, desc = "around indent" })
+vmap("ii", ":<C-u>lua IndentTextObj(true)<CR><Esc>gv", { silent = true, desc = "inner indent" })
+vmap("ai", ":<C-u>lua IndentTextObj(false)<CR><Esc>gv", { silent = true, desc = "around indent" })
 
--- Identify syntax ID under cursor
-nmap("<localleader>i", ":echo 'hi<' . synIDattr(synID(line('.'),col('.'),1),'name') . '> trans<'"
-  .. " . synIDattr(synID(line('.'),col('.'),0),'name') . '> lo<'"
-  .. " . synIDattr(synIDtrans(synID(line('.'),col('.'),1)),'name') . '>'<CR>"
-)
+nmap("<localleader>i", function()
+  local line = vim.fn.line(".")
+  local col = vim.fn.col(".")
+  local hi = vim.fn.synIDattr(vim.fn.synID(line, col, 1), "name")
+  local trans = vim.fn.synIDattr(vim.fn.synID(line, col, 0), "name")
+  local lo = vim.fn.synIDattr(vim.fn.synIDtrans(vim.fn.synID(line, col, 0)), "name")
+  vim.cmd(("echo 'hi<%s> trans<%s> lo<%s>'"):format(hi, trans, lo))
+end, { desc = "show syntax ID under cursor" })
 
-function ToggleGutter()
+nmap("<leader>\\", function()
   if vim.opt.nu:get() or vim.opt.rnu:get() or vim.opt.list:get() then
     vim.cmd("set nornu nonu nolist signcolumn=no")
   else
     vim.cmd("set rnu nu list signcolumn=yes:2")
   end
-end
+end, { desc = "toggle gutter and signs" })
 
--- Toggle gutter and signs
-nmap("<leader>\\", ":lua ToggleGutter()<CR>")
-
---- Ascii Art
-nmap("<localleader>ab", ":.!toilet -w 200 -f term -F border<CR>")
-nmap("<localleader>as", ":.!figlet -w 200 -f standard<CR>")
-nmap("<localleader>aS", ":.!figlet -w 200 -f small<CR>")
+nmap("<localleader>ab", ":.!toilet -w 200 -f term -F border<CR>", { desc = "ascii art border" })
+nmap("<localleader>as", ":.!figlet -w 200 -f standard<CR>", { desc = "ascii art standard" })
+nmap("<localleader>aS", ":.!figlet -w 200 -f small<CR>", { desc = "ascii art small" })
 
 
 -- =============================================================================
@@ -447,7 +407,7 @@ Plug("lewis6991/impatient.nvim", {
 -- Keep window layout when deleting buffers
 Plug("famiu/bufdelete.nvim", {
   config = function()
-    nmap("<leader>D", ":confirm Bdelete<CR>")
+    nmap("<leader>D", ":confirm Bdelete<CR>", { desc = "delete buffer" })
   end
 })
 -- Better buffer management
@@ -460,16 +420,16 @@ Plug("ap/vim-buftabline", {
     vim.g.buftabline_separators = 1
   end,
   config = function()
-    nmap("<leader>1", "<Plug>BufTabLine.Go(1)")
-    nmap("<leader>2", "<Plug>BufTabLine.Go(2)")
-    nmap("<leader>3", "<Plug>BufTabLine.Go(3)")
-    nmap("<leader>4", "<Plug>BufTabLine.Go(4)")
-    nmap("<leader>5", "<Plug>BufTabLine.Go(5)")
-    nmap("<leader>6", "<Plug>BufTabLine.Go(6)")
-    nmap("<leader>7", "<Plug>BufTabLine.Go(7)")
-    nmap("<leader>8", "<Plug>BufTabLine.Go(8)")
-    nmap("<leader>9", "<Plug>BufTabLine.Go(9)")
-    nmap("<leader>0", "<Plug>BufTabLine.Go(-1)")
+    nmap("<leader>1", "<Plug>BufTabLine.Go(1)", { desc = "go to buffer tab 1" })
+    nmap("<leader>2", "<Plug>BufTabLine.Go(2)", { desc = "go to buffer tab 2" })
+    nmap("<leader>3", "<Plug>BufTabLine.Go(3)", { desc = "go to buffer tab 3" })
+    nmap("<leader>4", "<Plug>BufTabLine.Go(4)", { desc = "go to buffer tab 4" })
+    nmap("<leader>5", "<Plug>BufTabLine.Go(5)", { desc = "go to buffer tab 5" })
+    nmap("<leader>6", "<Plug>BufTabLine.Go(6)", { desc = "go to buffer tab 6" })
+    nmap("<leader>7", "<Plug>BufTabLine.Go(7)", { desc = "go to buffer tab 7" })
+    nmap("<leader>8", "<Plug>BufTabLine.Go(8)", { desc = "go to buffer tab 8" })
+    nmap("<leader>9", "<Plug>BufTabLine.Go(9)", { desc = "go to buffer tab 9" })
+    nmap("<leader>0", "<Plug>BufTabLine.Go(-1)", { desc = "go to last buffer tab" })
   end
 })
 Plug("tpope/vim-repeat") -- Repeat with "."
@@ -481,8 +441,8 @@ Plug("justinmk/vim-sneak", {
   end,
   config = function()
     -- Operator-mode - e.g. dzab - delete until `ab`
-    omap("z", "<Plug>Sneak_s")
-    omap("Z", "<Plug>Sneak_S")
+    omap("z", "<Plug>Sneak_s", { desc = "{action} until {char}{char} forwards" })
+    omap("Z", "<Plug>Sneak_S", { desc = "{action} until {char}{char} backwards" })
   end
 })
 Plug("ypcrts/securemodelines") -- Safe modelines
@@ -491,10 +451,10 @@ Plug("kshenoy/vim-signature") -- Show marks in gutter
 -- Less jarring scroll
 Plug("terryma/vim-smooth-scroll", {
   config = function()
-    nmap("<C-u>", ":call smooth_scroll#up(&scroll, 10, 1)<CR>", silent)
-    nmap("<C-d>", ":call smooth_scroll#down(&scroll, 10, 1)<CR>", silent)
-    nmap("<C-b>", ":call smooth_scroll#up(&scroll*2, 10, 3)<CR>", silent)
-    nmap("<C-f>", ":call smooth_scroll#down(&scroll*2, 10, 3)<CR>", silent)
+    nmap("<C-u>", ":call smooth_scroll#up(&scroll, 10, 1)<CR>", { silent = true, desc = "small scroll up" })
+    nmap("<C-d>", ":call smooth_scroll#down(&scroll, 10, 1)<CR>", { silent = true, desc = "small scroll down" })
+    nmap("<C-b>", ":call smooth_scroll#up(&scroll*2, 10, 3)<CR>", { silent = true, desc = "large scroll up" })
+    nmap("<C-f>", ":call smooth_scroll#down(&scroll*2, 10, 3)<CR>", { silent = true, desc = "large scroll down" })
   end
 })
 
@@ -506,8 +466,8 @@ Plug("terryma/vim-smooth-scroll", {
 Plug("sudormrfbin/cheatsheet.nvim", {
   on = { "Cheatsheet", "CheatsheetEdit" },
   preload = function()
-    nmap("<leader>C", ":Cheatsheet")
-    nmap("<localleader>C", ":CheatsheetEdit ")
+    nmap("<localleader>C", ":Cheatsheet<CR>", { desc = "cheatsheet" })
+    nmap("<localleader>E", ":CheatsheetEdit<CR>", { desc = "edit cheatsheet" })
   end
 })
 -- Online Cheat.sh lookup
@@ -518,13 +478,13 @@ Plug("dbeniamine/cheat.sh-vim", {
     vim.g.CheatSheetDoNotMap = 1
     vim.g.CheatDoNotReplaceKeywordPrg = 1
 
-    nmap("<leader>cs", ":Cheat ")
+    nmap("<leader>cs", ":Cheat ", { desc = "search cheat.sh" })
   end
 })
 -- File symbol outline to TagBar
 Plug("stevearc/aerial.nvim", {
   preload = function()
-    nmap("<leader>ts", ":AerialToggle<CR>")
+    nmap("<leader>ts", ":AerialToggle<CR>", { desc = "toggle symbol outline" })
   end,
   config = function()
     require("aerial").setup {
@@ -570,46 +530,47 @@ Plug("tpope/vim-commentary") -- Commenting motion commands gc*
 Plug("tpope/vim-surround", {
   config = function()
     -- Surround text with punctuation easier 'you surround' + motion
-    nmap('<leader>"', 'ysiw"', remap)
-    nmap("<leader>'", "ysiw'", remap)
-    nmap("<leader>(", "ysiw(", remap)
-    nmap("<leader>)", "ysiw)", remap)
-    nmap("<leader>>", "ysiw>", remap)
-    nmap("<leader>[", "ysiw[", remap)
-    nmap("<leader>]", "ysiw]", remap)
-    nmap("<leader>`", "ysiw`", remap)
-    nmap("<leader>{", "ysiw{", remap)
-    nmap("<leader>}", "ysiw}", remap)
-    nmap("<leader><Bar>", "ysiw|", remap)
+    nmap('<leader>"', 'ysiw"', { remap = true, desc = 'surround text with ""' })
+    nmap("<leader>'", "ysiw'", { remap = true, desc = "surround text with ''" })
+    nmap("<leader>(", "ysiw(", { remap = true, desc = "surround text with ( )" })
+    nmap("<leader>)", "ysiw)", { remap = true, desc = "surround text with ()" })
+    nmap("<leader><", "ysiw>", { remap = true, desc = "surround text with <>" })
+    nmap("<leader>>", "ysiw>", { remap = true, desc = "surround text with <>" })
+    nmap("<leader>[", "ysiw[", { remap = true, desc = "surround text with [ ]" })
+    nmap("<leader>]", "ysiw]", { remap = true, desc = "surround text with []" })
+    nmap("<leader>`", "ysiw`", { remap = true, desc = "surround text with ``" })
+    nmap("<leader>{", "ysiw{", { remap = true, desc = "surround text with { }" })
+    nmap("<leader>}", "ysiw}", { remap = true, desc = "surround text with {}" })
+    nmap("<leader>|", "ysiw|", { remap = true, desc = "surround text with ||" })
+    nmap("<localleader>rh", "ds'ds}", { remap = true, desc = "remove surrounding {''}" })
+    nmap("<localleader>sh", "ysiw}lysiw'", { remap = true, desc = "surround text with {''}" })
 
     -- Same mappers for visual mode
-    vmap('<leader>"', 'gS"', remap)
-    vmap("<leader>'", "gS'", remap)
-    vmap("<leader>(", "gS(", remap)
-    vmap("<leader>)", "gS)", remap)
-    vmap("<leader><", "gS<", remap)
-    vmap("<leader>>", "gS>", remap)
-    vmap("<leader>[", "gS[", remap)
-    vmap("<leader>]", "gS]", remap)
-    vmap("<leader>`", "gS`", remap)
-    vmap("<leader>{", "gS{", remap)
-    vmap("<leader>}", "gS}", remap)
-    vmap("<leader>|", "gS|", remap)
+    vmap('<leader>"', 'gS"', { remap = true, desc = 'surround text with ""' })
+    vmap("<leader>'", "gS'", { remap = true, desc = "surround text with ''" })
+    vmap("<leader>(", "gS(", { remap = true, desc = "surround text with ( )" })
+    vmap("<leader>)", "gS)", { remap = true, desc = "surround text with ()" })
+    vmap("<leader><", "gS>", { remap = true, desc = "surround text with <>" })
+    vmap("<leader>>", "gS>", { remap = true, desc = "surround text with <>" })
+    vmap("<leader>[", "gS[", { remap = true, desc = "surround text with [ ]" })
+    vmap("<leader>]", "gS]", { remap = true, desc = "surround text with []" })
+    vmap("<leader>`", "gS`", { remap = true, desc = "surround text with ``" })
+    vmap("<leader>{", "gS{", { remap = true, desc = "surround text with { }" })
+    vmap("<leader>}", "gS}", { remap = true, desc = "surround text with {}" })
+    vmap("<leader>|", "gS|", { remap = true, desc = "surround text with |" })
 
-    nmap("<localleader>[", "ysip[", remap)
-    nmap("<localleader>]", "ysip]", remap)
-    nmap("<localleader>rh", "ds'ds}", remap)
-    nmap("<localleader>sh", "ysiw}lysiw'", remap)
-    nmap("<localleader>{", "ysip{", remap)
-    nmap("<localleader>}", "ysip{", remap)
+    nmap("<localleader>[", "ysip[", { remap = true, desc = "surround paragraph with []" })
+    nmap("<localleader>]", "ysip]", { remap = true, desc = "surround paragraph with []" })
+    nmap("<localleader>{", "ysip{", { remap = true, desc = "surround paragraph with {}" })
+    nmap("<localleader>}", "ysip{", { remap = true, desc = "surround paragraph with {}" })
   end
 })
 -- Make aligning rows easier
 Plug("junegunn/vim-easy-align", {
   on = { "EasyAlign" },
   preload = function()
-    xmap("<leader>a", ":EasyAlign<CR>")
-    nmap("<leader>a", ":EasyAlign<CR>")
+    nmap("<leader>a", ":EasyAlign<CR>", { desc = "align text" })
+    vmap("<leader>a", ":EasyAlign<CR>", { desc = "align selection" })
   end
 })
 local vim_radical_on = {
@@ -627,12 +588,12 @@ Plug("glts/vim-magnum", {
 Plug("glts/vim-radical", {
   on = vim_radical_on,
   preload = function()
-    nmap("gA", "<Plug>RadicalView")
-    xmap("gA", "<Plug>RadicalView")
-    nmap("crd", "<Plug>RadicalCoerceToDecimal")
-    nmap("crx", "<Plug>RadicalCoerceToHex")
-    nmap("cro", "<Plug>RadicalCoerceToOctal")
-    nmap("crb", "<Plug>RadicalCoerceToBinary")
+    nmap("gA", "<Plug>RadicalView", { desc = "show number conversions under cursor" })
+    vmap("gA", "<Plug>RadicalView", { desc = "show number conversions under selection" })
+    nmap("crd", "<Plug>RadicalCoerceToDecimal", { desc = "convert number to decimal" })
+    nmap("crx", "<Plug>RadicalCoerceToHex", { desc = "convert number to hex" })
+    nmap("cro", "<Plug>RadicalCoerceToOctal", { desc = "convert number to octal" })
+    nmap("crb", "<Plug>RadicalCoerceToBinary", { desc = "convert number to binary" })
   end
 })
 Plug("zirrostig/vim-schlepp", {
@@ -643,10 +604,10 @@ Plug("zirrostig/vim-schlepp", {
     "<Plug>SchleppRight",
   },
   preload = function()
-    vmap("K", "<Plug>SchleppUp")
-    vmap("J", "<Plug>SchleppDown")
-    vmap("H", "<Plug>SchleppLeft")
-    vmap("L", "<Plug>SchleppRight")
+    vmap("K", "<Plug>SchleppUp", { desc = "move selection up" })
+    vmap("J", "<Plug>SchleppDown", { desc = "move selection down" })
+    vmap("H", "<Plug>SchleppLeft", { desc = "move selection left" })
+    vmap("L", "<Plug>SchleppRight", { desc = "move selection right" })
   end
 })
 
@@ -683,23 +644,12 @@ Plug("preservim/nerdtree", {
       "<leader>n",
       "exists('g:NERDTree') && g:NERDTree.IsOpen() ? ':NERDTreeClose<CR>' : @% == ''"
       .. " ? ':NERDTree<CR>' : ':NERDTreeFind<CR>'",
-      { expr = true }
+      { expr = true, desc = "toggle NERDTree" }
     )
-    nmap("<leader>N", ":NERDTreeFind<CR>")
+    nmap("<leader>N", ":NERDTreeFind<CR>", { desc = "find file in NERDTree" })
 
-    vim.cmd([[
-      aug NERDTree
-        au!
-        " Start NERDTree when Vim starts with a directory argument.
-        au StdinReadPre * let s:std_in=1
-
-        " Closes if NERDTree is the only open window
-        au BufEnter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
-        " If another buffer tries to replace NERDTree, put it in the other window, and bring back NERDTree.
-        au BufEnter * if bufname('#') =~ 'NERD_tree_\d\+' && bufname('%') !~ 'NERD_tree_\d\+' && winnr('$') > 1 |
-          \ let buf=bufnr() | buffer# | exe "normal! \<C-W>w" | exe 'buffer'.buf | endif
-      aug END
-    ]])
+    -- Closes if NERDTree is the only open window
+    vim.cmd([[au! BufEnter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif]])
   end,
 })
 Plug("Xuyuanp/nerdtree-git-plugin", {
@@ -736,7 +686,7 @@ Plug("yardnsm/vim-import-cost", {
   preload = function()
     vim.g.import_cost_virtualtext_prefix = " ▸ "
 
-    nmap("<localleader>C", ":ImportCost<CR>");
+    nmap("<localleader>I", ":ImportCost<CR>", { desc = "calculate import sizes" });
   end,
   config = function()
     vim.cmd([[
@@ -829,31 +779,31 @@ Plug("neovim/nvim-lspconfig", {
     -- Default LSP shortcuts to no-ops for non-supported file types to avoid
     -- confusion with default vim shortcuts.
     function NoLspClient()
-      vim.notify("No LSP client attached for filetype: `" .. vim.bo.filetype .. "`.", 3)
+      vim.notify("No LSP client attached for filetype: `" .. vim.bo.filetype .. "`.", vim.log.levels.WARN,
+        { title = "lsp" })
     end
 
     local buf_nmap = function(bufnr, lhs, rhs, opts) set_keymap("n", lhs, rhs,
         Merge({ buffer = bufnr }, opts))
     end
-    local buf_set_option = function(bufnr, ...) vim.api.nvim_buf_set_option(bufnr, ...) end
 
-    nmap("<leader>Li", ":LspInfo<CR>", silent)
-    nmap("<leader>LI", ":LspInstallInfo<CR>", silent)
-    nmap("<leader>Ls", ":LspStart<CR>", silent)
-    nmap("<leader>LS", ":LspStop<CR>", silent)
-    nmap("<leader>Lr", ":LspRestart<CR>", silent)
-    nmap("gd", NoLspClient, silent)
-    nmap("gD", NoLspClient, silent)
-    nmap("gh", NoLspClient, silent)
-    nmap("gH", NoLspClient, silent)
-    nmap("gi", NoLspClient, silent)
-    nmap("gr", NoLspClient, silent)
-    nmap("gR", NoLspClient, silent)
-    nmap("ga", NoLspClient, silent)
-    nmap("ge", vim.diagnostic.open_float, silent)
-    nmap("gp", vim.diagnostic.goto_prev, silent)
-    nmap("gn", vim.diagnostic.goto_next, silent)
-    nmap("<localleader>f", NoLspClient, silent)
+    nmap("<leader>Li", ":LspInfo<CR>", { desc = "lsp info" })
+    nmap("<leader>LI", ":LspInstallInfo<CR>", { desc = "lsp install info" })
+    nmap("<leader>Ls", ":LspStart<CR>", { desc = "start lsp server" })
+    nmap("<leader>LS", ":LspStop<CR>", { desc = "stop lsp server" })
+    nmap("<leader>Lr", ":LspRestart<CR>", { desc = "restart lsp server" })
+    nmap("gd", NoLspClient, { desc = "go to definition" })
+    nmap("gD", NoLspClient, { desc = "go to type definition" })
+    nmap("gh", NoLspClient, { desc = "display symbol information" })
+    nmap("gH", NoLspClient, { desc = "display signature information" })
+    nmap("gi", NoLspClient, { desc = "go to implementation" })
+    nmap("gr", NoLspClient, { desc = "list references" })
+    nmap("gR", NoLspClient, { desc = "rename all references to symbol" })
+    nmap("ga", NoLspClient, { desc = "select code action" })
+    nmap("ge", vim.diagnostic.open_float, { desc = "show diagnostics" })
+    nmap("gp", vim.diagnostic.goto_prev, { desc = "go to previous diagnostic" })
+    nmap("gn", vim.diagnostic.goto_next, { desc = "go to next diagnostic" })
+    nmap("<localleader>f", NoLspClient, { desc = "format buffer" })
 
     vim.cmd("au! DiagnosticChanged * lua vim.diagnostic.setqflist({ open = false })")
 
@@ -874,13 +824,10 @@ Plug("neovim/nvim-lspconfig", {
     -- after the language server attaches to the current buffer
     local on_attach = function(client, bufnr)
       if bufnr == nil then
-        vim.notify("Buffer error")
+        vim.notify_once("on_attach buffer error for " .. client.config.name, vim.log.levels.ERROR, { title = "lsp" })
       else
-        -- Used for debugging
-        -- vim.notify("Attached " .. client.config.name)
+        vim.notify_once("attached " .. client.config.name, vim.log.levels.INFO, { title = "lsp" })
       end
-      -- Enable completion triggered by <C-x><C-o>
-      buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
 
       vim.fn.sign_define("DiagnosticSignError", { text = "", texthl = "LspDiagnosticsSignError" })
       vim.fn.sign_define("DiagnosticSignWarn", { text = "", texthl = "LspDiagnosticsSignWarning" })
@@ -888,18 +835,18 @@ Plug("neovim/nvim-lspconfig", {
       vim.fn.sign_define("DiagnosticSignInformation", { text = "", texthl = "LspDiagnosticsSignInformation" })
 
       -- See `:help vim.lsp.*` for documentation on any of the below functions
-      buf_nmap(bufnr, "gd", ":Telescope lsp_definitions<CR>", silent)
-      buf_nmap(bufnr, "gD", ":Telescope lsp_type_definitions<CR>", silent)
-      buf_nmap(bufnr, "gh", vim.lsp.buf.hover, silent)
-      buf_nmap(bufnr, "gH", vim.lsp.buf.signature_help, silent)
-      buf_nmap(bufnr, "gi", ":Telescope lsp_implementations<CR>", silent)
-      buf_nmap(bufnr, "gr", ":Telescope lsp_references<CR>", silent)
-      buf_nmap(bufnr, "gR", vim.lsp.buf.rename, silent)
-      buf_nmap(bufnr, "ga", vim.lsp.buf.code_action, silent)
-      buf_nmap(bufnr, "ge", vim.diagnostic.open_float, silent)
+      buf_nmap(bufnr, "gd", ":Telescope lsp_definitions<CR>", { desc = "go to definition" })
+      buf_nmap(bufnr, "gD", ":Telescope lsp_type_definitions<CR>", { desc = "go to type definition" })
+      buf_nmap(bufnr, "gh", vim.lsp.buf.hover, { desc = "display symbol information" })
+      buf_nmap(bufnr, "gH", vim.lsp.buf.signature_help, { desc = "display signature information" })
+      buf_nmap(bufnr, "gi", ":Telescope lsp_implementations<CR>", { desc = "go to implementation" })
+      buf_nmap(bufnr, "gr", ":Telescope lsp_references<CR>", { desc = "list references" })
+      buf_nmap(bufnr, "gR", vim.lsp.buf.rename, { desc = "rename all references to symbol" })
+      buf_nmap(bufnr, "ga", vim.lsp.buf.code_action, { desc = "select code action" })
+      buf_nmap(bufnr, "ge", vim.diagnostic.open_float, { desc = "show diagnostics" })
 
       if client.supports_method("textDocument/formatting") then
-        buf_nmap(bufnr, "<localleader>f", function() lsp_format(bufnr) end, silent)
+        buf_nmap(bufnr, "<localleader>f", function() lsp_format(bufnr) end, { desc = "format buffer" })
 
         vim.api.nvim_clear_autocmds({ group = lsp_format_augroup, buffer = bufnr })
         vim.api.nvim_create_autocmd("BufWritePre", {
@@ -931,7 +878,7 @@ Plug("neovim/nvim-lspconfig", {
         handler_opts = {
           border = "rounded"
         },
-        toggle_key = "<C-x>",
+        toggle_key = "<C-p>",
       })
     end
     local capabilities = require("cmp_nvim_lsp").update_capabilities(vim.lsp.protocol.make_client_capabilities())
@@ -1044,13 +991,12 @@ Plug("neovim/nvim-lspconfig", {
         end
       end
       if server == "rust_analyzer" then
-        nmap("<leader>R", ":Make run<CR>");
-        nmap("<leader>M", ":Make build<CR>");
-        nmap("<leader>C", ":Make clippy<CR>");
+        nmap("<leader>R", ":Make run<CR>", { desc = "cargo run" });
+        nmap("<leader>M", ":Make build<CR>", { desc = "cargo build" });
+        nmap("<leader>C", ":Make clippy<CR>", { desc = "cargo clippy" });
         require("rust-tools").setup {
           -- We don't want to call lspconfig.rust_analyzer.setup() when using
-          -- rust-tools. See
-          -- * https://github.com/simrat39/rust-tools.nvim/issues/89
+          -- rust-tools. See https://github.com/simrat39/rust-tools.nvim/issues/89
           server = opts,
           tools = {
             inlay_hints = {
@@ -1071,11 +1017,11 @@ Plug("neovim/nvim-lspconfig", {
 Plug("folke/trouble.nvim", {
   on = { "TroubleToggle" },
   preload = function()
-    nmap("<leader>tt", ":TroubleToggle<CR>")
-    nmap("<leader>tw", ":TroubleToggle workspace_diagnostics<CR>")
-    nmap("<leader>td", ":TroubleToggle document_diagnostics<CR>")
-    nmap("<leader>tq", ":TroubleToggle quickfix<CR>")
-    nmap("<leader>tl", ":TroubleToggle loclist<CR>")
+    nmap("<leader>tt", ":TroubleToggle<CR>", { desc = "toggle diagnostics" })
+    nmap("<leader>tw", ":TroubleToggle workspace_diagnostics<CR>", { desc = "toggle workspace diagnostics" })
+    nmap("<leader>td", ":TroubleToggle document_diagnostics<CR>", { desc = "toggle document diagnostics" })
+    nmap("<leader>tq", ":TroubleToggle quickfix<CR>", { desc = "toggle quickfix list" })
+    nmap("<leader>tl", ":TroubleToggle loclist<CR>", { desc = "toggle location list" })
   end,
   config = function()
     require("trouble").setup {}
@@ -1088,9 +1034,11 @@ Plug("folke/trouble.nvim", {
 
 Plug("hrsh7th/cmp-nvim-lsp") -- LSP completion source
 Plug("hrsh7th/cmp-buffer") -- Buffer completion source
+Plug("amarakon/nvim-cmp-buffer-lines") -- Buffer lines completion source
 Plug("hrsh7th/cmp-path") -- Path completion source
 Plug("hrsh7th/cmp-cmdline") -- Command completion source
 Plug("quangnguyen30192/cmp-nvim-ultisnips") -- Ultisnips completion source
+Plug("dmitmel/cmp-digraphs") -- Diagraphs completion source
 -- Plug("github/copilot.vim") -- Maybe someday
 -- Auto-completion library
 Plug("hrsh7th/nvim-cmp", {
@@ -1213,7 +1161,10 @@ Plug("hrsh7th/nvim-cmp", {
       }, {
         { name = "path" },
       }, {
+        { name = "buffer-lines" },
         { name = "buffer" },
+      }, {
+        { name = "digraphs" },
       }),
       view = {
         entries = {
@@ -1248,16 +1199,15 @@ Plug("SirVer/ultisnips", {
     vim.g.UltiSnipsExpandTrigger = "<Plug>(ultisnips_expand)"
     vim.g.UltiSnipsJumpForwardTrigger = "<Plug>(ultisnips_jump_forward)"
     vim.g.UltiSnipsJumpBackwardTrigger = "<Plug>(ultisnips_jump_backward)"
-    vim.g.UltiSnipsListSnippets = "<c-x><c-s>"
+    vim.g.UltiSnipsListSnippets = "<c-s>"
     vim.g.UltiSnipsRemoveSelectModeMappings = 0
     vim.g.UltiSnipsEnableSnipMate = 0
   end,
   config = function()
-    -- Fixes Ctrl-X Ctrl-K https://github.com/SirVer/ultisnips/blob/master/doc/UltiSnips.txt#L263
-    imap("<C-x><C-k>", "<C-x><C-k>")
-    nmap("<leader>es", ":UltiSnipsEdit<CR>")
+    nmap("<leader>es", ":UltiSnipsEdit<CR>", { desc = "edit snippets" })
   end,
 })
+
 Plug("honza/vim-snippets", {
   preload = function()
     vim.g.snips_author = vim.fn.system("git config --get user.name | tr -d '\n'")
@@ -1305,20 +1255,21 @@ Plug("nvim-telescope/telescope.nvim", { -- Fuzzy finder
     telescope.load_extension("ultisnips")
     telescope.load_extension("fzf")
 
-    nmap("<leader>f", ":Telescope fd<CR>")
-    nmap("<leader>A", ":Telescope fd find_command=rg,--files,--hidden,--no-ignore,--glob,!.git<CR>")
-    nmap("<leader>b", ":Telescope buffers<CR>")
-    nmap("<leader>H", ":Telescope oldfiles<CR>")
-    nmap("<leader>Th", ":Telescope help_tags<CR>")
-    nmap("<leader>S", ":Telescope lsp_document_symbols<CR>")
-    nmap("<leader>U", ":Telescope ultisnips<CR>")
-    nmap("<leader>K", ":Telescope keymaps<CR>")
-    nmap("<leader>r", ":Telescope live_grep<CR>")
-    nmap("<leader>s", ":Telescope current_buffer_fuzzy_find<CR>")
-    nmap("<leader>gf", ":Telescope git_files<CR>")
-    nmap("<leader>gb", ":Telescope git_branches<CR>")
-    nmap("<leader>gc", ":Telescope git_commits<CR>")
-    nmap("<leader>gC", ":Telescope git_bcommits<CR>")
+    nmap("<leader>f", ":Telescope fd<CR>", { desc = "find file" })
+    nmap("<leader>A", ":Telescope fd find_command=rg,--files,--hidden,--no-ignore,--glob,!.git<CR>",
+      { desc = "find hidden files" })
+    nmap("<leader>b", ":Telescope buffers<CR>", { desc = "list buffers" })
+    nmap("<leader>H", ":Telescope oldfiles<CR>", { desc = "list recent files" })
+    nmap("<leader>Th", ":Telescope help_tags<CR>", { desc = "list help tags" })
+    nmap("<leader>S", ":Telescope lsp_document_symbols<CR>", { desc = "list symbols" })
+    nmap("<leader>U", ":Telescope ultisnips<CR>", { desc = "list snippets" })
+    nmap("<leader>K", ":Telescope keymaps<CR>", { desc = "list keymaps" })
+    nmap("<leader>r", ":Telescope live_grep<CR>", { desc = "live grep" })
+    nmap("<leader>s", ":Telescope current_buffer_fuzzy_find<CR>", { desc = "search in buffer" })
+    nmap("<leader>gf", ":Telescope git_files<CR>", { desc = "open git file" })
+    nmap("<leader>gb", ":Telescope git_branches<CR>", { desc = "list git branches" })
+    nmap("<leader>gc", ":Telescope git_bcommits<CR>", { desc = "list buffer git commits" })
+    nmap("<leader>gC", ":Telescope git_commits<CR>", { desc = "list all git commits" })
   end
 })
 
@@ -1362,21 +1313,17 @@ Plug("stephpy/vim-yaml")
 Plug("romainl/vim-qf", {
   on = { "<Plug>(qf_qf_toggle)", "<Plug>(qf_qf_next)", "<Plug>(qf_qf_previous)" },
   preload = function()
-    nmap("[q", "<Plug>(qf_qf_previous)")
-    nmap("]q", "<Plug>(qf_qf_next)")
-    nmap("<leader>ct", "<Plug>(qf_qf_toggle)")
-    -- Clear quickfix
-    nmap("<leader>cc", ":cexpr []")
+    nmap("<leader>cc", ":cexpr []<CR>", { desc = "clears quickfix list" })
   end
 })
 Plug("vim-test/vim-test", {
   on = { "TestNearest", "TestFile", "TestSuite", "TestLast", "TestVisit" },
   preload = function()
-    nmap("<leader>Tn", ":TestNearest<CR>")
-    nmap("<leader>Tf", ":TestFile<CR>")
-    nmap("<leader>Ts", ":TestSuite<CR>")
-    nmap("<leader>Tl", ":TestLast<CR>")
-    nmap("<leader>Tv", ":TestVisit<CR>")
+    nmap("<leader>Tn", ":TestNearest<CR>", { desc = "run nearest test" })
+    nmap("<leader>Tf", ":TestFile<CR>", { desc = "run test file" })
+    nmap("<leader>Ts", ":TestSuite<CR>", { desc = "run test suite" })
+    nmap("<leader>Tl", ":TestLast<CR>", { desc = "run last test" })
+    nmap("<leader>Tv", ":TestVisit<CR>", { desc = "open last test file" })
   end
 })
 local dispatch_on = { "Make", "Dispatch" }
@@ -1405,26 +1352,26 @@ Plug("puremourning/vimspector", {
       "delve", -- For Golang
     }
 
-    nmap("<leader>dd", "<Plug>VimspectorLaunch")
-    nmap("<leader>db", "<Plug>VimspectorToggleBreakpoint")
-    nmap("<leader>dc", "<Plug>VimspectorToggleConditionalBreakpoint")
+    nmap("<leader>dd", "<Plug>VimspectorLaunch", { desc = "launch debugger" })
+    nmap("<leader>db", "<Plug>VimspectorToggleBreakpoint", { desc = "toggle breakpoint" })
+    nmap("<leader>dc", "<Plug>VimspectorToggleConditionalBreakpoint", { desc = "toggle conditional breakpoint" })
   end,
   config = function()
-    nmap("<leader>dl", "<Plug>VimspectorBreakpoints")
-    nmap("<leader>dc", "call vimspector#ClearBreakpoints()")
-    nmap("<leader>/", "<Plug>VimspectorContinue")
-    nmap("<leader>!", "<Plug>VimspectorPause")
-    nmap("<leader>ds", ":VimspectorReset<CR>")
-    nmap("<leader>dS", "<Plug>VimspectorStop")
-    nmap("<leader>'", "<Plug>VimspectorStepOver")
-    nmap("<leader>;", "<Plug>VimspectorStepInto")
-    nmap("<leader>:", "<Plug>VimspectorStepOut")
-    nmap("<leader>dr", "<Plug>VimspectorRunToCursor")
-    nmap("<leader>dR", "<Plug>VimspectorRestart")
-    nmap("<leader>de", "<Plug>VimspectorBalloonEval")
-    xmap("<leader>de", "<Plug>VimspectorBalloonEval")
-    xmap("<leader>dw", ":VimspectorWatch ")
-    xmap("<leader>dE", ":VimspectorEval ")
+    nmap("<leader>dl", "<Plug>VimspectorBreakpoints", { desc = "list breakpoints" })
+    nmap("<leader>dc", "call vimspector#ClearBreakpoints()", { desc = "clear breakpoints" })
+    nmap("<leader>/", "<Plug>VimspectorContinue", { desc = "continue execution" })
+    nmap("<leader>!", "<Plug>VimspectorPause", { desc = "pause debugger" })
+    nmap("<leader>ds", ":VimspectorReset<CR>", { desc = "reset debugger" })
+    nmap("<leader>dS", "<Plug>VimspectorStop", { desc = "stop debugger" })
+    nmap("<leader>'", "<Plug>VimspectorStepOver", { desc = "step over" })
+    nmap("<leader>;", "<Plug>VimspectorStepInto", { desc = "step into" })
+    nmap("<leader>:", "<Plug>VimspectorStepOut", { desc = "step out" })
+    nmap("<leader>dr", "<Plug>VimspectorRunToCursor", { desc = "run until cursor" })
+    nmap("<leader>dR", "<Plug>VimspectorRestart", { desc = "restart debugger" })
+    nmap("<leader>de", "<Plug>VimspectorBalloonEval", { desc = "evaluate value" })
+    vmap("<leader>de", "<Plug>VimspectorBalloonEval", { desc = "evaluate selection" })
+    vmap("<leader>dw", ":VimspectorWatch ", { desc = "watch expression" })
+    vmap("<leader>dE", ":VimspectorEval ", { desc = "evaluate expression" })
   end
 })
 
@@ -1445,68 +1392,6 @@ vim.cmd("iabbrev tehn then")
 vim.cmd("iabbrev tihs this")
 vim.cmd("iabbrev waht what")
 
-function ToggleDigraphs()
-  local digraphs = {
-    copyright = "©",
-    registered = "®",
-    degrees = "°",
-    ["+-"] = "±",
-    ["1S"] = "¹",
-    ["2S"] = "²",
-    ["3S"] = "³",
-    ["14F"] = "¼",
-    ["12F"] = "½",
-    ["34F"] = "¾",
-    multiply = "×",
-    divide = "÷",
-    alpha = "α",
-    beta = "β",
-    delta = "δ",
-    epsilon = "ε",
-    theta = "θ",
-    lambda = "λ",
-    mu = "μ",
-    pi = "π",
-    rho = "ρ",
-    sigma = "σ",
-    tau = "τ",
-    phi = "φ",
-    omega = "ω",
-    ["<-"] = "←",
-    ["-^"] = "↑",
-    ["->"] = "→",
-    ["-v"] = "↓",
-    ["<->"] = "↔",
-    ["^-v"] = "↕",
-    ["<="] = "⇐",
-    ["=>"] = "⇒",
-    ["<=>"] = "⇔",
-    sqrt = "√",
-    inf = "∞",
-    ["!="] = "≠",
-    ["=<"] = "≤",
-    [">="] = "≥",
-  }
-
-  if vim.g.digraphs_enabled == 1 then
-    local cmd = 'exe ":iunabbrev %s"'
-    for abbr, _ in pairs(digraphs) do
-      vim.cmd(cmd:format(abbr))
-    end
-    vim.g.digraphs_enabled = 0
-    vim.notify("Digraphs Disabled")
-  else
-    local cmd = 'exe ":iabbrev %s %s"'
-    for abbr, symbol in pairs(digraphs) do
-      vim.cmd(cmd:format(abbr, symbol))
-    end
-    vim.g.digraphs_enabled = 1
-    vim.notify("Digraphs Enabled")
-  end
-end
-
-nmap("<leader>I", ":lua ToggleDigraphs()<CR>", silent)
-
 -- =============================================================================
 -- Autocommands
 -- =============================================================================
@@ -1522,16 +1407,6 @@ vim.cmd([[
     au Filetype markdown set comments=
   aug END
 ]])
-
-function FindExecCmd()
-  local line = vim.fn.search("^!!:.*")
-  if line > 0 then
-    local command = vim.fn.substitute(vim.fn.getline(line), "^!!:", "", "")
-    vim.cmd(("silent !%s"):format(command))
-    vim.cmd("normal gg0")
-    vim.cmd("redraw!")
-  end
-end
 
 vim.cmd([[
   aug Init
