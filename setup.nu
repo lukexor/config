@@ -4,19 +4,23 @@ echo "
 Installing Packages...
 "
 
+let apt_packages = [
+  bash cc65 cmake coreutils docker fzf git gnutls-bin hexedit llvm neovim
+  node-latest-version npm openssl postgresql python2 python3 python3-pip
+  shellcheck sqlite stow tidy tree watchman wget yamllint
+]
 let brew_packages = [
   bash cc65 cmake coreutils docker exercism fzf git gnutls hexedit llvm neovim
-  node openjdk openjdk@11 openssl postgresql prettier python python3 sdl2
-  sdl2_gfx sdl2_image sdl2_mixer sdl2_ttf shellcheck sqlite stow tidy-html5 tmux
-  tree vim watchman wget yamllint starship stow
+  node openssl postgresql prettier python python3 shellcheck sqlite stow
+  tidy-html5 tree watchman wget yamllint 
 ]
 let npm_packages = [
   eslint_d @fsouza/prettierd markdownlint markdownlint-cli jsonlint stylelint
   stylelint-config-standard
 ]
 let cargo_packages = [
-  bat cargo-asm cargo-bloat cargo-count cargo-expand cargo-generate cargo-outdated
-  cargo-tree cargo-watch exa flamegraph fnm procs ripgrep tealdeer tokei
+  bat cargo-asm cargo-bloat cargo-expand cargo-generate cargo-outdated
+  cargo-tree cargo-watch exa flamegraph fnm procs starship ripgrep tealdeer tokei
   wasm-pack fd-find
 ]
 let cargo_components = [clippy]
@@ -25,12 +29,28 @@ let language_servers = [
   tsserver vimls yamlls
 ]
 
-^open ./roboto_mono_nerd_font.ttf
+if (uname -s | str starts-with Linux) {
+  mkdir ~/.local/share/fonts
+  cp ./assets/*.ttf ~/.local/share/fonts/
+  fc-cache -f -v
 
-echo $brew_packages | each { brew install $it }
-echo $npm_packages | each { npm install -g $it }
-echo $cargo_packages | each { cargo install $it }
-echo $cargo_components | each { rustup component add $it }
+  echo $apt_packages | each { |it| sudo apt install $it }
+  sudo apt autoremove
+} else if (uname -s | str starts-with Darwin) {
+  ^open ./assets/*.ttf
+
+  echo $brew_packages | each { |it| brew install $it }
+} else {
+  echo $"Platform (uname -s) is not supported"
+}
+
+let npm_dir = ([$nu.home-path .npm-packages] | path join)
+mkdir $npm_dir
+npm config set prefix $npm_dir
+
+echo $npm_packages | each { |it| npm install -g $it }
+echo $cargo_packages | each { |it| ~/.cargo/bin/cargo install $it }
+echo $cargo_components | each { |it| ~/.cargo/bin/rustup component add $it }
 
 # Move conflict files out of the way
 do { bash -c "stow -nv files 2>&1" } | complete | get stdout | lines | wrap line
@@ -57,7 +77,8 @@ ln -s ([$nu.home-path .config/nu/env.nu] | path join) ($nu.env-path)
 git clone https://github.com/jaseg/lolcat
 enter lolcat
 make lolcat
-cp lolcat /usr/local/bin/
+cp lolcat ~./local/bin/
+rm -rf lolcat
 exit
 
 exec nu

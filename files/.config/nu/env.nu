@@ -68,7 +68,8 @@ let-env PATH = [
   ([$nu.home-path bin] | path join)
   ([$nu.home-path .cargo/bin] | path join)
   ([$nu.home-path .fzf/bin] | path join)
-  /Applications/kitty.app/Contents/MacOS
+  ([$nu.home-path .local/bin] | path join)
+  ([$nu.home-path .npm-packages] | path join)
   ([$env.JAVA_HOME bin] | path join)
   /usr/local/go/bin
   /usr/local/bin
