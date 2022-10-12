@@ -43,7 +43,6 @@ do { bash -c "stow -nv files 2>&1" } | complete | get stdout | lines | wrap line
 
 stow -Rv files
 
-curl -fLo ([$nu.home-path .local/share/nvim/site/autoload/plug.vim] | path join) --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 vim +PlugUpgrade +PlugInstall +PlugClean +PlugUpdate +UpdateRemotePlugins +VimspectorUpdate +qall
 vim -c (build-string "LspInstall --sync " ($language_servers | str collect " ")) +qall
 python3 -m pip install --upgrade --user pip

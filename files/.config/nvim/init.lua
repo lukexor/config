@@ -19,62 +19,62 @@
 -- General Settings
 -- =============================================================================
 
+-- Don"t use nvim as a pager within itself
+vim.env.PAGER = "less"
 -- Ensure a vim-compatible shell
 vim.env.SHELL = "/bin/bash"
 vim.opt.shell = vim.env.SHELL
 -- https://neovim.io/doc/user/provider.html
 vim.g.python3_host_prog = "python3"
-
--- Don"t use nvim as a pager within itself
-vim.env.PAGER = "less"
-
-vim.opt.shiftwidth = 2
-vim.opt.tabstop = 4
-vim.opt.expandtab = true
-vim.opt.shiftround = true
-vim.opt.virtualedit = "block"
-vim.opt.relativenumber = true
-vim.opt.number = true
-vim.opt.termguicolors = true
-vim.opt.undofile = true
-vim.opt.title = true
-vim.opt.incsearch = true
-vim.opt.wildmode = "longest:full,full"
-vim.opt.completeopt = "menu,menuone,noselect"
-vim.opt.wrap = false
-vim.opt.breakindent = true
-vim.opt.list = true
-vim.opt.listchars = "tab:│ ,trail:+,extends:,precedes:,nbsp:‗"
-vim.opt.matchpairs:append { "<:>" }
-vim.opt.scrolloff = 8
-vim.opt.sidescrolloff = 8
-vim.opt.splitright = true
-vim.opt.splitbelow = true
-vim.opt.cmdheight = 2
-vim.opt.confirm = true
-vim.opt.updatetime = 300 -- Save more often than 4 seconds.
-vim.opt.updatecount = 50 -- Save more often than 200 characters typed.
-vim.opt.redrawtime = 10000 -- Allow more time for loading syntax on large files
-vim.opt.textwidth = 80
-vim.opt.cursorline = true
-vim.opt.signcolumn = "yes:2"
-vim.opt.synmaxcol = 200
-vim.opt.foldmethod = "indent"
-vim.opt.foldlevelstart = 99
-vim.opt.showmatch = true
-vim.opt.path:append { "**" }
-vim.opt.dictionary = "/usr/share/dict/words"
-vim.opt.spellfile = vim.env.HOME .. "/.config/nvim/spell.utf-8.add"
-
 -- Highlight strings and numbers inside comments
 vim.g.c_comment_strings = 1
 
+vim.opt.breakindent = true
+vim.opt.cmdheight = 2
+vim.opt.completeopt = "menu,menuone,noselect"
+vim.opt.confirm = true
+vim.opt.cursorline = true
+vim.opt.dictionary = "/usr/share/dict/words"
 -- Make diffing better: https://vimways.org/2018/the-power-of-diff/
 vim.opt.diffopt:append { "iwhite", "algorithm:patience", "indent-heuristic" }
+vim.opt.expandtab = true
+vim.opt.foldlevelstart = 99
+vim.opt.foldmethod = "indent"
+vim.opt.incsearch = true
+vim.opt.list = true
+vim.opt.listchars = "tab:│ ,trail:+,extends:,precedes:,nbsp:‗"
+vim.opt.matchpairs:append { "<:>" }
+vim.opt.mouse = ""
+vim.opt.number = true
+vim.opt.path:append { "**" }
+vim.opt.redrawtime = 10000 -- Allow more time for loading syntax on large files
+vim.opt.relativenumber = true
+vim.opt.scrolloff = 8
+vim.opt.shiftround = true
+vim.opt.shiftwidth = 2
+vim.opt.showmatch = true
+vim.opt.sidescrolloff = 8
+vim.opt.signcolumn = "yes:2"
+vim.opt.spellfile = vim.env.HOME .. "/.config/nvim/spell.utf-8.add"
+vim.opt.splitbelow = true
+vim.opt.splitright = true
+vim.opt.synmaxcol = 200
+vim.opt.tabstop = 4
+vim.opt.termguicolors = true
+vim.opt.textwidth = 80
+vim.opt.title = true
+vim.opt.undofile = true
+vim.opt.updatecount = 50 -- Save more often than 200 characters typed.
+vim.opt.updatetime = 300 -- Save more often than 4 seconds.
+vim.opt.virtualedit = "block"
+vim.opt.wildmode = "longest:full,full"
+vim.opt.wrap = false
 
 if vim.fn.executable("rg") then
   vim.opt.grepprg = "rg --no-heading --vimgrep --smart-case"
   vim.opt.grepformat = "%f:%l:%c:%m"
+else
+  vim.notify_once("rg is not installed", vim.log.levels.ERROR)
 end
 
 
@@ -86,23 +86,23 @@ end
 vim.g.mapleader = " "
 vim.g.maplocalleader = ","
 
-function MergeR(t1, t2)
-  for k, v in pairs(t2) do
-    if type(v) == "table" then
-      if type(t1[k] or false) == "table" then
-        MergeR(t1[k] or {}, t2[k] or {})
+function Merge(a, b)
+  function MergeR(t1, t2)
+    for k, v in pairs(t2) do
+      if type(v) == "table" then
+        if type(t1[k] or false) == "table" then
+          MergeR(t1[k] or {}, t2[k] or {})
+        else
+          t1[k] = v
+        end
       else
         t1[k] = v
       end
-    else
-      t1[k] = v
     end
+    return t1
   end
-  return t1
-end
 
-function Merge(t1, t2)
-  return MergeR(MergeR({}, t1 or {}), t2 or {})
+  return MergeR(MergeR({}, a or {}), b or {})
 end
 
 local silent = { silent = true }
@@ -417,12 +417,18 @@ for _, plugin in pairs(disabled_built_ins) do
   vim.g["loaded_" .. plugin] = 1
 end
 
--- Auto-install vim-plug
 local data_dir = vim.fn.stdpath('data') .. "/site"
--- if vim.fn.empty(vim.fn.glob(data_dir .. "/autoload/plug.vim")) then
---   local install_cmd = "silent exe '!curl -fLo %s/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'"
---   vim.cmd(install_cmd:format(data_dir))
--- end
+
+-- Install vim-plug
+function EnsureVimPlugInstalled()
+  local plug = io.open(data_dir .. "/autoload/plug.vim", "r")
+  if plug == nil then
+    local install_cmd = "silent exe '!curl -fLo %s/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'"
+    vim.cmd(install_cmd:format(data_dir))
+  end
+end
+
+vim.cmd([[au VimEnter * :lua EnsureVimPlugInstalled()]])
 
 local Plug = require("vimplug")
 
