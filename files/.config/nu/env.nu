@@ -66,10 +66,10 @@ let-env STARSHIP_SESSION_KEY = (random chars -l 16)
 let-env JAVA_HOME = "/usr/local/opt/openjdk"
 let-env PATH = [
   ([$nu.home-path bin] | path join)
-  ([$nu.home-path .cargo/bin] | path join)
-  ([$nu.home-path .fzf/bin] | path join)
   ([$nu.home-path .local/bin] | path join)
+  ([$nu.home-path .cargo/bin] | path join)
   ([$nu.home-path .npm-packages] | path join)
+  ([$nu.home-path .fzf/bin] | path join)
   ([$env.JAVA_HOME bin] | path join)
   /usr/local/go/bin
   /usr/local/bin
@@ -79,6 +79,17 @@ let-env PATH = [
   /usr/sbin
   /sbin
 ]
+
+let os = (sys | get host.name)
+let-env PATH = if $os == "Darwin" {
+  ($env.PATH | append [
+    "/Applications/kitty.app/Contents/MacOS",
+    ([(brew --prefix | str trim) opt/llvm/bin] | path join)]
+  )
+} else {
+  $env.PATH
+}
+
 
 # Specifies how environment variables are:
 # - converted from a string to a value on Nushell startup (from_string)
