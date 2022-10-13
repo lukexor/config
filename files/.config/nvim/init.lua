@@ -112,68 +112,68 @@ local vmap = function(lhs, rhs, opts) set_keymap("v", lhs, rhs, opts) end
 local imap = function(lhs, rhs, opts) set_keymap("i", lhs, rhs, opts) end
 local omap = function(lhs, rhs, opts) set_keymap("o", lhs, rhs, opts) end
 
-nmap("<leader>ve", ":edit $MYVIMRC<CR>", { unique = true, desc = "edit init.lua" })
-nmap("<leader>vr", ":source $MYVIMRC<CR>:edit<CR>", { unique = true, desc = "reload init.lua" })
+nmap("<leader>ve", ":edit $MYVIMRC<CR>", { desc = "edit init.lua" })
+nmap("<leader>vr", ":source $MYVIMRC<CR>:edit<CR>", { desc = "reload init.lua" })
 
-nmap("<leader>w", ":w<CR>", { unique = true, desc = "write buffer" })
-nmap("<leader>W", ":noa w<CR>", { unique = true, desc = "write without autocommands" })
+nmap("<leader>w", ":w<CR>", { desc = "write buffer" })
+nmap("<leader>W", ":noa w<CR>", { desc = "write without autocommands" })
 
-nmap("<leader>q", ":confirm q<CR>", { unique = true, desc = "close window/exit vim" })
-nmap("<leader>Q", ":confirm qall<CR>", { unique = true, desc = "exit vim" })
-nmap("<leader>O", ":%bd|e#|bd#<CR>", { unique = true, desc = "close all but current" })
+nmap("<leader>q", ":confirm q<CR>", { desc = "close window/exit vim" })
+nmap("<leader>Q", ":confirm qall<CR>", { desc = "exit vim" })
+nmap("<leader>O", ":%bd|e#|bd#<CR>", { desc = "close all but current" })
 
-nmap("x", '"_x', { unique = true, desc = "del character(s) under/after cursor into blackhole" })
-nmap("X", '"_X', { unique = true, desc = "del character(s) before cursor into blackhole" })
+nmap("x", '"_x', { desc = "del character(s) under/after cursor into blackhole" })
+nmap("X", '"_X', { desc = "del character(s) before cursor into blackhole" })
 
-nmap("Q", "<nop>", { unique = true, desc = "disable Q for ExMode, use gQ instead" })
+nmap("Q", "<nop>", { desc = "disable Q for ExMode, use gQ instead" })
 
-nmap("<leader><CR>", ":nohlsearch|diffupdate|normal !<C-l><CR>", { unique = true, desc = "clear search highlighting" })
+nmap("<leader><CR>", ":nohlsearch|diffupdate|normal !<C-l><CR>", { desc = "clear search highlighting" })
 
-nmap("ef", ":edit <cfile><CR>", { unique = true, desc = "edit file" })
-nmap("gt", "<C-]>", { unique = true, desc = "go to tag" })
+nmap("ef", ":edit <cfile><CR>", { desc = "edit file" })
+nmap("gt", "<C-]>", { desc = "go to tag" })
 
 map("<C-h>", "<C-w>h", { desc = "go to Nth left window" })
 map("<C-j>", "<C-w>j", { desc = "go to Nth below window" })
 map("<C-k>", "<C-w>k", { desc = "go to Nth above window" })
 map("<C-l>", "<C-w>l", { desc = "go to Nth right window" })
 
-nmap("<leader>-", "<C-w>_<C-w>|", { unique = true, desc = "maximize window" })
-nmap("<leader>=", "<C-w>=", { unique = true, desc = "make all windows equal size" })
+nmap("<leader>-", "<C-w>_<C-w>|", { desc = "maximize window" })
+nmap("<leader>=", "<C-w>=", { desc = "make all windows equal size" })
 
-nmap("<leader>h", ":bp<CR>", { silent = true, unique = true, desc = "go to previous buffer" })
-nmap("<leader>l", ":bn<CR>", { silent = true, unique = true, desc = "go to next buffer" })
-nmap("<leader><leader>", "<C-^>", { unique = true, desc = "alternate buffer" })
+nmap("<leader>h", ":bp<CR>", { silent = true, desc = "go to previous buffer" })
+nmap("<leader>l", ":bn<CR>", { silent = true, desc = "go to next buffer" })
+nmap("<leader><leader>", "<C-^>", { desc = "alternate buffer" })
 
 -- Show diffs in a modified buffer
 vim.api.nvim_create_user_command("DiffOrig",
   "vert new | set bt=nofile | r ++edit # | 0d_ | diffthis | wincmd p | diffthis", {})
 
 -- Reselect visual after indenting
-vmap("<", "<gv", { unique = true, desc = "shift {motion} lines leftwards" })
-vmap(">", ">gv", { unique = true, desc = "shift {motion} lines rightwards" })
+vmap("<", "<gv", { desc = "shift {motion} lines leftwards" })
+vmap(">", ">gv", { desc = "shift {motion} lines rightwards" })
 
-vmap("p", '"_dP', { unique = true, desc = "replace selection without yanking" })
-nmap("+", 'V"_dP', { unique = true, desc = "replace current line with yank" })
+vmap("p", '"_dP', { desc = "replace selection without yanking" })
+nmap("+", 'V"_dP', { desc = "replace current line with yank" })
 
 -- "==" honors indent
-nmap("<leader>j", ":m .+1<CR>==", { silent = true, unique = true, desc = "move line upwards" })
-nmap("<leader>k", ":m .-2<CR>==", { silent = true, unique = true, desc = "move line downwards" })
+nmap("<leader>j", ":m .+1<CR>==", { silent = true, desc = "move line upwards" })
+nmap("<leader>k", ":m .-2<CR>==", { silent = true, desc = "move line downwards" })
 
 nmap("<localleader>w", [[&fo =~ 't' ? ":set fo-=t<CR>" : ":set fo+=t<CR>"]],
-  { expr = true, unique = true, desc = "toggle text auto-wrap" })
+  { expr = true, desc = "toggle text auto-wrap" })
 
 -- Keep cursor centered
-nmap("n", "nzzzv", { unique = true, desc = "repeat latest / or ?" })
-nmap("N", "Nzzzv", { unique = true, desc = "repeat latest / or ? in reverse" })
-nmap("J", "mzJ`z", { unique = true, desc = "join lines" })
-nmap("*", "*zzzv", { unique = true, desc = "search forward" })
-nmap("#", "#zzzv", { unique = true, desc = "search backwards" })
-nmap("g*", "g*zzzv", { unique = true, desc = "search forwards without word boundary" })
-nmap("g#", "g*zzzv", { unique = true, desc = "search backwards without word boundary" })
+nmap("n", "nzzzv", { desc = "repeat latest / or ?" })
+nmap("N", "Nzzzv", { desc = "repeat latest / or ? in reverse" })
+nmap("J", "mzJ`z", { desc = "join lines" })
+nmap("*", "*zzzv", { desc = "search forward" })
+nmap("#", "#zzzv", { desc = "search backwards" })
+nmap("g*", "g*zzzv", { desc = "search forwards without word boundary" })
+nmap("g#", "g*zzzv", { desc = "search backwards without word boundary" })
 
-nmap("<leader>G", ":silent lgrep ", { unique = true, desc = "grep" })
-nmap("<localleader>S", ":%s/", { unique = true, desc = "global search and replace" })
-nmap("<localleader>Tb", ":%s/\\s\\+$//<CR>", { unique = true, desc = "trim trailing blanks" })
+nmap("<leader>G", ":silent lgrep ", { desc = "grep" })
+nmap("<localleader>S", ":%s/", { desc = "global search and replace" })
+nmap("<localleader>Tb", ":%s/\\s\\+$//<CR>", { desc = "trim trailing blanks" })
 
 nmap("<localleader>x", function()
   if vim.fn.has("linux") == 1 then
@@ -183,31 +183,31 @@ nmap("<localleader>x", function()
   else
     vim.notify("unable to open file", vim.log.levels.ERROR, { title = "open external file" })
   end
-end, { expr = true, unique = true, desc = "open external file" })
+end, { expr = true, desc = "open external file" })
 
-imap("jj", "<Esc>", { unique = true, desc = "escape" })
-imap("<C-c>", "<Esc>", { unique = true, desc = "escape" })
+imap("jj", "<Esc>", { desc = "escape" })
+imap("<C-c>", "<Esc>", { desc = "escape" })
 
-nmap(";;", "A;<Esc>", { unique = true, desc = "append ;" })
-nmap(",,", "A,<Esc>", { unique = true, desc = "append ," })
-imap(";;", "<Esc>A;<Esc>", { unique = true, desc = "append ;" })
-imap(",,", "<Esc>A,<Esc>", { unique = true, desc = "append ," })
+nmap(";;", "A;<Esc>", { desc = "append ;" })
+nmap(",,", "A,<Esc>", { desc = "append ," })
+imap(";;", "<Esc>A;<Esc>", { desc = "append ;" })
+imap(",,", "<Esc>A,<Esc>", { desc = "append ," })
 
 -- Add breaks in undo chain when typing punctuation
-imap(".", ".<C-g>u", { unique = true, desc = "." })
-imap(",", ",<C-g>u", { unique = true, desc = "," })
-imap("!", "!<C-g>u", { unique = true, desc = "!" })
-imap("?", "?<C-g>u", { unique = true, desc = "?" })
+imap(".", ".<C-g>u", { desc = "." })
+imap(",", ",<C-g>u", { desc = "," })
+imap("!", "!<C-g>u", { desc = "!" })
+imap("?", "?<C-g>u", { desc = "?" })
 
 -- Add relative jumps of more than 5 lines to jump list
 -- Move by terminal rows, not lines, unless count is provided
-nmap("j", [[v:count > 0 ? "m'" . v:count . 'j' : "gj"]], { expr = true, unique = true, desc = "go down a line" })
-nmap("k", [[v:count > 0 ? "m'" . v:count . 'k' : "gk"]], { expr = true, unique = true, desc = "go up a line" })
+nmap("j", [[v:count > 0 ? "m'" . v:count . 'j' : "gj"]], { expr = true, desc = "go down a line" })
+nmap("k", [[v:count > 0 ? "m'" . v:count . 'k' : "gk"]], { expr = true, desc = "go up a line" })
 
-nmap("<Down>", ":resize -5<CR>", { unique = true, desc = "shrink window height" })
-nmap("<Up>", ":resize +5<CR>", { unique = true, desc = "increase window height" })
-nmap("<Left>", ":vertical resize +5<CR>", { unique = true, desc = "shrink window width" })
-nmap("<Right>", ":vertical resize -5<CR>", { unique = true, desc = "increase window width" })
+nmap("<Down>", ":resize -5<CR>", { desc = "shrink window height" })
+nmap("<Up>", ":resize +5<CR>", { desc = "increase window height" })
+nmap("<Left>", ":vertical resize +5<CR>", { desc = "shrink window width" })
+nmap("<Right>", ":vertical resize -5<CR>", { desc = "increase window width" })
 
 nmap("cd",
   function()
@@ -215,45 +215,45 @@ nmap("cd",
     vim.cmd(("lcd %s"):format(pathname))
     vim.notify(("lcd %s"):format(pathname))
   end,
-  { unique = true, desc = "cd to current file path" }
+  { desc = "cd to current file path" }
 )
 
-nmap("cy", '"*y', { unique = true, desc = "yank to clipboard" })
-nmap("cY", '"*Y', { unique = true, desc = "yank line to clipboard" })
-nmap("cyy", '"*yy', { unique = true, desc = "yank line to clipbard" })
-vmap("cy", '"*y', { unique = true, desc = "yank selection to clipboard" })
-nmap("cp", '"*p', { unique = true, desc = "paste from clipboard after cursor" })
-nmap("cP", '"*P', { unique = true, desc = "paste from clipboard before cursor" })
+nmap("cy", '"*y', { desc = "yank to clipboard" })
+nmap("cY", '"*Y', { desc = "yank line to clipboard" })
+nmap("cyy", '"*yy', { desc = "yank line to clipbard" })
+vmap("cy", '"*y', { desc = "yank selection to clipboard" })
+nmap("cp", '"*p', { desc = "paste from clipboard after cursor" })
+nmap("cP", '"*P', { desc = "paste from clipboard before cursor" })
 
-omap("in(", ":<C-u>normal! f(vi(<CR>", { silent = true, unique = true, desc = "inner next () block" })
-omap("il(", ":<C-u>normal! F)vi(<CR>", { silent = true, unique = true, desc = "inner last () block" })
-omap("an(", ":<C-u>normal! f(va(<CR>", { silent = true, unique = true, desc = "around next () block" })
-omap("al(", ":<C-u>normal! F)va(<CR>", { silent = true, unique = true, desc = "around last () block" })
-vmap("in(", ":<C-u>normal! f(vi(<CR><Esc>gv", { silent = true, unique = true, desc = "inner next () block" })
-vmap("il(", ":<C-u>normal! F)vi(<CR><Esc>gv", { silent = true, unique = true, desc = "inner last () block" })
-vmap("an(", ":<C-u>normal! f(va(<CR><Esc>gv", { silent = true, unique = true, desc = "around next () block" })
-vmap("al(", ":<C-u>normal! F)va(<CR><Esc>gv", { silent = true, unique = true, desc = "around last () block" })
+omap("in(", ":<C-u>normal! f(vi(<CR>", { silent = true, desc = "inner next () block" })
+omap("il(", ":<C-u>normal! F)vi(<CR>", { silent = true, desc = "inner last () block" })
+omap("an(", ":<C-u>normal! f(va(<CR>", { silent = true, desc = "around next () block" })
+omap("al(", ":<C-u>normal! F)va(<CR>", { silent = true, desc = "around last () block" })
+vmap("in(", ":<C-u>normal! f(vi(<CR><Esc>gv", { silent = true, desc = "inner next () block" })
+vmap("il(", ":<C-u>normal! F)vi(<CR><Esc>gv", { silent = true, desc = "inner last () block" })
+vmap("an(", ":<C-u>normal! f(va(<CR><Esc>gv", { silent = true, desc = "around next () block" })
+vmap("al(", ":<C-u>normal! F)va(<CR><Esc>gv", { silent = true, desc = "around last () block" })
 
-omap("in{", ":<C-u>normal! f{vi{<CR>", { silent = true, unique = true, desc = "inner next {} block" })
-omap("il{", ":<C-u>normal! F{vi{<CR>", { silent = true, unique = true, desc = "inner last {} block" })
-omap("an{", ":<C-u>normal! f{va{<CR>", { silent = true, unique = true, desc = "around next {} block" })
-omap("al{", ":<C-u>normal! F{va{<CR>", { silent = true, unique = true, desc = "around last {} block" })
-vmap("in{", ":<C-u>normal! f{vi{<CR><Esc>gv", { silent = true, unique = true, desc = "inner next {} block" })
-vmap("il{", ":<C-u>normal! F{vi{<CR><Esc>gv", { silent = true, unique = true, desc = "inner last {} block" })
-vmap("an{", ":<C-u>normal! f{va{<CR><Esc>gv", { silent = true, unique = true, desc = "around next {} block" })
-vmap("al{", ":<C-u>normal! F{va{<CR><Esc>gv", { silent = true, unique = true, desc = "around last {} block" })
+omap("in{", ":<C-u>normal! f{vi{<CR>", { silent = true, desc = "inner next {} block" })
+omap("il{", ":<C-u>normal! F{vi{<CR>", { silent = true, desc = "inner last {} block" })
+omap("an{", ":<C-u>normal! f{va{<CR>", { silent = true, desc = "around next {} block" })
+omap("al{", ":<C-u>normal! F{va{<CR>", { silent = true, desc = "around last {} block" })
+vmap("in{", ":<C-u>normal! f{vi{<CR><Esc>gv", { silent = true, desc = "inner next {} block" })
+vmap("il{", ":<C-u>normal! F{vi{<CR><Esc>gv", { silent = true, desc = "inner last {} block" })
+vmap("an{", ":<C-u>normal! f{va{<CR><Esc>gv", { silent = true, desc = "around next {} block" })
+vmap("al{", ":<C-u>normal! F{va{<CR><Esc>gv", { silent = true, desc = "around last {} block" })
 
-omap("in[", ":<C-u>normal! f[vi[<CR>", { silent = true, unique = true, desc = "inner next [] block" })
-omap("il[", ":<C-u>normal! F[vi[<CR>", { silent = true, unique = true, desc = "inner last [] block" })
-omap("an[", ":<C-u>normal! f[va[<CR>", { silent = true, unique = true, desc = "around next [] block" })
-omap("al[", ":<C-u>normal! F[va[<CR>", { silent = true, unique = true, desc = "around last [] block" })
-vmap("in[", ":<C-u>normal! f[vi[<CR><Esc>gv", { silent = true, unique = true, desc = "inner next [] block" })
-vmap("il[", ":<C-u>normal! F[vi[<CR><Esc>gv", { silent = true, unique = true, desc = "inner last [] block" })
-vmap("an[", ":<C-u>normal! f[va[<CR><Esc>gv", { silent = true, unique = true, desc = "around next [] block" })
-vmap("al[", ":<C-u>normal! F[va[<CR><Esc>gv", { silent = true, unique = true, desc = "around last [] block" })
+omap("in[", ":<C-u>normal! f[vi[<CR>", { silent = true, desc = "inner next [] block" })
+omap("il[", ":<C-u>normal! F[vi[<CR>", { silent = true, desc = "inner last [] block" })
+omap("an[", ":<C-u>normal! f[va[<CR>", { silent = true, desc = "around next [] block" })
+omap("al[", ":<C-u>normal! F[va[<CR>", { silent = true, desc = "around last [] block" })
+vmap("in[", ":<C-u>normal! f[vi[<CR><Esc>gv", { silent = true, desc = "inner next [] block" })
+vmap("il[", ":<C-u>normal! F[vi[<CR><Esc>gv", { silent = true, desc = "inner last [] block" })
+vmap("an[", ":<C-u>normal! f[va[<CR><Esc>gv", { silent = true, desc = "around next [] block" })
+vmap("al[", ":<C-u>normal! F[va[<CR><Esc>gv", { silent = true, desc = "around last [] block" })
 
-vmap("af", ":<C-u>silent! normal! [zV]z<CR>", { silent = true, unique = true, desc = "around fold" })
-omap("af", ":normal Vaf<CR>", { silent = true, unique = true, desc = "around fold" })
+vmap("af", ":<C-u>silent! normal! [zV]z<CR>", { silent = true, desc = "around fold" })
+omap("af", ":normal Vaf<CR>", { silent = true, desc = "around fold" })
 
 function IndentTextObj(around)
   local curcol = vim.fn.col(".")
@@ -316,10 +316,10 @@ function IndentTextObj(around)
   end
 end
 
-omap("ii", ":<C-u>lua IndentTextObj(true)<CR>", { silent = true, unique = true, desc = "inner indent" })
-omap("ai", ":<C-u>lua IndentTextObj(false)<CR>", { silent = true, unique = true, desc = "around indent" })
-vmap("ii", ":<C-u>lua IndentTextObj(true)<CR><Esc>gv", { silent = true, unique = true, desc = "inner indent" })
-vmap("ai", ":<C-u>lua IndentTextObj(false)<CR><Esc>gv", { silent = true, unique = true, desc = "around indent" })
+omap("ii", ":<C-u>lua IndentTextObj(true)<CR>", { silent = true, desc = "inner indent" })
+omap("ai", ":<C-u>lua IndentTextObj(false)<CR>", { silent = true, desc = "around indent" })
+vmap("ii", ":<C-u>lua IndentTextObj(true)<CR><Esc>gv", { silent = true, desc = "inner indent" })
+vmap("ai", ":<C-u>lua IndentTextObj(false)<CR><Esc>gv", { silent = true, desc = "around indent" })
 
 nmap("<localleader>i", function()
   local line = vim.fn.line(".")
@@ -328,7 +328,7 @@ nmap("<localleader>i", function()
   local trans = vim.fn.synIDattr(vim.fn.synID(line, col, 0), "name")
   local lo = vim.fn.synIDattr(vim.fn.synIDtrans(vim.fn.synID(line, col, 0)), "name")
   vim.cmd(("echo 'hi<%s> trans<%s> lo<%s>'"):format(hi, trans, lo))
-end, { unique = true, desc = "show syntax ID under cursor" })
+end, { desc = "show syntax ID under cursor" })
 
 nmap("<leader>\\", function()
   if vim.opt.nu:get() or vim.opt.rnu:get() or vim.opt.list:get() then
@@ -336,11 +336,11 @@ nmap("<leader>\\", function()
   else
     vim.cmd("set rnu nu list signcolumn=yes:2")
   end
-end, { unique = true, desc = "toggle gutter and signs" })
+end, { desc = "toggle gutter and signs" })
 
-nmap("<localleader>ab", ":.!toilet -w 200 -f term -F border<CR>", { unique = true, desc = "ascii art border" })
-nmap("<localleader>as", ":.!figlet -w 200 -f standard<CR>", { unique = true, desc = "ascii art standard" })
-nmap("<localleader>aS", ":.!figlet -w 200 -f small<CR>", { unique = true, desc = "ascii art small" })
+nmap("<localleader>ab", ":.!toilet -w 200 -f term -F border<CR>", { desc = "ascii art border" })
+nmap("<localleader>as", ":.!figlet -w 200 -f standard<CR>", { desc = "ascii art standard" })
+nmap("<localleader>aS", ":.!figlet -w 200 -f small<CR>", { desc = "ascii art small" })
 
 
 -- =============================================================================
@@ -408,7 +408,7 @@ Plug("lewis6991/impatient.nvim", {
 -- Keep window layout when deleting buffers
 Plug("famiu/bufdelete.nvim", {
   config = function()
-    nmap("<leader>D", ":confirm Bdelete<CR>", { unique = true, desc = "delete buffer" })
+    nmap("<leader>D", ":confirm Bdelete<CR>", { desc = "delete buffer" })
   end
 })
 -- Better buffer management
@@ -421,16 +421,16 @@ Plug("ap/vim-buftabline", {
     vim.g.buftabline_separators = 1
   end,
   config = function()
-    nmap("<leader>1", "<Plug>BufTabLine.Go(1)", { unique = true, desc = "go to buffer tab 1" })
-    nmap("<leader>2", "<Plug>BufTabLine.Go(2)", { unique = true, desc = "go to buffer tab 2" })
-    nmap("<leader>3", "<Plug>BufTabLine.Go(3)", { unique = true, desc = "go to buffer tab 3" })
-    nmap("<leader>4", "<Plug>BufTabLine.Go(4)", { unique = true, desc = "go to buffer tab 4" })
-    nmap("<leader>5", "<Plug>BufTabLine.Go(5)", { unique = true, desc = "go to buffer tab 5" })
-    nmap("<leader>6", "<Plug>BufTabLine.Go(6)", { unique = true, desc = "go to buffer tab 6" })
-    nmap("<leader>7", "<Plug>BufTabLine.Go(7)", { unique = true, desc = "go to buffer tab 7" })
-    nmap("<leader>8", "<Plug>BufTabLine.Go(8)", { unique = true, desc = "go to buffer tab 8" })
-    nmap("<leader>9", "<Plug>BufTabLine.Go(9)", { unique = true, desc = "go to buffer tab 9" })
-    nmap("<leader>0", "<Plug>BufTabLine.Go(-1)", { unique = true, desc = "go to last buffer tab" })
+    nmap("<leader>1", "<Plug>BufTabLine.Go(1)", { desc = "go to buffer tab 1" })
+    nmap("<leader>2", "<Plug>BufTabLine.Go(2)", { desc = "go to buffer tab 2" })
+    nmap("<leader>3", "<Plug>BufTabLine.Go(3)", { desc = "go to buffer tab 3" })
+    nmap("<leader>4", "<Plug>BufTabLine.Go(4)", { desc = "go to buffer tab 4" })
+    nmap("<leader>5", "<Plug>BufTabLine.Go(5)", { desc = "go to buffer tab 5" })
+    nmap("<leader>6", "<Plug>BufTabLine.Go(6)", { desc = "go to buffer tab 6" })
+    nmap("<leader>7", "<Plug>BufTabLine.Go(7)", { desc = "go to buffer tab 7" })
+    nmap("<leader>8", "<Plug>BufTabLine.Go(8)", { desc = "go to buffer tab 8" })
+    nmap("<leader>9", "<Plug>BufTabLine.Go(9)", { desc = "go to buffer tab 9" })
+    nmap("<leader>0", "<Plug>BufTabLine.Go(-1)", { desc = "go to last buffer tab" })
   end
 })
 Plug("tpope/vim-repeat") -- Repeat with "."
@@ -442,8 +442,8 @@ Plug("justinmk/vim-sneak", {
   end,
   config = function()
     -- Operator-mode - e.g. dzab - delete until `ab`
-    omap("z", "<Plug>Sneak_s", { unique = true, desc = "{action} until {char}{char} forwards" })
-    omap("Z", "<Plug>Sneak_S", { unique = true, desc = "{action} until {char}{char} backwards" })
+    omap("z", "<Plug>Sneak_s", { desc = "{action} until {char}{char} forwards" })
+    omap("Z", "<Plug>Sneak_S", { desc = "{action} until {char}{char} backwards" })
   end
 })
 Plug("ypcrts/securemodelines") -- Safe modelines
@@ -453,13 +453,13 @@ Plug("kshenoy/vim-signature") -- Show marks in gutter
 Plug("terryma/vim-smooth-scroll", {
   config = function()
     nmap("<C-u>", ":call smooth_scroll#up(&scroll, 10, 1)<CR>",
-      { silent = true, unique = true, desc = "small scroll up" })
+      { silent = true, desc = "small scroll up" })
     nmap("<C-d>", ":call smooth_scroll#down(&scroll, 10, 1)<CR>",
-      { silent = true, unique = true, desc = "small scroll down" })
+      { silent = true, desc = "small scroll down" })
     nmap("<C-b>", ":call smooth_scroll#up(&scroll*2, 10, 3)<CR>",
-      { silent = true, unique = true, desc = "large scroll up" })
+      { silent = true, desc = "large scroll up" })
     nmap("<C-f>", ":call smooth_scroll#down(&scroll*2, 10, 3)<CR>",
-      { silent = true, unique = true, desc = "large scroll down" })
+      { silent = true, desc = "large scroll down" })
   end
 })
 
@@ -471,8 +471,8 @@ Plug("terryma/vim-smooth-scroll", {
 Plug("sudormrfbin/cheatsheet.nvim", {
   on = { "Cheatsheet", "CheatsheetEdit" },
   preload = function()
-    nmap("<localleader>C", ":Cheatsheet<CR>", { unique = true, desc = "cheatsheet" })
-    nmap("<localleader>E", ":CheatsheetEdit<CR>", { unique = true, desc = "edit cheatsheet" })
+    nmap("<localleader>C", ":Cheatsheet<CR>", { desc = "cheatsheet" })
+    nmap("<localleader>E", ":CheatsheetEdit<CR>", { desc = "edit cheatsheet" })
   end
 })
 -- Online Cheat.sh lookup
@@ -483,13 +483,13 @@ Plug("dbeniamine/cheat.sh-vim", {
     vim.g.CheatSheetDoNotMap = 1
     vim.g.CheatDoNotReplaceKeywordPrg = 1
 
-    nmap("<leader>cs", ":Cheat ", { unique = true, desc = "search cheat.sh" })
+    nmap("<leader>cs", ":Cheat ", { desc = "search cheat.sh" })
   end
 })
 -- File symbol outline to TagBar
 Plug("stevearc/aerial.nvim", {
   preload = function()
-    nmap("<leader>ts", ":AerialToggle<CR>", { unique = true, desc = "toggle symbol outline" })
+    nmap("<leader>ts", ":AerialToggle<CR>", { desc = "toggle symbol outline" })
   end,
   config = function()
     require("aerial").setup {
@@ -535,47 +535,47 @@ Plug("tpope/vim-commentary") -- Commenting motion commands gc*
 Plug("tpope/vim-surround", {
   config = function()
     -- Surround text with punctuation easier 'you surround' + motion
-    nmap('<leader>"', 'ysiw"', { remap = true, unique = true, desc = 'surround text with ""' })
-    nmap("<leader>'", "ysiw'", { remap = true, unique = true, desc = "surround text with ''" })
-    nmap("<leader>(", "ysiw(", { remap = true, unique = true, desc = "surround text with ( )" })
-    nmap("<leader>)", "ysiw)", { remap = true, unique = true, desc = "surround text with ()" })
-    nmap("<leader><", "ysiw>", { remap = true, unique = true, desc = "surround text with <>" })
-    nmap("<leader>>", "ysiw>", { remap = true, unique = true, desc = "surround text with <>" })
-    nmap("<leader>[", "ysiw[", { remap = true, unique = true, desc = "surround text with [ ]" })
-    nmap("<leader>]", "ysiw]", { remap = true, unique = true, desc = "surround text with []" })
-    nmap("<leader>`", "ysiw`", { remap = true, unique = true, desc = "surround text with ``" })
-    nmap("<leader>{", "ysiw{", { remap = true, unique = true, desc = "surround text with { }" })
-    nmap("<leader>}", "ysiw}", { remap = true, unique = true, desc = "surround text with {}" })
-    nmap("<leader>|", "ysiw|", { remap = true, unique = true, desc = "surround text with ||" })
-    nmap("<localleader>rh", "ds'ds}", { remap = true, unique = true, desc = "remove surrounding {''}" })
-    nmap("<localleader>sh", "ysiw}lysiw'", { remap = true, unique = true, desc = "surround text with {''}" })
+    nmap('<leader>"', 'ysiw"', { remap = true, desc = 'surround text with ""' })
+    nmap("<leader>'", "ysiw'", { remap = true, desc = "surround text with ''" })
+    nmap("<leader>(", "ysiw(", { remap = true, desc = "surround text with ( )" })
+    nmap("<leader>)", "ysiw)", { remap = true, desc = "surround text with ()" })
+    nmap("<leader><", "ysiw>", { remap = true, desc = "surround text with <>" })
+    nmap("<leader>>", "ysiw>", { remap = true, desc = "surround text with <>" })
+    nmap("<leader>[", "ysiw[", { remap = true, desc = "surround text with [ ]" })
+    nmap("<leader>]", "ysiw]", { remap = true, desc = "surround text with []" })
+    nmap("<leader>`", "ysiw`", { remap = true, desc = "surround text with ``" })
+    nmap("<leader>{", "ysiw{", { remap = true, desc = "surround text with { }" })
+    nmap("<leader>}", "ysiw}", { remap = true, desc = "surround text with {}" })
+    nmap("<leader>|", "ysiw|", { remap = true, desc = "surround text with ||" })
+    nmap("<localleader>rh", "ds'ds}", { remap = true, desc = "remove surrounding {''}" })
+    nmap("<localleader>sh", "ysiw}lysiw'", { remap = true, desc = "surround text with {''}" })
 
     -- Same mappers for visual mode
-    vmap('<leader>"', 'gS"', { remap = true, unique = true, desc = 'surround text with ""' })
-    vmap("<leader>'", "gS'", { remap = true, unique = true, desc = "surround text with ''" })
-    vmap("<leader>(", "gS(", { remap = true, unique = true, desc = "surround text with ( )" })
-    vmap("<leader>)", "gS)", { remap = true, unique = true, desc = "surround text with ()" })
-    vmap("<leader><", "gS>", { remap = true, unique = true, desc = "surround text with <>" })
-    vmap("<leader>>", "gS>", { remap = true, unique = true, desc = "surround text with <>" })
-    vmap("<leader>[", "gS[", { remap = true, unique = true, desc = "surround text with [ ]" })
-    vmap("<leader>]", "gS]", { remap = true, unique = true, desc = "surround text with []" })
-    vmap("<leader>`", "gS`", { remap = true, unique = true, desc = "surround text with ``" })
-    vmap("<leader>{", "gS{", { remap = true, unique = true, desc = "surround text with { }" })
-    vmap("<leader>}", "gS}", { remap = true, unique = true, desc = "surround text with {}" })
-    vmap("<leader>|", "gS|", { remap = true, unique = true, desc = "surround text with |" })
+    vmap('<leader>"', 'gS"', { remap = true, desc = 'surround text with ""' })
+    vmap("<leader>'", "gS'", { remap = true, desc = "surround text with ''" })
+    vmap("<leader>(", "gS(", { remap = true, desc = "surround text with ( )" })
+    vmap("<leader>)", "gS)", { remap = true, desc = "surround text with ()" })
+    vmap("<leader><", "gS>", { remap = true, desc = "surround text with <>" })
+    vmap("<leader>>", "gS>", { remap = true, desc = "surround text with <>" })
+    vmap("<leader>[", "gS[", { remap = true, desc = "surround text with [ ]" })
+    vmap("<leader>]", "gS]", { remap = true, desc = "surround text with []" })
+    vmap("<leader>`", "gS`", { remap = true, desc = "surround text with ``" })
+    vmap("<leader>{", "gS{", { remap = true, desc = "surround text with { }" })
+    vmap("<leader>}", "gS}", { remap = true, desc = "surround text with {}" })
+    vmap("<leader>|", "gS|", { remap = true, desc = "surround text with |" })
 
-    nmap("<localleader>[", "ysip[", { remap = true, unique = true, desc = "surround paragraph with []" })
-    nmap("<localleader>]", "ysip]", { remap = true, unique = true, desc = "surround paragraph with []" })
-    nmap("<localleader>{", "ysip{", { remap = true, unique = true, desc = "surround paragraph with {}" })
-    nmap("<localleader>}", "ysip{", { remap = true, unique = true, desc = "surround paragraph with {}" })
+    nmap("<localleader>[", "ysip[", { remap = true, desc = "surround paragraph with []" })
+    nmap("<localleader>]", "ysip]", { remap = true, desc = "surround paragraph with []" })
+    nmap("<localleader>{", "ysip{", { remap = true, desc = "surround paragraph with {}" })
+    nmap("<localleader>}", "ysip{", { remap = true, desc = "surround paragraph with {}" })
   end
 })
 -- Make aligning rows easier
 Plug("junegunn/vim-easy-align", {
   on = { "EasyAlign" },
   preload = function()
-    nmap("<leader>a", ":EasyAlign<CR>", { unique = true, desc = "align text" })
-    vmap("<leader>a", ":EasyAlign<CR>", { unique = true, desc = "align selection" })
+    nmap("<leader>a", ":EasyAlign<CR>", { desc = "align text" })
+    vmap("<leader>a", ":EasyAlign<CR>", { desc = "align selection" })
   end
 })
 local vim_radical_on = {
@@ -593,12 +593,12 @@ Plug("glts/vim-magnum", {
 Plug("glts/vim-radical", {
   on = vim_radical_on,
   preload = function()
-    nmap("gA", "<Plug>RadicalView", { unique = true, desc = "show number conversions under cursor" })
-    vmap("gA", "<Plug>RadicalView", { unique = true, desc = "show number conversions under selection" })
-    nmap("crd", "<Plug>RadicalCoerceToDecimal", { unique = true, desc = "convert number to decimal" })
-    nmap("crx", "<Plug>RadicalCoerceToHex", { unique = true, desc = "convert number to hex" })
-    nmap("cro", "<Plug>RadicalCoerceToOctal", { unique = true, desc = "convert number to octal" })
-    nmap("crb", "<Plug>RadicalCoerceToBinary", { unique = true, desc = "convert number to binary" })
+    nmap("gA", "<Plug>RadicalView", { desc = "show number conversions under cursor" })
+    vmap("gA", "<Plug>RadicalView", { desc = "show number conversions under selection" })
+    nmap("crd", "<Plug>RadicalCoerceToDecimal", { desc = "convert number to decimal" })
+    nmap("crx", "<Plug>RadicalCoerceToHex", { desc = "convert number to hex" })
+    nmap("cro", "<Plug>RadicalCoerceToOctal", { desc = "convert number to octal" })
+    nmap("crb", "<Plug>RadicalCoerceToBinary", { desc = "convert number to binary" })
   end
 })
 Plug("zirrostig/vim-schlepp", {
@@ -609,10 +609,10 @@ Plug("zirrostig/vim-schlepp", {
     "<Plug>SchleppRight",
   },
   preload = function()
-    vmap("K", "<Plug>SchleppUp", { unique = true, desc = "move selection up" })
-    vmap("J", "<Plug>SchleppDown", { unique = true, desc = "move selection down" })
-    vmap("H", "<Plug>SchleppLeft", { unique = true, desc = "move selection left" })
-    vmap("L", "<Plug>SchleppRight", { unique = true, desc = "move selection right" })
+    vmap("K", "<Plug>SchleppUp", { desc = "move selection up" })
+    vmap("J", "<Plug>SchleppDown", { desc = "move selection down" })
+    vmap("H", "<Plug>SchleppLeft", { desc = "move selection left" })
+    vmap("L", "<Plug>SchleppRight", { desc = "move selection right" })
   end
 })
 
@@ -649,9 +649,9 @@ Plug("preservim/nerdtree", {
       "<leader>n",
       "exists('g:NERDTree') && g:NERDTree.IsOpen() ? ':NERDTreeClose<CR>' : @% == ''"
       .. " ? ':NERDTree<CR>' : ':NERDTreeFind<CR>'",
-      { expr = true, unique = true, desc = "toggle NERDTree" }
+      { expr = true, desc = "toggle NERDTree" }
     )
-    nmap("<leader>N", ":NERDTreeFind<CR>", { unique = true, desc = "find file in NERDTree" })
+    nmap("<leader>N", ":NERDTreeFind<CR>", { desc = "find file in NERDTree" })
 
     -- Closes if NERDTree is the only open window
     vim.cmd([[au! BufEnter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif]])
@@ -691,7 +691,7 @@ Plug("yardnsm/vim-import-cost", {
   preload = function()
     vim.g.import_cost_virtualtext_prefix = " ▸ "
 
-    nmap("<localleader>I", ":ImportCost<CR>", { unique = true, desc = "calculate import sizes" });
+    nmap("<localleader>I", ":ImportCost<CR>", { desc = "calculate import sizes" });
   end,
   config = function()
     vim.cmd([[
@@ -792,23 +792,23 @@ Plug("neovim/nvim-lspconfig", {
         Merge({ buffer = bufnr }, opts))
     end
 
-    nmap("<leader>Li", ":LspInfo<CR>", { unique = true, desc = "lsp info" })
-    nmap("<leader>LI", ":LspInstallInfo<CR>", { unique = true, desc = "lsp install info" })
-    nmap("<leader>Ls", ":LspStart<CR>", { unique = true, desc = "start lsp server" })
-    nmap("<leader>LS", ":LspStop<CR>", { unique = true, desc = "stop lsp server" })
-    nmap("<leader>Lr", ":LspRestart<CR>", { unique = true, desc = "restart lsp server" })
-    nmap("gd", NoLspClient, { unique = true, desc = "go to definition" })
-    nmap("gD", NoLspClient, { unique = true, desc = "go to type definition" })
-    nmap("gh", NoLspClient, { unique = true, desc = "display symbol information" })
-    nmap("gH", NoLspClient, { unique = true, desc = "display signature information" })
-    nmap("gi", NoLspClient, { unique = true, desc = "go to implementation" })
-    nmap("gr", NoLspClient, { unique = true, desc = "list references" })
-    nmap("gR", NoLspClient, { unique = true, desc = "rename all references to symbol" })
-    nmap("ga", NoLspClient, { unique = true, desc = "select code action" })
-    nmap("ge", vim.diagnostic.open_float, { unique = true, desc = "show diagnostics" })
-    nmap("gp", vim.diagnostic.goto_prev, { unique = true, desc = "go to previous diagnostic" })
-    nmap("gn", vim.diagnostic.goto_next, { unique = true, desc = "go to next diagnostic" })
-    nmap("<localleader>f", "gq", { unique = true, desc = "format buffer" })
+    nmap("<leader>Li", ":LspInfo<CR>", { desc = "lsp info" })
+    nmap("<leader>LI", ":LspInstallInfo<CR>", { desc = "lsp install info" })
+    nmap("<leader>Ls", ":LspStart<CR>", { desc = "start lsp server" })
+    nmap("<leader>LS", ":LspStop<CR>", { desc = "stop lsp server" })
+    nmap("<leader>Lr", ":LspRestart<CR>", { desc = "restart lsp server" })
+    nmap("gd", NoLspClient, { desc = "go to definition" })
+    nmap("gD", NoLspClient, { desc = "go to type definition" })
+    nmap("gh", NoLspClient, { desc = "display symbol information" })
+    nmap("gH", NoLspClient, { desc = "display signature information" })
+    nmap("gi", NoLspClient, { desc = "go to implementation" })
+    nmap("gr", NoLspClient, { desc = "list references" })
+    nmap("gR", NoLspClient, { desc = "rename all references to symbol" })
+    nmap("ga", NoLspClient, { desc = "select code action" })
+    nmap("ge", vim.diagnostic.open_float, { desc = "show diagnostics" })
+    nmap("gp", vim.diagnostic.goto_prev, { desc = "go to previous diagnostic" })
+    nmap("gn", vim.diagnostic.goto_next, { desc = "go to next diagnostic" })
+    nmap("<localleader>f", "gq", { desc = "format buffer" })
 
     vim.cmd("au! DiagnosticChanged * lua vim.diagnostic.setqflist({ open = false })")
 
@@ -996,9 +996,9 @@ Plug("neovim/nvim-lspconfig", {
         end
       end
       if server == "rust_analyzer" then
-        nmap("<leader>R", ":Make run<CR>", { unique = true, desc = "cargo run" });
-        nmap("<leader>M", ":Make build<CR>", { unique = true, desc = "cargo build" });
-        nmap("<leader>C", ":Make clippy<CR>", { unique = true, desc = "cargo clippy" });
+        nmap("<leader>R", ":Make run<CR>", { desc = "cargo run" });
+        nmap("<leader>M", ":Make build<CR>", { desc = "cargo build" });
+        nmap("<leader>C", ":Make clippy<CR>", { desc = "cargo clippy" });
         require("rust-tools").setup {
           -- We don't want to call lspconfig.rust_analyzer.setup() when using
           -- rust-tools. See https://github.com/simrat39/rust-tools.nvim/issues/89
@@ -1022,12 +1022,12 @@ Plug("neovim/nvim-lspconfig", {
 Plug("folke/trouble.nvim", {
   on = { "TroubleToggle" },
   preload = function()
-    nmap("<leader>tt", ":TroubleToggle<CR>", { unique = true, desc = "toggle diagnostics" })
+    nmap("<leader>tt", ":TroubleToggle<CR>", { desc = "toggle diagnostics" })
     nmap("<leader>tw", ":TroubleToggle workspace_diagnostics<CR>",
-      { unique = true, desc = "toggle workspace diagnostics" })
-    nmap("<leader>td", ":TroubleToggle document_diagnostics<CR>", { unique = true, desc = "toggle document diagnostics" })
-    nmap("<leader>tq", ":TroubleToggle quickfix<CR>", { unique = true, desc = "toggle quickfix list" })
-    nmap("<leader>tl", ":TroubleToggle loclist<CR>", { unique = true, desc = "toggle location list" })
+      { desc = "toggle workspace diagnostics" })
+    nmap("<leader>td", ":TroubleToggle document_diagnostics<CR>", { desc = "toggle document diagnostics" })
+    nmap("<leader>tq", ":TroubleToggle quickfix<CR>", { desc = "toggle quickfix list" })
+    nmap("<leader>tl", ":TroubleToggle loclist<CR>", { desc = "toggle location list" })
   end,
   config = function()
     require("trouble").setup {}
@@ -1210,7 +1210,7 @@ Plug("SirVer/ultisnips", {
     vim.g.UltiSnipsEnableSnipMate = 0
   end,
   config = function()
-    nmap("<leader>es", ":UltiSnipsEdit<CR>", { unique = true, desc = "edit snippets" })
+    nmap("<leader>es", ":UltiSnipsEdit<CR>", { desc = "edit snippets" })
   end,
 })
 
@@ -1261,21 +1261,21 @@ Plug("nvim-telescope/telescope.nvim", { -- Fuzzy finder
     telescope.load_extension("ultisnips")
     telescope.load_extension("fzf")
 
-    nmap("<leader>f", ":Telescope fd<CR>", { unique = true, desc = "find file" })
+    nmap("<leader>f", ":Telescope fd<CR>", { desc = "find file" })
     nmap("<leader>A", ":Telescope fd find_command=rg,--files,--hidden,--no-ignore,--glob,!.git<CR>",
-      { unique = true, desc = "find hidden files" })
-    nmap("<leader>b", ":Telescope buffers<CR>", { unique = true, desc = "list buffers" })
-    nmap("<leader>H", ":Telescope oldfiles<CR>", { unique = true, desc = "list recent files" })
-    nmap("<leader>Th", ":Telescope help_tags<CR>", { unique = true, desc = "list help tags" })
-    nmap("<leader>S", ":Telescope lsp_document_symbols<CR>", { unique = true, desc = "list symbols" })
-    nmap("<leader>U", ":Telescope ultisnips<CR>", { unique = true, desc = "list snippets" })
-    nmap("<leader>K", ":Telescope keymaps<CR>", { unique = true, desc = "list keymaps" })
-    nmap("<leader>r", ":Telescope live_grep<CR>", { unique = true, desc = "live grep" })
-    nmap("<leader>s", ":Telescope current_buffer_fuzzy_find<CR>", { unique = true, desc = "search in buffer" })
-    nmap("<leader>gf", ":Telescope git_files<CR>", { unique = true, desc = "open git file" })
-    nmap("<leader>gb", ":Telescope git_branches<CR>", { unique = true, desc = "list git branches" })
-    nmap("<leader>gc", ":Telescope git_bcommits<CR>", { unique = true, desc = "list buffer git commits" })
-    nmap("<leader>gC", ":Telescope git_commits<CR>", { unique = true, desc = "list all git commits" })
+      { desc = "find hidden files" })
+    nmap("<leader>b", ":Telescope buffers<CR>", { desc = "list buffers" })
+    nmap("<leader>H", ":Telescope oldfiles<CR>", { desc = "list recent files" })
+    nmap("<leader>Th", ":Telescope help_tags<CR>", { desc = "list help tags" })
+    nmap("<leader>S", ":Telescope lsp_document_symbols<CR>", { desc = "list symbols" })
+    nmap("<leader>U", ":Telescope ultisnips<CR>", { desc = "list snippets" })
+    nmap("<leader>K", ":Telescope keymaps<CR>", { desc = "list keymaps" })
+    nmap("<leader>r", ":Telescope live_grep<CR>", { desc = "live grep" })
+    nmap("<leader>s", ":Telescope current_buffer_fuzzy_find<CR>", { desc = "search in buffer" })
+    nmap("<leader>gf", ":Telescope git_files<CR>", { desc = "open git file" })
+    nmap("<leader>gb", ":Telescope git_branches<CR>", { desc = "list git branches" })
+    nmap("<leader>gc", ":Telescope git_bcommits<CR>", { desc = "list buffer git commits" })
+    nmap("<leader>gC", ":Telescope git_commits<CR>", { desc = "list all git commits" })
   end
 })
 
@@ -1319,17 +1319,17 @@ Plug("stephpy/vim-yaml")
 Plug("romainl/vim-qf", {
   on = { "<Plug>(qf_qf_toggle)", "<Plug>(qf_qf_next)", "<Plug>(qf_qf_previous)" },
   preload = function()
-    nmap("<leader>cc", ":cexpr []<CR>", { unique = true, desc = "clears quickfix list" })
+    nmap("<leader>cc", ":cexpr []<CR>", { desc = "clears quickfix list" })
   end
 })
 Plug("vim-test/vim-test", {
   on = { "TestNearest", "TestFile", "TestSuite", "TestLast", "TestVisit" },
   preload = function()
-    nmap("<leader>Tn", ":TestNearest<CR>", { unique = true, desc = "run nearest test" })
-    nmap("<leader>Tf", ":TestFile<CR>", { unique = true, desc = "run test file" })
-    nmap("<leader>Ts", ":TestSuite<CR>", { unique = true, desc = "run test suite" })
-    nmap("<leader>Tl", ":TestLast<CR>", { unique = true, desc = "run last test" })
-    nmap("<leader>Tv", ":TestVisit<CR>", { unique = true, desc = "open last test file" })
+    nmap("<leader>Tn", ":TestNearest<CR>", { desc = "run nearest test" })
+    nmap("<leader>Tf", ":TestFile<CR>", { desc = "run test file" })
+    nmap("<leader>Ts", ":TestSuite<CR>", { desc = "run test suite" })
+    nmap("<leader>Tl", ":TestLast<CR>", { desc = "run last test" })
+    nmap("<leader>Tv", ":TestVisit<CR>", { desc = "open last test file" })
   end
 })
 local dispatch_on = { "Make", "Dispatch" }
@@ -1358,27 +1358,27 @@ Plug("puremourning/vimspector", {
       "delve", -- For Golang
     }
 
-    nmap("<leader>dd", "<Plug>VimspectorLaunch", { unique = true, desc = "launch debugger" })
-    nmap("<leader>db", "<Plug>VimspectorToggleBreakpoint", { unique = true, desc = "toggle breakpoint" })
+    nmap("<leader>dd", "<Plug>VimspectorLaunch", { desc = "launch debugger" })
+    nmap("<leader>db", "<Plug>VimspectorToggleBreakpoint", { desc = "toggle breakpoint" })
     nmap("<leader>dc", "<Plug>VimspectorToggleConditionalBreakpoint",
-      { unique = true, desc = "toggle conditional breakpoint" })
+      { desc = "toggle conditional breakpoint" })
   end,
   config = function()
-    nmap("<leader>dl", "<Plug>VimspectorBreakpoints", { unique = true, desc = "list breakpoints" })
-    nmap("<leader>dc", "call vimspector#ClearBreakpoints()", { unique = true, desc = "clear breakpoints" })
-    nmap("<leader>/", "<Plug>VimspectorContinue", { unique = true, desc = "continue execution" })
-    nmap("<leader>!", "<Plug>VimspectorPause", { unique = true, desc = "pause debugger" })
-    nmap("<leader>ds", ":VimspectorReset<CR>", { unique = true, desc = "reset debugger" })
-    nmap("<leader>dS", "<Plug>VimspectorStop", { unique = true, desc = "stop debugger" })
-    nmap("<leader>'", "<Plug>VimspectorStepOver", { unique = true, desc = "step over" })
-    nmap("<leader>;", "<Plug>VimspectorStepInto", { unique = true, desc = "step into" })
-    nmap("<leader>:", "<Plug>VimspectorStepOut", { unique = true, desc = "step out" })
-    nmap("<leader>dr", "<Plug>VimspectorRunToCursor", { unique = true, desc = "run until cursor" })
-    nmap("<leader>dR", "<Plug>VimspectorRestart", { unique = true, desc = "restart debugger" })
-    nmap("<leader>de", "<Plug>VimspectorBalloonEval", { unique = true, desc = "evaluate value" })
-    vmap("<leader>de", "<Plug>VimspectorBalloonEval", { unique = true, desc = "evaluate selection" })
-    vmap("<leader>dw", ":VimspectorWatch ", { unique = true, desc = "watch expression" })
-    vmap("<leader>dE", ":VimspectorEval ", { unique = true, desc = "evaluate expression" })
+    nmap("<leader>dl", "<Plug>VimspectorBreakpoints", { desc = "list breakpoints" })
+    nmap("<leader>dc", "call vimspector#ClearBreakpoints()", { desc = "clear breakpoints" })
+    nmap("<leader>/", "<Plug>VimspectorContinue", { desc = "continue execution" })
+    nmap("<leader>!", "<Plug>VimspectorPause", { desc = "pause debugger" })
+    nmap("<leader>ds", ":VimspectorReset<CR>", { desc = "reset debugger" })
+    nmap("<leader>dS", "<Plug>VimspectorStop", { desc = "stop debugger" })
+    nmap("<leader>'", "<Plug>VimspectorStepOver", { desc = "step over" })
+    nmap("<leader>;", "<Plug>VimspectorStepInto", { desc = "step into" })
+    nmap("<leader>:", "<Plug>VimspectorStepOut", { desc = "step out" })
+    nmap("<leader>dr", "<Plug>VimspectorRunToCursor", { desc = "run until cursor" })
+    nmap("<leader>dR", "<Plug>VimspectorRestart", { desc = "restart debugger" })
+    nmap("<leader>de", "<Plug>VimspectorBalloonEval", { desc = "evaluate value" })
+    vmap("<leader>de", "<Plug>VimspectorBalloonEval", { desc = "evaluate selection" })
+    vmap("<leader>dw", ":VimspectorWatch ", { desc = "watch expression" })
+    vmap("<leader>dE", ":VimspectorEval ", { desc = "evaluate expression" })
   end
 })
 
