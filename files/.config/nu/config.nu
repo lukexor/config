@@ -327,7 +327,6 @@ alias gdt = git difftool
 alias gf = git fetch origin
 alias glg = git log --graph --pretty=format:'%C(yellow)%h (%p) %ai%Cred%d %Creset%Cblue[%ae]%Creset %s (%ar). %b %N'
 alias gm = git merge
-alias gmd = (git pull; git merge origin/develop)
 alias gops = git push origin (git rev-parse --abbrev-ref HEAD | str trim) -u
 alias gopsn = git push origin (git rev-parse --abbrev-ref HEAD | str trim) -u --no-verify
 alias gpl = git pull
@@ -365,6 +364,11 @@ alias vimdiff = nvim -d
 # =============================================================================
 # Commands   {{{1
 # =============================================================================
+
+def gmd [] {
+  git pull
+  git merge origin/develop
+}
 
 # Find broken symlinks
 def fbroken [path: path] {

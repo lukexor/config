@@ -204,10 +204,10 @@ imap("?", "?<C-g>u", { desc = "?" })
 nmap("j", [[v:count > 0 ? "m'" . v:count . 'j' : "gj"]], { expr = true, desc = "go down a line" })
 nmap("k", [[v:count > 0 ? "m'" . v:count . 'k' : "gk"]], { expr = true, desc = "go up a line" })
 
-nmap("<Down>", ":resize -5<CR>", { desc = "shrink window height" })
-nmap("<Up>", ":resize +5<CR>", { desc = "increase window height" })
-nmap("<Left>", ":vertical resize +5<CR>", { desc = "shrink window width" })
-nmap("<Right>", ":vertical resize -5<CR>", { desc = "increase window width" })
+nmap("<S-Down>", ":resize -5<CR>", { desc = "shrink window height" })
+nmap("<S-Up>", ":resize +5<CR>", { desc = "increase window height" })
+nmap("<S-Left>", ":vertical resize +5<CR>", { desc = "shrink window width" })
+nmap("<S-Right>", ":vertical resize -5<CR>", { desc = "increase window width" })
 
 nmap("cd",
   function()
@@ -609,10 +609,10 @@ Plug("zirrostig/vim-schlepp", {
     "<Plug>SchleppRight",
   },
   preload = function()
-    vmap("K", "<Plug>SchleppUp", { desc = "move selection up" })
-    vmap("J", "<Plug>SchleppDown", { desc = "move selection down" })
-    vmap("H", "<Plug>SchleppLeft", { desc = "move selection left" })
-    vmap("L", "<Plug>SchleppRight", { desc = "move selection right" })
+    vmap("<S-Up>", "<Plug>SchleppUp", { desc = "move selection up" })
+    vmap("<S-Down>", "<Plug>SchleppDown", { desc = "move selection down" })
+    vmap("<S-Left>", "<Plug>SchleppLeft", { desc = "move selection left" })
+    vmap("<S-Right>", "<Plug>SchleppRight", { desc = "move selection right" })
   end
 })
 
@@ -1040,7 +1040,6 @@ Plug("folke/trouble.nvim", {
 
 Plug("hrsh7th/cmp-nvim-lsp") -- LSP completion source
 Plug("hrsh7th/cmp-buffer") -- Buffer completion source
-Plug("amarakon/nvim-cmp-buffer-lines") -- Buffer lines completion source
 Plug("hrsh7th/cmp-path") -- Path completion source
 Plug("hrsh7th/cmp-cmdline") -- Command completion source
 Plug("quangnguyen30192/cmp-nvim-ultisnips") -- Ultisnips completion source
@@ -1167,7 +1166,6 @@ Plug("hrsh7th/nvim-cmp", {
       }, {
         { name = "path" },
       }, {
-        { name = "buffer-lines" },
         { name = "buffer" },
       }, {
         { name = "digraphs" },
