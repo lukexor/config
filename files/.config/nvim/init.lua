@@ -23,56 +23,56 @@
 vim.env.PAGER = "less"
 -- Ensure a vim-compatible shell
 vim.env.SHELL = "/bin/bash"
-vim.opt.shell = vim.env.SHELL
+vim.o.shell = vim.env.SHELL
 -- https://neovim.io/doc/user/provider.html
 vim.g.python3_host_prog = "python3"
 -- Highlight strings and numbers inside comments
 vim.g.c_comment_strings = 1
 
-vim.opt.breakindent = true
-vim.opt.cmdheight = 2
-vim.opt.completeopt = "menu,menuone,noselect"
-vim.opt.confirm = true
-vim.opt.cursorline = true
-vim.opt.dictionary = "/usr/share/dict/words"
+vim.o.breakindent = true
+vim.o.cmdheight = 2
+vim.o.completeopt = "menu,menuone,noselect"
+vim.o.confirm = true
+vim.o.cursorline = true
+vim.o.dictionary = "/usr/share/dict/words"
 -- Make diffing better: https://vimways.org/2018/the-power-of-diff/
 vim.opt.diffopt:append { "iwhite", "algorithm:patience", "indent-heuristic" }
-vim.opt.expandtab = true
-vim.opt.foldlevelstart = 99
-vim.opt.foldmethod = "indent"
-vim.opt.incsearch = true
-vim.opt.list = true
-vim.opt.listchars = "tab:│ ,trail:+,extends:,precedes:,nbsp:‗"
+vim.o.expandtab = true
+vim.o.foldlevelstart = 99
+vim.o.foldmethod = "indent"
+vim.o.incsearch = true
+vim.o.list = true
+vim.o.listchars = "tab:│ ,trail:+,extends:,precedes:,nbsp:‗"
 vim.opt.matchpairs:append { "<:>" }
-vim.opt.mouse = ""
-vim.opt.number = true
+vim.o.mouse = ""
+vim.o.number = true
 vim.opt.path:append { "**" }
-vim.opt.redrawtime = 10000 -- Allow more time for loading syntax on large files
-vim.opt.relativenumber = true
-vim.opt.scrolloff = 8
-vim.opt.shiftround = true
-vim.opt.shiftwidth = 2
-vim.opt.showmatch = true
-vim.opt.sidescrolloff = 8
-vim.opt.signcolumn = "yes:2"
-vim.opt.spellfile = vim.env.HOME .. "/.config/nvim/spell.utf-8.add"
-vim.opt.splitbelow = true
-vim.opt.splitright = true
-vim.opt.synmaxcol = 200
-vim.opt.tabstop = 4
-vim.opt.termguicolors = true
-vim.opt.textwidth = 80
-vim.opt.title = true
-vim.opt.undofile = true
-vim.opt.updatecount = 50 -- Save more often than 200 characters typed.
-vim.opt.updatetime = 300 -- Save more often than 4 seconds.
-vim.opt.virtualedit = "block"
-vim.opt.wildmode = "longest:full,full"
-vim.opt.wrap = false
+vim.o.redrawtime = 10000 -- Allow more time for loading syntax on large files
+vim.o.relativenumber = true
+vim.o.scrolloff = 8
+vim.o.shiftround = true
+vim.o.shiftwidth = 2
+vim.o.showmatch = true
+vim.o.sidescrolloff = 8
+vim.o.signcolumn = "yes:2"
+vim.o.spellfile = vim.env.HOME .. "/.config/nvim/spell.utf-8.add"
+vim.o.splitbelow = true
+vim.o.splitright = true
+vim.o.synmaxcol = 200
+vim.o.tabstop = 4
+vim.o.termguicolors = true
+vim.o.textwidth = 80
+vim.o.title = true
+vim.o.undofile = true
+vim.o.updatecount = 50 -- Save more often than 200 characters typed.
+vim.o.updatetime = 300 -- Save more often than 4 seconds.
+vim.o.virtualedit = "block"
+vim.o.wildmode = "longest:full,full"
+vim.o.wrap = false
 
 if vim.fn.executable("rg") then
-  vim.opt.grepprg = "rg --no-heading --vimgrep --smart-case"
-  vim.opt.grepformat = "%f:%l:%c:%m"
+  vim.o.grepprg = "rg --no-heading --vimgrep --smart-case"
+  vim.o.grepformat = "%f:%l:%c:%m"
 else
   vim.notify_once("rg is not installed", vim.log.levels.ERROR)
 end
@@ -261,7 +261,7 @@ function IndentTextObj(around)
   local lastline = vim.fn.line("$")
   local blank_line_pat = "^%s*$"
 
-  local i = vim.fn.indent(vim.fn.line(".")) - vim.opt.shiftwidth:get() * (vim.v.count1 - 1)
+  local i = vim.fn.indent(vim.fn.line(".")) - vim.o.shiftwidth * (vim.v.count1 - 1)
   if i < 0 then
     i = 0
   end
@@ -331,7 +331,7 @@ nmap("<localleader>i", function()
 end, { desc = "show syntax ID under cursor" })
 
 nmap("<leader>\\", function()
-  if vim.opt.nu:get() or vim.opt.rnu:get() or vim.opt.list:get() then
+  if vim.o.nu or vim.o.rnu or vim.o.list then
     vim.cmd("set nornu nonu nolist signcolumn=no")
   else
     vim.cmd("set rnu nu list signcolumn=yes:2")
@@ -361,8 +361,6 @@ local disabled_built_ins = {
   "netrwPlugin",
   "netrwSettings",
   "netrwFileHandlers",
-  "matchit",
-  "matchparen",
   "tar",
   "tarPlugin",
   "tutor",
@@ -399,6 +397,7 @@ Plug.begin(data_dir .. "/plugged")
 -- VIM Enhancements
 -- -----------------------------------------------------------------------------
 
+Plug("nathom/filetype.nvim") -- lua replacement of filetype.vim
 -- Cache lua plugins
 Plug("lewis6991/impatient.nvim", {
   config = function()
@@ -435,15 +434,15 @@ Plug("ap/vim-buftabline", {
 })
 Plug("tpope/vim-repeat") -- Repeat with "."
 Plug("tpope/vim-sleuth") -- Smart buffer options based on contents
-Plug("tpope/vim-unimpaired") -- Bracket motions
-Plug("justinmk/vim-sneak", {
-  preload = function()
-    vim.g["sneak#s_next"] = 1
-  end,
+Plug("ggandor/leap.nvim", {
   config = function()
-    -- Operator-mode - e.g. dzab - delete until `ab`
-    omap("z", "<Plug>Sneak_s", { desc = "{action} until {char}{char} forwards" })
-    omap("Z", "<Plug>Sneak_S", { desc = "{action} until {char}{char} backwards" })
+    require("leap").add_default_mappings()
+    vim.keymap.del({ "x", "o" }, "x")
+    vim.keymap.del({ "x", "o" }, "X")
+    vmap("g", "<Plug>(leap-forward-till)", { desc = "leap forward till" })
+    vmap("G", "<Plug>(leap-forward-till)", { desc = "leap forward till" })
+    omap("g", "<Plug>(leap-forward-till)", { desc = "leap forward till" })
+    omap("G", "<Plug>(leap-forward-till)", { desc = "leap forward till" })
   end
 })
 Plug("ypcrts/securemodelines") -- Safe modelines
@@ -710,32 +709,23 @@ Plug("yardnsm/vim-import-cost", {
 Plug("ryanoasis/vim-devicons")
 Plug("kyazdani42/nvim-web-devicons")
 Plug("stevearc/dressing.nvim") -- Window UI enhancements, popups, input, etc
-Plug("sainnhe/gruvbox-material", {
+Plug("kvrohit/rasmus.nvim", {
   preload = function()
-    vim.g.gruvbox_material_transparent_background = 1
-    vim.g.gruvbox_material_background = "hard"
-    vim.g.gruvbox_material_enable_italic = 1
-    vim.g.gruvbox_material_diagnostic_virtual_text = "colored"
-    vim.g.gruvbox_material_better_performance = 1
-    vim.g.gruvbox_material_visual = "reverse"
-    vim.g.gruvbox_material_menu_selection_background = "green"
-    vim.g.gruvbox_material_ui_contrast = "high"
-    vim.opt.background = "dark"
+    vim.o.background = "dark"
   end,
   config = function()
     vim.cmd([[
       aug ColorOverrides
         au!
-        au ColorScheme gruvbox-material hi! Comment ctermfg=208 guifg=#e78a4e
-        au ColorScheme gruvbox-material hi! SpecialComment ctermfg=108 guifg=#89b482 guisp=#89b482
-        au ColorScheme gruvbox-material hi! FloatermBorder ctermbg=none guibg=none
-        au ColorScheme gruvbox-material hi! link Search IncSearch
-        au InsertEnter * hi! CursorLine ctermbg=237 guibg=#333e34
+        au ColorScheme * hi! Comment ctermfg=208 guifg=#e78a4e
+        au ColorScheme * hi! SpecialComment ctermfg=108 guifg=#89b482 guisp=#89b482
+        au ColorScheme * hi! FloatermBorder ctermbg=none guibg=none
+        au ColorScheme * hi! link Search IncSearch
+        au InsertEnter * hi! CursorLine ctermbg=237 guibg=#362417
         au InsertLeave * hi! CursorLine ctermbg=235 guibg=#282828
       aug END
     ]])
-
-    vim.cmd("colorscheme gruvbox-material")
+    vim.cmd("colorscheme rasmus")
   end
 })
 Plug("nvim-lualine/lualine.nvim", {
@@ -767,9 +757,6 @@ Plug("nvim-lualine/lualine.nvim", {
 
 Plug("ray-x/lsp_signature.nvim") -- Shows function signatures as you type
 Plug("williamboman/nvim-lsp-installer")
--- TODO: Fixed in https://github.com/neovim/neovim/pull/20198 whenever it gets
--- released
-Plug("antoinemadec/FixCursorHold.nvim") -- Dependency for nvim-lightbulb
 -- Lightbulb next to code actions
 Plug("kosayoda/nvim-lightbulb", {
   config = function()
@@ -1278,38 +1265,6 @@ Plug("nvim-telescope/telescope.nvim", { -- Fuzzy finder
 })
 
 -- -----------------------------------------------------------------------------
--- Language Support
--- -----------------------------------------------------------------------------
-
-Plug("nathom/filetype.nvim")
-Plug("sheerun/vim-polyglot", {
-  preload = function()
-    vim.g.polyglot_disabled = { "autoindent", "sensible" } -- Let vim-sleuth do it
-    vim.g.polyglot_enable_extra_features = 0
-    vim.g.markdown_fenced_languages = { "javascript", "js=javascript", "json=javascript", "rust" }
-    vim.g.rustfmt_autosave = 1
-    vim.g.rust_clip_command = "pbcopy"
-
-    -- HTML:       othree/html5.vim
-    -- Javascript: pangloss/vim-javascript
-    -- JSON:       elzr/vim-json
-    -- JSX:        MaxMEllon/vim-jsx-pretty
-    -- Kotlin:     udalov/kotlin-vim
-    -- Lua:        tbastos/vim-lua
-    -- Markdown:   plasticboy/vim-markdown
-    -- Python:     vim-python/python-syntax
-    -- Rust:       rust-lang/rust.vim
-    -- Swift:      keith/swift.vim
-    -- TOML:       cespare/vim-toml
-    -- Typescript: HerringtonDarkholme/yats.vim
-    -- Lua GetLuaIndent is not accurate
-    vim.cmd("au BufEnter *.lua set indentexpr= smartindent")
-  end
-})
--- Not provided by vim-polyglot
-Plug("stephpy/vim-yaml")
-
--- -----------------------------------------------------------------------------
 -- Testing/Debugging
 -- -----------------------------------------------------------------------------
 
@@ -1402,7 +1357,7 @@ vim.cmd("iabbrev waht what")
 -- =============================================================================
 
 vim.cmd([[
-  aug FileTypeOverrides
+  aug FiletypeOverrides
     au!
     au TermOpen * setlocal nospell nonu nornu | startinsert
     au BufRead,BufNewFile *.nu set ft=nu

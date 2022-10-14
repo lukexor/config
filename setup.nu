@@ -12,7 +12,7 @@ let apt_packages = [
 let brew_packages = [
   bash cc65 cmake coreutils docker exercism fzf git gnutls hexedit llvm neovim
   node openssl postgresql prettier python python3 shellcheck sqlite stow
-  tidy-html5 tree watchman wget yamllint 
+  tidy-html5 tree watchman wget yamllint
 ]
 let npm_packages = [
   eslint_d @fsouza/prettierd markdownlint markdownlint-cli jsonlint stylelint
@@ -20,8 +20,8 @@ let npm_packages = [
 ]
 let cargo_packages = [
   bat cargo-asm cargo-bloat cargo-expand cargo-generate cargo-outdated
-  cargo-tree cargo-watch exa flamegraph fnm procs starship ripgrep tealdeer tokei
-  wasm-pack fd-find
+  cargo-tree cargo-watch exa flamegraph fnm hyperfine procs starship ripgrep
+  tealdeer tokei wasm-pack fd-find
 ]
 let cargo_components = [clippy]
 let language_servers = [
