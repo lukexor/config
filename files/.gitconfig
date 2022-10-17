@@ -12,6 +12,7 @@
   excludesfile = ~/.gitignore
   editor = nvim -i NONE
   pager = less -F -X -x1,5
+  autocrlf = input
 [pager]
   log = less -+F -+X -x1,5
   diff = less -+F -+X -x1,5

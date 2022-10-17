@@ -294,7 +294,6 @@ alias cb = cargo build
 alias cbr = cargo build --release
 alias cc = cargo clippy
 alias cca = cargo clippy --all-targets
-alias cd = fnmcd
 alias cdoc = cargo doc
 alias cdoco = cargo doc --open
 alias cfg = cd ~/config
@@ -469,11 +468,13 @@ def pg [search: string] {
 }
 
 # Restart ssh-agent.
-def ra [] {
+def-env ra [] {
   pg ssh-agent | each { |p| kill $p.pid }
   ^rm -f /tmp/ssh-agent-info /tmp/ssh-agent
   let agent = (ssh-agent -s -a /tmp/ssh-agent)
   $agent | save /tmp/ssh-agent-info
+  let-env SSH_AUTH_SOCK = "/tmp/ssh-agent"
+  let-env SSH_AGENT_PID = (rg -o '=\d+' /tmp/ssh-agent-info | str replace = '' | str trim)
   ssh-add ~/.ssh/id_rsa
 }
 
@@ -592,7 +593,7 @@ def venv [
 }
 
 # CD using `fnm` which manages node versions
-def-env fnmcd [path?: path] {
+def-env fcd [path?: path] {
   let path = if ($path | is-empty) { $env.HOME } else { ($path | path expand) }
   let-env PWD = (if ($path | path exists) {
     $path
@@ -602,7 +603,7 @@ def-env fnmcd [path?: path] {
   if (echo .nvmrc | path exists) {
     fnm use --silent-if-unchanged
   }
-  ^cd $path
+  cd $path
 }
 
 

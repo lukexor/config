@@ -439,10 +439,10 @@ Plug("ggandor/leap.nvim", {
     require("leap").add_default_mappings()
     vim.keymap.del({ "x", "o" }, "x")
     vim.keymap.del({ "x", "o" }, "X")
-    vmap("g", "<Plug>(leap-forward-till)", { desc = "leap forward till" })
-    vmap("G", "<Plug>(leap-forward-till)", { desc = "leap forward till" })
-    omap("g", "<Plug>(leap-forward-till)", { desc = "leap forward till" })
-    omap("G", "<Plug>(leap-forward-till)", { desc = "leap forward till" })
+    vmap("z", "<Plug>(leap-forward-till)", { desc = "leap forward till" })
+    vmap("Z", "<Plug>(leap-forward-till)", { desc = "leap forward till" })
+    omap("z", "<Plug>(leap-forward-till)", { desc = "leap forward till" })
+    omap("Z", "<Plug>(leap-forward-till)", { desc = "leap forward till" })
   end
 })
 Plug("ypcrts/securemodelines") -- Safe modelines
@@ -873,7 +873,7 @@ Plug("neovim/nvim-lspconfig", {
         toggle_key = "<C-p>",
       })
     end
-    local capabilities = require("cmp_nvim_lsp").update_capabilities(vim.lsp.protocol.make_client_capabilities())
+    local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
     local null_ls = require("null-ls")
     null_ls.setup {

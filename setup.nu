@@ -24,10 +24,6 @@ let cargo_packages = [
   tealdeer tokei wasm-pack fd-find
 ]
 let cargo_components = [clippy]
-let language_servers = [
-  bashls cssls html jsonls kotlin_language_server rust_analyzer sumneko_lua
-  tsserver vimls yamlls
-]
 
 if (uname -s | str starts-with Linux) {
   mkdir ~/.local/share/fonts
@@ -63,8 +59,7 @@ do { bash -c "stow -nv files 2>&1" } | complete | get stdout | lines | wrap line
 
 stow -Rv files
 
-vim +PlugUpgrade +PlugInstall +PlugClean +PlugUpdate +UpdateRemotePlugins +VimspectorUpdate +qall
-vim -c (build-string "LspInstall --sync " ($language_servers | str collect " ")) +qall
+nvim +PlugUpgrade +PlugInstall +PlugClean +PlugUpdate +UpdateRemotePlugins +VimspectorUpdate +qall
 python3 -m pip install --upgrade --user pip
 pip3 install --upgrade --user pip pynvim pytest pylint
 
@@ -74,10 +69,11 @@ ln -s ([$nu.home-path .config/nu/config.nu] | path join) ($nu.config-path)
 ln -s ([$nu.home-path .config/nu/env.nu] | path join) ($nu.env-path)
 
 # https://github.com/jaseg/lolcat
+rm -rf lolcat
 git clone https://github.com/jaseg/lolcat
 enter lolcat
 make lolcat
-cp lolcat ~./local/bin/
+cp lolcat ~/.local/bin/
 rm -rf lolcat
 exit
 
