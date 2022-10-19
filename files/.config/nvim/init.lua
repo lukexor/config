@@ -863,6 +863,11 @@ Plug("neovim/nvim-lspconfig", {
         end, { update_in_insert = false }
       )
 
+      -- vim.lsp.formatexpr() seems broken with markdownlint/prettier
+      if vim.bo.filetype == "markdown" then
+        vim.o.formatexpr = ""
+      end
+
       require("aerial").on_attach(client, bufnr)
       require("lsp_signature").on_attach({
         bind = true,
@@ -1361,6 +1366,7 @@ vim.cmd([[
     au!
     au TermOpen * setlocal nospell nonu nornu | startinsert
     au BufRead,BufNewFile *.nu set ft=nu
+    au BufRead,BufNewFile Vagrantfile set filetype=ruby
     au BufRead,BufNewFile *.vert,*.frag set ft=glsl
     au Filetype help set nu rnu
     au Filetype * set formatoptions=croqnjp

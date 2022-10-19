@@ -262,7 +262,7 @@ let-env config = {
       event: [
         {
           send: executehostcommand
-          cmd: "do { |$file| if (not ($file | is-empty)) { echo $file; echo $'vim ($file)' | pbcopy; vim $file } } (fzf | str trim)"
+          cmd: "do { |$file| if (not ($file | is-empty)) { echo $file; echo $'vim ($file)' | clipboard; vim $file } } (fzf | str trim)"
         }
       ]
     }
@@ -359,11 +359,16 @@ alias vi = nvim
 alias vim = nvim
 alias vimdiff = nvim -d
 
+# OS Aliases
+
+let os = ($nu.os-info.name)
+alias clipboard = if $os == "linux" { xclip } else if $os == "macos" { pbcopy } else { echo "invalid clipboard" }
 
 # =============================================================================
 # Commands   {{{1
 # =============================================================================
 
+# Merge latest origin/develop into current branch
 def gmd [] {
   git pull
   git merge origin/develop
@@ -424,7 +429,7 @@ def crf [] {
   let file = (fzf | str trim)
   if ($file | is-empty | first) {} else {
     echo $"crd ($file)"
-    echo $file | pbcopy
+    echo $file | clipboard
     crd $file
   }
 }
@@ -440,7 +445,7 @@ def al [...rest] {
 # Fuzzy search a file to edit.
 def ff [] {
   let file = (fzf | str trim)
-  echo $file | pbcopy
+  echo $file | clipboard
   echo $file
 }
 
@@ -448,7 +453,7 @@ def ff [] {
 def ffi [] {
   let-env FZF_DEFAULT_COMMAND = "rg --files --hidden --no-ignore-vcs"
   let file = (fzf | str trim)
-  echo $file | pbcopy
+  echo $file | clipboard
   echo $file
 }
 
@@ -475,7 +480,12 @@ def-env ra [] {
   $agent | save /tmp/ssh-agent-info
   let-env SSH_AUTH_SOCK = "/tmp/ssh-agent"
   let-env SSH_AGENT_PID = (rg -o '=\d+' /tmp/ssh-agent-info | str replace = '' | str trim)
-  ssh-add ~/.ssh/id_rsa
+  if (echo ~/.ssh/id_rsa | path exists) {
+    ssh-add ~/.ssh/id_rsa
+  }
+  if (echo ~/.ssh/id_ed25519 | path exists) {
+    ssh-add ~/.ssh/id_ed25519
+  }
 }
 
 # Output commits since yesterday.
@@ -576,7 +586,7 @@ def "commands search" [] {
 
 # Fuzzy search history.
 alias hs = history search
-def "history search" [] { cat $nu.history-path | fzf | pbcopy }
+def "history search" [] { cat $nu.history-path | fzf | clipboard }
 
 alias deactivate = (source ~/.config/nu/envs/deactivate.nu)
 # Activate a virtual environment.
@@ -623,6 +633,13 @@ load-env (
 )
 let-env PATH = ($env.PATH | prepend $"($env.FNM_MULTISHELL_PATH)/bin")
 
+def-env load-ssh-agent [] {
+  let agent_info = "/tmp/ssh-agent-info"
+  let agent_active = ($agent_info | path exists) and (not (ps | where name =~ ssh-agent | is-empty))
+  let-env SSH_AUTH_SOCK = if $agent_active { "/tmp/ssh-agent" } else { "" }
+  let-env SSH_AGENT_PID = if $agent_active { rg -o '=\d+' $agent_info | str replace = '' | str trim } else { "" }
+}
+
 # Print out personalized ASCII logo.
 let level = if (env | any name == SHLVL) { $env.SHLVL | into int } else { 0 }
 let-env SHLVL = (if (env | any name == TMUX) && $level >= 3 {
@@ -631,7 +648,7 @@ let-env SHLVL = (if (env | any name == TMUX) && $level >= 3 {
     $level + 1
   }
 )
-def init [] {
+def logo [] {
   if ($env.SHLVL | into int) == 1 {
     echo $"
                i  t
@@ -652,6 +669,7 @@ def init [] {
   }
 }
 
-init
+logo
+load-ssh-agent
 
 # =============================================================================

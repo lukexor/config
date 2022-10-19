@@ -80,8 +80,7 @@ let-env PATH = [
   /sbin
 ]
 
-let os = (sys | get host.name)
-let-env PATH = if $os == "Darwin" {
+let-env PATH = if $nu.os-info.name == "macos" {
   ($env.PATH | append [
     "/Applications/kitty.app/Contents/MacOS",
     ([(brew --prefix | str trim) opt/llvm/bin] | path join)]
@@ -89,7 +88,6 @@ let-env PATH = if $os == "Darwin" {
 } else {
   $env.PATH
 }
-
 
 # Specifies how environment variables are:
 # - converted from a string to a value on Nushell startup (from_string)
