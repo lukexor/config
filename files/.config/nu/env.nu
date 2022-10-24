@@ -63,14 +63,12 @@ let-env STARSHIP_SESSION_KEY = (random chars -l 16)
 # Path   {{{1
 # =============================================================================
 
-let-env JAVA_HOME = "/usr/local/opt/openjdk"
 let-env PATH = [
   ([$nu.home-path bin] | path join)
   ([$nu.home-path .local/bin] | path join)
   ([$nu.home-path .cargo/bin] | path join)
   ([$nu.home-path .npm-packages/bin] | path join)
   ([$nu.home-path .fzf/bin] | path join)
-  ([$env.JAVA_HOME bin] | path join)
   /usr/local/go/bin
   /usr/local/bin
   /usr/games

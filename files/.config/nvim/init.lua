@@ -417,7 +417,6 @@ Plug("ap/vim-buftabline", {
     vim.g.buftabline_show = 2 -- always
     vim.g.buftabline_numbers = 2 -- ordinal numbers
     vim.g.buftabline_indicators = 1
-    vim.g.buftabline_separators = 1
   end,
   config = function()
     nmap("<leader>1", "<Plug>BufTabLine.Go(1)", { desc = "go to buffer tab 1" })
@@ -436,13 +435,17 @@ Plug("tpope/vim-repeat") -- Repeat with "."
 Plug("tpope/vim-sleuth") -- Smart buffer options based on contents
 Plug("ggandor/leap.nvim", {
   config = function()
-    require("leap").add_default_mappings()
-    vim.keymap.del({ "x", "o" }, "x")
-    vim.keymap.del({ "x", "o" }, "X")
-    vmap("z", "<Plug>(leap-forward-till)", { desc = "leap forward till" })
-    vmap("Z", "<Plug>(leap-forward-till)", { desc = "leap forward till" })
+    if vim.fn.mapcheck("s", "n") == "" then
+      require("leap").add_default_mappings()
+    end
+    if vim.fn.mapcheck("x", "x") ~= "" then
+      vim.keymap.del({ "x", "o" }, "x")
+      vim.keymap.del({ "x", "o" }, "X")
+    end
+    -- vmap("u", "<Plug>(leap-forward-till)", { desc = "leap forward till" })
+    -- vmap("U", "<Plug>(leap-backward-till)", { desc = "leap forward till" })
     omap("z", "<Plug>(leap-forward-till)", { desc = "leap forward till" })
-    omap("Z", "<Plug>(leap-forward-till)", { desc = "leap forward till" })
+    omap("Z", "<Plug>(leap-backward-till)", { desc = "leap forward till" })
   end
 })
 Plug("ypcrts/securemodelines") -- Safe modelines
@@ -721,6 +724,8 @@ Plug("kvrohit/rasmus.nvim", {
         au ColorScheme * hi! SpecialComment ctermfg=108 guifg=#89b482 guisp=#89b482
         au ColorScheme * hi! FloatermBorder ctermbg=none guibg=none
         au ColorScheme * hi! link Search IncSearch
+        au ColorScheme * hi! TabLineFill guibg=transparent
+        au ColorScheme * hi! VirtualTextInfo guifg=#fff0c4
         au InsertEnter * hi! CursorLine ctermbg=237 guibg=#362417
         au InsertLeave * hi! CursorLine ctermbg=235 guibg=#282828
       aug END
@@ -729,6 +734,9 @@ Plug("kvrohit/rasmus.nvim", {
   end
 })
 Plug("nvim-lualine/lualine.nvim", {
+  preload = function()
+    vim.g.rasmus_transparent = true
+  end,
   config = function()
     require("lualine").setup {
       options = {
@@ -927,16 +935,6 @@ Plug("neovim/nvim-lspconfig", {
           }
         }
       end),
-      kotlin_language_server = get_options(function(opts)
-        opts.settings = {
-          ["kotlin-language-server"] = {
-            cmd_env = {
-              PATH = vim.env.JAVA_HOME .. "/bin:" .. vim.env.PATH,
-              JAVA_HOME = vim.env.JAVA_HOME,
-            }
-          }
-        }
-      end),
       pylsp = get_options(),
       ccls = get_options(),
       rust_analyzer = get_options(function(opts)
@@ -947,7 +945,7 @@ Plug("neovim/nvim-lspconfig", {
               importprefix = "by_crate",
             },
             cargo = {},
-            checkonsave = { command = "clippy" },
+            checkOnSave = { command = "clippy" },
           }
         }
       end),
@@ -1277,6 +1275,8 @@ Plug("nvim-telescope/telescope.nvim", { -- Fuzzy finder
 Plug("romainl/vim-qf", {
   on = { "<Plug>(qf_qf_toggle)", "<Plug>(qf_qf_next)", "<Plug>(qf_qf_previous)" },
   preload = function()
+    nmap("[q", "<Plug>(qf_qf_previous)")
+    nmap("]q", "<Plug>(qf_qf_next)")
     nmap("<leader>cc", ":cexpr []<CR>", { desc = "clears quickfix list" })
   end
 })

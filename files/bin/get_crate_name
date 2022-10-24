@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+nu -c "open Cargo.toml | get package.name"
+exit 0

@@ -613,7 +613,6 @@ def-env fcd [path?: path] {
   if (echo .nvmrc | path exists) {
     fnm use --silent-if-unchanged
   }
-  cd $path
 }
 
 
