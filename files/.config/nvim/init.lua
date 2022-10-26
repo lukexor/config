@@ -129,7 +129,7 @@ nmap("Q", "<nop>", { desc = "disable Q for ExMode, use gQ instead" })
 
 nmap("<leader><CR>", ":nohlsearch|diffupdate|normal !<C-l><CR>", { desc = "clear search highlighting" })
 
-nmap("ef", ":edit <cfile><CR>", { desc = "edit file" })
+nmap("<leader>ef", ":edit <cfile><CR>", { desc = "edit file" })
 nmap("gt", "<C-]>", { desc = "go to tag" })
 
 map("<C-h>", "<C-w>h", { desc = "go to Nth left window" })
@@ -172,8 +172,9 @@ nmap("g*", "g*zzzv", { desc = "search forwards without word boundary" })
 nmap("g#", "g*zzzv", { desc = "search backwards without word boundary" })
 
 nmap("<leader>G", ":silent lgrep ", { desc = "grep" })
-nmap("<localleader>S", ":%s/", { desc = "global search and replace" })
+nmap("<localleader>S", ":%s//g<left><left>", { desc = "global search and replace" })
 nmap("<localleader>Tb", ":%s/\\s\\+$//<CR>", { desc = "trim trailing blanks" })
+vmap("<C-r>", '"hy:%s/<C-r>h//g<left><left>', { desc = "search and replace selection" });
 
 nmap("<localleader>x", function()
   if vim.fn.has("linux") == 1 then
@@ -442,8 +443,6 @@ Plug("ggandor/leap.nvim", {
       vim.keymap.del({ "x", "o" }, "x")
       vim.keymap.del({ "x", "o" }, "X")
     end
-    -- vmap("u", "<Plug>(leap-forward-till)", { desc = "leap forward till" })
-    -- vmap("U", "<Plug>(leap-backward-till)", { desc = "leap forward till" })
     omap("z", "<Plug>(leap-forward-till)", { desc = "leap forward till" })
     omap("Z", "<Plug>(leap-backward-till)", { desc = "leap forward till" })
   end
@@ -574,10 +573,9 @@ Plug("tpope/vim-surround", {
 })
 -- Make aligning rows easier
 Plug("junegunn/vim-easy-align", {
-  on = { "EasyAlign" },
   preload = function()
-    nmap("<leader>a", ":EasyAlign<CR>", { desc = "align text" })
-    vmap("<leader>a", ":EasyAlign<CR>", { desc = "align selection" })
+    nmap("gA", "<Plug>(EasyAlign)", { desc = "align text" })
+    vmap("<Enter>", "<Plug>(EasyAlign) ", { desc = "align selection" })
   end
 })
 local vim_radical_on = {
@@ -595,8 +593,8 @@ Plug("glts/vim-magnum", {
 Plug("glts/vim-radical", {
   on = vim_radical_on,
   preload = function()
-    nmap("gA", "<Plug>RadicalView", { desc = "show number conversions under cursor" })
-    vmap("gA", "<Plug>RadicalView", { desc = "show number conversions under selection" })
+    nmap("gC", "<Plug>RadicalView", { desc = "show number conversions under cursor" })
+    vmap("gC", "<Plug>RadicalView", { desc = "show number conversions under selection" })
     nmap("crd", "<Plug>RadicalCoerceToDecimal", { desc = "convert number to decimal" })
     nmap("crx", "<Plug>RadicalCoerceToHex", { desc = "convert number to hex" })
     nmap("cro", "<Plug>RadicalCoerceToOctal", { desc = "convert number to octal" })

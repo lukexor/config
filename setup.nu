@@ -16,7 +16,7 @@ let brew_packages = [
 ]
 let npm_packages = [
   eslint_d @fsouza/prettierd markdownlint markdownlint-cli jsonlint stylelint
-  stylelint-config-standard
+  stylelint-config-standard yarn
 ]
 let cargo_packages = [
   bat cargo-asm cargo-bloat cargo-expand cargo-generate cargo-outdated
@@ -62,6 +62,7 @@ stow -Rv files
 nvim +PlugUpgrade +PlugInstall +PlugClean +PlugUpdate +UpdateRemotePlugins +VimspectorUpdate +qall
 python3 -m pip install --upgrade --user pip
 pip3 install --upgrade --user pip pynvim pytest pylint
+yarn set version stable
 
 ^rm -f $nu.config-path
 ln -s ([$nu.home-path .config/nu/config.nu] | path join) ($nu.config-path)

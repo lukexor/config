@@ -283,6 +283,22 @@ let-env config = {
 use ~/.config/nu/completions/git.nu *
 use ~/.config/nu/completions/cargo.nu *
 use ~/.config/nu/completions/npm.nu *
+use ~/.config/nu/completions/yarn.nu *
+use ~/.config/nu/completions/tldr.nu *
+
+# takes a table of parsed help commands in format [short? long format? description]
+def make-completion [command_name: string] {
+  # help format  '        -s,                      --long                   <format>                 description   '
+  $in
+    | parse -r '\s\s+(?:-(?P<short>\w)[,\s]+)?(?:--(?P<long>[\w-]+))\s*(?:<(?P<format>.*)>)?\s*(?P<description>.*)?'
+    | build-string "extern \"" $command_name "\" [\n" ($in | each { |it|
+      build-string "\t--" $it.long (if ($it.short | is-empty) == false {
+          build-string "(-" $it.short ")"
+      }) (if ($it.description | is-empty) == false {
+          build-string "\t\t# " $it.description
+      })
+  } | str collect "\n") "\n\t...args\n]"
+}
 
 # =============================================================================
 # Aliases   {{{1
@@ -319,6 +335,8 @@ alias gc = git commit
 alias gcam = git commit --amend
 alias gcb = git checkout -b
 alias gco = git checkout
+alias gs = git switch
+alias gr = git restore
 alias gcp = git cherry-pick
 alias gd = git diff
 alias gdc = git diff --cached

@@ -1,22 +1,25 @@
-def "nu-comp npm" [] {
+# Npm commands
+def npm-commands [] {
   ^npm -l | lines | find 'Run "' | str trim | split column -c ' ' | get column4 | str replace '"' ''
 }
 
-def "nu-comp npm scripts" [] {
+# Npm scripts
+def npm-scripts [] {
   open package.json | get scripts | columns
 }
 
+# Node package manager
 export extern "npm" [
-  command: string@"nu-comp npm"
+  command: string@npm-commands # command to execute
   ...args: any
-  --help(-h)                                     # help
-  --version(-v)                                  # display version
-  -l                                             # display usage info for all commands
+  -l                           # display usage info for all commands
+  --version(-v)                # display version
+  --help(-h)                   # help
 ]
 
+# List installed packages
 export extern "npm ls" [
   ...args: any
-  --help(-h)                                     # help
   --all(-a)
   --json
   --long(-l)
@@ -24,26 +27,28 @@ export extern "npm ls" [
   --global(-g)
   --depth: number
   --omit: string
+  --help(-h)                   # help
 ]
 
+# Run package script
 export extern "npm run" [
-  script?: string@"nu-comp npm scripts"          # script to run
+  script?: string@npm-scripts  # script to run
   ...args: any
-  --help(-h)                                     # help
-  --workspace(-w): string                        # run command in target workspace
-  --workspaces                                   # run command in all workspaces
-  --include-workspace-root                       # include workspace root
-  --if-present                                   # don\'t exit with error if script is not defined
+  --workspace(-w): string      # run command in target workspace
+  --workspaces                 # run command in all workspaces
+  --include-workspace-root     # include workspace root
+  --if-present                 # don\'t exit with error if script is not defined
   --silent
-  --ignore-scripts                               # do not run scripts specified in package.json
-  --script-shell: string                         # shell to run scripts in (default "/bin/sh")
+  --ignore-scripts             # do not run scripts specified in package.json
+  --script-shell: string       # shell to run scripts in (default "/bin/sh")
+  --help(-h)                   # help
 ]
 
+# Install a package
 export extern "npm i" [
   ...packages: any
   --legacy-peer-deps
   --force(-f)
-  --help(-h)                                     # help
   --save(-S)
   --no-save
   --save-prod
@@ -66,13 +71,14 @@ export extern "npm i" [
   --dry-run
   --workspace(-w): string
   --include-workspace-root
+  --help(-h)                   # help
 ]
 
+# Install a package
 export extern "npm install" [
   ...packages: any
   --legacy-peer-deps
   --force(-f)
-  --help(-h)                                     # help
   --save(-S)
   --no-save
   --save-prod
@@ -95,4 +101,5 @@ export extern "npm install" [
   --dry-run
   --workspace(-w): string
   --include-workspace-root
+  --help(-h)                   # help
 ]
