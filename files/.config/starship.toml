@@ -15,7 +15,6 @@ $python\
 $rust\
 $cmd_duration\
 $line_break\
-$line_break\
 $battery\
 $status"""
 
@@ -33,7 +32,7 @@ style = "bold red"
 discharging_symbol = "💀 "
 
 [[battery.display]]
-threshold = 100
+threshold = 30
 style = "bold yellow"
 
 [directory]
