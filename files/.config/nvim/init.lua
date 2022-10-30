@@ -490,12 +490,12 @@ Plug("dbeniamine/cheat.sh-vim", {
 -- File symbol outline to TagBar
 Plug("stevearc/aerial.nvim", {
   preload = function()
-    nmap("<leader>ts", ":AerialToggle<CR>", { desc = "toggle symbol outline" })
+    nmap("<leader>to", ":AerialToggle<CR>", { desc = "toggle symbol outline" })
   end,
   config = function()
     require("aerial").setup {
-      min_width = 40,
       layout = {
+        min_width = 40,
         default_direction = "prefer_right"
       }
     }
@@ -766,8 +766,8 @@ Plug("williamboman/nvim-lsp-installer")
 -- Lightbulb next to code actions
 Plug("kosayoda/nvim-lightbulb", {
   config = function()
-    vim.fn.sign_define("LightBulbSign", { text = "", texthl = "", linehl = "", numhl = "" })
-    require("nvim-lightbulb").setup { au = { enabled = true } }
+    vim.fn.sign_define("LightBulbSign", { text = "💡", texthl = "", linehl = "", numhl = "" })
+    require("nvim-lightbulb").setup { autocmd = { enabled = true } }
   end
 })
 Plug("simrat39/rust-tools.nvim")
@@ -827,10 +827,10 @@ Plug("neovim/nvim-lspconfig", {
         vim.notify_once("attached " .. client.config.name, vim.log.levels.INFO, { title = "lsp" })
       end
 
-      vim.fn.sign_define("DiagnosticSignError", { text = "", texthl = "LspDiagnosticsSignError" })
-      vim.fn.sign_define("DiagnosticSignWarn", { text = "", texthl = "LspDiagnosticsSignWarning" })
-      vim.fn.sign_define("DiagnosticSignHint", { text = "", texthl = "LspDiagnosticsSignHint" })
-      vim.fn.sign_define("DiagnosticSignInformation", { text = "", texthl = "LspDiagnosticsSignInformation" })
+      vim.fn.sign_define("DiagnosticSignError", { text = "", texthl = "LspDiagnosticsSignError" })
+      vim.fn.sign_define("DiagnosticSignWarn", { text = "", texthl = "LspDiagnosticsSignWarning" })
+      vim.fn.sign_define("DiagnosticSignHint", { text = "", texthl = "LspDiagnosticsSignHint" })
+      vim.fn.sign_define("DiagnosticSignInformation", { text = "ℹ", texthl = "LspDiagnosticsSignInformation" })
 
       -- See `:help vim.lsp.*` for documentation on any of the below functions
       buf_nmap(bufnr, "gd", ":Telescope lsp_definitions<CR>", { desc = "go to definition" })
@@ -874,7 +874,6 @@ Plug("neovim/nvim-lspconfig", {
         vim.o.formatexpr = ""
       end
 
-      require("aerial").on_attach(client, bufnr)
       require("lsp_signature").on_attach({
         bind = true,
         doc_lines = 5,
@@ -938,14 +937,44 @@ Plug("neovim/nvim-lspconfig", {
       rust_analyzer = get_options(function(opts)
         opts.settings = {
           ["rust-analyzer"] = {
-            assist = {
-              importgroup = false,
-              importprefix = "by_crate",
+            imports = {
+              group = {
+                enable = false,
+              },
             },
-            cargo = {},
-            checkOnSave = { command = "clippy" },
-          }
+            cargo = {
+              features = "all",
+            },
+            checkOnSave = {
+              command = "clippy",
+              features = "all",
+            },
+            completion = {
+              snippets = {
+                custom = {},
+              },
+            },
+          },
         }
+        opts.setup = function(server_opts)
+          nmap("<leader>R", ":Make run<CR>", { desc = "cargo run" });
+          nmap("<leader>M", ":Make build<CR>", { desc = "cargo build" });
+          nmap("<leader>C", ":Make clippy<CR>", { desc = "cargo clippy" });
+          require("rust-tools").setup {
+            -- We don't want to call lspconfig.rust_analyzer.setup() when using
+            -- rust-tools. See https://github.com/simrat39/rust-tools.nvim/issues/89
+            server = server_opts,
+            tools = {
+              inlay_hints = {
+                only_current_line_au = "CursorHold,CursorHoldI",
+                show_parameter_hints = false,
+                highlight = "VirtualTextInfo",
+                parameter_hints_prefix = " ← ",
+                other_hints_prefix = " ▸ ",
+              },
+            },
+          }
+        end
       end),
       sumneko_lua = get_options(function(opts)
         opts.settings = {
@@ -976,6 +1005,13 @@ Plug("neovim/nvim-lspconfig", {
 
     local lspconfig = require("lspconfig")
     for server, opts in pairs(server_opts) do
+      -- Custom config overrides per-project
+      -- e.g.
+      -- return {
+      --   rust_analyzer = function(opts)
+      --     -- customize opts
+      --   end
+      -- }
       local load_config = loadfile(vim.fn.getcwd() .. "/.lspconfig.lua")
       if load_config ~= nil then
         local enhance_opts = load_config()
@@ -983,24 +1019,8 @@ Plug("neovim/nvim-lspconfig", {
           enhance_opts[server](opts)
         end
       end
-      if server == "rust_analyzer" then
-        nmap("<leader>R", ":Make run<CR>", { desc = "cargo run" });
-        nmap("<leader>M", ":Make build<CR>", { desc = "cargo build" });
-        nmap("<leader>C", ":Make clippy<CR>", { desc = "cargo clippy" });
-        require("rust-tools").setup {
-          -- We don't want to call lspconfig.rust_analyzer.setup() when using
-          -- rust-tools. See https://github.com/simrat39/rust-tools.nvim/issues/89
-          server = opts,
-          tools = {
-            inlay_hints = {
-              only_current_line_au = "CursorHold,CursorHoldI",
-              show_parameter_hints = false,
-              highlight = "VirtualTextInfo",
-              parameter_hints_prefix = " ← ",
-              other_hints_prefix = " ▸ ",
-            },
-          },
-        }
+      if opts.setup ~= nil then
+        opts.setup(opts)
       else
         lspconfig[server].setup(opts)
       end
@@ -1232,6 +1252,7 @@ Plug("rcarriga/nvim-notify", { -- Prettier notifications
     vim.notify = require("notify")
   end
 })
+Plug("nvim-telescope/telescope-symbols.nvim")
 Plug("nvim-telescope/telescope.nvim", { -- Fuzzy finder
   config = function()
     local telescope = require("telescope")

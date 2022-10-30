@@ -21,7 +21,9 @@
 # Config   {{{1
 # =============================================================================
 
-let $theme = {
+let os = ($nu.os-info.name)
+
+let theme = {
     separator: yellow_dimmed
     leading_trailing_space_bg: white_bold
     header: cyan_bold
@@ -74,11 +76,11 @@ let menu_style = {
   selected_text: green_reverse
   description_text: yellow
 }
+
 let-env config = {
   show_banner: false
   filesize_metric: true
-  # TODO: "%" causes a crash https://github.com/nushell/nushell/issues/5958
-  # history_file_format: "sqlite"
+  history_file_format: "sqlite"
   table_mode: rounded
   use_ls_colors: true
   rm_always_trash: true
@@ -92,6 +94,17 @@ let-env config = {
   edit_mode: vi
   max_history_size: 10000
   log_level: error
+  hooks: {
+    env_change: {
+      PWD: [
+        {
+          # `fnm` manages node versions
+          condition: { |_, after| ([$after .nvmrc] | path join | path exists) }
+          code: "fnm use --silent-if-unchanged"
+        },
+      ]
+    }
+  }
   menus: [
     {
       name: completion_menu
@@ -141,7 +154,7 @@ let-env config = {
       source: { |buffer, position|
           $nu.scope.commands
           | where command =~ $buffer
-          | each { |it| {value: $it.command description: $it.usage} }
+          | par-each { |it| {value: $it.command description: $it.usage} }
       }
     }
   ]
@@ -251,7 +264,11 @@ let-env config = {
       mode: vi_insert
       event: {
         send: executehostcommand
-        cmd: "cd (ls | where type == dir | get name | str collect (char nl) | fzf)" }
+        cmd: "cd (ls
+        | where type == dir
+        | get name
+        | str collect (char nl)
+        | fzf)" }
       }
     }
     {
@@ -262,7 +279,12 @@ let-env config = {
       event: [
         {
           send: executehostcommand
-          cmd: "do { |$file| if (not ($file | is-empty)) { echo $file; echo $'vim ($file)' | clipboard; vim $file } } (fzf | str trim)"
+          cmd: "do {
+            |$file| if (not ($file | is-empty)) {
+              echo $file; echo $'vim ($file)'
+              | clipboard; vim $file
+            }
+          } (fzfile)"
         }
       ]
     }
@@ -291,7 +313,7 @@ def make-completion [command_name: string] {
   # help format  '        -s,                      --long                   <format>                 description   '
   $in
     | parse -r '\s\s+(?:-(?P<short>\w)[,\s]+)?(?:--(?P<long>[\w-]+))\s*(?:<(?P<format>.*)>)?\s*(?P<description>.*)?'
-    | build-string "extern \"" $command_name "\" [\n" ($in | each { |it|
+    | build-string "extern \"" $command_name "\" [\n" ($in | par-each { |it|
       build-string "\t--" $it.long (if ($it.short | is-empty) == false {
           build-string "(-" $it.short ")"
       }) (if ($it.description | is-empty) == false {
@@ -299,6 +321,12 @@ def make-completion [command_name: string] {
       })
   } | str collect "\n") "\n\t...args\n]"
 }
+
+# =============================================================================
+# Libs   {{{1
+# =============================================================================
+
+use ~/.config/nu/libs/jobs.nu *
 
 # =============================================================================
 # Aliases   {{{1
@@ -313,18 +341,16 @@ alias cca = cargo clippy --all-targets
 alias cdoc = cargo doc
 alias cdoco = cargo doc --open
 alias cfg = cd ~/config
+alias clipboard = if $os == "linux" { xclip } else if $os == "macos" { pbcopy } else { echo $"clipboard not supported on ($os)" }
+alias cp = ^cp -ia
 alias cr = ^cargo run
 alias crd = ^cargo run --profile dev-opt
 alias cre = cargo run --example
 alias crr = cargo run --release
 alias ct = cargo test
-alias sopen = ^open
-alias find = ^fd
-alias ni = npm i
-alias nci = npm ci
-alias ns = npm start
-alias nr = npm run
 alias da = (date now | date format '%Y-%m-%d %H:%M:%S')
+alias find = ^fd
+alias flg = CARGO_PROFILE_RELEASE_DEBUG=true cargo flamegraph --root
 alias ga = git add
 alias gb = git branch -v
 alias gba = git branch -a
@@ -335,8 +361,6 @@ alias gc = git commit
 alias gcam = git commit --amend
 alias gcb = git checkout -b
 alias gco = git checkout
-alias gs = git switch
-alias gr = git restore
 alias gcp = git cherry-pick
 alias gd = git diff
 alias gdc = git diff --cached
@@ -348,27 +372,32 @@ alias gops = git push origin (git rev-parse --abbrev-ref HEAD | str trim) -u
 alias gopsn = git push origin (git rev-parse --abbrev-ref HEAD | str trim) -u --no-verify
 alias gpl = git pull
 alias gps = git push
+alias gr = git restore
 alias grhh = git reset HEAD --hard
 alias grm = git rm
+alias gs = git switch
 alias gsl = git stash list
 alias gst = git status
 alias gt = git tag
 alias gun = git reset HEAD --
-alias flg = CARGO_PROFILE_RELEASE_DEBUG=true cargo flamegraph --root
 alias la = ls -a
-alias ll = ls -l
 alias lc = (ls | sort-by modified | reverse)
 alias lk = (ls | sort-by size | reverse)
-alias cp = ^cp -ia
-alias myip = curl -s api.ipify.org
-alias mv = ^mv -i
+alias ll = ls -l
 alias md = ^mkdir -p
-alias rm = ^rm -i
-alias rd = rmdir
-alias pwd = (^pwd | str replace $nu.home-path '~')
+alias mv = ^mv -i
+alias myip = curl -s api.ipify.org
+alias nci = npm ci
+alias ni = npm i
+alias nr = npm run
+alias ns = npm start
 alias pc = procs
+alias pwd = (^pwd | str replace $nu.home-path '~')
 alias py = python3
+alias rd = rmdir
+alias rm = ^rm -i
 alias slp = kitty +kitten ssh caeledh@138.197.217.136
+alias sopen = ^open
 alias sshl = ssh-add -L
 alias topc = (ps | sort-by -r cpu | first 10)
 alias topm = (ps | sort-by -r mem | first 10)
@@ -377,16 +406,30 @@ alias vi = nvim
 alias vim = nvim
 alias vimdiff = nvim -d
 
-# OS Aliases
-
-let os = ($nu.os-info.name)
-alias clipboard = if $os == "linux" { xclip } else if $os == "macos" { pbcopy } else { echo "invalid clipboard" }
-
 # =============================================================================
 # Commands   {{{1
 # =============================================================================
 
-# Merge latest origin/develop into current branch
+# Show last $count history entries
+def h [count: int = 10] {
+  history
+  | select item_id command cwd duration exit_status
+  | last $count
+  | par-each { |it| update cwd { get cwd | str replace $env.HOME "~" } }
+}
+
+# Open file using the default system application.
+def o [path: path] {
+  if $os == "linux" {
+    xdg-open $path
+  } else if $os == "macos" {
+    ^open $path
+  } else {
+    echo $"open not supported on ($os)"
+  }
+}
+
+# Merge latest origin/develop into current branch.
 def gmd [] {
   git pull
   git merge origin/develop
@@ -441,10 +484,14 @@ def vf [] {
   echo "use ctrl+s"
 }
 
+def fzfile [flags: string = ""] {
+  let-env FZF_DEFAULT_COMMAND = $"rg --files --hidden ($flags)"
+  fzf | str trim
+}
+
 # Fuzzy cargo run a file.
 def crf [] {
-  let-env FZF_DEFAULT_COMMAND = "rg --files --hidden --no-ignore"
-  let file = (fzf | str trim)
+  let file = (fzfile)
   if ($file | is-empty | first) {} else {
     echo $"crd ($file)"
     echo $file | clipboard
@@ -453,31 +500,44 @@ def crf [] {
 }
 
 let log_file = ([$nu.home-path .activity_log.txt] | path join);
+if not ($log_file | path exists) {
+  touch $log_file
+}
 alias lal = (open $log_file | lines | last 10)
 # Log activity
-def al [...rest] {
-  touch $log_file
-  open $log_file | append (build-string (date format "[%Y-%m-%d %H:%M]: ") ($rest | str collect " ") (char nl)) | str collect | save $log_file
+def al [...rest: string] {
+  open $log_file
+  | append (build-string (date format "[%Y-%m-%d %H:%M]: ") (
+    $rest
+    | str collect " ") (char nl))
+  | str collect
+  | save $log_file
+}
+def cl [] {
+  echo "" | save $log_file
 }
 
 # Fuzzy search a file to edit.
 def ff [] {
-  let file = (fzf | str trim)
+  let file = (fzfile)
   echo $file | clipboard
   echo $file
 }
 
 # Fuzzy search a file to edit, including .gitignore.
 def ffi [] {
-  let-env FZF_DEFAULT_COMMAND = "rg --files --hidden --no-ignore-vcs"
-  let file = (fzf | str trim)
+  let file = (fzfile "--no-ignore-vcs")
   echo $file | clipboard
   echo $file
 }
 
 # Output last N ^git commits.
 def gl [count: int] {
-  ^git log --pretty=%h»¦«%s»¦«%aN»¦«%aD | lines | first $count | split column "»¦«" commit message name date | update date { get date | into datetime }
+  ^git log --pretty=%h»¦«%s»¦«%aN»¦«%aD
+  | lines
+  | first $count
+  | split column "»¦«" commit message name date
+  | update date { get date | into datetime }
 }
 
 # Output last N history commands.
@@ -515,13 +575,13 @@ def gnew [] {
 def gage [] {
   # substring 2, skips the currently checked out branch: "* "
   ^git branch -a | lines | str substring 2, | wrap name | where name !~ HEAD | insert "last commit" {
-      get name | each { |commit| ^git show $commit --no-patch --format=%as | str collect | str trim }
+      get name | par-each { |commit| ^git show $commit --no-patch --format=%as | str collect | str trim }
   } | sort-by "last commit"
 }
 
 # Clean old ^git branches.
 def gb-clean [] {
-  ^git branch -vl | lines | str substring 2, | split column " " branch hash st      atus --collapse-empty | where status == '[gone]' | each { |line| ^git branch -d $line.branch }
+  ^git branch -vl | lines | str substring 2, | split column " " branch hash st      atus --collapse-empty | where status == '[gone]' | par-each { |line| ^git branch -d $line.branch }
 }
 
 ## Community Commands
@@ -587,7 +647,7 @@ alias cs = commands search
 def "commands search" [] {
   # calculate required tabs/spaces to get a nicely aligned table
   let tablen = 8
-  let max_len = (help commands | each { |cmd| $cmd.name | str length } | math max)
+  let max_len = (help commands | par-each { |cmd| $cmd.name | str length } | math max)
   let max_indent = ($max_len / $tablen | into int)
 
   def pad-tabs [input_name] {
@@ -596,42 +656,19 @@ def "commands search" [] {
     "" | str rpad -l $required_tabs -c (char tab)
   }
 
-  help (echo (help commands | each { |cmd|
-    let name = ($cmd.name | ansi strip)
-    $"($name)(pad-tabs $name)($cmd.usage)"
-  }) | str collect (char nl) | fzf | split column (char tab) | get column1 | first )
+  let command = (help commands | par-each { |cmd|
+      let name = ($cmd.name | ansi strip)
+      $"($name)(pad-tabs $name)($cmd.usage)"
+    } | str collect (char nl) | fzf)
+
+  if (not ($command | is-empty)) {
+    help ($command | split column (char tab) | get column1 | first)
+  }
 }
 
 # Fuzzy search history.
 alias hs = history search
 def "history search" [] { cat $nu.history-path | fzf | clipboard }
-
-alias deactivate = (source ~/.config/nu/envs/deactivate.nu)
-# Activate a virtual environment.
-def venv [
-  venv_dir: string # The virtual environment directory
-] {
-  let venv_name = ($venv_dir | path expand | path basename)
-  let venv_path = ([$venv_dir "bin"] | path join)
-  {
-    VENV_OLD_PATH: $env.PATH,
-    VIRTUAL_ENV: $venv_name,
-    PATH: ($env.PATH | prepend $venv_path)
-  }
-}
-
-# CD using `fnm` which manages node versions
-def-env fcd [path?: path] {
-  let path = if ($path | is-empty) { $env.HOME } else { ($path | path expand) }
-  let-env PWD = (if ($path | path exists) {
-    $path
-  } else {
-    $env.PWD
-  })
-  if (echo .nvmrc | path exists) {
-    fnm use --silent-if-unchanged
-  }
-}
 
 
 # =============================================================================

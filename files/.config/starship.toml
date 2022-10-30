@@ -24,13 +24,16 @@ disabled = false
 format = '[\[$time\]]($style) '
 time_format = "%H:%M"
 
+[battery]
+charging_symbol = "⚡️ "
+
 [[battery.display]]
 threshold = 15
 style = "bold red"
 discharging_symbol = "💀 "
 
 [[battery.display]]
-threshold = 30
+threshold = 100
 style = "bold yellow"
 
 [directory]

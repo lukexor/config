@@ -47,7 +47,7 @@
 # =============================================================================
 
 let-env PROMPT_COMMAND = {
-  let width = (term size -c | get columns | into string)
+  let width = (term size | get columns | into string)
   starship prompt $"--cmd-duration=($env.CMD_DURATION_MS)" $"--status=($env.LAST_EXIT_CODE)" $"--terminal-width=($width)"
 }
 let-env PROMPT_COMMAND_RIGHT = ""

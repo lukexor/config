@@ -20,8 +20,8 @@ let npm_packages = [
 ]
 let cargo_packages = [
   bat cargo-asm cargo-bloat cargo-expand cargo-generate cargo-outdated
-  cargo-tree cargo-watch exa flamegraph fnm hyperfine procs starship ripgrep
-  tealdeer tokei wasm-pack fd-find
+  cargo-tree cargo-watch exa flamegraph fnm hyperfine procs pueue starship
+  ripgrep tealdeer tokei wasm-pack fd-find
 ]
 let cargo_components = [clippy]
 
@@ -68,6 +68,10 @@ yarn set version stable
 ln -s ([$nu.home-path .config/nu/config.nu] | path join) ($nu.config-path)
 ^rm -f $nu.env-path
 ln -s ([$nu.home-path .config/nu/env.nu] | path join) ($nu.env-path)
+
+if ($nu.os-info.name == "macos") {
+  ln -s ([$nu.home-path .config/environment.plist]|path join) ~/Library/LaunchAgents/environment.plist
+}
 
 # https://github.com/jaseg/lolcat
 rm -rf lolcat
