@@ -1,0 +1,32 @@
+## rust-option
+
+and - chain options | Option<T> -> Option<U>
+and_then - chain options, aka flatmap | Option<T> -> Option<U>
+filter - filter options | Option<T> -> Option<T>
+map - compose options | Option<T> -> Option<U>
+map_or - unpack some or default | Option<T> -> U
+map_or_else - unpack some or lazy-default | Option<T> -> U
+ok_or - transform option into result | Option<T> -> Result<T, E>
+ok_or_else - transform option into lazy-result | Option<T> -> Result<T, E>
+or - some or default | Option<T> -> Option<T>
+or_else - some or lazy-default | Option<T> -> Option<T>
+transpose - transform option into result | Option<Result<T, E>> -> Result<Option<T>, E>
+unwrap_or - unpack some or default | Option<T> -> T
+unwrap_or_default - unpack some or Default::default | Option<T> -> T
+unwrap_or_else - unpack some or lazy-default | Option<T> -> T
+
+## rust-result
+
+and - chain results | Result<T, E> -> Result<U, E>
+and_then - chain fallible operations | Result<T, E> -> Result<U, E>
+err - transform result into option, discarding success | Result<T, E> -> Option<E>
+map - compose results | Result<T, E> -> Result<U, E>
+map_or - unpack ok or default | Result<T, E> -> U
+map_or_else - unpack ok or lazy-default | Result<T, E> -> U
+or - ok or default | Result<T, F> -> Result<T, F>
+or_else - success or lazy-default | Result<T, F> -> Result<T, F>
+ok - transform result into option, discarding error | Result<T, E> -> Option<T>
+transpose - transform result into option | Result<Option<T>, E> -> Option<Result<T, E>>
+unwrap_or - unpack ok or default | Result<T, E> -> T
+unwrap_or_default - unpack ok or Default::default | Result<T, E> -> T
+unwrap_or_else - unpack ok or lazy-default | Result<T, E> -> T
