@@ -71,7 +71,7 @@ vim.o.wildmode = "longest:full,full"
 vim.o.wrap = false
 
 if vim.fn.executable("rg") then
-  vim.o.grepprg = "rg --no-heading --vimgrep --smart-case"
+  vim.o.grepprg = "rg --no-heading --vimgrep"
   vim.o.grepformat = "%f:%l:%c:%m"
 else
   vim.notify_once("rg is not installed", vim.log.levels.ERROR)
