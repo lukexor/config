@@ -627,8 +627,7 @@ Plug("tpope/vim-fugitive", {
   on = { "Git", "Gdiffsplit", "Gvdiffsplit", "GMove", "GBrowse", "GDelete" }
 })
 Plug("iamcco/markdown-preview.nvim", {
-  run = vim.fn["mkdp#util#install"],
-  on = { "MarkdownPreview" },
+  run = vim.fn["mkdp#util#install()"],
   preload = function()
     vim.g.mkdp_echo_preview_url = 1
   end
@@ -1181,7 +1180,6 @@ Plug("hrsh7th/nvim-cmp", {
       view = {
         entries = {
           name = "custom",
-          selection_order = "near_cursor",
         },
       },
       cmdline = {

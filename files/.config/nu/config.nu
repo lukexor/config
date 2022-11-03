@@ -96,13 +96,7 @@ let-env config = {
   log_level: error
   hooks: {
     env_change: {
-      PWD: [
-        {
-          # `fnm` manages node versions
-          condition: { |_, after| ([$after .nvmrc] | path join | path exists) }
-          code: "fnm use --silent-if-unchanged"
-        },
-      ]
+      PWD: []
     }
   }
   menus: [
@@ -328,6 +322,9 @@ def make-completion [command_name: string] {
 
 use ~/.config/nu/libs/jobs.nu *
 
+module dotenv {}
+use ~/.config/nu/libs/auto-env.nu *
+
 # =============================================================================
 # Aliases   {{{1
 # =============================================================================
@@ -415,7 +412,7 @@ def h [count: int = 10] {
   history
   | select item_id command cwd duration exit_status
   | last $count
-  | par-each { |it| update cwd { get cwd | str replace $env.HOME "~" } }
+  | each { |it| update cwd { get cwd | str replace $env.HOME "~" } }
 }
 
 # Open file using the default system application.
@@ -665,10 +662,6 @@ def "commands search" [] {
     help ($command | split column (char tab) | get column1 | first)
   }
 }
-
-# Fuzzy search history.
-alias hs = history search
-def "history search" [] { cat $nu.history-path | fzf | clipboard }
 
 
 # =============================================================================

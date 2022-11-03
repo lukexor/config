@@ -25,19 +25,23 @@ let cargo_packages = [
 ]
 let cargo_components = [clippy]
 
-if (uname -s | str starts-with Linux) {
+let os = (uname -s)
+let is_linux = ($os | str starts-with Linux)
+let is_macos = ($os | str starts-with Darwin)
+
+if $is_linux {
   mkdir ~/.local/share/fonts
   cp ./assets/*.ttf ~/.local/share/fonts/
   fc-cache -f -v
 
   echo $apt_packages | each { |it| sudo apt install $it }
   sudo apt autoremove
-} else if (uname -s | str starts-with Darwin) {
+} else if $is_macos {
   ^open ./assets/*.ttf
 
   echo $brew_packages | each { |it| brew install $it }
 } else {
-  echo $"Platform (uname -s) is not supported"
+  echo $"Platform ($os) is not supported"
 }
 
 let npm_dir = ([$nu.home-path .npm-packages] | path join)
@@ -58,6 +62,17 @@ do { bash -c "stow -nv files 2>&1" } | complete | get stdout | lines | wrap line
   }
 
 stow -Rv files
+
+if $is_linux {
+  systemctl --user daemon-reload
+  systemctl --user enable pueued.service
+  systemctl --user start pueued.service
+} else if $is_macos {
+  ln -s assets/pueued.plist ~/Library/LaunchDaemons/pueued.plist
+  launchctl load ~/Library/LaunchDaemons/pueued.plist
+} else {
+  echo $"Platform ($os) is not supported"
+}
 
 nvim +PlugUpgrade +PlugInstall +PlugClean +PlugUpdate +UpdateRemotePlugins +VimspectorUpdate +qall
 python3 -m pip install --upgrade --user pip

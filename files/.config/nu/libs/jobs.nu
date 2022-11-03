@@ -14,7 +14,7 @@ export def pa [
     let source_code = (view-source $command | str trim -l -c '{' | str trim -r -c '}')
     let job_id = (pueue add -p $"nu --config \"($config_path)\" --env-config \"($env_path)\" -c '($source_code)'")
     { "job_id": $job_id }
-    }
+}
 
 export def pl [
     id: int   # id to fetch log
@@ -45,11 +45,4 @@ export def pk [id: int] {
 # clean job log
 export def pcl [] {
     pueue clean
-}
-
-export def init-jobs [] {
-    # Start daemon if not running
-    if (pg pueued | is-empty) {
-        pueued -d
-    }
 }

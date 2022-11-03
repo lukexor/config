@@ -14,9 +14,10 @@ $nodejs\
 $python\
 $rust\
 $cmd_duration\
-$line_break\
+$status
 $battery\
-$status"""
+$line_break\
+"""
 
 [time]
 disabled = false
