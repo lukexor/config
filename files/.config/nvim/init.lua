@@ -936,6 +936,10 @@ Plug("neovim/nvim-lspconfig", {
       rust_analyzer = get_options(function(opts)
         opts.settings = {
           ["rust-analyzer"] = {
+            -- Uncomment for debugging
+            -- trace = {
+            --   server = "verbose",
+            -- },
             imports = {
               group = {
                 enable = false,
@@ -947,6 +951,7 @@ Plug("neovim/nvim-lspconfig", {
             checkOnSave = {
               command = "clippy",
               features = "all",
+              extraEnv = { ["RUSTUP_TOOLCHAIN"] = "nightly" }
             },
             completion = {
               snippets = {
