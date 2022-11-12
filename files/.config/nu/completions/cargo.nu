@@ -266,6 +266,33 @@ export extern "cargo run" [
   --help(-h)                            # Prints help information
 ]
 
+# Watches over your Cargo project’s source
+export extern "cargo watch" [
+  ...args: any                          # Full command to run. -x and -s will be ignored!
+  --ignore-nothing                      # Ignore nothing, not even target/ and .git/
+  --no-gitignore                        # Don’t use .gitignore files
+  --debug                               # Show debug output
+  --help(-h)                            # Display this message
+  --use-shell                           # Use a different shell. E.g. --use-shell=bash
+  --features                            # List of features passed to cargo invocations
+  --ignore(-i)                          # Ignore a glob/gitignore-style pattern
+  --postpone                            # Postpone first run until a file changes
+  --no-ignore                           # Don’t use .ignore files
+  --why                                 # Show paths that changed
+  --clear(-c)                           # Clear the screen before each run
+  --delay(-d)                           # File updates debounce delay in seconds [default: 0.5]
+  --version(-V)                         # Display version information
+  --watch-when-idle                     # Ignore events emitted while the commands run. Will become default behaviour in 8.0.
+  --exec(-x)                            # Cargo command(s) to execute on changes [default: check]
+  --shell(-s)                           # Shell command(s) to execute on changes
+  --watch(-w)                           # Watch specific file(s) or folder(s) [default: .]
+  --workdir(-C)                         # Change working directory before running command [default: crate root]
+  --poll                                # Force use of polling for file changes
+  --notify(-N)                          # Send a desktop notification when watchexec notices a change (experimental, behaviour may
+  --no-restart                          # Don’t restart command while it’s still running
+  --quiet(-q)                           # Suppress output from cargo-watch itself
+]
+
 # Execute all unit and integration tests and build examples of a local package
 export extern "cargo test" [
   test_arg_seperator?: string

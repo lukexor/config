@@ -31,7 +31,7 @@ snippet todo "TODO comment" bw
 endsnippet
 
 snippet uuid "Random UUID" w
-`!p if not snip.c: import uuid; snip.rv = str(uuid.uuid4())`
+`!p if not snip.c: import uuid; snip.rv = '"' + str(uuid.uuid4()) + '"'`
 endsnippet
 
 snippet c)

@@ -937,9 +937,9 @@ Plug("neovim/nvim-lspconfig", {
         opts.settings = {
           ["rust-analyzer"] = {
             -- Uncomment for debugging
-            -- trace = {
-            --   server = "verbose",
-            -- },
+            trace = {
+              server = "verbose",
+            },
             imports = {
               group = {
                 enable = false,
