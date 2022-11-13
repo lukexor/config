@@ -709,31 +709,42 @@ Plug("yardnsm/vim-import-cost", {
 Plug("ryanoasis/vim-devicons")
 Plug("kyazdani42/nvim-web-devicons")
 Plug("stevearc/dressing.nvim") -- Window UI enhancements, popups, input, etc
-Plug("kvrohit/rasmus.nvim", {
+Plug("Shatur/neovim-ayu", {
   preload = function()
     vim.o.background = "dark"
   end,
   config = function()
-    vim.cmd([[
-      aug ColorOverrides
+    local colors = require('ayu.colors')
+    colors.generate()
+
+    vim.cmd(([[
+      aug CursorLine
         au!
-        au ColorScheme * hi! Comment ctermfg=208 guifg=#e78a4e
-        au ColorScheme * hi! SpecialComment ctermfg=108 guifg=#89b482 guisp=#89b482
-        au ColorScheme * hi! FloatermBorder ctermbg=none guibg=none
-        au ColorScheme * hi! link Search IncSearch
-        au ColorScheme * hi! TabLineFill guibg=transparent
-        au ColorScheme * hi! VirtualTextInfo guifg=#fff0c4
-        au InsertEnter * hi! CursorLine ctermbg=237 guibg=#362417
-        au InsertLeave * hi! CursorLine ctermbg=235 guibg=#282828
+        au InsertEnter * hi! CursorLine guibg=%s
+        au InsertLeave * hi! CursorLine guibg=%s
       aug END
-    ]])
-    vim.cmd("colorscheme rasmus")
+    ]]):format(colors.selection_inactive, colors.panel_bg))
+
+    local ayu = require('ayu')
+    ayu.setup {
+      overrides = {
+        CursorLine = { bg = colors.panel_bg },
+        LineNr = { fg = colors.gutter_active },
+        Comment = { fg = colors.vcs_added },
+        SpecialComment = { fg = colors.vcs_added },
+        Normal = { bg = "none" },
+        FloatermBorder = { bg = "none" },
+        TabLine = { bg = "none" },
+        TabLineFill = { bg = "none" },
+        SignColumn = { bg = "none" },
+        TabLineSel = { fg = colors.tag, bg = "none" },
+        VirtualTextInfo = { fg = colors.special },
+      }
+    }
+    ayu.colorscheme()
   end
 })
 Plug("nvim-lualine/lualine.nvim", {
-  preload = function()
-    vim.g.rasmus_transparent = true
-  end,
   config = function()
     require("lualine").setup {
       options = {
@@ -1410,5 +1421,6 @@ vim.cmd([[
         \ echo 'You discovered the command-line window! You can close it with ":q".' |
         \ echohl None
     au TextYankPost * silent! lua vim.highlight.on_yank { higroup="Search", timeout=300, on_visual=false }
+    au VimEnter * if isdirectory(expand('%')) | bd | exe 'Telescope fd' | endif
   aug END
 ]])

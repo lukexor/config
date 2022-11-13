@@ -563,6 +563,20 @@ export extern "cargo clippy" [
   --help(-h)                            # Prints help information
 ]
 
+# This utility formats all bin and lib files of the current crate using rustfmt.
+extern "cargo fmt" [
+  ...args: any                          # rustfmt options
+  --check                               # Run rustfmt in check mode
+  --manifest-path                       # Specify path to Cargo.toml
+  --all                                 # Format all packages, and also their local path-based dependencies
+  --message-format                      # Specify message-format: short|json|human
+  --package(-p)                         # Specify package to format
+  --help(-h)                            # Print help information
+  --quiet(-q)                           # No output printed to stdout
+  --verbose(-v)                         # Use verbose output
+  --version                             # Print rustfmt version and exit
+]
+
 # Shows the assembly generated for a Rust function.
 export extern "cargo asm" [
   ...args: any
