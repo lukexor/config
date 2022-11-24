@@ -39,7 +39,7 @@ install_linux() {
     python3 \
     python3-pip
     shellcheck \
-    software-properties-common
+    software-properties-common \
     sqlite \
     stow \
     tidy \
@@ -141,9 +141,8 @@ install_crates() {
     cargo-tree \
     cargo-watch \
     exa \
-    fd-find
+    fd-find \
     flamegraph \
-    fnm \
     hyperfine \
     procs \
     ripgrep \
@@ -237,6 +236,8 @@ bootstrap() {
   echo "
   Bootstrapping system...
   "
+
+  PATH=~/bin:~/.local/bin:~/.cargo/bin:~/.npm-packages/bin:~/.fzf/bin:"$PATH"
 
   case "$(uname -s)" in
     Linux*)  install_linux;;
