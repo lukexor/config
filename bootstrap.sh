@@ -1,11 +1,10 @@
 #!/usr/bin/env bash
 
-set -euxo pipefail
+[ -n "$DEBUG" ] && set -x
+set -euo pipefail
 
 install_linux() {
-  echo "
-  Installing Packages...
-  "
+  echo "Installing Packages..."
 
   LANG=${LANG:-C.UTF-8}
   sudo=
@@ -13,6 +12,7 @@ install_linux() {
 
   $sudo add-apt-repository -y ppa:neovim-ppa/stable
   $sudo apt update -y
+  set +e
   $sudo apt install -y \
     bash \
     cc65 \
@@ -48,18 +48,20 @@ install_linux() {
     wget \
     yamllint
   $sudo apt autoremove
+  set -e
 
-  ln -s ~/.local/kitty.app/bin/kitty ~/.local/bin/kitty
+  [ ! -f ~/.local/bin/kitty ] \
+    && ln -s ~/.local/kitty.app/bin/kitty ~/.local/bin/kitty
 
   mkdir -p ~/.local/share/fonts
   cp ./assets/*.ttf ~/.local/share/fonts/
   fc-cache -f -v
+
+  return 0
 }
 
 install_macos() {
-  echo "
-  Installing Packages...
-  "
+  echo "Installing Packages..."
 
   set +e
   xcode-select --install
@@ -72,6 +74,7 @@ install_macos() {
     bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   fi
 
+  set +e
   brew install \
     bash \
     cc65 \
@@ -90,6 +93,7 @@ install_macos() {
     openssl \
     postgresql \
     prettier \
+    pylint \
     python \
     python3 \
     shellcheck \
@@ -100,26 +104,31 @@ install_macos() {
     watchman \
     wget \
     yamllint
+  set -e
 
-  ln -s /Applications/kitty.app/Contents/MacOS/kitty ~/.local/bin/kitty
-  ln -s ~/.config/environment.plist ~/Library/LaunchAgents/environment.plist
+  [ ! -f ~/.local/bin/kitty ] \
+    && ln -s /Applications/kitty.app/Contents/MacOS/kitty ~/.local/bin/kitty
+  [ ! -f ~/Library/LaunchAgents/environment.plist ] \
+    && ln -s ~/.config/environment.plist ~/Library/LaunchAgents/environment.plist
+
+  return 0
 }
 
 install_terminal() {
-  echo "
-  Installing Terminal...
-  "
+  echo "Installing Terminal..."
 
   mkdir -p ~/.local/bin
-  PATH=~/bin:~/.local/bin:~/.cargo/bin"$PATH"
+  set +e
   curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin launch=n
+  set -e
+
+  return 0
 }
 
 install_crates() {
-  echo "
-  Installing Crates...
-  "
+  echo "Installing Crates..."
 
+  set +e
   if command -v rustup &> /dev/null; then
     rustup update
   else
@@ -154,17 +163,19 @@ install_crates() {
   cargo install nu --features=extra
   NU_BIN=$HOME/.cargo/bin/nu
   sudo grep -qxF "$NU_BIN" /etc/shells | wc -l || echo "$NU_BIN" | sudo tee -a /etc/shells
+  set -e
+
+  return 0
 }
 
 install_npm() {
-  echo "
-  Installing Npm...
-  "
+  echo "Installing Npm..."
 
   npm_dir=~/.npm-packages
   mkdir -p "$npm_dir"
   npm config set prefix "$npm_dir"
 
+  set +e
   npm install -g \
     @fsouza/prettierd \
     eslint_d \
@@ -174,47 +185,37 @@ install_npm() {
     stylelint \
     stylelint-config-standard \
     yarn
+  set -e
 
   yarn set version stable
-}
 
-install_python() {
-  echo "
-  Installing Python...
-  "
-
-  python3 -m pip install --upgrade --user \
-    pip
-  pip3 install --upgrade --user \
-    pip \
-    pynvim \
-    pytest \
-    pylint
+  return 0
 }
 
 install_lolcat() {
-  echo "
-  Installing lolcat...
-  "
+  echo "Installing lolcat..."
 
   # https://github.com/jaseg/lolcat
   rm -rf lolcat
   git clone https://github.com/jaseg/lolcat
   pushd lolcat
+  set +e
   make lolcat
+  set -e
   cp lolcat ~/.local/bin/
   popd
   rm -rf lolcat
+
+  return 0
 }
 
 setup_config() {
-  echo "
-  Setting up configs...
-  "
+  echo "Setting up configs..."
 
-  conflicts=$(stow -nv files 2>&1 \
-    | rg "existing target" \
-    | sed 's/.*existing target .*: //')
+  set +o pipefail
+  conflicts=$(stow -nv files 2>&1 | rg "existing target" | sed 's/.*existing target .*: //')
+  set -o pipefail
+
   for file in $conflicts; do
     echo "Moved $file to ${file}.orig"
     mv "$file"{,.orig}
@@ -229,35 +230,38 @@ setup_config() {
     +UpdateRemotePlugins \
     +VimspectorUpdate \
     +qall
+
+  return 0
 }
 
 
 bootstrap() {
-  echo "
-  Bootstrapping system...
-  "
+  echo "Bootstrapping system..."
 
   PATH=~/bin:~/.local/bin:~/.cargo/bin:~/.npm-packages/bin:~/.fzf/bin:"$PATH"
 
   case "$(uname -s)" in
-    Linux*)  install_linux;;
-    Darwin*) install_macos;;
-    *)       echo "Platform $(uname -s) is not supported"
+    Linux*)
+      install_linux
+      ;;
+    Darwin*)
+      install_macos
+      ;;
+    *)
+      echo "Platform $(uname -s) is not supported"
+      ;;
   esac
 
   install_terminal
   install_crates
   install_npm
-  install_python
   install_lolcat
 
   setup_config
 
-  exec fish
+  echo "Bootstrap Complete!"
 
-  echo "
-  Bootstrap Complete!
-  "
+  exec fish
 }
 
 bootstrap
