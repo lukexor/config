@@ -121,12 +121,19 @@
       }
     },
     "Rust (Attach)": {
-      "extends": "Rust",
+      "adapter": "CodeLLDB",
       "filetypes": ["rust"],
+      "breakpoints": {
+        "exception": {
+          "cpp_throw": "Y",
+          "cpp_catch": "N"
+        }
+      },
       "configuration": {
         "request": "attach",
+        "sourceLanguages": ["rust"],
         "cwd": "${PWD}",
-        "processId": "${processId}"
+        "pid": "${processId}"
       }
     },
     "Go": {

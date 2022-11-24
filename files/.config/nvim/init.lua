@@ -399,6 +399,7 @@ Plug.begin(data_dir .. "/plugged")
 -- -----------------------------------------------------------------------------
 
 Plug("nathom/filetype.nvim") -- lua replacement of filetype.vim
+Plug("nickeb96/fish.vim")
 -- Cache lua plugins
 Plug("lewis6991/impatient.nvim", {
   config = function()
@@ -739,6 +740,7 @@ Plug("Shatur/neovim-ayu", {
         SignColumn = { bg = "none" },
         TabLineSel = { fg = colors.tag, bg = "none" },
         VirtualTextInfo = { fg = colors.special },
+        Visual = { bg = colors.selection_bg },
       }
     }
     ayu.colorscheme()
@@ -947,28 +949,32 @@ Plug("neovim/nvim-lspconfig", {
       rust_analyzer = get_options(function(opts)
         opts.settings = {
           ["rust-analyzer"] = {
-            -- Uncomment for debugging
-            trace = {
-              server = "verbose",
+            assist = {
+              emitMustUse = true,
+            },
+            cargo = {
+              features = "all",
+              buildScripts = {
+                enable = true,
+              },
+            },
+            checkOnSave = {
+              command = "clippy",
+              features = "all",
+              extraEnv = { RUSTUP_TOOLCHAIN = "nightly" },
             },
             imports = {
               group = {
                 enable = false,
               },
             },
-            cargo = {
-              features = "all",
+            procMacro = {
+              enable = true,
             },
-            checkOnSave = {
-              command = "clippy",
-              features = "all",
-              extraEnv = { ["RUSTUP_TOOLCHAIN"] = "nightly" }
-            },
-            completion = {
-              snippets = {
-                custom = {},
-              },
-            },
+            -- Uncomment for debugging
+            -- trace = {
+            --   server = "verbose",
+            -- },
           },
         }
         opts.setup = function(server_opts)
@@ -981,9 +987,6 @@ Plug("neovim/nvim-lspconfig", {
             server = server_opts,
             tools = {
               inlay_hints = {
-                only_current_line_au = "CursorHold,CursorHoldI",
-                show_parameter_hints = false,
-                highlight = "VirtualTextInfo",
                 parameter_hints_prefix = " ← ",
                 other_hints_prefix = " ▸ ",
               },

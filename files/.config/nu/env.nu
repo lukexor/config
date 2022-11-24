@@ -51,9 +51,9 @@ let-env PROMPT_COMMAND = {
   starship prompt $"--cmd-duration=($env.CMD_DURATION_MS)" $"--status=($env.LAST_EXIT_CODE)" $"--terminal-width=($width)"
 }
 let-env PROMPT_COMMAND_RIGHT = ""
-let-env PROMPT_INDICATOR = "❯ "
-let-env PROMPT_INDICATOR_VI_NORMAL = ": "
-let-env PROMPT_INDICATOR_VI_INSERT = "❯ "
+let-env PROMPT_INDICATOR = ""
+let-env PROMPT_INDICATOR_VI_NORMAL = ""
+let-env PROMPT_INDICATOR_VI_INSERT = ""
 let-env PROMPT_MULTILINE_INDICATOR = "::: "
 
 let-env STARSHIP_SHELL = "nu"
@@ -114,6 +114,7 @@ let-env FZF_DEFAULT_COMMAND = "rg --files --hidden --no-ignore --glob !.git --gl
 let-env LESS = "-RFX"
 let-env PAGER = "nvim +Man!"
 let-env MANPAGER = "nvim +Man!"
+# let-env RA_LOG = "info,salsa=off,chalk=off"
 let-env CARGO_TARGET_DIR = ([$nu.home-path .cargo-target] | path join)
 
 # Directories to search for scripts when calling source or use
