@@ -16,10 +16,10 @@
 #    Personal nushell env configuration of Luke Petherbridge <me@lukeworks.tech>
 
 if not status is-interactive
-    return
+    exit
 end
 
-set -U os $(uname)
+set -U os (uname)
 
 function macos
     test $os = "Darwin"
@@ -60,11 +60,11 @@ end
 
 set -g agent_info /tmp/ssh-agent-info
 set -g agent_file /tmp/ssh-agent
-set -l agents_running $(ps -A | rg [s]sh-agent | wc -l | string trim)
+set -l agents_running (ps -A | rg [s]sh-agent | wc -l | string trim)
 if test -e $agent_info
     and test $agents_running -gt 0
     set -gx SSH_AUTH_SOCK $agent_file
-    set -gx SSH_AGENT_PID $(rg -o '=\d+' $agent_info | string replace '=' '')
+    set -gx SSH_AGENT_PID (rg -o '=\d+' $agent_info | string replace '=' '')
 end
 
 # TODO: virtualenv with .env
@@ -83,7 +83,7 @@ set -gx LESS "-RFX"
 set -gx PAGER "nvim +Man!"
 set -gx MANPAGER "nvim +Man!"
 # set -gx RA_LOG "info,salsa=off,chalk=off"
-set -gx CARGO_TARGET_DIR "~/.cargo-target"
+set -gx CARGO_TARGET_DIR ~/.cargo-target
 
 
 # =============================================================================
@@ -201,8 +201,8 @@ alias dirsize="fd -t d | xargs du -sh"
 alias glg="git log --graph --pretty=format:'%C(yellow)%h (%p) %ai%Cred%d %Creset%Cblue[%ae]%Creset %s (%ar). %b %N'"
 alias gmd="git pull && git merge origin/develop"
 alias gmm="git pull && git merge origin/main"
-alias gops='git push origin $(git rev-parse --abbrev-ref HEAD | string trim) -u'
-alias gopsn='git push origin $(git rev-parse --abbrev-ref HEAD | string trim) -u --no-verify'
+alias gops="git push origin "(git rev-parse --abbrev-ref HEAD | string trim)" -u"
+alias gopsn="git push origin "(git rev-parse --abbrev-ref HEAD | string trim)" -u --no-verify"
 alias la="ls -a"
 alias lal="cat $activity_log | head"
 alias lc="ls -U"
@@ -231,6 +231,6 @@ function fish_greeting
     :W##########WtE#t
     :,,,,,,,,,,,,,.
 
-    $(uptime)
+   "(uptime)"
     " | lolcat
 end

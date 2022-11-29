@@ -1,7 +1,7 @@
 # This file contains fish universal variable definitions.
 # VERSION: 3.0
 SETUVAR --path PATH:\x2e
-SETUVAR __fish_initialized:3400
+SETUVAR __fish_initialized:3100
 SETUVAR _fish_abbr_cal:echo\x20\x2dn\x20\x20\x3e\x20/Users/lukepetherbridge/\x2eactivity_log\x2etxt
 SETUVAR _fish_abbr_cat:bat\x20\x2dP
 SETUVAR _fish_abbr_cb:cargo\x20build
@@ -10,7 +10,7 @@ SETUVAR _fish_abbr_cc:cargo\x20clippy
 SETUVAR _fish_abbr_cca:cargo\x20clippy\x20\x2d\x2dall\x2dtargets
 SETUVAR _fish_abbr_cdoc:cargo\x20doc
 SETUVAR _fish_abbr_cdoco:cargo\x20doc\x20\x2d\x2dopen
-SETUVAR _fish_abbr_cfg:cd\x20/Users/lukepetherbridge/config
+SETUVAR _fish_abbr_cfg:cd\x20/home/luke/config
 SETUVAR _fish_abbr_cp:cp\x20\x2dia
 SETUVAR _fish_abbr_cr:cargo\x20run
 SETUVAR _fish_abbr_crd:cargo\x20run\x20\x2d\x2dprofile\x20dev\x2dopt
@@ -59,15 +59,15 @@ SETUVAR _fish_abbr_nci:npm\x20ci
 SETUVAR _fish_abbr_ni:npm\x20i
 SETUVAR _fish_abbr_nr:npm\x20run
 SETUVAR _fish_abbr_ns:npm\x20start
-SETUVAR _fish_abbr_o:open
+SETUVAR _fish_abbr_o:xdg\x2dopen
 SETUVAR _fish_abbr_pc:procs
 SETUVAR _fish_abbr_pg:ps\x20\x2dAo\x20user\x2cuid\x2cpid\x2cpcpu\x2ctty\x2ccomm\x20\x7c\x20rg
 SETUVAR _fish_abbr_py:python3
 SETUVAR _fish_abbr_rd:rmdir
 SETUVAR _fish_abbr_slp:kitty\x20\x2bkitten\x20ssh\x20caeledh\x40138\x2e197\x2e217\x2e136
 SETUVAR _fish_abbr_sshl:ssh\x2dadd\x20\x2dL
-SETUVAR _fish_abbr_topc:ps\x20\x2dAo\x20user\x2cuid\x2cpid\x2cpcpu\x2ctty\x2ccomm\x20\x2dr\x20\x7c\x20head
-SETUVAR _fish_abbr_topm:ps\x20\x2dAo\x20user\x2cuid\x2cpid\x2cpcpu\x2ctty\x2ccomm\x20\x2dm\x20\x7c\x20head
+SETUVAR _fish_abbr_topc:ps\x20\x2dAo\x20user\x2cuid\x2cpid\x2cpcpu\x2ctty\x2ccomm\x20\x2d\x2dsort\x3d\x2dpcpu\x20\x7c\x20head
+SETUVAR _fish_abbr_topm:ps\x20\x2dAo\x20user\x2cuid\x2cpid\x2cpcpu\x2ctty\x2ccomm\x20\x2d\x2dsort\x3d\x2dpmem\x20\x7c\x20head
 SETUVAR _fish_abbr_v:nvim
 SETUVAR _fish_abbr_vi:nvim
 SETUVAR _fish_abbr_vim:nvim
@@ -115,4 +115,4 @@ SETUVAR fish_pager_color_selected_prefix:\x1d
 SETUVAR fish_user_paths:/Applications/kitty\x2eapp/Contents/MacOS\x1e/usr/local/opt/llvm/bin\x1e/sbin\x1e/usr/sbin\x1e/bin\x1e/usr/bin\x1e/usr/local/bin\x1e/usr/local/go/bin\x1e/Users/lukepetherbridge/\x2efzf/bin\x1e/Users/lukepetherbridge/\x2ecargo/bin\x1e/Users/lukepetherbridge/bin
 SETUVAR linux:\x1d
 SETUVAR macos:\x1d
-SETUVAR os:Darwin
+SETUVAR os:Linux
