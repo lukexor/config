@@ -38,6 +38,7 @@ starship init fish | source
 fish_add_path -gm \
     ~/bin \
     $local_bin \
+    ~/snap/bin \
     ~/.cargo/bin \
     $npm_dir \
     ~/.fzf/bin \

@@ -345,6 +345,7 @@ alias crd = ^cargo run --profile dev-opt
 alias cre = cargo run --example
 alias crr = cargo run --release
 alias ct = cargo test
+alias cw = cargo watch
 alias da = (date now | date format '%Y-%m-%d %H:%M:%S')
 alias find = ^fd
 alias flg = CARGO_PROFILE_RELEASE_DEBUG=true cargo flamegraph --root

@@ -778,7 +778,7 @@ Plug("williamboman/nvim-lsp-installer")
 -- Lightbulb next to code actions
 Plug("kosayoda/nvim-lightbulb", {
   config = function()
-    vim.fn.sign_define("LightBulbSign", { text = "💡", texthl = "", linehl = "", numhl = "" })
+    vim.fn.sign_define("LightBulbSign", { text = "", texthl = "", linehl = "", numhl = "" })
     require("nvim-lightbulb").setup { autocmd = { enabled = true } }
   end
 })
