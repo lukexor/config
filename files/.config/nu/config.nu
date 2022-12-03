@@ -78,21 +78,52 @@ let menu_style = {
 }
 
 let-env config = {
+  cd: {
+    abbreviations: false
+  }
+  completions: {
+    case_sensitive: false
+    quick: true
+    partial: true
+    algorithm: "fuzzy"
+    external: {
+      enable: true
+      max_results: 100
+      completer: null
+    }
+  }
+  filesize: {
+    metric: true
+    format: "auto"
+  }
+  history: {
+    max_size: 10000
+    file_format: "sqlite"
+    sync_on_enter: true
+  }
+  ls: {
+    use_ls_colors: true
+    clickable_links: true
+  }
+  rm: {
+    always_trash: true
+  }
   show_banner: false
-  filesize_metric: true
-  history_file_format: "sqlite"
-  table_mode: rounded
-  use_ls_colors: true
-  rm_always_trash: true
+  table: {
+    mode: rounded
+    index_mode: always
+    trim: {
+      methodology: wrapping
+      wrapping_try_keep_words: true
+      truncating_suffix: "..."
+    }
+  }
   color_config: $theme
   use_grid_icons: true
   footer_mode: "30"
-  quick_completions: true
   float_precision: 2
   use_ansi_coloring: true
-  filesize_format: "auto"
   edit_mode: vi
-  max_history_size: 10000
   log_level: error
   hooks: {
     env_change: {
@@ -345,6 +376,7 @@ alias crd = ^cargo run --profile dev-opt
 alias cre = cargo run --example
 alias crr = cargo run --release
 alias ct = cargo test
+alias cw = cargo watch
 alias da = (date now | date format '%Y-%m-%d %H:%M:%S')
 alias find = ^fd
 alias flg = CARGO_PROFILE_RELEASE_DEBUG=true cargo flamegraph --root

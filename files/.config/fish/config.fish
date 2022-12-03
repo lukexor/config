@@ -16,10 +16,10 @@
 #    Personal nushell env configuration of Luke Petherbridge <me@lukeworks.tech>
 
 if not status is-interactive
-    return
+    exit
 end
 
-set -U os $(uname)
+set -U os (uname)
 
 function macos
     test $os = "Darwin"
@@ -38,6 +38,7 @@ starship init fish | source
 fish_add_path -gm \
     ~/bin \
     $local_bin \
+    ~/snap/bin \
     ~/.cargo/bin \
     $npm_dir \
     ~/.fzf/bin \
@@ -59,11 +60,11 @@ end
 
 set -g agent_info /tmp/ssh-agent-info
 set -g agent_file /tmp/ssh-agent
-set -l agents_running $(ps -A | rg [s]sh-agent | wc -l | string trim)
+set -l agents_running (ps -A | rg [s]sh-agent | wc -l | string trim)
 if test -e $agent_info
     and test $agents_running -gt 0
     set -gx SSH_AUTH_SOCK $agent_file
-    set -gx SSH_AGENT_PID $(rg -o '=\d+' $agent_info | string replace '=' '')
+    set -gx SSH_AGENT_PID (rg -o '=\d+' $agent_info | string replace '=' '')
 end
 
 # TODO: virtualenv with .env
@@ -82,22 +83,24 @@ set -gx LESS "-RFX"
 set -gx PAGER "nvim +Man!"
 set -gx MANPAGER "nvim +Man!"
 # set -gx RA_LOG "info,salsa=off,chalk=off"
-set -gx CARGO_TARGET_DIR "~/.cargo-target"
+set -gx CARGO_TARGET_DIR ~/.cargo-target
 
 
 # =============================================================================
 # Keybindings   {{{1
 # =============================================================================
 
-bind \cw backward-kill-path-component
-bind \cb prevd-or-backward-word
-bind \cf nextd-or-forward-word
-bind \co beginning-of-line
-bind \ce end-of-line
-bind \ct forward-char
-bind \cr fzf_history
-bind \cs fzf_file
-bind \cy fzf_dir
+fish_vi_key_bindings
+
+bind -M insert \cw backward-kill-path-component
+bind -M insert \cb prevd-or-backward-word
+bind -M insert \cf nextd-or-forward-word
+bind -M insert \co beginning-of-line
+bind -M insert \ce end-of-line
+bind -M insert \ct forward-char
+bind -M insert \cr fzf_history
+bind -M insert \cs fzf_file
+bind -M insert \cy fzf_dir
 
 
 # =============================================================================
@@ -129,6 +132,7 @@ abbr -aU cr cargo run
 abbr -aU crd cargo run --profile dev-opt
 abbr -aU cre cargo run --example
 abbr -aU crr cargo run --release
+abbr -aU cw cargo watch
 abbr -aU ct cargo test
 abbr -aU da "date +'%Y-%m-%d %H:%M:%S'"
 abbr -aU find fd
@@ -197,11 +201,8 @@ end
 alias cal="echo -n "" > $activity_log"
 alias cp="cp -i"
 alias dirsize="fd -t d | xargs du -sh"
-alias glg="git log --graph --pretty=format:'%C(yellow)%h (%p) %ai%Cred%d %Creset%Cblue[%ae]%Creset %s (%ar). %b %N'"
 alias gmd="git pull && git merge origin/develop"
 alias gmm="git pull && git merge origin/main"
-alias gops='git push origin $(git rev-parse --abbrev-ref HEAD | string trim) -u'
-alias gopsn='git push origin $(git rev-parse --abbrev-ref HEAD | string trim) -u --no-verify'
 alias la="ls -a"
 alias lal="cat $activity_log | head"
 alias lc="ls -U"
@@ -210,6 +211,10 @@ alias ll="ls -l"
 alias mv="mv -i"
 alias rm="rm -i"
 
+
+# TODO: Move to virtual env
+set -gx ARCADEROOT ~/preveil/ARCADE/arcade_2.5/
+set -gx RUST_LOG debug,lapin=off,hyper=off,reqwest::connect=off
 
 # =============================================================================
 # Init   {{{1
@@ -230,6 +235,6 @@ function fish_greeting
     :W##########WtE#t
     :,,,,,,,,,,,,,.
 
-    $(uptime)
+   "(uptime)"
     " | lolcat
 end

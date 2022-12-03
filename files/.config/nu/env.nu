@@ -66,6 +66,7 @@ let-env STARSHIP_SESSION_KEY = (random chars -l 16)
 let-env PATH = [
   ([$nu.home-path bin] | path join)
   ([$nu.home-path .local/bin] | path join)
+  ([$nu.home-path /snap/bin] | path join)
   ([$nu.home-path .cargo/bin] | path join)
   ([$nu.home-path .npm-packages/bin] | path join)
   ([$nu.home-path .fzf/bin] | path join)

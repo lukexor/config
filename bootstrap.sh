@@ -3,12 +3,13 @@
 [ -n "$DEBUG" ] && set -x
 set -euo pipefail
 
+sudo=
+[ "$EUID" -ne 0 ] && sudo=sudo
+
 install_linux() {
   echo "Installing Packages..."
 
   LANG=${LANG:-C.UTF-8}
-  sudo=
-  [ "$EUID" -ne 0 ] && sudo=sudo
 
   $sudo add-apt-repository -y ppa:neovim-ppa/stable
   $sudo apt update -y
@@ -20,6 +21,7 @@ install_linux() {
     coreutils \
     curl \
     docker \
+    fish \
     fzf \
     gcc-multilib \
     git \
@@ -161,8 +163,8 @@ install_crates() {
     wasm-pack
 
   cargo install nu --features=extra
-  NU_BIN=$HOME/.cargo/bin/nu
-  sudo grep -qxF "$NU_BIN" /etc/shells | wc -l || echo "$NU_BIN" | sudo tee -a /etc/shells
+  nushell=$HOME/.cargo/bin/nu
+  sudo grep -qxF "$nushell" /etc/shells | wc -l || echo "$nushell" | sudo tee -a /etc/shells
   set -e
 
   return 0
@@ -186,8 +188,6 @@ install_npm() {
     stylelint-config-standard \
     yarn
   set -e
-
-  yarn set version stable
 
   return 0
 }
@@ -230,6 +230,11 @@ setup_config() {
     +UpdateRemotePlugins \
     +VimspectorUpdate \
     +qall
+
+
+  shell=$(which fish)
+  $sudo grep -qxF "$shell" /etc/shells | wc -l || echo "$shell" | $sudo tee -a /etc/shells
+  [ "$SHELL" == "$shell" ] || chsh -s "$shell"
 
   return 0
 }
