@@ -961,6 +961,7 @@ Plug("neovim/nvim-lspconfig", {
             checkOnSave = {
               command = "clippy",
               features = "all",
+              allTargets = true,
               extraEnv = { RUSTUP_TOOLCHAIN = "nightly" },
             },
             imports = {

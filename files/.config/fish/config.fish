@@ -90,15 +90,17 @@ set -gx CARGO_TARGET_DIR ~/.cargo-target
 # Keybindings   {{{1
 # =============================================================================
 
-bind \cw backward-kill-path-component
-bind \cb prevd-or-backward-word
-bind \cf nextd-or-forward-word
-bind \co beginning-of-line
-bind \ce end-of-line
-bind \ct forward-char
-bind \cr fzf_history
-bind \cs fzf_file
-bind \cy fzf_dir
+fish_vi_key_bindings
+
+bind -M insert \cw backward-kill-path-component
+bind -M insert \cb prevd-or-backward-word
+bind -M insert \cf nextd-or-forward-word
+bind -M insert \co beginning-of-line
+bind -M insert \ce end-of-line
+bind -M insert \ct forward-char
+bind -M insert \cr fzf_history
+bind -M insert \cs fzf_file
+bind -M insert \cy fzf_dir
 
 
 # =============================================================================
@@ -130,6 +132,7 @@ abbr -aU cr cargo run
 abbr -aU crd cargo run --profile dev-opt
 abbr -aU cre cargo run --example
 abbr -aU crr cargo run --release
+abbr -aU cw cargo watch
 abbr -aU ct cargo test
 abbr -aU da "date +'%Y-%m-%d %H:%M:%S'"
 abbr -aU find fd
@@ -198,11 +201,8 @@ end
 alias cal="echo -n "" > $activity_log"
 alias cp="cp -i"
 alias dirsize="fd -t d | xargs du -sh"
-alias glg="git log --graph --pretty=format:'%C(yellow)%h (%p) %ai%Cred%d %Creset%Cblue[%ae]%Creset %s (%ar). %b %N'"
 alias gmd="git pull && git merge origin/develop"
 alias gmm="git pull && git merge origin/main"
-alias gops="git push origin "(git rev-parse --abbrev-ref HEAD | string trim)" -u"
-alias gopsn="git push origin "(git rev-parse --abbrev-ref HEAD | string trim)" -u --no-verify"
 alias la="ls -a"
 alias lal="cat $activity_log | head"
 alias lc="ls -U"
@@ -211,6 +211,10 @@ alias ll="ls -l"
 alias mv="mv -i"
 alias rm="rm -i"
 
+
+# TODO: Move to virtual env
+set -gx ARCADEROOT ~/preveil/ARCADE/arcade_2.5/
+set -gx RUST_LOG debug,lapin=off,hyper=off,reqwest::connect=off
 
 # =============================================================================
 # Init   {{{1

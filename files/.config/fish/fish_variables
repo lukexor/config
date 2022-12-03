@@ -17,6 +17,7 @@ SETUVAR _fish_abbr_crd:cargo\x20run\x20\x2d\x2dprofile\x20dev\x2dopt
 SETUVAR _fish_abbr_cre:cargo\x20run\x20\x2d\x2dexample
 SETUVAR _fish_abbr_crr:cargo\x20run\x20\x2d\x2drelease
 SETUVAR _fish_abbr_ct:cargo\x20test
+SETUVAR _fish_abbr_cw:cargo\x20watch
 SETUVAR _fish_abbr_da:date\x20\x2b\x27\x25Y\x2d\x25m\x2d\x25d\x20\x25H\x3a\x25M\x3a\x25S\x27
 SETUVAR _fish_abbr_find:fd
 SETUVAR _fish_abbr_flg:CARGO_PROFILE_RELEASE_DEBUG\x3dtrue\x20cargo\x20flamegraph\x20\x2d\x2droot
@@ -35,12 +36,9 @@ SETUVAR _fish_abbr_gd:git\x20diff
 SETUVAR _fish_abbr_gdc:git\x20diff\x20\x2d\x2dcached
 SETUVAR _fish_abbr_gdt:git\x20difftool
 SETUVAR _fish_abbr_gf:git\x20fetch\x20origin
-SETUVAR _fish_abbr_glg:git\x20log\x20\x2d\x2dgraph\x20\x2d\x2dpretty\x3dformat\x3a\x27\x25C\x28yellow\x29\x25h\x20\x28\x25p\x29\x20\x25ai\x25Cred\x25d\x20\x25Creset\x25Cblue\x5b\x25ae\x5d\x25Creset\x20\x25s\x20\x28\x25ar\x29\x2e\x20\x25b\x20\x25N\x27
 SETUVAR _fish_abbr_gm:git\x20merge
 SETUVAR _fish_abbr_gmd:git\x20pull\x20\x26\x26\x20git\x20merge\x20origin/develop
 SETUVAR _fish_abbr_gmm:git\x20pull\x20\x26\x26\x20git\x20merge\x20origin/main
-SETUVAR _fish_abbr_gops:git\x20push\x20origin\x20\x24\x28git\x20rev\x2dparse\x20\x2d\x2dabbrev\x2dref\x20HEAD\x20\x7c\x20string\x20trim\x29\x20\x2du
-SETUVAR _fish_abbr_gopsn:git\x20push\x20origin\x20\x24\x28git\x20rev\x2dparse\x20\x2d\x2dabbrev\x2dref\x20HEAD\x20\x7c\x20string\x20trim\x29\x20\x2du\x20\x2d\x2dno\x2dverify
 SETUVAR _fish_abbr_gpl:git\x20pull
 SETUVAR _fish_abbr_gps:git\x20push
 SETUVAR _fish_abbr_gr:git\x20restore
@@ -98,7 +96,7 @@ SETUVAR fish_color_selection:\x2d\x2dbackground\x3dE6B450
 SETUVAR fish_color_status:red
 SETUVAR fish_color_user:brgreen
 SETUVAR fish_color_valid_path:\x2d\x2dunderline
-SETUVAR fish_key_bindings:fish_default_key_bindings
+SETUVAR fish_key_bindings:fish_vi_key_bindings
 SETUVAR fish_pager_color_background:\x1d
 SETUVAR fish_pager_color_completion:normal
 SETUVAR fish_pager_color_description:B3A06D
