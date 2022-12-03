@@ -19,8 +19,11 @@ if not status is-interactive
     exit
 end
 
-set -U os (uname)
+# =============================================================================
+# OS Utils   {{{1
+# =============================================================================
 
+set -U os (uname)
 function macos
     test $os = "Darwin"
 end
@@ -28,12 +31,25 @@ function linux
     test $os = "Linux"
 end
 
+# =============================================================================
+# Settings   {{{1
+# =============================================================================
+
+set fish_config theme chooise ayu Dark
+set fish_color_valid_path
+set fish_pager_color_prefix 'normal' '--bold'
+
+
+# =============================================================================
+# Prompt   {{{1
+# =============================================================================
+
+starship init fish | source
+
 
 # =============================================================================
 # Environment   {{{1
 # =============================================================================
-
-starship init fish | source
 
 fish_add_path -gm \
     ~/bin \
@@ -58,6 +74,22 @@ else if linux
         /usr/games
 end
 
+set -gx CLICOLOR 1
+set -gx EDITOR "nvim"
+set -gx PAGER "nvim +Man!"
+set -gx MANPAGER "nvim +Man!"
+
+# Tools
+set -gx FZF_DEFAULT_OPTS "--height 50% --layout=reverse --border --inline-info"
+set -gx FZF_CTRL_T_COMMAND "rg --files --hidden --no-ignore --glob !.git --glob !node_modules"
+set -gx FZF_DEFAULT_COMMAND "rg --files --hidden --no-ignore --glob !.git --glob !node_modules"
+set -gx LESS "-RFX"
+# set -gx RA_LOG "info,salsa=off,chalk=off"
+set -gx CARGO_TARGET_DIR ~/.cargo-target
+set -gx RUST_LOG debug
+set -g activity_log ~/.activity_log.txt
+
+# ssh-agent
 set -g agent_info /tmp/ssh-agent-info
 set -g agent_file /tmp/ssh-agent
 set -l agents_running (ps -A | rg [s]sh-agent | wc -l | string trim)
@@ -68,56 +100,46 @@ if test -e $agent_info
 end
 
 # TODO: virtualenv with .env
-
-
-# =============================================================================
-# Tools   {{{1
-# =============================================================================
-
-set -gx CLICOLOR 1
-set -gx EDITOR "nvim"
-set -gx FZF_DEFAULT_OPTS "--height 50% --layout=reverse --border --inline-info"
-set -gx FZF_CTRL_T_COMMAND "rg --files --hidden --no-ignore --glob !.git --glob !node_modules"
-set -gx FZF_DEFAULT_COMMAND "rg --files --hidden --no-ignore --glob !.git --glob !node_modules"
-set -gx LESS "-RFX"
-set -gx PAGER "nvim +Man!"
-set -gx MANPAGER "nvim +Man!"
-# set -gx RA_LOG "info,salsa=off,chalk=off"
-set -gx CARGO_TARGET_DIR ~/.cargo-target
+if test -f ~/preveil
+    set -gx ARCADEROOT ~/preveil/ARCADE/arcade_2.5/
+    set -gx RUST_LOG debug,lapin=off,hyper=off,reqwest::connect=off
+end
 
 
 # =============================================================================
 # Keybindings   {{{1
 # =============================================================================
 
-fish_vi_key_bindings
+function fish_user_key_bindings
+    fish_vi_key_bindings
 
-bind -M insert \cw backward-kill-path-component
-bind -M insert \cb prevd-or-backward-word
-bind -M insert \cf nextd-or-forward-word
-bind -M insert \co beginning-of-line
-bind -M insert \ce end-of-line
-bind -M insert \ct forward-char
-bind -M insert \cr fzf_history
-bind -M insert \cs fzf_file
-bind -M insert \cy fzf_dir
+    bind -M insert \cw backward-kill-path-component
+    bind -M insert \cb prevd-or-backward-word
+    bind -M insert \cf nextd-or-forward-word
+    bind -M insert \co beginning-of-line
+    bind -M insert \ce end-of-line
+    bind -M insert \ct forward-char
+    bind -M insert \cr fzf_history
+    bind -M insert \cs fzf_file
+    bind -M insert \cy fzf_dir
+end
 
 
 # =============================================================================
 # Completions   {{{1
 # =============================================================================
 
-# TODO: git/cargo/npm/yarn/tldr
-
-# vim: foldmethod=marker foldlevel=0
+# TODO:
+# git
+# cargo
+# npm
+# yarn
+# tldr
 
 
 # =============================================================================
 # Abbreviations   {{{1
 # =============================================================================
-
-set -g activity_log ~/.activity_log.txt
-# fish_clipboard_copy fish_clipboard_paste
 
 abbr -aU cat bat -P
 abbr -aU cb cargo build
@@ -196,25 +218,22 @@ end
 # Aliases   {{{1
 # =============================================================================
 
-# TODO: Cargo tag version/publish?
-
 alias cal="echo -n "" > $activity_log"
-alias cp="cp -i"
-alias dirsize="fd -t d | xargs du -sh"
-alias gmd="git pull && git merge origin/develop"
-alias gmm="git pull && git merge origin/main"
-alias la="ls -a"
 alias lal="cat $activity_log | head"
-alias lc="ls -U"
-alias lk="ls -S"
-alias ll="ls -l"
+
+alias cp="cp -i"
 alias mv="mv -i"
 alias rm="rm -i"
 
+alias dirsize="fd -t d | xargs du -sh"
 
-# TODO: Move to virtual env
-set -gx ARCADEROOT ~/preveil/ARCADE/arcade_2.5/
-set -gx RUST_LOG debug,lapin=off,hyper=off,reqwest::connect=off
+alias gmd="git pull && git merge origin/develop"
+alias gmm="git pull && git merge origin/main"
+
+alias la="ls -a"
+alias lc="ls -U"
+alias lk="ls -S"
+alias ll="ls -l"
 
 # =============================================================================
 # Init   {{{1
@@ -238,3 +257,6 @@ function fish_greeting
    "(uptime)"
     " | lolcat
 end
+
+
+# vim: foldmethod=marker foldlevel=0

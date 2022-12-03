@@ -4,5 +4,5 @@ function gnew -d "Show new changes in the last day"
       --pretty=format:"%C(yellow)%h %ad%Cred%d %Creset%Cblue[%cn]%Creset  %s (%ar)" \
       --date=iso \
       --all \
-      --since="23 hours ago"
+      --since="23 hours ago" $argv
 end

@@ -14,11 +14,11 @@ function config -a "config" -d "edit a configuration file"
         case "starship"
             nvim ~/.config/starship.toml
         case ""
-            echo "must pass a config option"
+            echo "Error! must pass a config to edit"
             return 1
         case "*"
-            echo "`$config` is not a valid configuration file"
-            return 1
+            echo "Error! `$config` is not a valid config"
+            return 2
     end
 end
 
