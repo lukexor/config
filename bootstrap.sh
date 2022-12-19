@@ -15,18 +15,25 @@ install_linux() {
   $sudo apt update -y
   set +e
   $sudo apt install -y \
+    bat \
     bash \
     cc65 \
     cmake \
+    cargo-outdated \
+    cargo-udeps \
+    cargo-watch \
     coreutils \
     curl \
     docker \
+    exa \
+    fd \
     fish \
     fzf \
     gcc-multilib \
     git \
     gnutls-bin \
     hexedit \
+    hyperfine \
     libssl-dev \
     libx11-dev \
     libxcb-composite0-dev \
@@ -37,16 +44,22 @@ install_linux() {
     openssl \
     pkg-config \
     postgresql \
+    procs \
     python2 \
     python3 \
     python3-pip
+    ripgrep \
     shellcheck \
     software-properties-common \
     sqlite \
+    starship \
     stow \
+    tealdeer \
     tidy \
+    tokei \
     tree \
     watchman \
+    wasm-pack \
     wget \
     yamllint
   $sudo apt autoremove
@@ -79,31 +92,44 @@ install_macos() {
   set +e
   brew install \
     bash \
+    bat \
+    cargo-outdated \
+    cargo-udeps \
+    cargo-watch \
     cc65 \
     cmake \
     coreutils \
     docker \
+    exa \
     exercism \
+    fd \
     fish \
     fzf \
     git \
     gnutls \
     hexedit \
+    hyperfine \
     llvm \
     neovim \
     node \
     openssl \
     postgresql \
     prettier \
+    procs \
     pylint \
     python \
     python3 \
+    ripgrep \
     shellcheck \
     sqlite \
+    starship \
     stow \
+    tealdeer \
     tidy-html5 \
+    tokei \
     tree \
     watchman \
+    wasm-pack \
     wget \
     yamllint
   set -e
@@ -143,24 +169,13 @@ install_crates() {
     rust-analyzer
 
   cargo install \
-    bat \
     cargo-asm \
     cargo-bloat \
     cargo-expand \
     cargo-generate \
-    cargo-outdated \
     cargo-tree \
-    cargo-watch \
-    exa \
-    fd-find \
     flamegraph \
-    hyperfine \
-    procs \
-    ripgrep \
-    starship \
-    tealdeer \
-    tokei \
-    wasm-pack
+    runcc
 
   cargo install nu --features=extra
   nushell=$HOME/.cargo/bin/nu

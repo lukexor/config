@@ -395,6 +395,18 @@ local Plug = require("vimplug")
 Plug.begin(data_dir .. "/plugged")
 
 -- -----------------------------------------------------------------------------
+-- Global Dependencies
+-- -----------------------------------------------------------------------------
+
+local orig_loadfile = loadfile
+Plug("rcarriga/nvim-notify", { -- Prettier notifications
+  config = function()
+    require("notify").setup({ background_colour = "#000000", timeout = 1000 })
+    vim.notify = require("notify")
+  end
+})
+
+-- -----------------------------------------------------------------------------
 -- VIM Enhancements
 -- -----------------------------------------------------------------------------
 
@@ -729,17 +741,19 @@ Plug("Shatur/neovim-ayu", {
     local ayu = require('ayu')
     ayu.setup {
       overrides = {
+        BufTabLineActive = { bg = "none" },
+        BufTabLineModifiedActive = { bg = "none" },
         CursorLine = { bg = colors.panel_bg },
         LineNr = { fg = colors.gutter_active },
-        Comment = { fg = colors.vcs_added },
+        Comment = { fg = colors.vcs_modified },
         SpecialComment = { fg = colors.vcs_added },
         Normal = { bg = "none" },
         FloatermBorder = { bg = "none" },
+        SignColumn = { bg = "none" },
         TabLine = { bg = "none" },
         TabLineFill = { bg = "none" },
-        SignColumn = { bg = "none" },
         TabLineSel = { fg = colors.tag, bg = "none" },
-        VirtualTextInfo = { fg = colors.special },
+        VirtualTextInfo = { fg = colors.vcs_removed },
         Visual = { bg = colors.selection_bg },
       }
     }
@@ -775,10 +789,10 @@ Plug("nvim-lualine/lualine.nvim", {
 
 Plug("ray-x/lsp_signature.nvim") -- Shows function signatures as you type
 Plug("williamboman/nvim-lsp-installer")
--- Lightbulb next to code actions
 Plug("kosayoda/nvim-lightbulb", {
+  -- Lightbulb next to code actions
   config = function()
-    vim.fn.sign_define("LightBulbSign", { text = "", texthl = "", linehl = "", numhl = "" })
+    vim.fn.sign_define("LightBulbSign", { text = "", texthl = "", linehl = "", numhl = "" })
     require("nvim-lightbulb").setup { autocmd = { enabled = true } }
   end
 })
@@ -841,7 +855,7 @@ Plug("neovim/nvim-lspconfig", {
 
       vim.fn.sign_define("DiagnosticSignError", { text = "", texthl = "LspDiagnosticsSignError" })
       vim.fn.sign_define("DiagnosticSignWarn", { text = "", texthl = "LspDiagnosticsSignWarning" })
-      vim.fn.sign_define("DiagnosticSignHint", { text = "", texthl = "LspDiagnosticsSignHint" })
+      vim.fn.sign_define("DiagnosticSignHint", { text = "ﳵ", texthl = "LspDiagnosticsSignHint" })
       vim.fn.sign_define("DiagnosticSignInformation", { text = "ℹ", texthl = "LspDiagnosticsSignInformation" })
 
       -- See `:help vim.lsp.*` for documentation on any of the below functions
@@ -990,6 +1004,7 @@ Plug("neovim/nvim-lspconfig", {
               inlay_hints = {
                 parameter_hints_prefix = " ← ",
                 other_hints_prefix = " ▸ ",
+                highlight = "VirtualTextInfo",
               },
             },
           }
@@ -1031,13 +1046,14 @@ Plug("neovim/nvim-lspconfig", {
       --     -- customize opts
       --   end
       -- }
-      local load_config = loadfile(vim.fn.getcwd() .. "/.lspconfig.lua")
+      local load_config = orig_loadfile(vim.fn.getcwd() .. "/.lspconfig.lua")
       if load_config ~= nil then
         local enhance_opts = load_config()
         if enhance_opts ~= nil and enhance_opts[server] then
           enhance_opts[server](opts)
         end
       end
+
       if opts.setup ~= nil then
         opts.setup(opts)
       else
@@ -1264,12 +1280,6 @@ Plug("nvim-lua/plenary.nvim") -- Async library for other plugins
 Plug("nvim-lua/popup.nvim")
 Plug("nvim-telescope/telescope-fzf-native.nvim", { run = "make" }) -- Search dependency of telescope
 Plug("fhill2/telescope-ultisnips.nvim")
-Plug("rcarriga/nvim-notify", { -- Prettier notifications
-  config = function()
-    require("notify").setup({ background_colour = "#000000", timeout = 1000 })
-    vim.notify = require("notify")
-  end
-})
 Plug("nvim-telescope/telescope-symbols.nvim")
 Plug("nvim-telescope/telescope.nvim", { -- Fuzzy finder
   config = function()
@@ -1301,6 +1311,7 @@ Plug("nvim-telescope/telescope.nvim", { -- Fuzzy finder
     nmap("<leader>gb", ":Telescope git_branches<CR>", { desc = "list git branches" })
     nmap("<leader>gc", ":Telescope git_bcommits<CR>", { desc = "list buffer git commits" })
     nmap("<leader>gC", ":Telescope git_commits<CR>", { desc = "list all git commits" })
+    imap("<c-s>", "<Esc>h:Telescope symbols<CR>", { desc = "find a symbol to insert to insert" })
   end
 })
 

@@ -15,10 +15,6 @@
 #
 #    Personal nushell env configuration of Luke Petherbridge <me@lukeworks.tech>
 
-if not status is-interactive
-    exit
-end
-
 # =============================================================================
 # OS Utils   {{{1
 # =============================================================================
@@ -35,7 +31,7 @@ end
 # Settings   {{{1
 # =============================================================================
 
-set fish_config theme chooise ayu Dark
+fish_config theme choose "ayu Dark"
 set fish_color_valid_path
 set fish_pager_color_prefix 'normal' '--bold'
 
@@ -196,7 +192,7 @@ abbr -aU pc procs
 abbr -aU pg "ps -Ao user,uid,pid,pcpu,tty,comm | rg"
 abbr -aU py python3
 abbr -aU rd rmdir
-abbr -aU slp kitty +kitten ssh caeledh@138.197.217.136
+abbr -aU slp ssh caeledh@138.197.217.136
 abbr -aU sshl ssh-add -L
 abbr -aU v nvim
 abbr -aU vi nvim
