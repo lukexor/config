@@ -8,8 +8,9 @@ local Plug = {
   ends = function()
     vim.call("plug#end")
     for plug_name, config in pairs(configs.start) do
-      if not pcall(config) then
-        vim.notify("failed to load config for " .. plug_name)
+      local status, err = pcall(config)
+      if not status then
+        vim.notify("failed to load config for " .. plug_name .. "\n" .. err)
       end
     end
   end
