@@ -1,0 +1,270 @@
+priority 10
+
+snippet fn "fn" b
+    fn ${1:name}($2)${3/..*/ -> /}$3 {
+        ${VISUAL}$0
+    }
+
+snippet pfn "pub fn" b
+    pub fn ${1:name}($2)${3/..*/ -> /}$3 {
+        ${VISUAL}$0
+    }
+
+snippet pfc "pub(crate) fn" b
+    pub(crate) fn ${1:name}($2)${3/..*/ -> /}$3 {
+        ${VISUAL}$0
+    }
+
+snippet pfs "pub(super) fn" b
+    pub(super) fn ${1:name}($2)${3/..*/ -> /}$3 {
+        ${VISUAL}$0
+    }
+
+snippet afn "async fn" b
+    async fn ${1:name}($2)${3/..*/ -> /}$3 {
+        ${VISUAL}$0
+    }
+
+snippet pafn "pub async fn" b
+    pub async fn ${1:name}($2)${3/..*/ -> /}$3 {
+        ${VISUAL}$0
+    }
+
+snippet new "new" b
+    pub fn new(${2}) -> ${1:Self} {
+        $1 { $0 }
+    }
+
+snippet main "main" b
+    fn main() {
+        ${VISUAL}$0
+    }
+
+snippet pr "print!" b
+    print!("$1"${2/..*/, /}$2);
+
+snippet prln "println!" b
+    println!("$1"${2/..*/, /}$2);
+
+snippet fmt "format!"
+    format!("$1"${2/..*/, /}$2);
+
+snippet st "Struct definition"
+    #[derive(Debug, Clone)]
+    #[must_use]
+    struct ${1:`!p snip.rv = ''.join(word.title() for word in snip.basename.split('_'))`} {
+        ${VISUAL}$0
+    }
+
+snippet stn "Struct with new constructor"
+    #[derive(Debug, Clone)]
+    #[must_use]
+    pub struct ${1:`!p snip.rv = ''.join(word.title() for word in snip.basename.split('_'))`} {
+        ${VISUAL}$0
+    }
+
+    impl$2 $1$2 {
+        pub fn new(${4}) -> Self {
+            $1 { $0 }
+        }
+    }
+
+snippet pst "Pub struct definition"
+    #[derive(Debug, Clone)]
+    #[must_use]
+    pub struct ${1:`!p snip.rv = ''.join(word.title() for word in snip.basename.split('_'))`} {
+        ${VISUAL}$0
+    }
+
+
+snippet ty "Type alias"
+    type ${1:Type} = $0;
+
+snippet en "enum"
+    #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+    #[must_use]
+    enum ${1:Name} {
+        ${VISUAL}$0
+    }
+
+snippet pen "pub enum"
+    #[must_use]
+    pub enum ${1:Name} {
+        ${VISUAL}$0
+    }
+
+snippet tr "trait"
+    trait ${1:Name} {
+        ${VISUAL}$0
+    }
+
+snippet pt "pub trait"
+    pub trait ${1:Name} {
+        ${VISUAL}$0
+    }
+
+snippet impl "impl" b
+    impl ${1:type/trait}${2: for ${3:type}} {
+        ${VISUAL}$0
+    }
+
+snippet implg "impl (generic)" b
+    impl$4 ${1:type/trait}${2: for ${3:type}}${4:<${5:T}>} {
+        ${VISUAL}$0
+    }
+
+snippet idef "impl Default" b
+    impl Default for ${1:type} {
+        fn default() -> Self {
+            Self {
+                ${VISUAL}$0
+            }
+        }
+    }
+
+snippet ifrom "impl From" b
+    impl From<${1:type}> for ${2:type} {
+        fn from(${3:value}: $1) -> Self {
+            Self {
+                ${VISUAL}$0
+            }
+        }
+    }
+
+snippet idbg "impl Debug" b
+    impl fmt::Debug for ${1:type} {
+        fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+            ${VISUAL}$0
+        }
+    }
+
+snippet idis "impl Display" b
+    impl fmt::Display for ${1:type} {
+        fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+            ${VISUAL}$0
+        }
+    }
+
+snippet ideref "impl Deref" b
+    impl Deref for ${1:type} {
+        type Target = ${2:targetType};
+        fn deref(&self) -> &Self::Target {
+            &self.$0
+        }
+    }
+
+snippet iderefm "impl DerefMut" b
+    impl DerefMut for ${1:type} {
+        fn deref_mut(&mut self) -> &mut Self::Target {
+            &mut self.$0
+        }
+    }
+
+snippet test "test function"
+    #[test]
+    fn ${1:name}() {
+        ${VISUAL}$0
+    }
+
+snippet testmod "test module" b
+    #[cfg(test)]
+    mod tests {
+        use super::${1:*};
+
+        #[test]
+        fn ${2:name}() {
+            ${VISUAL}$0
+        }
+    }
+
+snippet allow "allow lint attribute" b
+    #[allow(${1:unused_variables})]
+
+snippet cfg "cfg attribute" b
+    #[cfg(${1:target_os = "linux"})]
+
+snippet feat "feature attribute" b
+    #![feature(${1:plugin})]
+
+snippet der "derive" b
+    #[derive(${1:Debug})]
+
+snippet mu "must_use" b
+    #[must_use]
+
+snippet inl "inline" b
+    #[inline]
+
+snippet attr "#[attr]" b
+    #[${1:inline}]
+
+snippet opt "Option<T>"
+    Option<${1:i32}>
+
+snippet res "Result<T, E>"
+    Result<${1:&str}, ${2:()}>
+
+snippet if
+    if ${1} {
+        ${VISUAL}$0
+    }
+
+snippet ife "if..else"
+    if ${1} {
+        ${2:${VISUAL}}
+    } else {
+        ${0}
+    }
+
+snippet ifl "if let"
+    if let ${1:Some($2)} = $3 {
+        ${VISUAL}$0
+    }
+
+snippet el "else"
+    else {
+        ${VISUAL}$0
+    }
+
+snippet eli "else if"
+    else if ${1} {
+        ${VISUAL}$0
+    }
+
+snippet mat "match"
+    match ${1} {
+        ${2} => ${3}
+    }
+
+snippet case "match case"
+    ${1:_} => ${2:expression}
+
+snippet ,, "=> "
+    => $0
+
+snippet loop "loop" b
+    loop {
+        ${VISUAL}$0
+    }
+
+snippet wh "while"
+    while ${1:condition} {
+        ${VISUAL}$0
+    }
+
+snippet whl "while let"
+    while let ${1:Some($2)} = $3 {
+        ${VISUAL}$0
+    }
+
+snippet for "for...in"
+    for ${1:i} in ${2} {
+        ${VISUAL}$0
+    }
+
+snippet unim "unimplemented!()"
+    unimplemented!($1);
+
+snippet todo "todo!()"
+    todo!($1);
+
