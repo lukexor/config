@@ -96,11 +96,15 @@ if test -e $agent_info
 end
 
 # TODO: virtualenv with .env
-if test -f ~/preveil
+if test -d ~/preveil
     set -gx ARCADEROOT ~/preveil/ARCADE/arcade_2.5/
     set -gx RUST_LOG debug,lapin=off,hyper=off,reqwest::connect=off
 end
 
+function fish_title
+    set -q argv[1]; or set argv fish
+    echo (fish_prompt_pwd_dir_length=1 prompt_pwd): $argv;
+end
 
 # =============================================================================
 # Keybindings   {{{1
@@ -137,6 +141,7 @@ end
 # Abbreviations   {{{1
 # =============================================================================
 
+abbr -aU _ sudo
 abbr -aU cat bat -P
 abbr -aU cb cargo build
 abbr -aU cbr cargo build --release
