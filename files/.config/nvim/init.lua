@@ -753,7 +753,7 @@ Plug("Shatur/neovim-ayu", {
         TabLine = { bg = "none" },
         TabLineFill = { bg = "none" },
         TabLineSel = { fg = colors.tag, bg = "none" },
-        VirtualTextInfo = { fg = colors.vcs_removed },
+        VirtualTextInfo = { fg = colors.selection_bg },
         Visual = { bg = colors.selection_bg },
         DiffAdd = { bg = "none", fg = colors.vcs_added },
         DiffDelete = { bg = "none", fg = colors.vcs_removed },
