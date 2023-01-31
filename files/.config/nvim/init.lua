@@ -466,9 +466,9 @@ Plug("kshenoy/vim-signature") -- Show marks in gutter
 -- Less jarring scroll
 Plug("terryma/vim-smooth-scroll", {
   config = function()
-    nmap("<C-u>", ":call smooth_scroll#up(&scroll, 10, 1)<CR>",
+    nmap("<C-u>", ":call smooth_scroll#up(&scroll, 5, 1)<CR>",
       { silent = true, desc = "small scroll up" })
-    nmap("<C-d>", ":call smooth_scroll#down(&scroll, 10, 1)<CR>",
+    nmap("<C-d>", ":call smooth_scroll#down(&scroll, 5, 1)<CR>",
       { silent = true, desc = "small scroll down" })
     nmap("<C-b>", ":call smooth_scroll#up(&scroll*2, 10, 3)<CR>",
       { silent = true, desc = "large scroll up" })
@@ -770,9 +770,6 @@ Plug("nvim-lualine/lualine.nvim", {
       options = {
         icons_enabled = true,
         theme = "ayu",
-        component_separators = { left = " ", right = " " },
-        section_separators = { left = " ", right = " " },
-        disabled_filetypes = {},
         always_divide_middle = true,
       },
       sections = {
@@ -972,6 +969,8 @@ Plug("neovim/nvim-lspconfig", {
             },
             cargo = {
               features = "all",
+              -- target = "x86_64-pc-windows-msvc",
+              -- target = "x86_64-unknown-linux-musl",
               buildScripts = {
                 enable = true,
               },
@@ -1089,21 +1088,26 @@ Plug("hrsh7th/cmp-nvim-lsp") -- LSP completion source
 Plug("hrsh7th/cmp-buffer") -- Buffer completion source
 Plug("hrsh7th/cmp-path") -- Path completion source
 Plug("hrsh7th/cmp-cmdline") -- Command completion source
-Plug("quangnguyen30192/cmp-nvim-ultisnips") -- Ultisnips completion source
+-- Plug("quangnguyen30192/cmp-nvim-ultisnips") -- Ultisnips completion source
+Plug("saadparwaiz1/cmp_luasnip")
 Plug("dmitmel/cmp-digraphs") -- Diagraphs completion source
 -- Plug("github/copilot.vim") -- Maybe someday
 -- Auto-completion library
 Plug("hrsh7th/nvim-cmp", {
   config = function()
-    local t = function(str)
-      return vim.api.nvim_replace_termcodes(str, true, true, true)
-    end
+    -- local t = function(str)
+    --   return vim.api.nvim_replace_termcodes(str, true, true, true)
+    -- end
 
+    local luasnip = require("luasnip")
     local cmp = require("cmp")
     cmp.setup {
       preselect = cmp.PreselectMode.None,
       snippet = {
-        expand = function(args) vim.fn["UltiSnips#Anon"](args.body) end,
+        expand = function(args)
+          luasnip.lsp_expand(args.body)
+          -- vim.fn["UltiSnips#Anon"](args.body)
+        end,
       },
       window = {
         completion = cmp.config.window.bordered(),
@@ -1123,8 +1127,10 @@ Plug("hrsh7th/nvim-cmp", {
             end
           end,
           s = function(fallback)
-            if vim.fn["UltiSnips#CanJumpForwards"]() == 1 then
-              vim.api.nvim_feedkeys(t("<Plug>(ultisnips_jump_forward)"), 'm', true)
+            if luasnip.expand_or_jumpable() then
+              luasnip.expand_or_jump()
+              -- if vim.fn["UltiSnips#CanJumpForwards"]() == 1 then
+              --   vim.api.nvim_feedkeys(t("<Plug>(ultisnips_jump_forward)"), 'm', true)
             else
               fallback()
             end
@@ -1132,8 +1138,10 @@ Plug("hrsh7th/nvim-cmp", {
         }),
         ["<S-Tab>"] = cmp.mapping({
           s = function(fallback)
-            if vim.fn["UltiSnips#CanJumpBackwards"]() == 1 then
-              vim.api.nvim_feedkeys(t("<Plug>(ultisnips_jump_backward)"), 'm', true)
+            if luasnip.jumpable(-1) then
+              luasnip.jump(-1)
+              -- if vim.fn["UltiSnips#CanJumpBackwards"]() == 1 then
+              --   vim.api.nvim_feedkeys(t("<Plug>(ultisnips_jump_backward)"), 'm', true)
             else
               fallback()
             end
@@ -1148,8 +1156,10 @@ Plug("hrsh7th/nvim-cmp", {
             end
           end,
           s = function(fallback)
-            if vim.fn["UltiSnips#CanJumpForwards"]() == 1 then
-              vim.api.nvim_feedkeys(t("<Plug>(ultisnips_jump_forward)"), 'm', true)
+            if luasnip.expand_or_jumpable() then
+              luasnip.expand_or_jump()
+              -- if vim.fn["UltiSnips#CanJumpForwards"]() == 1 then
+              --   vim.api.nvim_feedkeys(t("<Plug>(ultisnips_jump_forward)"), 'm', true)
             else
               fallback()
             end
@@ -1164,8 +1174,10 @@ Plug("hrsh7th/nvim-cmp", {
             end
           end,
           s = function(fallback)
-            if vim.fn["UltiSnips#CanJumpBackwards"]() == 1 then
-              vim.api.nvim_feedkeys(t("<Plug>(ultisnips_jump_backward)"), 'm', true)
+            if luasnip.jumpable(-1) then
+              luasnip.jump(-1)
+              -- if vim.fn["UltiSnips#CanJumpBackwards"]() == 1 then
+              --   vim.api.nvim_feedkeys(t("<Plug>(ultisnips_jump_backward)"), 'm', true)
             else
               fallback()
             end
@@ -1173,15 +1185,19 @@ Plug("hrsh7th/nvim-cmp", {
         }),
         ["<C-j>"] = cmp.mapping({
           i = function(fallback)
-            if vim.fn["UltiSnips#CanJumpForwards"]() == 1 then
-              vim.fn["UltiSnips#JumpForwards"]()
+            if luasnip.expand_or_jumpable() then
+              luasnip.expand_or_jump()
+              -- if vim.fn["UltiSnips#CanJumpForwards"]() == 1 then
+              --   vim.fn["UltiSnips#JumpForwards"]()
             else
               fallback()
             end
           end,
           s = function(fallback)
-            if vim.fn["UltiSnips#CanJumpForwards"]() == 1 then
-              vim.api.nvim_feedkeys(t("<Plug>(ultisnips_jump_forward)"), 'm', true)
+            if luasnip.expand_or_jumpable() then
+              luasnip.expand_or_jump()
+              -- if vim.fn["UltiSnips#CanJumpForwards"]() == 1 then
+              --   vim.api.nvim_feedkeys(t("<Plug>(ultisnips_jump_forward)"), 'm', true)
             else
               fallback()
             end
@@ -1189,15 +1205,19 @@ Plug("hrsh7th/nvim-cmp", {
         }),
         ["<C-k>"] = cmp.mapping({
           i = function(fallback)
-            if vim.fn["UltiSnips#CanJumpBackwards"]() == 1 then
-              vim.fn["UltiSnips#JumpBackwards"]()
+            if luasnip.jumpable(-1) then
+              luasnip.jump(-1)
+              -- if vim.fn["UltiSnips#CanJumpBackwards"]() == 1 then
+              --   vim.fn["UltiSnips#JumpBackwards"]()
             else
               fallback()
             end
           end,
           s = function(fallback)
-            if vim.fn["UltiSnips#CanJumpBackwards"]() == 1 then
-              vim.api.nvim_feedkeys(t("<Plug>(ultisnips_jump_backward)"), 'm', true)
+            if luasnip.jumpable(-1) then
+              luasnip.jump(-1)
+              -- if vim.fn["UltiSnips#CanJumpBackwards"]() == 1 then
+              --   vim.api.nvim_feedkeys(t("<Plug>(ultisnips_jump_backward)"), 'm', true)
             else
               fallback()
             end
@@ -1208,7 +1228,8 @@ Plug("hrsh7th/nvim-cmp", {
         ['<C-e>'] = cmp.mapping({ i = cmp.mapping.close(), c = cmp.mapping.close() }),
       }),
       sources = cmp.config.sources({
-        { name = "ultisnips", priority = 2 },
+        { name = 'luasnip', priority = 2 },
+        -- { name = "ultisnips", priority = 2 },
         { name = "nvim_lsp", priority = 1 }
       }, {
         { name = "path" },
@@ -1244,19 +1265,25 @@ Plug("hrsh7th/nvim-cmp", {
     }
   end
 })
-Plug("SirVer/ultisnips", {
-  preload = function()
-    vim.g.UltiSnipsExpandTrigger = "<Plug>(ultisnips_expand)"
-    vim.g.UltiSnipsJumpForwardTrigger = "<Plug>(ultisnips_jump_forward)"
-    vim.g.UltiSnipsJumpBackwardTrigger = "<Plug>(ultisnips_jump_backward)"
-    vim.g.UltiSnipsListSnippets = "<c-s>"
-    vim.g.UltiSnipsRemoveSelectModeMappings = 0
-    vim.g.UltiSnipsEnableSnipMate = 0
-  end,
+Plug("L3MON4D3/LuaSnip", {
   config = function()
-    nmap("<leader>es", ":UltiSnipsEdit<CR>", { desc = "edit snippets" })
-  end,
+    require("luasnip.loaders.from_snipmate").lazy_load()
+    nmap("<leader>es", ":lua require('luasnip.loaders').edit_snippet_files()<CR>", { desc = "edit snippets" })
+  end
 })
+-- Plug("SirVer/ultisnips", {
+--   preload = function()
+--     vim.g.UltiSnipsExpandTrigger = "<Plug>(ultisnips_expand)"
+--     vim.g.UltiSnipsJumpForwardTrigger = "<Plug>(ultisnips_jump_forward)"
+--     vim.g.UltiSnipsJumpBackwardTrigger = "<Plug>(ultisnips_jump_backward)"
+--     vim.g.UltiSnipsListSnippets = "<c-s>"
+--     vim.g.UltiSnipsRemoveSelectModeMappings = 0
+--     vim.g.UltiSnipsEnableSnipMate = 0
+--   end,
+--   config = function()
+--     nmap("<leader>es", ":UltiSnipsEdit<CR>", { desc = "edit snippets" })
+--   end,
+-- })
 
 Plug("honza/vim-snippets", {
   preload = function()
@@ -1283,7 +1310,8 @@ Plug("nvim-treesitter/nvim-treesitter-context", {
 Plug("nvim-lua/plenary.nvim") -- Async library for other plugins
 Plug("nvim-lua/popup.nvim")
 Plug("nvim-telescope/telescope-fzf-native.nvim", { run = "make" }) -- Search dependency of telescope
-Plug("fhill2/telescope-ultisnips.nvim")
+-- Plug("fhill2/telescope-ultisnips.nvim")
+Plug("benfowler/telescope-luasnip.nvim")
 Plug("nvim-telescope/telescope-symbols.nvim")
 Plug("nvim-telescope/telescope.nvim", { -- Fuzzy finder
   config = function()
@@ -1297,7 +1325,8 @@ Plug("nvim-telescope/telescope.nvim", { -- Fuzzy finder
       }
     }
     telescope.load_extension("notify")
-    telescope.load_extension("ultisnips")
+    telescope.load_extension('luasnip')
+    -- telescope.load_extension("ultisnips")
     telescope.load_extension("fzf")
 
     nmap("<leader>f", ":Telescope fd<CR>", { desc = "find file" })
@@ -1307,7 +1336,8 @@ Plug("nvim-telescope/telescope.nvim", { -- Fuzzy finder
     nmap("<leader>H", ":Telescope oldfiles<CR>", { desc = "list recent files" })
     nmap("<leader>Th", ":Telescope help_tags<CR>", { desc = "list help tags" })
     nmap("<leader>S", ":Telescope lsp_document_symbols<CR>", { desc = "list symbols" })
-    nmap("<leader>U", ":Telescope ultisnips<CR>", { desc = "list snippets" })
+    nmap("<leader>U", ":Telescope luasnip<CR>", { desc = "list snippets" })
+    -- nmap("<leader>U", ":Telescope ultisnips<CR>", { desc = "list snippets" })
     nmap("<leader>K", ":Telescope keymaps<CR>", { desc = "list keymaps" })
     nmap("<leader>r", ":Telescope live_grep<CR>", { desc = "live grep" })
     nmap("<leader>s", ":Telescope current_buffer_fuzzy_find<CR>", { desc = "search in buffer" })
@@ -1374,8 +1404,9 @@ Plug("puremourning/vimspector", {
       { desc = "toggle conditional breakpoint" })
   end,
   config = function()
+    -- TODO: Make shortcuts easier to use when debugging
     nmap("<leader>dl", "<Plug>VimspectorBreakpoints", { desc = "list breakpoints" })
-    nmap("<leader>dc", "call vimspector#ClearBreakpoints()", { desc = "clear breakpoints" })
+    nmap("<leader>dC", ":call vimspector#ClearBreakpoints()<CR>", { desc = "clear breakpoints" })
     nmap("<leader>/", "<Plug>VimspectorContinue", { desc = "continue execution" })
     nmap("<leader>!", "<Plug>VimspectorPause", { desc = "pause debugger" })
     nmap("<leader>ds", ":VimspectorReset<CR>", { desc = "reset debugger" })

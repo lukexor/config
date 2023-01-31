@@ -109,6 +109,9 @@
         }
       },
       "variables": {
+        "_": {
+          "shell": ["cargo", "build"]
+        },
         "Binary": {
           "shell": ["${HOME}/bin/get_crate_name"]
         }
@@ -117,6 +120,7 @@
         "request": "launch",
         "sourceLanguages": ["rust"],
         "stopAtEntry": true,
+        "cwd": "${PWD}",
         "program": "${CARGO_TARGET_DIR}/debug/${binary:${Binary\\}}"
       }
     },
