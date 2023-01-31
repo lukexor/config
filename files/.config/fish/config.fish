@@ -206,11 +206,11 @@ abbr -aU vimdif nvim -d
 
 if macos
     abbr -aU topc "ps -Ao user,uid,pid,pcpu,tty,comm -r | head"
-    abbr -aU topm "ps -Ao user,uid,pid,pcpu,tty,comm -m | head"
+    abbr -aU topm "ps -Ao user,uid,pid,pmem,tty,comm -m | head"
     abbr -aU o open
 else if linux
     abbr -aU topc "ps -Ao user,uid,pid,pcpu,tty,comm --sort=-pcpu | head"
-    abbr -aU topm "ps -Ao user,uid,pid,pcpu,tty,comm --sort=-pmem | head"
+    abbr -aU topm "ps -Ao user,uid,pid,pmem,tty,comm --sort=-pmem | head"
     abbr -aU o xdg-open
 end
 
