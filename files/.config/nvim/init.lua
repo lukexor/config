@@ -401,7 +401,12 @@ Plug.begin(data_dir .. "/plugged")
 local orig_loadfile = loadfile
 Plug("rcarriga/nvim-notify", { -- Prettier notifications
   config = function()
-    require("notify").setup({ background_colour = "#000000", timeout = 1000 })
+    require("notify").setup({
+      background_colour = "#000000",
+      timeout = 500,
+      render = "minimal",
+
+    })
     vim.notify = require("notify")
   end
 })
