@@ -1088,7 +1088,6 @@ Plug("hrsh7th/cmp-nvim-lsp") -- LSP completion source
 Plug("hrsh7th/cmp-buffer") -- Buffer completion source
 Plug("hrsh7th/cmp-path") -- Path completion source
 Plug("hrsh7th/cmp-cmdline") -- Command completion source
--- Plug("quangnguyen30192/cmp-nvim-ultisnips") -- Ultisnips completion source
 Plug("saadparwaiz1/cmp_luasnip")
 Plug("dmitmel/cmp-digraphs") -- Diagraphs completion source
 -- Plug("github/copilot.vim") -- Maybe someday
@@ -1106,7 +1105,6 @@ Plug("hrsh7th/nvim-cmp", {
       snippet = {
         expand = function(args)
           luasnip.lsp_expand(args.body)
-          -- vim.fn["UltiSnips#Anon"](args.body)
         end,
       },
       window = {
@@ -1129,8 +1127,6 @@ Plug("hrsh7th/nvim-cmp", {
           s = function(fallback)
             if luasnip.expand_or_jumpable() then
               luasnip.expand_or_jump()
-              -- if vim.fn["UltiSnips#CanJumpForwards"]() == 1 then
-              --   vim.api.nvim_feedkeys(t("<Plug>(ultisnips_jump_forward)"), 'm', true)
             else
               fallback()
             end
@@ -1140,8 +1136,6 @@ Plug("hrsh7th/nvim-cmp", {
           s = function(fallback)
             if luasnip.jumpable(-1) then
               luasnip.jump(-1)
-              -- if vim.fn["UltiSnips#CanJumpBackwards"]() == 1 then
-              --   vim.api.nvim_feedkeys(t("<Plug>(ultisnips_jump_backward)"), 'm', true)
             else
               fallback()
             end
@@ -1158,8 +1152,6 @@ Plug("hrsh7th/nvim-cmp", {
           s = function(fallback)
             if luasnip.expand_or_jumpable() then
               luasnip.expand_or_jump()
-              -- if vim.fn["UltiSnips#CanJumpForwards"]() == 1 then
-              --   vim.api.nvim_feedkeys(t("<Plug>(ultisnips_jump_forward)"), 'm', true)
             else
               fallback()
             end
@@ -1176,8 +1168,6 @@ Plug("hrsh7th/nvim-cmp", {
           s = function(fallback)
             if luasnip.jumpable(-1) then
               luasnip.jump(-1)
-              -- if vim.fn["UltiSnips#CanJumpBackwards"]() == 1 then
-              --   vim.api.nvim_feedkeys(t("<Plug>(ultisnips_jump_backward)"), 'm', true)
             else
               fallback()
             end
@@ -1187,8 +1177,6 @@ Plug("hrsh7th/nvim-cmp", {
           i = function(fallback)
             if luasnip.expand_or_jumpable() then
               luasnip.expand_or_jump()
-              -- if vim.fn["UltiSnips#CanJumpForwards"]() == 1 then
-              --   vim.fn["UltiSnips#JumpForwards"]()
             else
               fallback()
             end
@@ -1196,8 +1184,6 @@ Plug("hrsh7th/nvim-cmp", {
           s = function(fallback)
             if luasnip.expand_or_jumpable() then
               luasnip.expand_or_jump()
-              -- if vim.fn["UltiSnips#CanJumpForwards"]() == 1 then
-              --   vim.api.nvim_feedkeys(t("<Plug>(ultisnips_jump_forward)"), 'm', true)
             else
               fallback()
             end
@@ -1207,8 +1193,6 @@ Plug("hrsh7th/nvim-cmp", {
           i = function(fallback)
             if luasnip.jumpable(-1) then
               luasnip.jump(-1)
-              -- if vim.fn["UltiSnips#CanJumpBackwards"]() == 1 then
-              --   vim.fn["UltiSnips#JumpBackwards"]()
             else
               fallback()
             end
@@ -1216,8 +1200,6 @@ Plug("hrsh7th/nvim-cmp", {
           s = function(fallback)
             if luasnip.jumpable(-1) then
               luasnip.jump(-1)
-              -- if vim.fn["UltiSnips#CanJumpBackwards"]() == 1 then
-              --   vim.api.nvim_feedkeys(t("<Plug>(ultisnips_jump_backward)"), 'm', true)
             else
               fallback()
             end
@@ -1229,7 +1211,6 @@ Plug("hrsh7th/nvim-cmp", {
       }),
       sources = cmp.config.sources({
         { name = 'luasnip', priority = 2 },
-        -- { name = "ultisnips", priority = 2 },
         { name = "nvim_lsp", priority = 1 }
       }, {
         { name = "path" },
@@ -1268,22 +1249,10 @@ Plug("hrsh7th/nvim-cmp", {
 Plug("L3MON4D3/LuaSnip", {
   config = function()
     require("luasnip.loaders.from_snipmate").lazy_load()
+    require("luasnip.loaders.from_lua").lazy_load({ paths = "./snippets" })
     nmap("<leader>es", ":lua require('luasnip.loaders').edit_snippet_files()<CR>", { desc = "edit snippets" })
   end
 })
--- Plug("SirVer/ultisnips", {
---   preload = function()
---     vim.g.UltiSnipsExpandTrigger = "<Plug>(ultisnips_expand)"
---     vim.g.UltiSnipsJumpForwardTrigger = "<Plug>(ultisnips_jump_forward)"
---     vim.g.UltiSnipsJumpBackwardTrigger = "<Plug>(ultisnips_jump_backward)"
---     vim.g.UltiSnipsListSnippets = "<c-s>"
---     vim.g.UltiSnipsRemoveSelectModeMappings = 0
---     vim.g.UltiSnipsEnableSnipMate = 0
---   end,
---   config = function()
---     nmap("<leader>es", ":UltiSnipsEdit<CR>", { desc = "edit snippets" })
---   end,
--- })
 
 Plug("honza/vim-snippets", {
   preload = function()
@@ -1310,7 +1279,6 @@ Plug("nvim-treesitter/nvim-treesitter-context", {
 Plug("nvim-lua/plenary.nvim") -- Async library for other plugins
 Plug("nvim-lua/popup.nvim")
 Plug("nvim-telescope/telescope-fzf-native.nvim", { run = "make" }) -- Search dependency of telescope
--- Plug("fhill2/telescope-ultisnips.nvim")
 Plug("benfowler/telescope-luasnip.nvim")
 Plug("nvim-telescope/telescope-symbols.nvim")
 Plug("nvim-telescope/telescope.nvim", { -- Fuzzy finder
@@ -1326,7 +1294,6 @@ Plug("nvim-telescope/telescope.nvim", { -- Fuzzy finder
     }
     telescope.load_extension("notify")
     telescope.load_extension('luasnip')
-    -- telescope.load_extension("ultisnips")
     telescope.load_extension("fzf")
 
     nmap("<leader>f", ":Telescope fd<CR>", { desc = "find file" })
@@ -1337,7 +1304,6 @@ Plug("nvim-telescope/telescope.nvim", { -- Fuzzy finder
     nmap("<leader>Th", ":Telescope help_tags<CR>", { desc = "list help tags" })
     nmap("<leader>S", ":Telescope lsp_document_symbols<CR>", { desc = "list symbols" })
     nmap("<leader>U", ":Telescope luasnip<CR>", { desc = "list snippets" })
-    -- nmap("<leader>U", ":Telescope ultisnips<CR>", { desc = "list snippets" })
     nmap("<leader>K", ":Telescope keymaps<CR>", { desc = "list keymaps" })
     nmap("<leader>r", ":Telescope live_grep<CR>", { desc = "live grep" })
     nmap("<leader>s", ":Telescope current_buffer_fuzzy_find<CR>", { desc = "search in buffer" })
