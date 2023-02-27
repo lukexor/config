@@ -174,7 +174,10 @@ install_crates() {
     cargo-expand \
     cargo-generate \
     cargo-tree \
+    du-dust \
     flamegraph \
+    ncspot \
+    speedtest-rs \
     runcc
 
   cargo install nu --features=extra

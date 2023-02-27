@@ -253,10 +253,11 @@ alias dirsize="fd -t d | xargs du -sh"
 alias gmd="git pull && git merge origin/develop"
 alias gmm="git pull && git merge origin/main"
 
-alias la="ls -a"
-alias lc="ls -U"
-alias lk="ls -S"
-alias ll="ls -l"
+alias du="dust"
+
+alias la="exa -a"
+alias lk="exa -lrs size"
+alias ll="exa -l"
 
 # =============================================================================
 # Init   {{{1
