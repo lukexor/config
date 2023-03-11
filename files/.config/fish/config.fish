@@ -178,8 +178,9 @@ abbr -aU crd cargo run --profile dev-opt
 abbr -aU cre cargo run --example
 abbr -aU crr cargo run --release
 abbr -aU cw cargo watch
-abbr -aU ct cargo test
+abbr -aU ct cargo test --workspace
 abbr -aU da "date +'%Y-%m-%d %H:%M:%S'"
+abbr -aU du dust
 abbr -aU find fd
 abbr -aU flg CARGO_PROFILE_RELEASE_DEBUG=true cargo flamegraph --root
 abbr -aU ga git add
@@ -201,6 +202,7 @@ abbr -aU gm git merge
 abbr -aU gpl git pull
 abbr -aU gps git push
 abbr -aU gr git restore
+abbr -aU grep rg
 abbr -aU grhh git reset HEAD --hard
 abbr -aU grm git rm
 abbr -aU gs git switch
@@ -209,6 +211,9 @@ abbr -aU gst git status
 abbr -aU gt git tag
 abbr -aU gun git reset HEAD --
 abbr -aU h "history | head -"
+abbr -aU la exa -a
+abbr -aU lk exa -lrs size
+abbr -aU ll exa -l
 abbr -aU mkdir mkdir -p
 abbr -aU myip curl -s api.ipify.org
 abbr -aU nci npm ci
@@ -252,12 +257,6 @@ alias dirsize="fd -t d | xargs du -sh"
 
 alias gmd="git pull && git merge origin/develop"
 alias gmm="git pull && git merge origin/main"
-
-alias du="dust"
-
-alias la="exa -a"
-alias lk="exa -lrs size"
-alias ll="exa -l"
 
 # =============================================================================
 # Init   {{{1

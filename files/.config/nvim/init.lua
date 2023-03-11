@@ -1018,7 +1018,7 @@ Plug("neovim/nvim-lspconfig", {
           }
         end
       end),
-      sumneko_lua = get_options(function(opts)
+      lua_ls = get_options(function(opts)
         opts.settings = {
           Lua = {
             diagnostics = {
