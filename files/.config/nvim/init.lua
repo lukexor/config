@@ -106,7 +106,6 @@ function Merge(a, b)
 end
 
 local set_keymap = function(...) vim.keymap.set(...) end
-local map = function(lhs, rhs, opts) set_keymap("", lhs, rhs, opts) end
 local nmap = function(lhs, rhs, opts) set_keymap("n", lhs, rhs, opts) end
 local vmap = function(lhs, rhs, opts) set_keymap("v", lhs, rhs, opts) end
 local imap = function(lhs, rhs, opts) set_keymap("i", lhs, rhs, opts) end
@@ -132,10 +131,10 @@ nmap("<leader><CR>", ":nohlsearch|diffupdate|normal !<C-l><CR>", { desc = "clear
 nmap("<leader>ef", ":edit <cfile><CR>", { desc = "edit file" })
 nmap("gt", "<C-]>", { desc = "go to tag" })
 
-map("<C-h>", "<C-w>h", { desc = "go to Nth left window" })
-map("<C-j>", "<C-w>j", { desc = "go to Nth below window" })
-map("<C-k>", "<C-w>k", { desc = "go to Nth above window" })
-map("<C-l>", "<C-w>l", { desc = "go to Nth right window" })
+nmap("<C-h>", "<C-w>h", { desc = "go to Nth left window" })
+nmap("<C-j>", "<C-w>j", { desc = "go to Nth below window" })
+nmap("<C-k>", "<C-w>k", { desc = "go to Nth above window" })
+nmap("<C-l>", "<C-w>l", { desc = "go to Nth right window" })
 
 nmap("<leader>-", "<C-w>_<C-w>|", { desc = "maximize window" })
 nmap("<leader>=", "<C-w>=", { desc = "make all windows equal size" })
@@ -1108,14 +1107,22 @@ Plug("hrsh7th/cmp-path")     -- Path completion source
 Plug("hrsh7th/cmp-cmdline")  -- Command completion source
 Plug("saadparwaiz1/cmp_luasnip")
 Plug("dmitmel/cmp-digraphs") -- Diagraphs completion source
-Plug("github/copilot.vim")   -- Maybe someday
+Plug("zbirenbaum/copilot.lua", {
+  config = function()
+    require("copilot").setup({
+      suggestion = { enabled = false },
+      panel = { enabled = false },
+    })
+  end
+})
+Plug("zbirenbaum/copilot-cmp", {
+  config = function()
+    require("copilot_cmp").setup()
+  end
+})
 -- Auto-completion library
 Plug("hrsh7th/nvim-cmp", {
   config = function()
-    -- local t = function(str)
-    --   return vim.api.nvim_replace_termcodes(str, true, true, true)
-    -- end
-
     local luasnip = require("luasnip")
     local cmp = require("cmp")
     cmp.setup {
@@ -1133,11 +1140,7 @@ Plug("hrsh7th/nvim-cmp", {
         ["<Tab>"] = cmp.mapping({
           i = function(fallback)
             if cmp.visible() then
-              local entry = cmp.get_selected_entry()
-              if not entry then
-                cmp.select_next_item({ behavior = cmp.SelectBehavior.Insert })
-              end
-              cmp.confirm()
+              cmp.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = true })
             else
               fallback()
             end
@@ -1159,6 +1162,7 @@ Plug("hrsh7th/nvim-cmp", {
             end
           end,
         }),
+        ["<CR>"] = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = true }),
         ["<C-n>"] = cmp.mapping({
           i = function(fallback)
             if cmp.visible() then
@@ -1228,10 +1232,13 @@ Plug("hrsh7th/nvim-cmp", {
         ['<C-e>'] = cmp.mapping({ i = cmp.mapping.close(), c = cmp.mapping.close() }),
       }),
       sources = cmp.config.sources({
-        { name = 'luasnip',  priority = 2 },
-        { name = "nvim_lsp", priority = 1 }
+      }, {
+        { name = "copilot" },
+        { name = 'luasnip' },
+        { name = "nvim_lsp" },
       }, {
         { name = "path" },
+        { name = "cmdline" },
       }, {
         { name = "buffer" },
       }, {
