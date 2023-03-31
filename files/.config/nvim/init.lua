@@ -282,10 +282,10 @@ function IndentTextObj(around)
     local nextnextblank = get_blank(pp)
 
     while p > 0 and (
-        ((not nextblank or (pp > 0 and not nextnextblank))
-            and vim.fn.indent(p) >= i
-            ) or (not around and nextblank)
-        ) do
+      ((not nextblank or (pp > 0 and not nextnextblank))
+      and vim.fn.indent(p) >= i
+      ) or (not around and nextblank)
+      ) do
       vim.cmd("-")
       p = get_pos(-1)
       pp = get_pos(-2)
@@ -302,10 +302,10 @@ function IndentTextObj(around)
     nextnextblank = get_blank(pp)
 
     while p <= lastline and (
-        ((not nextblank or (pp > 0 and not nextnextblank))
-            and vim.fn.indent(p) >= i
-            ) or (not around and nextblank)
-        ) do
+      ((not nextblank or (pp > 0 and not nextnextblank))
+      and vim.fn.indent(p) >= i
+      ) or (not around and nextblank)
+      ) do
       vim.cmd("+")
       p = get_pos(1)
       pp = get_pos(2)
@@ -383,7 +383,8 @@ local data_dir = vim.fn.stdpath('data') .. "/site"
 function EnsureVimPlugInstalled()
   local plug = io.open(data_dir .. "/autoload/plug.vim", "r")
   if plug == nil then
-    local install_cmd = "silent exe '!curl -fLo %s/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'"
+    local install_cmd =
+    "silent exe '!curl -fLo %s/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'"
     vim.cmd(install_cmd:format(data_dir))
   end
 end
@@ -399,13 +400,13 @@ Plug.begin(data_dir .. "/plugged")
 -- -----------------------------------------------------------------------------
 
 local orig_loadfile = loadfile
-Plug("rcarriga/nvim-notify", { -- Prettier notifications
+Plug("rcarriga/nvim-notify", {
+  -- Prettier notifications
   config = function()
     require("notify").setup({
       background_colour = "#000000",
       timeout = 500,
       render = "minimal",
-
     })
     vim.notify = require("notify")
   end
@@ -433,7 +434,7 @@ Plug("famiu/bufdelete.nvim", {
 Plug("ap/vim-buftabline", {
   except = { "vpm" },
   preload = function()
-    vim.g.buftabline_show = 2 -- always
+    vim.g.buftabline_show = 2    -- always
     vim.g.buftabline_numbers = 2 -- ordinal numbers
     vim.g.buftabline_indicators = 1
   end,
@@ -465,9 +466,9 @@ Plug("ggandor/leap.nvim", {
     omap("Z", "<Plug>(leap-backward-till)", { desc = "leap forward till" })
   end
 })
-Plug("ypcrts/securemodelines") -- Safe modelines
+Plug("ypcrts/securemodelines")        -- Safe modelines
 Plug("editorconfig/editorconfig-vim") -- Parses .editorconfig
-Plug("kshenoy/vim-signature") -- Show marks in gutter
+Plug("kshenoy/vim-signature")         -- Show marks in gutter
 -- Less jarring scroll
 Plug("terryma/vim-smooth-scroll", {
   config = function()
@@ -549,7 +550,7 @@ Plug("windwp/nvim-ts-autotag", {
     }
   end
 })
-Plug("tpope/vim-endwise") -- Auto-add endings for control structures: if, for, etc
+Plug("tpope/vim-endwise")    -- Auto-add endings for control structures: if, for, etc
 Plug("tpope/vim-commentary") -- Commenting motion commands gc*
 Plug("tpope/vim-surround", {
   config = function()
@@ -593,7 +594,7 @@ Plug("tpope/vim-surround", {
 Plug("junegunn/vim-easy-align", {
   preload = function()
     nmap("gA", "<Plug>(EasyAlign)", { desc = "align text" })
-    vmap("<Enter>", "<Plug>(EasyAlign) ", { desc = "align selection" })
+    vmap("gA", "<Plug>(EasyAlign) ", { desc = "align selection" })
   end
 })
 local vim_radical_on = {
@@ -794,7 +795,10 @@ Plug("nvim-lualine/lualine.nvim", {
 -- -----------------------------------------------------------------------------
 
 Plug("ray-x/lsp_signature.nvim") -- Shows function signatures as you type
-Plug("williamboman/nvim-lsp-installer")
+Plug("williamboman/mason.nvim", {
+  run = function() vim.cmd(":MasonUpdate") end,
+})
+Plug("williamboman/mason-lspconfig.nvim")
 Plug("kosayoda/nvim-lightbulb", {
   -- Lightbulb next to code actions
   config = function()
@@ -813,12 +817,13 @@ Plug("neovim/nvim-lspconfig", {
         { title = "lsp" })
     end
 
-    local buf_nmap = function(bufnr, lhs, rhs, opts) set_keymap("n", lhs, rhs,
+    local buf_nmap = function(bufnr, lhs, rhs, opts)
+      set_keymap("n", lhs, rhs,
         Merge({ buffer = bufnr }, opts))
     end
 
     nmap("<leader>Li", ":LspInfo<CR>", { desc = "lsp info" })
-    nmap("<leader>LI", ":LspInstallInfo<CR>", { desc = "lsp install info" })
+    nmap("<leader>LI", ":LspInfo<CR>", { desc = "lsp install info" })
     nmap("<leader>Ls", ":LspStart<CR>", { desc = "start lsp server" })
     nmap("<leader>LS", ":LspStop<CR>", { desc = "stop lsp server" })
     nmap("<leader>Lr", ":LspRestart<CR>", { desc = "restart lsp server" })
@@ -1018,7 +1023,7 @@ Plug("neovim/nvim-lspconfig", {
           }
         end
       end),
-      sumneko_lua = get_options(function(opts)
+      lua_ls = get_options(function(opts)
         opts.settings = {
           Lua = {
             diagnostics = {
@@ -1035,15 +1040,23 @@ Plug("neovim/nvim-lspconfig", {
       end),
       tsserver = get_options(),
       vimls = get_options(),
-      yamlls = get_options(),
+      yamlls = get_options(function(opts)
+        opts.settings = {
+          yaml = {
+            keyOrdering = false
+          }
+        }
+      end),
     }
 
-    require("nvim-lsp-installer").setup {
-      automatic_installation = true,
+    require("mason").setup({
       ui = {
         check_outdated_servers_on_open = true,
       }
-    }
+    })
+    require("mason-lspconfig").setup({
+      automatic_installation = true,
+    })
 
     local lspconfig = require("lspconfig")
     for server, opts in pairs(server_opts) do
@@ -1090,9 +1103,9 @@ Plug("folke/trouble.nvim", {
 -- -----------------------------------------------------------------------------
 
 Plug("hrsh7th/cmp-nvim-lsp") -- LSP completion source
-Plug("hrsh7th/cmp-buffer") -- Buffer completion source
-Plug("hrsh7th/cmp-path") -- Path completion source
-Plug("hrsh7th/cmp-cmdline") -- Command completion source
+Plug("hrsh7th/cmp-buffer")   -- Buffer completion source
+Plug("hrsh7th/cmp-path")     -- Path completion source
+Plug("hrsh7th/cmp-cmdline")  -- Command completion source
 Plug("saadparwaiz1/cmp_luasnip")
 Plug("dmitmel/cmp-digraphs") -- Diagraphs completion source
 -- Plug("github/copilot.vim") -- Maybe someday
@@ -1215,7 +1228,7 @@ Plug("hrsh7th/nvim-cmp", {
         ['<C-e>'] = cmp.mapping({ i = cmp.mapping.close(), c = cmp.mapping.close() }),
       }),
       sources = cmp.config.sources({
-        { name = 'luasnip', priority = 2 },
+        { name = 'luasnip',  priority = 2 },
         { name = "nvim_lsp", priority = 1 }
       }, {
         { name = "path" },
@@ -1266,7 +1279,8 @@ Plug("honza/vim-snippets", {
     vim.g.snips_github = "https://github.com/lukexor"
   end
 })
-Plug("nvim-treesitter/nvim-treesitter", { -- AST Parser and highlighter
+Plug("nvim-treesitter/nvim-treesitter", {
+  -- AST Parser and highlighter
   run = function() vim.cmd(":TSUpdate") end,
   config = function()
     require("nvim-treesitter.configs").setup {
@@ -1281,12 +1295,13 @@ Plug("nvim-treesitter/nvim-treesitter-context", {
     require("treesitter-context").setup {}
   end
 })
-Plug("nvim-lua/plenary.nvim") -- Async library for other plugins
+Plug("nvim-lua/plenary.nvim")                                      -- Async library for other plugins
 Plug("nvim-lua/popup.nvim")
 Plug("nvim-telescope/telescope-fzf-native.nvim", { run = "make" }) -- Search dependency of telescope
 Plug("benfowler/telescope-luasnip.nvim")
 Plug("nvim-telescope/telescope-symbols.nvim")
-Plug("nvim-telescope/telescope.nvim", { -- Fuzzy finder
+Plug("nvim-telescope/telescope.nvim", {
+  -- Fuzzy finder
   config = function()
     local telescope = require("telescope")
     telescope.setup {
