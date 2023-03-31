@@ -180,7 +180,8 @@ abbr -aU crd cargo run --profile dev-opt
 abbr -aU cre cargo run --example
 abbr -aU crr cargo run --release
 abbr -aU cw cargo watch
-abbr -aU ct cargo test --all-targets
+abbr -aU ct cargo test --workspace --all-targets
+abbr -aU ct cargo test --workspace
 abbr -aU da "date +'%Y-%m-%d %H:%M:%S'"
 abbr -aU du dust
 abbr -aU find fd

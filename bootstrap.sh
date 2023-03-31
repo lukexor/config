@@ -38,7 +38,8 @@ install_linux() {
     libx11-dev \
     libxcb-composite0-dev \
     llvm \
-    neovim
+    neovim \
+    ncspot \
     node-latest-version \
     npm \
     openssl \
@@ -111,6 +112,7 @@ install_macos() {
     hyperfine \
     llvm \
     neovim \
+    ncspot \
     node \
     openssl \
     postgresql \
@@ -173,12 +175,17 @@ install_crates() {
     cargo-bloat \
     cargo-expand \
     cargo-generate \
+    cargo-info \
     cargo-tree \
     du-dust \
     flamegraph \
-    ncspot \
+    irust \
+    mprocs \
+    porsmo \
     speedtest-rs \
-    runcc
+    wiki-tui \
+    runcc \
+    rtx-cli
 
   cargo install nu --features=extra
   nushell=$HOME/.cargo/bin/nu
