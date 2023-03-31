@@ -1108,7 +1108,7 @@ Plug("hrsh7th/cmp-path")     -- Path completion source
 Plug("hrsh7th/cmp-cmdline")  -- Command completion source
 Plug("saadparwaiz1/cmp_luasnip")
 Plug("dmitmel/cmp-digraphs") -- Diagraphs completion source
--- Plug("github/copilot.vim") -- Maybe someday
+Plug("github/copilot.vim")   -- Maybe someday
 -- Auto-completion library
 Plug("hrsh7th/nvim-cmp", {
   config = function()
