@@ -20,7 +20,7 @@
 -- =============================================================================
 
 -- Don"t use nvim as a pager within itself
-vim.env.PAGER = "less"
+vim.env.PAGER = "bat"
 -- Ensure a vim-compatible shell
 vim.env.SHELL = "/bin/bash"
 vim.o.shell = vim.env.SHELL
@@ -38,8 +38,6 @@ vim.o.dictionary = "/usr/share/dict/words"
 -- Make diffing better: https://vimways.org/2018/the-power-of-diff/
 vim.opt.diffopt:append { "iwhite", "algorithm:patience", "indent-heuristic" }
 vim.o.expandtab = true
-vim.o.foldlevelstart = 99
-vim.o.foldmethod = "indent"
 vim.o.incsearch = true
 vim.o.list = true
 vim.o.listchars = "tab:│ ,trail:+,extends:,precedes:,nbsp:‗"
@@ -111,103 +109,114 @@ local vmap = function(lhs, rhs, opts) set_keymap("v", lhs, rhs, opts) end
 local imap = function(lhs, rhs, opts) set_keymap("i", lhs, rhs, opts) end
 local omap = function(lhs, rhs, opts) set_keymap("o", lhs, rhs, opts) end
 
-nmap("<leader>ve", ":edit $MYVIMRC<CR>", { desc = "edit init.lua" })
-nmap("<leader>vr", ":source $MYVIMRC<CR>:edit<CR>", { desc = "reload init.lua" })
+local function system_open(path)
+  local cmd
+  if vim.fn.has "win32" == 1 and vim.fn.executable "explorer" == 1 then
+    cmd = { "cmd.exe", "/K", "explorer" }
+  elseif vim.fn.has "unix" == 1 and vim.fn.executable "xdg-open" == 1 then
+    cmd = { "xdg-open" }
+  elseif (vim.fn.has "mac" == 1 or vim.fn.has "unix" == 1) and vim.fn.executable "open" == 1 then
+    cmd = { "open" }
+  end
+  if not cmd then vim.notify("Available system opening command not found!", "error") end
+  vim.fn.jobstart(vim.fn.extend(cmd, { path or vim.fn.expand "<cfile>" }), { detach = true })
+end
 
-nmap("<leader>w", ":w<CR>", { desc = "write buffer" })
-nmap("<leader>W", ":noa w<CR>", { desc = "write without autocommands" })
+local function bool2str(bool) return bool and "on" or "off" end
 
-nmap("<leader>q", ":confirm q<CR>", { desc = "close window/exit vim" })
-nmap("<leader>Q", ":confirm qall<CR>", { desc = "exit vim" })
-nmap("<leader>O", ":%bd|e#|bd#<CR>", { desc = "close all but current" })
-
-nmap("x", '"_x', { desc = "del character(s) under/after cursor into blackhole" })
-nmap("X", '"_X', { desc = "del character(s) before cursor into blackhole" })
-
-nmap("Q", "<nop>", { desc = "disable Q for ExMode, use gQ instead" })
-
-nmap("<leader><CR>", ":nohlsearch|diffupdate|normal !<C-l><CR>", { desc = "clear search highlighting" })
-
-nmap("<leader>ef", ":edit <cfile><CR>", { desc = "edit file" })
-nmap("gt", "<C-]>", { desc = "go to tag" })
-
-nmap("<C-h>", "<C-w>h", { desc = "go to Nth left window" })
-nmap("<C-j>", "<C-w>j", { desc = "go to Nth below window" })
-nmap("<C-k>", "<C-w>k", { desc = "go to Nth above window" })
-nmap("<C-l>", "<C-w>l", { desc = "go to Nth right window" })
-
-nmap("<leader>-", "<C-w>_<C-w>|", { desc = "maximize window" })
-nmap("<leader>=", "<C-w>=", { desc = "make all windows equal size" })
-
-nmap("<leader>h", ":bp<CR>", { silent = true, desc = "go to previous buffer" })
-nmap("<leader>l", ":bn<CR>", { silent = true, desc = "go to next buffer" })
-nmap("<leader><leader>", "<C-^>", { desc = "alternate buffer" })
-
--- Show diffs in a modified buffer
-vim.api.nvim_create_user_command("DiffOrig",
-  "vert new | set bt=nofile | r ++edit # | 0d_ | diffthis | wincmd p | diffthis", {})
-
--- Reselect visual after indenting
-vmap("<", "<gv", { desc = "shift {motion} lines leftwards" })
-vmap(">", ">gv", { desc = "shift {motion} lines rightwards" })
-
-vmap("p", '"_dP', { desc = "replace selection without yanking" })
-nmap("+", 'V"_dP', { desc = "replace current line with yank" })
-
--- "==" honors indent
-nmap("<leader>j", ":m .+1<CR>==", { silent = true, desc = "move line upwards" })
-nmap("<leader>k", ":m .-2<CR>==", { silent = true, desc = "move line downwards" })
+-- -----------------------------------------------------------------------------
+-- Settings
+-- -----------------------------------------------------------------------------
 
 nmap("<localleader>w", [[&fo =~ 't' ? ":set fo-=t<CR>" : ":set fo+=t<CR>"]],
-  { expr = true, desc = "toggle text auto-wrap" })
+  { expr = true, desc = "Toggle Text Auto-wrap" })
 
--- Keep cursor centered
-nmap("n", "nzzzv", { desc = "repeat latest / or ?" })
-nmap("N", "Nzzzv", { desc = "repeat latest / or ? in reverse" })
-nmap("J", "mzJ`z", { desc = "join lines" })
-nmap("*", "*zzzv", { desc = "search forward" })
-nmap("#", "#zzzv", { desc = "search backwards" })
-nmap("g*", "g*zzzv", { desc = "search forwards without word boundary" })
-nmap("g#", "g*zzzv", { desc = "search backwards without word boundary" })
-
-nmap("<leader>G", ":silent lgrep ", { desc = "grep" })
-nmap("<localleader>S", ":%s//g<left><left>", { desc = "global search and replace" })
-nmap("<localleader>Tb", ":%s/\\s\\+$//<CR>", { desc = "trim trailing blanks" })
-vmap("<C-r>", '"hy:%s/<C-r>h//g<left><left>', { desc = "search and replace selection" });
-
-nmap("<localleader>x", function()
-  if vim.fn.has("linux") == 1 then
-    vim.cmd("!xdg-open %")
-  elseif vim.fn.has("mac") == 1 then
-    vim.cmd("!open %")
+nmap("<leader>ug", function()
+  if vim.o.nu or vim.o.rnu or vim.o.list then
+    vim.cmd("set nornu nonu nolist signcolumn=no foldcolumn=0")
   else
-    vim.notify("unable to open file", vim.log.levels.ERROR, { title = "open external file" })
+    vim.cmd("set rnu nu list signcolumn=yes:2 foldcolumn=1")
   end
-end, { expr = true, desc = "open external file" })
+end, { desc = "Toggle Gutter" })
 
-imap("jj", "<Esc>", { desc = "escape" })
-imap("<C-c>", "<Esc>", { desc = "escape" })
+nmap("<leader>up", function()
+  vim.opt.paste = not vim.opt.paste:get() -- local to window
+  vim.notify(string.format("paste %s", bool2str(vim.opt.paste:get())))
+end, { desc = "Toggle Paste" })
 
-nmap(";;", "A;<Esc>", { desc = "append ;" })
-nmap(",,", "A,<Esc>", { desc = "append ," })
-imap(";;", "<Esc>A;<Esc>", { desc = "append ;" })
-imap(",,", "<Esc>A,<Esc>", { desc = "append ," })
+nmap("<leader>us", function()
+  vim.wo.spell = not vim.wo.spell -- local to window
+  vim.notify(string.format("spell %s", bool2str(vim.wo.spell)))
+end, { desc = "Toggle Spellcheck" })
 
--- Add breaks in undo chain when typing punctuation
-imap(".", ".<C-g>u", { desc = "." })
-imap(",", ",<C-g>u", { desc = "," })
-imap("!", "!<C-g>u", { desc = "!" })
-imap("?", "?<C-g>u", { desc = "?" })
+nmap("<leader>uS", function()
+  vim.opt.conceallevel = vim.opt.conceallevel:get() == 0 and 2 or 0
+  vim.notify(string.format("conceal %s", bool2str(vim.opt.conceallevel:get() == 2)))
+end, { desc = "Toggle Conceal" })
 
--- Add relative jumps of more than 5 lines to jump list
+nmap("<leader>uw", function()
+  vim.wo.wrap = not vim.wo.wrap -- local to window
+  vim.notify(string.format("wrap %s", bool2str(vim.wo.wrap)))
+end, { desc = "Toggle Wrap" })
+
+nmap("<leader>uc", function()
+  vim.g.cmp_enabled = not vim.g.cmp_enabled
+  vim.notify(string.format("completion %s", bool2str(vim.g.cmp_enabled)))
+end, { desc = "Toggle Auto-completion" })
+
+-- -----------------------------------------------------------------------------
+-- Plugin Manager
+-- -----------------------------------------------------------------------------
+
+nmap("<leader>pi", ":Lazy install<CR>", { desc = "Install Plugins" })
+nmap("<leader>ps", ":Lazy<CR>", { desc = "Plugin Status" })
+nmap("<leader>pS", ":Lazy sync<CR>", { desc = "Sync Plugins" })
+nmap("<leader>pu", ":Lazy check<CR>", { desc = "Check Plugin Updates" })
+nmap("<leader>pU", ":Lazy update<CR>", { desc = "Update Plugins" })
+
+-- -----------------------------------------------------------------------------
+-- Manage Buffers
+-- -----------------------------------------------------------------------------
+
+nmap("<leader>w", ":w<CR>", { desc = "Save" })
+nmap("<leader>W", ":noa w<CR>", { desc = "Save/No Formatting" })
+nmap("<leader>q", ":confirm q<CR>", { desc = "Quit" })
+nmap("<leader>Q", ":confirm qall<CR>", { desc = "Quit All" })
+nmap("<leader>bc", ":%bd|e#|bd#<CR>", { desc = "Quit all but current" })
+nmap("<leader>n", ":enew<CR>", { desc = "New Buffer" })
+
+nmap("<leader>h", ":bp<CR>", { silent = true, desc = "Go to Previous Buffer" })
+nmap("<leader>l", ":bn<CR>", { silent = true, desc = "Go to Next Buffer" })
+nmap("<leader><leader>", "<C-^>", { desc = "Alternate Buffer" })
+
+nmap("|", ":vsplit<CR>", { desc = "Vertical Split" })
+nmap("\\", ":split<CR>", { desc = "Horizontal Split" })
+
+-- -----------------------------------------------------------------------------
+-- Navigation
+-- -----------------------------------------------------------------------------
+
+-- Add relative jumps of more than 1 line to jump list
 -- Move by terminal rows, not lines, unless count is provided
-nmap("j", [[v:count > 0 ? "m'" . v:count . 'j' : "gj"]], { expr = true, desc = "go down a line" })
-nmap("k", [[v:count > 0 ? "m'" . v:count . 'k' : "gk"]], { expr = true, desc = "go up a line" })
+nmap("j", [[ v:count > 0 ? "m'" . v:count . 'j' : "gj" ]], { expr = true, desc = "Down N lines" })
+nmap("k", [[ v:count > 0 ? "m'" . v:count . 'k' : "gk" ]], { expr = true, desc = "Up N lines" })
+vmap("j", [[ v:count > 0 ? "m'" . v:count . 'j' : "gj" ]], { expr = true, desc = "Down N lines" })
+vmap("k", [[ v:count > 0 ? "m'" . v:count . 'k' : "gk" ]], { expr = true, desc = "Up N lines" })
 
-nmap("<S-Down>", ":resize -5<CR>", { desc = "shrink window height" })
-nmap("<S-Up>", ":resize +5<CR>", { desc = "increase window height" })
-nmap("<S-Left>", ":vertical resize +5<CR>", { desc = "shrink window width" })
-nmap("<S-Right>", ":vertical resize -5<CR>", { desc = "increase window width" })
+nmap("<leader>-", "<C-w>_<C-w>|", { desc = "Maximize window" })
+nmap("<leader>=", "<C-w>=", { desc = "Equal Window Sizes" })
+
+nmap("<S-Down>", ":resize -5<CR>", { desc = "Reduce Height" })
+nmap("<S-Up>", ":resize +5<CR>", { desc = "Increase Height" })
+nmap("<S-Left>", ":vertical resize +5<CR>", { desc = "Reduce Width" })
+nmap("<S-Right>", ":vertical resize -5<CR>", { desc = "Increase Width" })
+
+nmap("<C-h>", "<C-w>h", { desc = "Go to Nth left window" })
+nmap("<C-j>", "<C-w>j", { desc = "Go to Nth below window" })
+nmap("<C-k>", "<C-w>k", { desc = "Go to Nth above window" })
+nmap("<C-l>", "<C-w>l", { desc = "Go to Nth right window" })
+
+nmap("gt", "<C-]>", { desc = "Go to Tag" })
 
 nmap("cd",
   function()
@@ -218,12 +227,104 @@ nmap("cd",
   { desc = "cd to current file path" }
 )
 
-nmap("cy", '"*y', { desc = "yank to clipboard" })
-nmap("cY", '"*Y', { desc = "yank line to clipboard" })
-nmap("cyy", '"*yy', { desc = "yank line to clipbard" })
-vmap("cy", '"*y', { desc = "yank selection to clipboard" })
-nmap("cp", '"*p', { desc = "paste from clipboard after cursor" })
-nmap("cP", '"*P', { desc = "paste from clipboard before cursor" })
+-- -----------------------------------------------------------------------------
+-- Editing
+-- -----------------------------------------------------------------------------
+
+nmap("<leader>Ef", ":edit <cfile><CR>", { desc = "Edit File" })
+nmap("gx", system_open, { desc = "Open File Externally" })
+
+nmap("<leader>ve", ":edit $MYVIMRC<CR>", { desc = "Edit Nvim Config" })
+nmap("<leader>vr", ":source $MYVIMRC<CR>:edit<CR>", { desc = "Reload Nvim Config" })
+
+nmap("x", '"_x', { desc = "Delete Under" })
+nmap("X", '"_X', { desc = "Delete Before" })
+
+-- "==" honors indent
+nmap("<leader>j", ":m .+1<CR>==", { silent = true, desc = "Move Line Up" })
+nmap("<leader>k", ":m .-2<CR>==", { silent = true, desc = "Move Line Down" })
+
+-- Keep cursor centered
+nmap("n", "nzzzv", { desc = "repeat latest / or ?" })
+nmap("N", "Nzzzv", { desc = "repeat latest / or ? in reverse" })
+nmap("J", "mzJ`z", { desc = "join lines" })
+nmap("*", "*zzzv", { desc = "search forward" })
+nmap("#", "#zzzv", { desc = "search backwards" })
+nmap("g*", "g*zzzv", { desc = "search forwards without word boundary" })
+nmap("g#", "g*zzzv", { desc = "search backwards without word boundary" })
+
+-- Reselect visual after indenting
+vmap("<S-Tab>", "<gv", { desc = "Shift {motion} Lines Left" })
+vmap("<Tab>", ">gv", { desc = "Shift {motion} Lines Right" })
+
+vmap("p", '"_dP', { desc = "Replace selection without yanking" })
+nmap("+", 'V"_dP', { desc = "Replace current line with yank" })
+
+-- Show diffs in a modified buffer
+vim.api.nvim_create_user_command("DiffOrig",
+  "vert new | set bt=nofile | r ++edit # | 0d_ | diffthis | wincmd p | diffthis", {})
+
+nmap("<localleader>Tb", ":%s/\\s\\+$//<CR>", { desc = "Trim Trailing Blanks" })
+
+imap("jj", "<Esc>", { desc = "Escape" })
+imap("<C-c>", "<Esc>", { desc = "Escape" })
+
+-- Case statements in bash use `;;`
+if vim.bo.filetype ~= "sh" then
+  nmap(";;", "A;<Esc>", { desc = "Append ;" })
+  imap(";;", "<Esc>A;<Esc>", { desc = "Append ;" })
+end
+nmap(",,", "A,<Esc>", { desc = "Append ," })
+imap(",,", "<Esc>A,<Esc>", { desc = "Append ," })
+
+-- Add breaks in undo chain when typing punctuation
+imap(".", ".<C-g>u", { desc = "." })
+imap(",", ",<C-g>u", { desc = "," })
+imap("!", "!<C-g>u", { desc = "!" })
+imap("?", "?<C-g>u", { desc = "?" })
+
+nmap("<localleader>ab", ":.!toilet -w 200 -f term -F border<CR>", { desc = "ASCII Border" })
+nmap("<localleader>as", ":.!figlet -w 200 -f standard<CR>", { desc = "ASCII Standard" })
+nmap("<localleader>aS", ":.!figlet -w 200 -f small<CR>", { desc = "ASCII Small" })
+
+-- -----------------------------------------------------------------------------
+-- Git
+-- -----------------------------------------------------------------------------
+
+nmap("<leader>gs", ":Git<CR>", { desc = "Git Status" })
+nmap("<leader>gl", ":Git blame<CR>", { desc = "Git Blame" })
+
+-- -----------------------------------------------------------------------------
+-- Disabled mappings
+-- -----------------------------------------------------------------------------
+
+nmap("Q", "<nop>", { desc = "Disable ExMode" })
+nmap("gQ", "<nop>", { desc = "Disable ExMode" })
+
+-- -----------------------------------------------------------------------------
+-- Search
+-- -----------------------------------------------------------------------------
+
+nmap("<leader><CR>", ":nohlsearch|diffupdate|normal !<C-l><CR>", { desc = "Clear Highlighting" })
+
+nmap("<leader>G", ":silent lgrep ", { desc = "Grep" })
+nmap("<localleader>S", ":%s//g<left><left>", { desc = "Global Search and Replace" })
+vmap("<C-r>", '"hy:%s/<C-r>h//g<left><left>', { desc = "Search and Replace Selection" });
+
+-- -----------------------------------------------------------------------------
+-- Clipboard
+-- -----------------------------------------------------------------------------
+
+nmap("cy", '"*y', { desc = "Yank to clipboard" })
+nmap("cY", '"*Y', { desc = "Yank line to clipboard" })
+nmap("cyy", '"*yy', { desc = "Yank line to clipbard" })
+vmap("cy", '"*y', { desc = "Yank selection to clipboard" })
+nmap("cp", '"*p', { desc = "Paste from clipboard after cursor" })
+nmap("cP", '"*P', { desc = "Paste from clipboard before cursor" })
+
+-- -----------------------------------------------------------------------------
+-- Text Objects
+-- -----------------------------------------------------------------------------
 
 omap("in(", ":<C-u>normal! f(vi(<CR>", { silent = true, desc = "inner next () block" })
 omap("il(", ":<C-u>normal! F)vi(<CR>", { silent = true, desc = "inner last () block" })
@@ -321,6 +422,10 @@ omap("ai", ":<C-u>lua IndentTextObj(false)<CR>", { silent = true, desc = "around
 vmap("ii", ":<C-u>lua IndentTextObj(true)<CR><Esc>gv", { silent = true, desc = "inner indent" })
 vmap("ai", ":<C-u>lua IndentTextObj(false)<CR><Esc>gv", { silent = true, desc = "around indent" })
 
+-- -----------------------------------------------------------------------------
+-- Debug
+-- -----------------------------------------------------------------------------
+
 nmap("<localleader>i", function()
   local line = vim.fn.line(".")
   local col = vim.fn.col(".")
@@ -329,19 +434,6 @@ nmap("<localleader>i", function()
   local lo = vim.fn.synIDattr(vim.fn.synIDtrans(vim.fn.synID(line, col, 0)), "name")
   vim.cmd(("echo 'hi<%s> trans<%s> lo<%s>'"):format(hi, trans, lo))
 end, { desc = "show syntax ID under cursor" })
-
-nmap("<leader>\\", function()
-  if vim.o.nu or vim.o.rnu or vim.o.list then
-    vim.cmd("set nornu nonu nolist signcolumn=no")
-  else
-    vim.cmd("set rnu nu list signcolumn=yes:2")
-  end
-end, { desc = "toggle gutter and signs" })
-
-nmap("<localleader>ab", ":.!toilet -w 200 -f term -F border<CR>", { desc = "ascii art border" })
-nmap("<localleader>as", ":.!figlet -w 200 -f standard<CR>", { desc = "ascii art standard" })
-nmap("<localleader>aS", ":.!figlet -w 200 -f small<CR>", { desc = "ascii art small" })
-
 
 -- =============================================================================
 -- Plugins
@@ -389,6 +481,13 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
+-- Default LSP shortcuts to no-ops for non-supported file types to avoid
+-- confusion with default vim shortcuts.
+function NoLspClient()
+  vim.notify("No LSP client attached for filetype: `" .. vim.bo.filetype .. "`.", vim.log.levels.WARN,
+    { title = "lsp" })
+end
+
 require("lazy").setup({
   -- -----------------------------------------------------------------------------
   -- Global Dependencies
@@ -397,6 +496,14 @@ require("lazy").setup({
     "rcarriga/nvim-notify", -- Prettier notifications
     lazy = false,
     priority = 1000,
+    config = function()
+      require("notify").setup {
+        background_colour = "#000000",
+        timeout = 500,
+        render = "minimal",
+      }
+      vim.notify = require("notify")
+    end
   },
   -- -----------------------------------------------------------------------------
   -- VIM Enhancements
@@ -409,7 +516,7 @@ require("lazy").setup({
   {
     "famiu/bufdelete.nvim", -- Keep window layout when deleting buffers
     keys = {
-      { "<leader>D", ":confirm Bdelete<CR>", desc = "delete buffer" }
+      { "<leader>bd", ":confirm Bdelete<CR>", desc = "Delete Buffer" }
     }
   },
   {
@@ -444,9 +551,13 @@ require("lazy").setup({
   {
     "ggandor/leap.nvim", -- Better movement with s/S, x/X, and gS
     event = "InsertEnter",
-    config = function()
-      require("leap").add_default_mappings()
-    end
+    keys = {
+      { "s", "<Plug>(leap-forward-to)", desc = "leap forward to" },
+      { "S", "<Plug>(leap-backward-to)", desc = "leap backward to" },
+      { "z", "<Plug>(leap-forward-till)", mode = { "v", "o" }, desc = "leap forward till" },
+      { "Z", "<Plug>(leap-backward-till)", mode = { "v", "o" }, desc = "leap backward till" },
+      { "gs", "<Plug>(leap-from-window)", desc = "leap from window" },
+    },
   },
   "ypcrts/securemodelines",        -- Safe modelines
   "editorconfig/editorconfig-vim", -- Parses .editorconfig
@@ -482,6 +593,31 @@ require("lazy").setup({
         silent = true,
       },
     },
+  },
+  {
+    "kevinhwang91/nvim-ufo",
+    dependencies = {
+      "kevinhwang91/promise-async",
+    },
+    keys = {
+      { "zR", function() require("ufo").openAllFolds() end, desc = "Open All Folds" },
+      { "zM", function() require("ufo").closeAllFolds() end, desc = "Close All Folds" },
+      { "zr", function() require("ufo").openFoldsExceptKinds() end, desc = "Fold Less" },
+      { "zm", function() require("ufo").closeFoldsWith() end, desc = "Fold More" },
+      { "zp", function() require("ufo").peekFoldedLinesUnderCursor() end, desc = "Peek Fold" },
+    },
+    opts = {
+      provider_selector = function()
+        return { 'treesitter', 'indent' }
+      end
+    },
+    init = function()
+      vim.o.foldcolumn = 'auto'
+      vim.o.foldlevel = 99
+      vim.o.foldlevelstart = 99
+      vim.o.foldenable = true
+      vim.o.foldmethod = 'indent'
+    end
   },
   -- -----------------------------------------------------------------------------
   -- Documentation
@@ -645,35 +781,31 @@ require("lazy").setup({
     end
   },
   {
-    "preservim/nerdtree", -- file browser
-    cmd = { "NERDTree", "NERDTreeFind", "NERDTreeToggle" },
+    "nvim-neo-tree/neo-tree.nvim", -- file explorer
     dependencies = {
-      "Xuyuanp/nerdtree-git-plugin",
-      "tiagofumo/vim-nerdtree-syntax-highlight",
+      "nvim-lua/plenary.nvim",
+      "nvim-tree/nvim-web-devicons",
+      "MunifTanjim/nui.nvim",
     },
     keys = {
+      { "<leader>e", ":Neotree toggle reveal<CR>", desc = "Toggle Explorer" },
       {
-        "<leader>n",
-        "exists('g:NERDTree') && g:NERDTree.IsOpen() ? ':NERDTreeClose<CR>' : @% == ''"
-        .. " ? ':NERDTree<CR>' : ':NERDTreeFind<CR>'",
-        expr = true,
-        desc = "toggle NERDTree"
+        "<leader>o",
+        function()
+          if vim.bo.filetype == "neo-tree" then
+            vim.cmd.wincmd "p"
+          else
+            vim.cmd.Neotree "focus"
+          end
+        end,
+        desc = "Toggle Explorer Focus"
       },
-      { "<leader>N", ":NERDTreeFind<CR>", desc = "find file in NERDTree" },
+    },
+    opts = {
+      close_if_last_window = true,
     },
     init = function()
-      vim.g.NERDTreeShowHidden = 1
-      vim.g.NERDTreeMinimalUI = 1
-      vim.g.NERDTreeWinSize = 35
-      vim.g.NERDTreeDirArrowExpandable = '▹'
-      vim.g.NERDTreeDirArrowCollapsible = '▿'
-      -- Fixes issue with visual select being cancelled when NERDTree is open
-      vim.g.NERDTreeGitStatusUpdateOnCursorHold = 0
-      vim.g.NERDTreeLimitedSyntax = 1
-    end,
-    config = function()
-      -- Closes if NERDTree is the only open window
-      vim.cmd([[au! BufEnter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif]])
+      vim.g.neo_tree_remove_legacy_commands = 1
     end,
   },
   -- -----------------------------------------------------------------------------
@@ -711,10 +843,9 @@ require("lazy").setup({
   -- Windowing / Theme
   -- -----------------------------------------------------------------------------
   { "ryanoasis/vim-devicons", lazy = true },
-  { "kyazdani42/nvim-web-devicons", lazy = true },
   {
     "stevearc/dressing.nvim", -- Window UI enhancements, popups, input, etc
-    lazy = true
+    event = "VeryLazy",
   },
   {
     "Shatur/neovim-ayu",
@@ -785,18 +916,22 @@ require("lazy").setup({
   {
     "williamboman/mason.nvim",
     build = function() vim.cmd(":MasonUpdate") end,
-    lazy = true,
+    keys = {
+      { "<leader>pm", ":Mason<CR>", desc = "LSP Plugins" },
+      { "<leader>pM", ":MasonUpdate<CR>", desc = "LSP Update" },
+    },
   },
   {
     "neovim/nvim-lspconfig",
     dependencies = {
+      "williamboman/mason.nvim",
       "williamboman/mason-lspconfig.nvim",
-      "rcarriga/nvim-notify",
       "kosayoda/nvim-lightbulb",  -- Lightbulb next to code actions
       "ray-x/lsp_signature.nvim", -- Shows function signatures as you type
       "simrat39/rust-tools.nvim",
       "jose-elias-alvarez/null-ls.nvim",
     },
+    lazy = false,
     keys = {
       { "<leader>Li", ":LspInfo<CR>", desc = "lsp info" },
       { "<leader>LI", ":LspInfo<CR>", desc = "lsp install info" },
@@ -814,16 +949,10 @@ require("lazy").setup({
       { "ge", vim.diagnostic.open_float, desc = "show diagnostics" },
       { "gp", vim.diagnostic.goto_prev, desc = "go to previous diagnostic" },
       { "gn", vim.diagnostic.goto_next, desc = "go to next diagnostic" },
+      { "<leader>S", NoLspClient, desc = "LSP Symbols" },
       { "<localleader>f", "gq", desc = "format buffer" },
     },
     config = function()
-      -- Default LSP shortcuts to no-ops for non-supported file types to avoid
-      -- confusion with default vim shortcuts.
-      function NoLspClient()
-        vim.notify("No LSP client attached for filetype: `" .. vim.bo.filetype .. "`.", vim.log.levels.WARN,
-          { title = "lsp" })
-      end
-
       vim.fn.sign_define("LightBulbSign", { text = "", texthl = "", linehl = "", numhl = "" })
       require("nvim-lightbulb").setup { autocmd = { enabled = true } }
 
@@ -850,10 +979,12 @@ require("lazy").setup({
       -- Use an on_attach function to only map the following keys
       -- after the language server attaches to the current buffer
       local on_attach = function(client, bufnr)
-        if bufnr == nil then
-          vim.notify_once("on_attach buffer error for " .. client.config.name, vim.log.levels.ERROR, { title = "lsp" })
-        else
-          vim.notify_once("attached " .. client.config.name, vim.log.levels.INFO, { title = "lsp" })
+        if vim.notify ~= nil then
+          if bufnr == nil then
+            vim.notify_once("on_attach buffer error for " .. client.config.name, vim.log.levels.ERROR, { title = "lsp" })
+          else
+            vim.notify_once("attached " .. client.config.name, vim.log.levels.INFO, { title = "lsp" })
+          end
         end
 
         vim.fn.sign_define("DiagnosticSignError", { text = "", texthl = "LspDiagnosticsSignError" })
@@ -862,18 +993,19 @@ require("lazy").setup({
         vim.fn.sign_define("DiagnosticSignInformation", { text = "ℹ", texthl = "LspDiagnosticsSignInformation" })
 
         -- See `:help vim.lsp.*` for documentation on any of the below functions
-        buf_nmap(bufnr, "gd", ":Telescope lsp_definitions<CR>", { desc = "go to definition" })
-        buf_nmap(bufnr, "gD", ":Telescope lsp_type_definitions<CR>", { desc = "go to type definition" })
-        buf_nmap(bufnr, "gh", vim.lsp.buf.hover, { desc = "display symbol information" })
-        buf_nmap(bufnr, "gH", vim.lsp.buf.signature_help, { desc = "display signature information" })
-        buf_nmap(bufnr, "gi", ":Telescope lsp_implementations<CR>", { desc = "go to implementation" })
-        buf_nmap(bufnr, "gr", ":Telescope lsp_references<CR>", { desc = "list references" })
-        buf_nmap(bufnr, "gR", vim.lsp.buf.rename, { desc = "rename all references to symbol" })
-        buf_nmap(bufnr, "ga", vim.lsp.buf.code_action, { desc = "select code action" })
-        buf_nmap(bufnr, "ge", vim.diagnostic.open_float, { desc = "show diagnostics" })
+        buf_nmap(bufnr, "gd", ":Telescope lsp_definitions<CR>", { desc = "Go To Definition" })
+        buf_nmap(bufnr, "gD", ":Telescope lsp_type_definitions<CR>", { desc = "Go To Type Definition" })
+        buf_nmap(bufnr, "gh", vim.lsp.buf.hover, { desc = "Symbol Information" })
+        buf_nmap(bufnr, "gH", vim.lsp.buf.signature_help, { desc = "Signature Information" })
+        buf_nmap(bufnr, "gi", ":Telescope lsp_implementations<CR>", { desc = "Go To Implementation" })
+        buf_nmap(bufnr, "gr", ":Telescope lsp_references<CR>", { desc = "References" })
+        buf_nmap(bufnr, "gR", vim.lsp.buf.rename, { desc = "Rename References" })
+        buf_nmap(bufnr, "ga", vim.lsp.buf.code_action, { desc = "Code Action" })
+        buf_nmap(bufnr, "ge", vim.diagnostic.open_float, { desc = "Diagnostics" })
+        buf_nmap(bufnr, "<leader>S", ":Telescope lsp_document_symbols<CR>", { desc = "LSP Symbols" })
 
         if client.supports_method("textDocument/formatting") then
-          buf_nmap(bufnr, "<localleader>f", function() lsp_format(bufnr) end, { desc = "format buffer" })
+          buf_nmap(bufnr, "<localleader>f", function() lsp_format(bufnr) end, { desc = "Format" })
 
           vim.api.nvim_clear_autocmds({ group = lsp_format_augroup, buffer = bufnr })
           vim.api.nvim_create_autocmd("BufWritePre", {
@@ -1113,10 +1245,17 @@ require("lazy").setup({
       "dmitmel/cmp-digraphs",
       "zbirenbaum/copilot-cmp",
     },
+    init = function()
+      vim.g.cmp_enabled = true
+    end,
     config = function()
       local luasnip = require("luasnip")
       local cmp = require("cmp")
       cmp.setup {
+        enabled = function()
+          if vim.api.nvim_get_option_value("buftype", { buf = 0 }) == "prompt" then return false end
+          return vim.g.cmp_enabled
+        end,
         preselect = cmp.PreselectMode.None,
         snippet = {
           expand = function(args)
@@ -1223,16 +1362,14 @@ require("lazy").setup({
         }),
         sources = cmp.config.sources({
         }, {
-          { name = "copilot" },
-          { name = 'luasnip' },
-          { name = "nvim_lsp" },
-        }, {
-          { name = "path" },
-          { name = "cmdline" },
-        }, {
-          { name = "buffer" },
-        }, {
           { name = "digraphs" },
+        }, {
+          { name = "copilot", priority = 1, keyword_length = 3 },
+          { name = 'luasnip', priority = 3 },
+          { name = "nvim_lsp", priority = 3 },
+        }, {
+          { name = "path", priority = 1, keyword_length = 3 },
+          { name = "buffer", priority = 2, keyword_length = 3 },
         }),
         view = {
           entries = {
@@ -1243,7 +1380,7 @@ require("lazy").setup({
           ["/"] = {
             mapping = cmp.mapping.preset.cmdline(),
             sources = {
-              { name = "buffer", opts = { keyword_pattern = [=[[^[:blank:]].*]=] } }
+              { name = "buffer" }
             }
           },
           [":"] = {
@@ -1251,7 +1388,12 @@ require("lazy").setup({
             sources = cmp.config.sources({
               { name = "path" }
             }, {
-              { name = "cmdline" }
+              {
+                name = "cmdline",
+                option = {
+                  ignore_cmds = { 'Man', '!' }
+                }
+              }
             })
           },
         },
@@ -1268,7 +1410,7 @@ require("lazy").setup({
       "honza/vim-snippets",
     },
     keys = {
-      { "<leader>es", ":lua require('luasnip.loaders').edit_snippet_files()<CR>", desc = "edit snippets" },
+      { "<leader>Es", ":lua require('luasnip.loaders').edit_snippet_files()<CR>", desc = "Edit Snippets" },
     },
     init = function()
       vim.g.snips_author = vim.fn.system("git config --get user.name | tr -d '\n'")
@@ -1312,6 +1454,7 @@ require("lazy").setup({
       "benfowler/telescope-luasnip.nvim",
       "nvim-telescope/telescope-symbols.nvim",
     },
+    cmd = { "Telescope" },
     opts = {
       defaults = {
         preview = {
@@ -1321,25 +1464,30 @@ require("lazy").setup({
       }
     },
     keys = {
-      { "<leader>f", ":Telescope fd<CR>", desc = "find file" },
+      { "<leader>f", ":Telescope fd<CR>", desc = "Find File" },
       {
         "<leader>A",
         ":Telescope fd find_command=rg,--files,--hidden,--no-ignore,--glob,!.git<CR>",
-        desc = "find hidden files"
+        desc = "Find Hidden File"
       },
-      { "<leader>b", ":Telescope buffers<CR>", desc = "list buffers" },
-      { "<leader>H", ":Telescope oldfiles<CR>", desc = "list recent files" },
-      { "<leader>Th", ":Telescope help_tags<CR>", desc = "list help tags" },
-      { "<leader>S", ":Telescope lsp_document_symbols<CR>", desc = "list symbols" },
-      { "<leader>U", ":Telescope luasnip<CR>", desc = "list snippets" },
-      { "<leader>K", ":Telescope keymaps<CR>", desc = "list keymaps" },
-      { "<leader>r", ":Telescope live_grep<CR>", desc = "live grep" },
-      { "<leader>s", ":Telescope current_buffer_fuzzy_find<CR>", desc = "search in buffer" },
-      { "<leader>gf", ":Telescope git_files<CR>", desc = "open git file" },
-      { "<leader>gb", ":Telescope git_branches<CR>", desc = "list git branches" },
-      { "<leader>gc", ":Telescope git_bcommits<CR>", desc = "list buffer git commits" },
-      { "<leader>gC", ":Telescope git_commits<CR>", desc = "list all git commits" },
-      { "<c-s>", "<Esc>h:Telescope symbols<CR>", mode = "i", desc = "find a symbol to insert to insert" },
+      { "<leader>bb", ":Telescope buffers<CR>", desc = "Buffers" },
+      { "<leader>cc", ":Telescope commands<CR>", desc = "Commands" },
+      { "<leader>F", ":Telescope resume<CR>", desc = "Resume Search" },
+      { "<leader>gb", ":Telescope git_branches<CR>", desc = "Git Branches" },
+      { "<leader>gc", ":Telescope git_bcommits<CR>", desc = "Buffer Git Commits" },
+      { "<leader>gC", ":Telescope git_commits<CR>", desc = "Git Commits" },
+      { "<leader>gf", ":Telescope git_files<CR>", desc = "Git Files" },
+      { "<leader>gt", ":Telescope git_status<CR>", desc = "Git Status" },
+      { "<leader>H", ":Telescope oldfiles<CR>", desc = "Recent Files" },
+      { "<leader>K", ":Telescope keymaps<CR>", desc = "Keymaps" },
+      { "<leader>m", ":Telescope marks<CR>", desc = "Marks" },
+      { "<leader>r", ":Telescope live_grep<CR>", desc = "Live Grep" },
+      { "<leader>gs", ":Telescope grep_string<CR>", desc = "Grep String" },
+      { "<leader>s", ":Telescope current_buffer_fuzzy_find<CR>", desc = "Bufer Search" },
+      { "<leader>D", ":Telescope diagnostics<CR>", desc = "Diagnostics" },
+      { "<leader>Th", ":Telescope help_tags<CR>", desc = "Help Tags" },
+      { "<leader>U", ":Telescope luasnip<CR>", desc = "Snippets" },
+      { "<c-s>", "<Esc>h:Telescope symbols<CR>", mode = "i", desc = "Symbols" },
     },
     config = function()
       local telescope = require("telescope")
@@ -1358,7 +1506,7 @@ require("lazy").setup({
     keys = {
       { "[q", "<Plug>(qf_qf_previous)", desc = "previous quickfix" },
       { "]q", "<Plug>(qf_qf_next)", desc = "next quickfix" },
-      { "<leader>cc", ":cexpr []<CR>", desc = "clears quickfix list" },
+      { "<leader>cq", ":cexpr []<CR>", desc = "clears quickfix list" },
     }
   },
   {
