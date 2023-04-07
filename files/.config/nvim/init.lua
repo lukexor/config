@@ -968,8 +968,7 @@ require("lazy").setup({
         vim.lsp.buf.format({
           bufnr = bufnr,
           filter = function(client)
-            return client.name ~= "ccls" and
-                client.name ~= "html" and
+            return client.name ~= "html" and
                 client.name ~= "jsonls" and
                 client.name ~= "tsserver"
           end,
@@ -1094,7 +1093,7 @@ require("lazy").setup({
           }
         end),
         pylsp = get_options(),
-        ccls = get_options(),
+        clangd = get_options(),
         rust_analyzer = get_options(function(opts)
           opts.settings = {
             ["rust-analyzer"] = {
@@ -1182,7 +1181,7 @@ require("lazy").setup({
       })
       require("mason-lspconfig").setup({
         ensure_installed = {
-          "bashls", "cssls", "gopls", "html", "jsonls", "pylsp", "ccls", "rust_analyzer", "lua_ls",
+          "bashls", "cssls", "gopls", "html", "jsonls", "pylsp", "clangd", "rust_analyzer", "lua_ls",
           "tsserver", "vimls", "yamlls"
         },
         automatic_installation = true,
