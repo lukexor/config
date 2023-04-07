@@ -172,7 +172,7 @@ nmap("<leader>pi", ":Lazy install<CR>", { desc = "Install Plugins" })
 nmap("<leader>ps", ":Lazy<CR>", { desc = "Plugin Status" })
 nmap("<leader>pS", ":Lazy sync<CR>", { desc = "Sync Plugins" })
 nmap("<leader>pu", ":Lazy check<CR>", { desc = "Check Plugin Updates" })
-nmap("<leader>pU", ":Lazy update<CR>", { desc = "Update Plugins" })
+nmap("<leader>pU", ":Lazy update", { desc = "Update Plugins" })
 
 -- -----------------------------------------------------------------------------
 -- Manage Buffers
@@ -182,7 +182,7 @@ nmap("<leader>w", ":w<CR>", { desc = "Save" })
 nmap("<leader>W", ":noa w<CR>", { desc = "Save/No Formatting" })
 nmap("<leader>q", ":confirm q<CR>", { desc = "Quit" })
 nmap("<leader>Q", ":confirm qall<CR>", { desc = "Quit All" })
-nmap("<leader>bc", ":%bd|e#|bd#<CR>", { desc = "Quit all but current" })
+nmap("<leader>O", ":%bd|e#|bd#<CR>", { desc = "Quit all but current" })
 nmap("<leader>n", ":enew<CR>", { desc = "New Buffer" })
 
 nmap("<leader>h", ":bp<CR>", { silent = true, desc = "Go to Previous Buffer" })
@@ -516,7 +516,7 @@ require("lazy").setup({
   {
     "famiu/bufdelete.nvim", -- Keep window layout when deleting buffers
     keys = {
-      { "<leader>bd", ":confirm Bdelete<CR>", desc = "Delete Buffer" }
+      { "<leader>D", ":confirm Bdelete<CR>", desc = "Delete Buffer" }
     }
   },
   {
@@ -775,7 +775,7 @@ require("lazy").setup({
   {
     "iamcco/markdown-preview.nvim", -- markdown browser viewer
     ft = { "markdown" },
-    build = vim.fn["mkdp#util#install()"],
+    build = "mkdp#util#install()",
     init = function()
       vim.g.mkdp_echo_preview_url = 1
     end
@@ -915,7 +915,7 @@ require("lazy").setup({
   -- -----------------------------------------------------------------------------
   {
     "williamboman/mason.nvim",
-    build = function() vim.cmd(":MasonUpdate") end,
+    build = ":MasonUpdate",
     keys = {
       { "<leader>pm", ":Mason<CR>", desc = "LSP Plugins" },
       { "<leader>pM", ":MasonUpdate<CR>", desc = "LSP Update" },
@@ -1130,9 +1130,11 @@ require("lazy").setup({
             },
           }
           opts.setup = function(server_opts)
-            nmap("<leader>R", ":Make run<CR>", { desc = "cargo run" });
-            nmap("<leader>M", ":Make build<CR>", { desc = "cargo build" });
-            nmap("<leader>C", ":Make clippy<CR>", { desc = "cargo clippy" });
+            if vim.bo.filetype == "rust" then
+              nmap("<leader>R", ":Make run<CR>", { desc = "cargo run" });
+              nmap("<leader>M", ":Make build<CR>", { desc = "cargo build" });
+              nmap("<leader>C", ":Make clippy<CR>", { desc = "cargo clippy" });
+            end
             require("rust-tools").setup {
               -- We don't want to call lspconfig.rust_analyzer.setup() when using
               -- rust-tools. See https://github.com/simrat39/rust-tools.nvim/issues/89
@@ -1179,6 +1181,10 @@ require("lazy").setup({
         }
       })
       require("mason-lspconfig").setup({
+        ensure_installed = {
+          "bashls", "cssls", "gopls", "html", "jsonls", "pylsp", "ccls", "rust_analyzer", "lua_ls",
+          "tsserver", "vimls", "yamlls"
+        },
         automatic_installation = true,
       })
 
@@ -1470,7 +1476,7 @@ require("lazy").setup({
         ":Telescope fd find_command=rg,--files,--hidden,--no-ignore,--glob,!.git<CR>",
         desc = "Find Hidden File"
       },
-      { "<leader>bb", ":Telescope buffers<CR>", desc = "Buffers" },
+      { "<leader>B", ":Telescope buffers<CR>", desc = "Buffers" },
       { "<leader>cc", ":Telescope commands<CR>", desc = "Commands" },
       { "<leader>F", ":Telescope resume<CR>", desc = "Resume Search" },
       { "<leader>gb", ":Telescope git_branches<CR>", desc = "Git Branches" },

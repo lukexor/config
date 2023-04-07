@@ -65,7 +65,7 @@ To get up and running on a new system:
 cd ~/
 git clone https://github.com/lukexor/config.git
 cd config/
-./setup.sh
+./bootstrap.sh
 ```
 
 Then follow any prompts for customizing the setup & installation.

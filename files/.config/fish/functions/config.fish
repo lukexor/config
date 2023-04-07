@@ -7,6 +7,8 @@ function config -a "config" -d "edit a configuration file"
             nvim ~/.config/kitty/kitty.conf
         case "fish"
             nvim ~/.config/fish/config.fish
+        case "fishl"
+            nvim ~/.local/config.fish
         case "nu"
             nvim ~/.config/nu/config.nu
         case "nu_env"

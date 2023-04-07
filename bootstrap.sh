@@ -248,12 +248,7 @@ setup_config() {
 
   stow -Rv files
 
-  nvim +PlugUpgrade \
-    +PlugInstall \
-    +PlugClean \
-    +PlugUpdate \
-    +UpdateRemotePlugins \
-    +VimspectorUpdate \
+  nvim +VimspectorUpdate \
     +qall
 
 
