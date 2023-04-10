@@ -253,6 +253,8 @@ map("g*", "g*zzzv", { desc = "search forwards without word boundary" })
 map("g#", "g*zzzv", { desc = "search backwards without word boundary" })
 
 -- Reselect visual after indenting
+map("<", "<gv", { mode = "v", desc = "Shift {motion} Lines Left" })
+map(">", ">gv", { mode = "v", desc = "Shift {motion} Lines Right" })
 map("<S-Tab>", "<gv", { mode = "v", desc = "Shift {motion} Lines Left" })
 map("<Tab>", ">gv", { mode = "v", desc = "Shift {motion} Lines Right" })
 
@@ -1602,7 +1604,7 @@ require("lazy").setup({
       { "<leader>r", ":Telescope live_grep<CR>", desc = "Live Grep" },
       { "<leader>gs", ":Telescope grep_string<CR>", desc = "Grep String" },
       { "<leader>s", ":Telescope current_buffer_fuzzy_find<CR>", desc = "Buffer Search" },
-      { "<leader>D", ":Telescope diagnostics<CR>", desc = "Diagnostics" },
+      { "<leader>dD", ":Telescope diagnostics<CR>", desc = "Diagnostics" },
       { "<leader>Th", ":Telescope help_tags<CR>", desc = "Help Tags" },
       { "<leader>U", ":Telescope luasnip<CR>", desc = "Snippets" },
       { "<c-s>", "<Esc>h:Telescope symbols<CR>", mode = "i", desc = "Symbols" },
