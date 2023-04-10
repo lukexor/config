@@ -103,11 +103,12 @@ function Merge(a, b)
   return MergeR(MergeR({}, a or {}), b or {})
 end
 
-local set_keymap = function(...) vim.keymap.set(...) end
-local nmap = function(lhs, rhs, opts) set_keymap("n", lhs, rhs, opts) end
-local vmap = function(lhs, rhs, opts) set_keymap("v", lhs, rhs, opts) end
-local imap = function(lhs, rhs, opts) set_keymap("i", lhs, rhs, opts) end
-local omap = function(lhs, rhs, opts) set_keymap("o", lhs, rhs, opts) end
+local map = function(lhs, rhs, options)
+  local opts = vim.deepcopy(options)
+  local mode = opts.mode or "n"
+  opts.mode = nil
+  vim.keymap.set(mode, lhs, rhs, opts)
+end
 
 local function system_open(path)
   local cmd
@@ -128,10 +129,10 @@ local function bool2str(bool) return bool and "on" or "off" end
 -- Settings
 -- -----------------------------------------------------------------------------
 
-nmap("<localleader>w", [[&fo =~ 't' ? ":set fo-=t<CR>" : ":set fo+=t<CR>"]],
+map("<localleader>w", [[&fo =~ 't' ? ":set fo-=t<CR>" : ":set fo+=t<CR>"]],
   { expr = true, desc = "Toggle Text Auto-wrap" })
 
-nmap("<leader>ug", function()
+map("<leader>ug", function()
   if vim.o.nu or vim.o.rnu or vim.o.list then
     vim.cmd("set nornu nonu nolist signcolumn=no foldcolumn=0")
   else
@@ -139,27 +140,27 @@ nmap("<leader>ug", function()
   end
 end, { desc = "Toggle Gutter" })
 
-nmap("<leader>up", function()
+map("<leader>up", function()
   vim.opt.paste = not vim.opt.paste:get() -- local to window
   vim.notify(string.format("paste %s", bool2str(vim.opt.paste:get())))
 end, { desc = "Toggle Paste" })
 
-nmap("<leader>us", function()
+map("<leader>us", function()
   vim.wo.spell = not vim.wo.spell -- local to window
   vim.notify(string.format("spell %s", bool2str(vim.wo.spell)))
 end, { desc = "Toggle Spellcheck" })
 
-nmap("<leader>uS", function()
+map("<leader>uS", function()
   vim.opt.conceallevel = vim.opt.conceallevel:get() == 0 and 2 or 0
   vim.notify(string.format("conceal %s", bool2str(vim.opt.conceallevel:get() == 2)))
 end, { desc = "Toggle Conceal" })
 
-nmap("<leader>uw", function()
+map("<leader>uw", function()
   vim.wo.wrap = not vim.wo.wrap -- local to window
   vim.notify(string.format("wrap %s", bool2str(vim.wo.wrap)))
 end, { desc = "Toggle Wrap" })
 
-nmap("<leader>uc", function()
+map("<leader>uc", function()
   vim.g.cmp_enabled = not vim.g.cmp_enabled
   vim.notify(string.format("completion %s", bool2str(vim.g.cmp_enabled)))
 end, { desc = "Toggle Auto-completion" })
@@ -168,29 +169,29 @@ end, { desc = "Toggle Auto-completion" })
 -- Plugin Manager
 -- -----------------------------------------------------------------------------
 
-nmap("<leader>pi", ":Lazy install<CR>", { desc = "Install Plugins" })
-nmap("<leader>ps", ":Lazy<CR>", { desc = "Plugin Status" })
-nmap("<leader>pS", ":Lazy sync<CR>", { desc = "Sync Plugins" })
-nmap("<leader>pu", ":Lazy check<CR>", { desc = "Check Plugin Updates" })
-nmap("<leader>pU", ":Lazy update", { desc = "Update Plugins" })
+map("<leader>pi", ":Lazy install<CR>", { desc = "Install Plugins" })
+map("<leader>ps", ":Lazy<CR>", { desc = "Plugin Status" })
+map("<leader>pS", ":Lazy sync<CR>", { desc = "Sync Plugins" })
+map("<leader>pu", ":Lazy check<CR>", { desc = "Check Plugin Updates" })
+map("<leader>pU", ":Lazy update", { desc = "Update Plugins" })
 
 -- -----------------------------------------------------------------------------
 -- Manage Buffers
 -- -----------------------------------------------------------------------------
 
-nmap("<leader>w", ":w<CR>", { desc = "Save" })
-nmap("<leader>W", ":noa w<CR>", { desc = "Save/No Formatting" })
-nmap("<leader>q", ":confirm q<CR>", { desc = "Quit" })
-nmap("<leader>Q", ":confirm qall<CR>", { desc = "Quit All" })
-nmap("<leader>O", ":%bd|e#|bd#<CR>", { desc = "Quit all but current" })
-nmap("<leader>n", ":enew<CR>", { desc = "New Buffer" })
+map("<leader>w", ":w<CR>", { desc = "Save" })
+map("<leader>W", ":noa w<CR>", { desc = "Save/No Formatting" })
+map("<leader>q", ":confirm q<CR>", { desc = "Quit" })
+map("<leader>Q", ":confirm qall<CR>", { desc = "Quit All" })
+map("<leader>O", ":%bd|e#|bd#<CR>", { desc = "Quit all but current" })
+map("<leader>n", ":enew<CR>", { desc = "New Buffer" })
 
-nmap("<leader>h", ":bp<CR>", { silent = true, desc = "Go to Previous Buffer" })
-nmap("<leader>l", ":bn<CR>", { silent = true, desc = "Go to Next Buffer" })
-nmap("<leader><leader>", "<C-^>", { desc = "Alternate Buffer" })
+map("<leader>h", ":bp<CR>", { silent = true, desc = "Go to Previous Buffer" })
+map("<leader>l", ":bn<CR>", { silent = true, desc = "Go to Next Buffer" })
+map("<leader><leader>", "<C-^>", { desc = "Alternate Buffer" })
 
-nmap("|", ":vsplit<CR>", { desc = "Vertical Split" })
-nmap("\\", ":split<CR>", { desc = "Horizontal Split" })
+map("|", ":vsplit<CR>", { desc = "Vertical Split" })
+map("\\", ":split<CR>", { desc = "Horizontal Split" })
 
 -- -----------------------------------------------------------------------------
 -- Navigation
@@ -198,27 +199,25 @@ nmap("\\", ":split<CR>", { desc = "Horizontal Split" })
 
 -- Add relative jumps of more than 1 line to jump list
 -- Move by terminal rows, not lines, unless count is provided
-nmap("j", [[ v:count > 0 ? "m'" . v:count . 'j' : "gj" ]], { expr = true, desc = "Down N lines" })
-nmap("k", [[ v:count > 0 ? "m'" . v:count . 'k' : "gk" ]], { expr = true, desc = "Up N lines" })
-vmap("j", [[ v:count > 0 ? "m'" . v:count . 'j' : "gj" ]], { expr = true, desc = "Down N lines" })
-vmap("k", [[ v:count > 0 ? "m'" . v:count . 'k' : "gk" ]], { expr = true, desc = "Up N lines" })
+map("j", [[ v:count > 0 ? "m'" . v:count . 'j' : "gj" ]], { mode = { "n", "v" }, expr = true, desc = "Down N lines" })
+map("k", [[ v:count > 0 ? "m'" . v:count . 'k' : "gk" ]], { mode = { "n", "v" }, expr = true, desc = "Up N lines" })
 
-nmap("<leader>-", "<C-w>_<C-w>|", { desc = "Maximize window" })
-nmap("<leader>=", "<C-w>=", { desc = "Equal Window Sizes" })
+map("<leader>-", "<C-w>_<C-w>|", { desc = "Maximize window" })
+map("<leader>=", "<C-w>=", { desc = "Equal Window Sizes" })
 
-nmap("<S-Down>", ":resize -5<CR>", { desc = "Reduce Height" })
-nmap("<S-Up>", ":resize +5<CR>", { desc = "Increase Height" })
-nmap("<S-Left>", ":vertical resize +5<CR>", { desc = "Reduce Width" })
-nmap("<S-Right>", ":vertical resize -5<CR>", { desc = "Increase Width" })
+map("<S-Down>", ":resize -5<CR>", { desc = "Reduce Height" })
+map("<S-Up>", ":resize +5<CR>", { desc = "Increase Height" })
+map("<S-Left>", ":vertical resize +5<CR>", { desc = "Reduce Width" })
+map("<S-Right>", ":vertical resize -5<CR>", { desc = "Increase Width" })
 
-nmap("<C-h>", "<C-w>h", { desc = "Go to Nth left window" })
-nmap("<C-j>", "<C-w>j", { desc = "Go to Nth below window" })
-nmap("<C-k>", "<C-w>k", { desc = "Go to Nth above window" })
-nmap("<C-l>", "<C-w>l", { desc = "Go to Nth right window" })
+map("<C-h>", "<C-w>h", { desc = "Go to Nth left window" })
+map("<C-j>", "<C-w>j", { desc = "Go to Nth below window" })
+map("<C-k>", "<C-w>k", { desc = "Go to Nth above window" })
+map("<C-l>", "<C-w>l", { desc = "Go to Nth right window" })
 
-nmap("gt", "<C-]>", { desc = "Go to Tag" })
+map("gt", "<C-]>", { desc = "Go to Tag" })
 
-nmap("cd",
+map("cd",
   function()
     local pathname = vim.fs.dirname(vim.api.nvim_buf_get_name(0))
     vim.cmd(("lcd %s"):format(pathname))
@@ -231,130 +230,130 @@ nmap("cd",
 -- Editing
 -- -----------------------------------------------------------------------------
 
-nmap("<leader>Ef", ":edit <cfile><CR>", { desc = "Edit File" })
-nmap("gx", system_open, { desc = "Open File Externally" })
+map("<leader>Ef", ":edit <cfile><CR>", { desc = "Edit File" })
+map("gx", system_open, { desc = "Open File Externally" })
 
-nmap("<leader>ve", ":edit $MYVIMRC<CR>", { desc = "Edit Nvim Config" })
-nmap("<leader>vr", ":source $MYVIMRC<CR>:edit<CR>", { desc = "Reload Nvim Config" })
+map("<leader>ve", ":edit $MYVIMRC<CR>", { desc = "Edit Nvim Config" })
+map("<leader>vr", ":source $MYVIMRC<CR>:edit<CR>", { desc = "Reload Nvim Config" })
 
-nmap("x", '"_x', { desc = "Delete Under" })
-nmap("X", '"_X', { desc = "Delete Before" })
+map("x", '"_x', { desc = "Delete Under" })
+map("X", '"_X', { desc = "Delete Before" })
 
 -- "==" honors indent
-nmap("<leader>j", ":m .+1<CR>==", { silent = true, desc = "Move Line Up" })
-nmap("<leader>k", ":m .-2<CR>==", { silent = true, desc = "Move Line Down" })
+map("<leader>j", ":m .+1<CR>==", { silent = true, desc = "Move Line Up" })
+map("<leader>k", ":m .-2<CR>==", { silent = true, desc = "Move Line Down" })
 
 -- Keep cursor centered
-nmap("n", "nzzzv", { desc = "repeat latest / or ?" })
-nmap("N", "Nzzzv", { desc = "repeat latest / or ? in reverse" })
-nmap("J", "mzJ`z", { desc = "join lines" })
-nmap("*", "*zzzv", { desc = "search forward" })
-nmap("#", "#zzzv", { desc = "search backwards" })
-nmap("g*", "g*zzzv", { desc = "search forwards without word boundary" })
-nmap("g#", "g*zzzv", { desc = "search backwards without word boundary" })
+map("n", "nzzzv", { desc = "repeat latest / or ?" })
+map("N", "Nzzzv", { desc = "repeat latest / or ? in reverse" })
+map("J", "mzJ`z", { desc = "join lines" })
+map("*", "*zzzv", { desc = "search forward" })
+map("#", "#zzzv", { desc = "search backwards" })
+map("g*", "g*zzzv", { desc = "search forwards without word boundary" })
+map("g#", "g*zzzv", { desc = "search backwards without word boundary" })
 
 -- Reselect visual after indenting
-vmap("<S-Tab>", "<gv", { desc = "Shift {motion} Lines Left" })
-vmap("<Tab>", ">gv", { desc = "Shift {motion} Lines Right" })
+map("<S-Tab>", "<gv", { mode = "v", desc = "Shift {motion} Lines Left" })
+map("<Tab>", ">gv", { mode = "v", desc = "Shift {motion} Lines Right" })
 
-vmap("p", '"_dP', { desc = "Replace selection without yanking" })
-nmap("+", 'V"_dP', { desc = "Replace current line with yank" })
+map("p", '"_dP', { mode = "v", desc = "Replace selection without yanking" })
+map("+", 'V"_dP', { desc = "Replace current line with yank" })
 
 -- Show diffs in a modified buffer
 vim.api.nvim_create_user_command("DiffOrig",
   "vert new | set bt=nofile | r ++edit # | 0d_ | diffthis | wincmd p | diffthis", {})
 
-nmap("<localleader>Tb", ":%s/\\s\\+$//<CR>", { desc = "Trim Trailing Blanks" })
+map("<localleader>Tb", ":%s/\\s\\+$//<CR>", { desc = "Trim Trailing Blanks" })
 
-imap("jj", "<Esc>", { desc = "Escape" })
-imap("<C-c>", "<Esc>", { desc = "Escape" })
+map("jj", "<Esc>", { mode = "i", desc = "Escape" })
+map("<C-c>", "<Esc>", { mode = "i", desc = "Escape" })
 
 -- Case statements in bash use `;;`
 if vim.bo.filetype ~= "sh" then
-  nmap(";;", "A;<Esc>", { desc = "Append ;" })
-  imap(";;", "<Esc>A;<Esc>", { desc = "Append ;" })
+  map(";;", "A;<Esc>", { desc = "Append ;" })
+  map(";;", "<Esc>A;<Esc>", { mode = "i", desc = "Append ;" })
 end
-nmap(",,", "A,<Esc>", { desc = "Append ," })
-imap(",,", "<Esc>A,<Esc>", { desc = "Append ," })
+map(",,", "A,<Esc>", { desc = "Append ," })
+map(",,", "<Esc>A,<Esc>", { mode = "i", desc = "Append ," })
 
 -- Add breaks in undo chain when typing punctuation
-imap(".", ".<C-g>u", { desc = "." })
-imap(",", ",<C-g>u", { desc = "," })
-imap("!", "!<C-g>u", { desc = "!" })
-imap("?", "?<C-g>u", { desc = "?" })
+map(".", ".<C-g>u", { mode = "i", desc = "." })
+map(",", ",<C-g>u", { mode = "i", desc = "," })
+map("!", "!<C-g>u", { mode = "i", desc = "!" })
+map("?", "?<C-g>u", { mode = "i", desc = "?" })
 
-nmap("<localleader>ab", ":.!toilet -w 200 -f term -F border<CR>", { desc = "ASCII Border" })
-nmap("<localleader>as", ":.!figlet -w 200 -f standard<CR>", { desc = "ASCII Standard" })
-nmap("<localleader>aS", ":.!figlet -w 200 -f small<CR>", { desc = "ASCII Small" })
+map("<localleader>ab", ":.!toilet -w 200 -f term -F border<CR>", { desc = "ASCII Border" })
+map("<localleader>as", ":.!figlet -w 200 -f standard<CR>", { desc = "ASCII Standard" })
+map("<localleader>aS", ":.!figlet -w 200 -f small<CR>", { desc = "ASCII Small" })
 
 -- -----------------------------------------------------------------------------
 -- Git
 -- -----------------------------------------------------------------------------
 
-nmap("<leader>gs", ":Git<CR>", { desc = "Git Status" })
-nmap("<leader>gl", ":Git blame<CR>", { desc = "Git Blame" })
+map("<leader>gS", ":Git<CR>", { desc = "Git Status" })
+map("<leader>gB", ":Git blame<CR>", { desc = "Git Blame" })
 
 -- -----------------------------------------------------------------------------
 -- Disabled mappings
 -- -----------------------------------------------------------------------------
 
-nmap("Q", "<nop>", { desc = "Disable ExMode" })
-nmap("gQ", "<nop>", { desc = "Disable ExMode" })
+map("Q", "<nop>", { desc = "Disable ExMode" })
+map("gQ", "<nop>", { desc = "Disable ExMode" })
 
 -- -----------------------------------------------------------------------------
 -- Search
 -- -----------------------------------------------------------------------------
 
-nmap("<leader><CR>", ":nohlsearch|diffupdate|normal !<C-l><CR>", { desc = "Clear Highlighting" })
+map("<leader><CR>", ":nohlsearch|diffupdate|normal !<C-l><CR>", { desc = "Clear Highlighting" })
 
-nmap("<leader>G", ":silent lgrep ", { desc = "Grep" })
-nmap("<localleader>S", ":%s//g<left><left>", { desc = "Global Search and Replace" })
-vmap("<C-r>", '"hy:%s/<C-r>h//g<left><left>', { desc = "Search and Replace Selection" });
+map("<leader>G", ":silent lgrep ", { desc = "Grep" })
+map("<localleader>S", ":%s//g<left><left>", { desc = "Global Search and Replace" })
+map("<C-r>", '"hy:%s/<C-r>h//g<left><left>', { mode = "v", desc = "Search and Replace Selection" });
 
 -- -----------------------------------------------------------------------------
 -- Clipboard
 -- -----------------------------------------------------------------------------
 
-nmap("cy", '"*y', { desc = "Yank to clipboard" })
-nmap("cY", '"*Y', { desc = "Yank line to clipboard" })
-nmap("cyy", '"*yy', { desc = "Yank line to clipbard" })
-vmap("cy", '"*y', { desc = "Yank selection to clipboard" })
-nmap("cp", '"*p', { desc = "Paste from clipboard after cursor" })
-nmap("cP", '"*P', { desc = "Paste from clipboard before cursor" })
+map("cy", '"*y', { desc = "Yank to clipboard" })
+map("cY", '"*Y', { desc = "Yank line to clipboard" })
+map("cyy", '"*yy', { desc = "Yank line to clipbard" })
+map("cy", '"*y', { mode = "v", desc = "Yank selection to clipboard" })
+map("cp", '"*p', { desc = "Paste from clipboard after cursor" })
+map("cP", '"*P', { desc = "Paste from clipboard before cursor" })
 
 -- -----------------------------------------------------------------------------
 -- Text Objects
 -- -----------------------------------------------------------------------------
 
-omap("in(", ":<C-u>normal! f(vi(<CR>", { silent = true, desc = "inner next () block" })
-omap("il(", ":<C-u>normal! F)vi(<CR>", { silent = true, desc = "inner last () block" })
-omap("an(", ":<C-u>normal! f(va(<CR>", { silent = true, desc = "around next () block" })
-omap("al(", ":<C-u>normal! F)va(<CR>", { silent = true, desc = "around last () block" })
-vmap("in(", ":<C-u>normal! f(vi(<CR><Esc>gv", { silent = true, desc = "inner next () block" })
-vmap("il(", ":<C-u>normal! F)vi(<CR><Esc>gv", { silent = true, desc = "inner last () block" })
-vmap("an(", ":<C-u>normal! f(va(<CR><Esc>gv", { silent = true, desc = "around next () block" })
-vmap("al(", ":<C-u>normal! F)va(<CR><Esc>gv", { silent = true, desc = "around last () block" })
+map("in(", ":<C-u>normal! f(vi(<CR>", { mode = "o", silent = true, desc = "inner next () block" })
+map("il(", ":<C-u>normal! F)vi(<CR>", { mode = "o", silent = true, desc = "inner last () block" })
+map("an(", ":<C-u>normal! f(va(<CR>", { mode = "o", silent = true, desc = "around next () block" })
+map("al(", ":<C-u>normal! F)va(<CR>", { mode = "o", silent = true, desc = "around last () block" })
+map("in(", ":<C-u>normal! f(vi(<CR><Esc>gv", { mode = "v", silent = true, desc = "inner next () block" })
+map("il(", ":<C-u>normal! F)vi(<CR><Esc>gv", { mode = "v", silent = true, desc = "inner last () block" })
+map("an(", ":<C-u>normal! f(va(<CR><Esc>gv", { mode = "v", silent = true, desc = "around next () block" })
+map("al(", ":<C-u>normal! F)va(<CR><Esc>gv", { mode = "v", silent = true, desc = "around last () block" })
 
-omap("in{", ":<C-u>normal! f{vi{<CR>", { silent = true, desc = "inner next {} block" })
-omap("il{", ":<C-u>normal! F{vi{<CR>", { silent = true, desc = "inner last {} block" })
-omap("an{", ":<C-u>normal! f{va{<CR>", { silent = true, desc = "around next {} block" })
-omap("al{", ":<C-u>normal! F{va{<CR>", { silent = true, desc = "around last {} block" })
-vmap("in{", ":<C-u>normal! f{vi{<CR><Esc>gv", { silent = true, desc = "inner next {} block" })
-vmap("il{", ":<C-u>normal! F{vi{<CR><Esc>gv", { silent = true, desc = "inner last {} block" })
-vmap("an{", ":<C-u>normal! f{va{<CR><Esc>gv", { silent = true, desc = "around next {} block" })
-vmap("al{", ":<C-u>normal! F{va{<CR><Esc>gv", { silent = true, desc = "around last {} block" })
+map("in{", ":<C-u>normal! f{vi{<CR>", { mode = "o", silent = true, desc = "inner next {} block" })
+map("il{", ":<C-u>normal! F{vi{<CR>", { mode = "o", silent = true, desc = "inner last {} block" })
+map("an{", ":<C-u>normal! f{va{<CR>", { mode = "o", silent = true, desc = "around next {} block" })
+map("al{", ":<C-u>normal! F{va{<CR>", { mode = "o", silent = true, desc = "around last {} block" })
+map("in{", ":<C-u>normal! f{vi{<CR><Esc>gv", { mode = "v", silent = true, desc = "inner next {} block" })
+map("il{", ":<C-u>normal! F{vi{<CR><Esc>gv", { mode = "v", silent = true, desc = "inner last {} block" })
+map("an{", ":<C-u>normal! f{va{<CR><Esc>gv", { mode = "v", silent = true, desc = "around next {} block" })
+map("al{", ":<C-u>normal! F{va{<CR><Esc>gv", { mode = "v", silent = true, desc = "around last {} block" })
 
-omap("in[", ":<C-u>normal! f[vi[<CR>", { silent = true, desc = "inner next [] block" })
-omap("il[", ":<C-u>normal! F[vi[<CR>", { silent = true, desc = "inner last [] block" })
-omap("an[", ":<C-u>normal! f[va[<CR>", { silent = true, desc = "around next [] block" })
-omap("al[", ":<C-u>normal! F[va[<CR>", { silent = true, desc = "around last [] block" })
-vmap("in[", ":<C-u>normal! f[vi[<CR><Esc>gv", { silent = true, desc = "inner next [] block" })
-vmap("il[", ":<C-u>normal! F[vi[<CR><Esc>gv", { silent = true, desc = "inner last [] block" })
-vmap("an[", ":<C-u>normal! f[va[<CR><Esc>gv", { silent = true, desc = "around next [] block" })
-vmap("al[", ":<C-u>normal! F[va[<CR><Esc>gv", { silent = true, desc = "around last [] block" })
+map("in[", ":<C-u>normal! f[vi[<CR>", { mode = "o", silent = true, desc = "inner next [] block" })
+map("il[", ":<C-u>normal! F[vi[<CR>", { mode = "o", silent = true, desc = "inner last [] block" })
+map("an[", ":<C-u>normal! f[va[<CR>", { mode = "o", silent = true, desc = "around next [] block" })
+map("al[", ":<C-u>normal! F[va[<CR>", { mode = "o", silent = true, desc = "around last [] block" })
+map("in[", ":<C-u>normal! f[vi[<CR><Esc>gv", { mode = "v", silent = true, desc = "inner next [] block" })
+map("il[", ":<C-u>normal! F[vi[<CR><Esc>gv", { mode = "v", silent = true, desc = "inner last [] block" })
+map("an[", ":<C-u>normal! f[va[<CR><Esc>gv", { mode = "v", silent = true, desc = "around next [] block" })
+map("al[", ":<C-u>normal! F[va[<CR><Esc>gv", { mode = "v", silent = true, desc = "around last [] block" })
 
-vmap("af", ":<C-u>silent! normal! [zV]z<CR>", { silent = true, desc = "around fold" })
-omap("af", ":normal Vaf<CR>", { silent = true, desc = "around fold" })
+map("af", ":<C-u>silent! normal! [zV]z<CR>", { mode = "v", silent = true, desc = "around fold" })
+map("af", ":normal Vaf<CR>", { mode = "o", silent = true, desc = "around fold" })
 
 function IndentTextObj(around)
   local curcol = vim.fn.col(".")
@@ -417,16 +416,16 @@ function IndentTextObj(around)
   end
 end
 
-omap("ii", ":<C-u>lua IndentTextObj(true)<CR>", { silent = true, desc = "inner indent" })
-omap("ai", ":<C-u>lua IndentTextObj(false)<CR>", { silent = true, desc = "around indent" })
-vmap("ii", ":<C-u>lua IndentTextObj(true)<CR><Esc>gv", { silent = true, desc = "inner indent" })
-vmap("ai", ":<C-u>lua IndentTextObj(false)<CR><Esc>gv", { silent = true, desc = "around indent" })
+map("ii", ":<C-u>lua IndentTextObj(true)<CR>", { mode = "o", silent = true, desc = "inner indent" })
+map("ai", ":<C-u>lua IndentTextObj(false)<CR>", { mode = "o", silent = true, desc = "around indent" })
+map("ii", ":<C-u>lua IndentTextObj(true)<CR><Esc>gv", { mode = "v", silent = true, desc = "inner indent" })
+map("ai", ":<C-u>lua IndentTextObj(false)<CR><Esc>gv", { mode = "v", silent = true, desc = "around indent" })
 
 -- -----------------------------------------------------------------------------
 -- Debug
 -- -----------------------------------------------------------------------------
 
-nmap("<localleader>i", function()
+map("<localleader>i", function()
   local line = vim.fn.line(".")
   local col = vim.fn.col(".")
   local hi = vim.fn.synIDattr(vim.fn.synID(line, col, 1), "name")
@@ -494,16 +493,29 @@ require("lazy").setup({
   -- -----------------------------------------------------------------------------
   {
     "rcarriga/nvim-notify", -- Prettier notifications
-    lazy = false,
-    priority = 1000,
-    config = function()
-      require("notify").setup {
-        background_colour = "#000000",
-        timeout = 500,
-        render = "minimal",
-      }
+    keys = {
+      {
+        "<leader>un",
+        function()
+          require("notify").dismiss({ silent = true, pending = true })
+        end,
+        desc = "Delete all Notifications",
+      },
+    },
+    opts = {
+      timeout = 500,
+      background_colour = "#000000",
+      render = "minimal",
+      max_height = function()
+        return math.floor(vim.o.lines * 0.75)
+      end,
+      max_width = function()
+        return math.floor(vim.o.columns * 0.75)
+      end,
+    },
+    init = function()
       vim.notify = require("notify")
-    end
+    end,
   },
   -- -----------------------------------------------------------------------------
   -- VIM Enhancements
@@ -552,11 +564,11 @@ require("lazy").setup({
     "ggandor/leap.nvim", -- Better movement with s/S, x/X, and gS
     event = "InsertEnter",
     keys = {
-      { "s", "<Plug>(leap-forward-to)", desc = "leap forward to" },
-      { "S", "<Plug>(leap-backward-to)", desc = "leap backward to" },
+      { "s", "<Plug>(leap-forward-to)", mode = { "n", "x", "o" }, desc = "leap forward to" },
+      { "S", "<Plug>(leap-backward-to)", mode = { "n", "x", "o" }, desc = "leap backward to" },
       { "z", "<Plug>(leap-forward-till)", mode = { "v", "o" }, desc = "leap forward till" },
       { "Z", "<Plug>(leap-backward-till)", mode = { "v", "o" }, desc = "leap backward till" },
-      { "gs", "<Plug>(leap-from-window)", desc = "leap from window" },
+      { "gs", "<Plug>(leap-from-window)", mode = { "n", "x", "o" }, desc = "leap from window" },
     },
   },
   "ypcrts/securemodelines",        -- Safe modelines
@@ -659,11 +671,7 @@ require("lazy").setup({
     "folke/which-key.nvim", -- Show mappings as you type
     event = "VeryLazy",
     opts = {
-      plugins = {
-        spelling = {
-          enabled = true,
-        },
-      },
+      plugins = { spelling = true }
     },
   },
   -- -----------------------------------------------------------------------------
@@ -773,9 +781,34 @@ require("lazy").setup({
     cmd = { "Git", "Gdiffsplit", "Gvdiffsplit", "GMove", "GBrowse", "GDelete" }
   },
   {
+    "lewis6991/gitsigns.nvim",
+    event = { "BufReadPre", "BufNewFile" },
+    opts = {
+      signs = {
+        add = { text = "▎" },
+        change = { text = "▎" },
+        delete = { text = "" },
+        topdelete = { text = "" },
+        changedelete = { text = "▎" },
+        untracked = { text = "▎" },
+      },
+      on_attach = function()
+        local gs = package.loaded.gitsigns
+
+        map("]h", gs.next_hunk, { desc = "Next Hunk" })
+        map("[h", gs.prev_hunk, { desc = "Prev Hunk" })
+        map("<leader>ghp", gs.preview_hunk, { desc = "Preview Hunk" })
+        map("<leader>ghb", function() gs.blame_line({ full = true }) end, { desc = "Blame Line" })
+        map("<leader>ghd", gs.diffthis, { desc = "Diff This" })
+        map("<leader>ghD", function() gs.diffthis("~") end, { desc = "Diff This ~" })
+        map("ih", ":<C-U>Gitsigns select_hunk<CR>", { mode = { "o", "x" }, desc = "GitSigns Select Hunk" })
+      end,
+    },
+  },
+  {
     "iamcco/markdown-preview.nvim", -- markdown browser viewer
     ft = { "markdown" },
-    build = "mkdp#util#install()",
+    build = ":call mkdp#util#install()",
     init = function()
       vim.g.mkdp_echo_preview_url = 1
     end
@@ -787,6 +820,7 @@ require("lazy").setup({
       "nvim-tree/nvim-web-devicons",
       "MunifTanjim/nui.nvim",
     },
+    cmd = "Neotree",
     keys = {
       { "<leader>e", ":Neotree toggle reveal<CR>", desc = "Toggle Explorer" },
       {
@@ -803,6 +837,15 @@ require("lazy").setup({
     },
     opts = {
       close_if_last_window = true,
+      filesystem = {
+        bind_to_cwd = false,
+        follow_current_file = true,
+      },
+      window = {
+        mappings = {
+          ["<space>"] = "none",
+        },
+      },
     },
     init = function()
       vim.g.neo_tree_remove_legacy_commands = 1
@@ -842,10 +885,19 @@ require("lazy").setup({
   -- -----------------------------------------------------------------------------
   -- Windowing / Theme
   -- -----------------------------------------------------------------------------
-  { "ryanoasis/vim-devicons", lazy = true },
   {
     "stevearc/dressing.nvim", -- Window UI enhancements, popups, input, etc
-    event = "VeryLazy",
+    lazy = true,
+    init = function()
+      vim.ui.select = function(...)
+        require("lazy").load({ plugins = { "dressing.nvim" } })
+        return vim.ui.select(...)
+      end
+      vim.ui.input = function(...)
+        require("lazy").load({ plugins = { "dressing.nvim" } })
+        return vim.ui.input(...)
+      end
+    end,
   },
   {
     "Shatur/neovim-ayu",
@@ -858,12 +910,12 @@ require("lazy").setup({
       colors.generate()
 
       vim.cmd(([[
-      aug CursorLine
-        au!
-        au InsertEnter * hi! CursorLine guibg=%s
-        au InsertLeave * hi! CursorLine guibg=%s
-      aug END
-    ]]):format(colors.selection_inactive, colors.panel_bg))
+        aug CursorLine
+          au!
+          au InsertEnter * hi! CursorLine guibg=%s
+          au InsertLeave * hi! CursorLine guibg=%s
+        aug END
+      ]]):format(colors.selection_inactive, colors.panel_bg))
 
       local ayu = require('ayu')
       ayu.setup {
@@ -894,37 +946,64 @@ require("lazy").setup({
   {
     "nvim-lualine/lualine.nvim", -- statusline
     event = "VeryLazy",
-    opts = {
-      options = {
-        icons_enabled = true,
-        theme = "ayu",
-        always_divide_middle = true,
-      },
-      sections = {
-        lualine_a = { "mode" },
-        lualine_b = { "branch", "diff", "diagnostics" },
-        lualine_c = { { "filename", path = 1 } },
-        lualine_x = { "SleuthIndicator", "ObsessionStatus", "filetype" },
-        lualine_y = { "progress" },
-        lualine_z = { "location" },
+    opts = function()
+      local function fg(name)
+        return function()
+          ---@type {foreground?:number}?
+          local hl = vim.api.nvim_get_hl_by_name(name, true)
+          return hl and hl.foreground and { fg = string.format("#%06x", hl.foreground) }
+        end
+      end
+      return {
+        options = {
+          icons_enabled = true,
+          theme = "ayu",
+          always_divide_middle = true,
+          globalstatus = true,
+          disabled_filetypes = { statusline = { "dashboard", "lazy" } },
+        },
+        sections = {
+          lualine_a = { "mode" },
+          lualine_b = { "branch", "SleuthIndicator" },
+          lualine_c = {
+            { "diagnostics" },
+            { "filetype", icon_only = true, separator = "", padding = { left = 1, right = 0 } },
+            { "filename", path = 1, symbols = { modified = "  ", readonly = "", unnamed = "" } }
+          },
+          lualine_x = {
+            { require("lazy.status").updates, cond = require("lazy.status").has_updates, color = fg("Special") },
+            {
+              "diff"
+            },
+          },
+          lualine_y = {
+            { "progress", separator = " ", padding = { left = 1, right = 0 } },
+            { "location", padding = { left = 0, right = 1 } },
+          },
+          lualine_z = {
+            function()
+              return " " .. os.date("%m-%d %R")
+            end,
+          },
+        },
+        extensions = { "aerial", "fugitive", "lazy", "neo-tree", "quickfix", "trouble" },
       }
-    }
+    end,
   },
   -- -----------------------------------------------------------------------------
   -- LSP
   -- -----------------------------------------------------------------------------
   {
-    "williamboman/mason.nvim",
-    build = ":MasonUpdate",
-    keys = {
-      { "<leader>pm", ":Mason<CR>", desc = "LSP Plugins" },
-      { "<leader>pM", ":MasonUpdate<CR>", desc = "LSP Update" },
-    },
-  },
-  {
     "neovim/nvim-lspconfig",
     dependencies = {
-      "williamboman/mason.nvim",
+      {
+        "williamboman/mason.nvim",
+        cmd = "Mason",
+        keys = {
+          { "<leader>pm", ":Mason<CR>", desc = "LSP Plugins" },
+          { "<leader>pM", ":MasonUpdate<CR>", desc = "LSP Update" },
+        },
+      },
       "williamboman/mason-lspconfig.nvim",
       "kosayoda/nvim-lightbulb",  -- Lightbulb next to code actions
       "ray-x/lsp_signature.nvim", -- Shows function signatures as you type
@@ -955,11 +1034,6 @@ require("lazy").setup({
     config = function()
       vim.fn.sign_define("LightBulbSign", { text = "", texthl = "", linehl = "", numhl = "" })
       require("nvim-lightbulb").setup { autocmd = { enabled = true } }
-
-      local buf_nmap = function(bufnr, lhs, rhs, opts)
-        set_keymap("n", lhs, rhs,
-          Merge({ buffer = bufnr }, opts))
-      end
 
       vim.cmd("au! DiagnosticChanged * lua vim.diagnostic.setqflist({ open = false })")
 
@@ -992,19 +1066,19 @@ require("lazy").setup({
         vim.fn.sign_define("DiagnosticSignInformation", { text = "ℹ", texthl = "LspDiagnosticsSignInformation" })
 
         -- See `:help vim.lsp.*` for documentation on any of the below functions
-        buf_nmap(bufnr, "gd", ":Telescope lsp_definitions<CR>", { desc = "Go To Definition" })
-        buf_nmap(bufnr, "gD", ":Telescope lsp_type_definitions<CR>", { desc = "Go To Type Definition" })
-        buf_nmap(bufnr, "gh", vim.lsp.buf.hover, { desc = "Symbol Information" })
-        buf_nmap(bufnr, "gH", vim.lsp.buf.signature_help, { desc = "Signature Information" })
-        buf_nmap(bufnr, "gi", ":Telescope lsp_implementations<CR>", { desc = "Go To Implementation" })
-        buf_nmap(bufnr, "gr", ":Telescope lsp_references<CR>", { desc = "References" })
-        buf_nmap(bufnr, "gR", vim.lsp.buf.rename, { desc = "Rename References" })
-        buf_nmap(bufnr, "ga", vim.lsp.buf.code_action, { desc = "Code Action" })
-        buf_nmap(bufnr, "ge", vim.diagnostic.open_float, { desc = "Diagnostics" })
-        buf_nmap(bufnr, "<leader>S", ":Telescope lsp_document_symbols<CR>", { desc = "LSP Symbols" })
+        map("gd", ":Telescope lsp_definitions<CR>", { desc = "Go To Definition", buffer = bufnr })
+        map("gD", ":Telescope lsp_type_definitions<CR>", { desc = "Go To Type Definition", buffer = bufnr })
+        map("gh", vim.lsp.buf.hover, { desc = "Symbol Information", buffer = bufnr })
+        map("gH", vim.lsp.buf.signature_help, { desc = "Signature Information", buffer = bufnr })
+        map("gi", ":Telescope lsp_implementations<CR>", { desc = "Go To Implementation", buffer = bufnr })
+        map("gr", ":Telescope lsp_references<CR>", { desc = "References", buffer = bufnr })
+        map("gR", vim.lsp.buf.rename, { desc = "Rename References", buffer = bufnr })
+        map("ga", vim.lsp.buf.code_action, { desc = "Code Action", buffer = bufnr })
+        map("ge", vim.diagnostic.open_float, { desc = "Diagnostics", buffer = bufnr })
+        map("<leader>S", ":Telescope lsp_document_symbols<CR>", { desc = "LSP Symbols", buffer = bufnr })
 
         if client.supports_method("textDocument/formatting") then
-          buf_nmap(bufnr, "<localleader>f", function() lsp_format(bufnr) end, { desc = "Format" })
+          map("<localleader>f", function() lsp_format(bufnr) end, { desc = "Format", buffer = bufnr })
 
           vim.api.nvim_clear_autocmds({ group = lsp_format_augroup, buffer = bufnr })
           vim.api.nvim_create_autocmd("BufWritePre", {
@@ -1130,9 +1204,9 @@ require("lazy").setup({
           }
           opts.setup = function(server_opts)
             if vim.bo.filetype == "rust" then
-              nmap("<leader>R", ":Make run<CR>", { desc = "cargo run" });
-              nmap("<leader>M", ":Make build<CR>", { desc = "cargo build" });
-              nmap("<leader>C", ":Make clippy<CR>", { desc = "cargo clippy" });
+              map("<leader>R", ":Make run<CR>", { desc = "cargo run" });
+              map("<leader>M", ":Make build<CR>", { desc = "cargo build" });
+              map("<leader>C", ":Make clippy<CR>", { desc = "cargo clippy" });
             end
             require("rust-tools").setup {
               -- We don't want to call lspconfig.rust_analyzer.setup() when using
@@ -1232,6 +1306,7 @@ require("lazy").setup({
   -- -----------------------------------------------------------------------------
   {
     "zbirenbaum/copilot.lua", -- AI auto-complete
+    build = ":Copilot auth",
     event = "InsertEnter",
     opts = {
       suggestion = { enabled = false },
@@ -1428,13 +1503,51 @@ require("lazy").setup({
     end
   },
   {
-    "nvim-treesitter/nvim-treesitter", -- AST Parser and highlighter
+    "nvim-t{ reesitter/nvim-treesitter", -- AST Parser and highlighter
+    version = false,
+    build = ":TSUpdate",
+    event = { "BufReadPost", "BufNewFile" },
     dependencies = {
       "nvim-treesitter/nvim-treesitter-context",
+      {
+        "nvim-treesitter/nvim-treesitter-textobjects",
+        init = function()
+          -- PERF: no need to load the plugin, if we only need its queries for mini.ai
+          local plugin = require("lazy.core.config").spec.plugins["nvim-treesitter"]
+          local opts = require("lazy.core.plugin").values(plugin, "opts", false)
+          local enabled = false
+          if opts.textobjects then
+            for _, mod in ipairs({ "move", "select", "swap", "lsp_interop" }) do
+              if opts.textobjects[mod] and opts.textobjects[mod].enable then
+                enabled = true
+                break
+              end
+            end
+          end
+          if not enabled then
+            require("lazy.core.loader").disable_rtp_plugin("nvim-treesitter-textobjects")
+          end
+        end,
+      },
     },
-    build = function() vim.cmd(":TSUpdate") end,
     opts = {
-      ensure_installed = { "javascript", "lua", "rust" },
+      ensure_installed = {
+        "bash",
+        "c",
+        "help",
+        "html",
+        "javascript",
+        "json",
+        "lua",
+        "markdown",
+        "markdown_inline",
+        "python",
+        "rust",
+        "tsx",
+        "typescript",
+        "vim",
+        "yaml",
+      },
       sync_install = false,
       auto_install = true,
     }
@@ -1448,18 +1561,18 @@ require("lazy").setup({
     lazy = true,
   },
   {
-    "nvim-telescope/telescope-fzf-native.nvim", -- Search dependency of telescope
-    build = "make",
-    lazy = true,
-  },
-  {
     "nvim-telescope/telescope.nvim", -- Fuzzy finder
+    cmd = "Telescope",
+    version = false,
     dependencies = {
-      "nvim-telescope/telescope-fzf-native.nvim",
+      {
+        "nvim-telescope/telescope-fzf-native.nvim", -- Search dependency of telescope
+        build = "make",
+        lazy = true,
+      },
       "benfowler/telescope-luasnip.nvim",
       "nvim-telescope/telescope-symbols.nvim",
     },
-    cmd = { "Telescope" },
     opts = {
       defaults = {
         preview = {
@@ -1488,7 +1601,7 @@ require("lazy").setup({
       { "<leader>m", ":Telescope marks<CR>", desc = "Marks" },
       { "<leader>r", ":Telescope live_grep<CR>", desc = "Live Grep" },
       { "<leader>gs", ":Telescope grep_string<CR>", desc = "Grep String" },
-      { "<leader>s", ":Telescope current_buffer_fuzzy_find<CR>", desc = "Bufer Search" },
+      { "<leader>s", ":Telescope current_buffer_fuzzy_find<CR>", desc = "Buffer Search" },
       { "<leader>D", ":Telescope diagnostics<CR>", desc = "Diagnostics" },
       { "<leader>Th", ":Telescope help_tags<CR>", desc = "Help Tags" },
       { "<leader>U", ":Telescope luasnip<CR>", desc = "Snippets" },
