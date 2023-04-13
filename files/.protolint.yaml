@@ -1,0 +1,8 @@
+---
+lint:
+  rules:
+    remove:
+      - INDENT
+  rules_option:
+    max_line_length:
+      max_chars: 140

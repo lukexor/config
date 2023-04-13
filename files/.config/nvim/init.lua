@@ -516,7 +516,13 @@ require("lazy").setup({
       end,
     },
     init = function()
-      vim.notify = require("notify")
+      local notify = require("notify")
+      vim.notify = function(msg, ...)
+        if msg:match("warning: multiple different client offset_encodings") then
+          return
+        end
+        notify(msg, ...)
+      end
     end,
   },
   -- -----------------------------------------------------------------------------
@@ -614,10 +620,20 @@ require("lazy").setup({
       "kevinhwang91/promise-async",
     },
     keys = {
-      { "zR", function() require("ufo").openAllFolds() end, desc = "Open All Folds" },
-      { "zM", function() require("ufo").closeAllFolds() end, desc = "Close All Folds" },
+      { "zo", nil },
+      { "zO", nil },
+      { "zc", nil },
+      { "zC", nil },
+      { "za", nil },
+      { "zA", nil },
+      { "zv", nil },
+      { "zn", nil },
+      { "zN", nil },
+      { "zi", nil },
       { "zr", function() require("ufo").openFoldsExceptKinds() end, desc = "Fold Less" },
+      { "zR", function() require("ufo").openAllFolds() end, desc = "Open All Folds" },
       { "zm", function() require("ufo").closeFoldsWith() end, desc = "Fold More" },
+      { "zM", function() require("ufo").closeAllFolds() end, desc = "Close All Folds" },
       { "zp", function() require("ufo").peekFoldedLinesUnderCursor() end, desc = "Peek Fold" },
     },
     opts = {
@@ -701,6 +717,7 @@ require("lazy").setup({
   },
   {
     "tpope/vim-surround",
+    event = "VeryLazy",
     keys = {
       -- Surround text with punctuation easier 'you surround' + motion
       { '<leader>"', 'ysiw"', remap = true, desc = 'surround text with ""' },
@@ -741,10 +758,21 @@ require("lazy").setup({
   },
   {
     "junegunn/vim-easy-align", -- Make aligning rows easier
+    cmd = "EasyAlign",
     keys = {
       { "gA", "<Plug>(EasyAlign)", desc = "align text" },
       { "gA", "<Plug>(EasyAlign) ", mode = "v", desc = "align selection" },
-    }
+    },
+    init = function()
+      vim.g.easy_align_delimiters = {
+        [">"] = { pattern = ">>\\|=>\\|>" },
+        ["/"] = {
+          pattern = "//\\+\\|/\\*\\|\\*/",
+          delimiter_align = "l",
+          ignore_groups = { "!Comment" }
+        },
+      }
+    end
   },
   {
     "glts/vim-radical", -- Number conversions
@@ -824,7 +852,7 @@ require("lazy").setup({
     },
     cmd = "Neotree",
     keys = {
-      { "<leader>e", ":Neotree toggle reveal<CR>", desc = "Toggle Explorer" },
+      { "<leader>e", ":Neotree toggle reveal reveal_force_cwd<CR>", desc = "Toggle Explorer" },
       {
         "<leader>o",
         function()
@@ -934,7 +962,7 @@ require("lazy").setup({
           TabLine = { bg = "none" },
           TabLineFill = { bg = "none" },
           TabLineSel = { fg = colors.tag, bg = "none" },
-          VirtualTextInfo = { fg = colors.selection_bg },
+          VirtualTextInfo = { fg = colors.special },
           Visual = { bg = colors.selection_bg },
           DiffAdd = { bg = "none", fg = colors.vcs_added },
           DiffDelete = { bg = "none", fg = colors.vcs_removed },
@@ -1106,7 +1134,7 @@ require("lazy").setup({
         )
 
         -- vim.lsp.formatexpr() seems broken with markdownlint/prettier
-        if vim.bo.filetype == "markdown" then
+        if vim.bo.filetype == "markdown" or vim.bo.filetype == "proto" then
           vim.o.formatexpr = ""
         end
 
@@ -1130,6 +1158,7 @@ require("lazy").setup({
           null_ls.builtins.diagnostics.eslint_d,
           null_ls.builtins.diagnostics.jsonlint,
           null_ls.builtins.diagnostics.markdownlint,
+          null_ls.builtins.diagnostics.protolint,
           null_ls.builtins.diagnostics.pylint,
           null_ls.builtins.diagnostics.shellcheck,
           null_ls.builtins.diagnostics.stylelint,
@@ -1169,7 +1198,9 @@ require("lazy").setup({
           }
         end),
         pylsp = get_options(),
-        clangd = get_options(),
+        clangd = get_options(function(opts)
+          opts.filetypes = { "c", "cpp" }
+        end),
         rust_analyzer = get_options(function(opts)
           opts.settings = {
             ["rust-analyzer"] = {
@@ -1443,12 +1474,10 @@ require("lazy").setup({
           ['<C-e>'] = cmp.mapping({ i = cmp.mapping.close(), c = cmp.mapping.close() }),
         }),
         sources = cmp.config.sources({
-        }, {
-          { name = "digraphs" },
-        }, {
-          { name = "copilot", priority = 1, keyword_length = 3 },
-          { name = 'luasnip', priority = 3 },
-          { name = "nvim_lsp", priority = 3 },
+          { name = "digraphs", priority = 1 },
+          { name = 'luasnip', priority = 2 },
+          { name = "copilot", priority = 3, keyword_length = 3 },
+          { name = "nvim_lsp", priority = 3, keyword_length = 3 },
         }, {
           { name = "path", priority = 1, keyword_length = 3 },
           { name = "buffer", priority = 2, keyword_length = 3 },
