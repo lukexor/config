@@ -267,8 +267,8 @@ vim.api.nvim_create_user_command("DiffOrig",
 
 map("<localleader>Tb", ":%s/\\s\\+$//<CR>", { desc = "Trim Trailing Blanks" })
 
-map("jj", "<Esc>", { mode = "i", desc = "Escape" })
-map("<C-c>", "<Esc>", { mode = "i", desc = "Escape" })
+map("jj", "<Esc>", { mode = "i", remap = true, desc = "Escape" })
+map("<C-c>", "<Esc>", { mode = "i", remap = true, desc = "Escape" })
 
 -- Case statements in bash use `;;`
 if vim.bo.filetype ~= "sh" then
