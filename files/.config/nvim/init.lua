@@ -132,22 +132,20 @@ local function bool2str(bool) return bool and "on" or "off" end
 map("<localleader>w", [[&fo =~ 't' ? ":set fo-=t<CR>" : ":set fo+=t<CR>"]],
   { expr = true, desc = "Toggle Text Auto-wrap" })
 
+vim.g.gutter_enabled = true
 map("<leader>ug", function()
-  if vim.o.nu or vim.o.rnu or vim.o.list then
-    vim.cmd("set nornu nonu nolist signcolumn=no foldcolumn=0")
-  else
+  vim.g.gutter_enabled = not vim.g.gutter_enabled
+  vim.notify(string.format("gutter %s", bool2str(vim.g.cmp_enabled)))
+  if vim.g.gutter_enabled then
     vim.cmd("set rnu nu list signcolumn=yes:2 foldcolumn=1")
+  else
+    vim.cmd("set nornu nonu nolist signcolumn=no foldcolumn=0")
   end
 end, { desc = "Toggle Gutter" })
 
-map("<leader>up", function()
-  vim.opt.paste = not vim.opt.paste:get() -- local to window
-  vim.notify(string.format("paste %s", bool2str(vim.opt.paste:get())))
-end, { desc = "Toggle Paste" })
-
 map("<leader>us", function()
-  vim.wo.spell = not vim.wo.spell -- local to window
-  vim.notify(string.format("spell %s", bool2str(vim.wo.spell)))
+  vim.o.spell = not vim.o.spell
+  vim.notify(string.format("spell %s", bool2str(vim.o.spell)))
 end, { desc = "Toggle Spellcheck" })
 
 map("<leader>uS", function()
@@ -156,8 +154,8 @@ map("<leader>uS", function()
 end, { desc = "Toggle Conceal" })
 
 map("<leader>uw", function()
-  vim.wo.wrap = not vim.wo.wrap -- local to window
-  vim.notify(string.format("wrap %s", bool2str(vim.wo.wrap)))
+  vim.o.wrap = not vim.o.wrap -- local to window
+  vim.notify(string.format("wrap %s", bool2str(vim.o.wrap)))
 end, { desc = "Toggle Wrap" })
 
 map("<leader>uc", function()
@@ -761,7 +759,10 @@ require("lazy").setup({
     cmd = "EasyAlign",
     keys = {
       { "gA", "<Plug>(EasyAlign)", desc = "align text" },
-      { "gA", "<Plug>(EasyAlign) ", mode = "v", desc = "align selection" },
+      { "<CR>", "<Plug>(EasyAlign)", mode = "v", desc = "align selection" },
+      { "<leader>a/", "gAii/", remap = true, desc = "align indent level to /" },
+      { "<leader>a:", "gAii:", remap = true, desc = "align indent level to :" },
+      { "<leader>a=", "gAii:", remap = true, desc = "align indent level to =" },
     },
     init = function()
       vim.g.easy_align_delimiters = {
