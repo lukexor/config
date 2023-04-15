@@ -1535,7 +1535,7 @@ require("lazy").setup({
     end
   },
   {
-    "nvim-t{ reesitter/nvim-treesitter", -- AST Parser and highlighter
+    "nvim-treesitter/nvim-treesitter", -- AST Parser and highlighter
     version = false,
     build = ":TSUpdate",
     event = { "BufReadPost", "BufNewFile" },

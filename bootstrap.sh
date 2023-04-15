@@ -38,7 +38,6 @@ install_linux() {
     libx11-dev \
     libxcb-composite0-dev \
     llvm \
-    neovim \
     ncspot \
     node-latest-version \
     npm \
@@ -49,7 +48,6 @@ install_linux() {
     python2 \
     python3 \
     python3-pip
-    ripgrep \
     shellcheck \
     software-properties-common \
     sqlite \
@@ -72,6 +70,10 @@ install_linux() {
   mkdir -p ~/.local/share/fonts
   cp ./assets/*.ttf ~/.local/share/fonts/
   fc-cache -f -v
+
+  curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim.appimage
+  chmod u+x nvim.appimage
+  mv nvim.appimage ~/.local/bin/nvim
 
   return 0
 }
@@ -111,7 +113,6 @@ install_macos() {
     hexedit \
     hyperfine \
     llvm \
-    neovim \
     ncspot \
     node \
     openssl \
@@ -121,7 +122,6 @@ install_macos() {
     pylint \
     python \
     python3 \
-    ripgrep \
     shellcheck \
     sqlite \
     starship \
@@ -140,6 +140,11 @@ install_macos() {
     && ln -s /Applications/kitty.app/Contents/MacOS/kitty ~/.local/bin/kitty
   [ ! -f ~/Library/LaunchAgents/environment.plist ] \
     && ln -s ~/.config/environment.plist ~/Library/LaunchAgents/environment.plist
+
+  curl -LO https://github.com/neovim/neovim/releases/download/nightly/nvim-macos.tar.gz
+  tar xzf nvim-macos.tar.gz
+  mv nvim-macos/bin/nvim ~/.local/bin/nvim
+  rm -rf nvim-macos*
 
   return 0
 }
@@ -182,6 +187,8 @@ install_crates() {
     irust \
     mprocs \
     porsmo \
+    ripgrep \
+    sccache \
     speedtest-rs \
     wiki-tui \
     runcc \

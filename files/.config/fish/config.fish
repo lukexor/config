@@ -104,10 +104,10 @@ set -gx FZF_DEFAULT_OPTS "--height 50% --layout=reverse --border --inline-info"
 set -gx FZF_CTRL_T_COMMAND "rg --files --hidden --no-ignore --glob !.git --glob !node_modules"
 set -gx FZF_DEFAULT_COMMAND "rg --files --hidden --no-ignore --glob !.git --glob !node_modules"
 set -gx LESS "-RFX"
+# NOTE: To debug rust-analyzer
 # set -gx RA_LOG "info,salsa=off,chalk=off"
 set -gx CARGO_TARGET_DIR ~/.cargo-target
 set -gx CARGO_INCREMENTAL 0 # Required for SCCACHE
-set -gx RUST_LOG debug
 set -gx RUSTC_WRAPPER ~/.cargo/bin/sccache
 set -g activity_log ~/.activity_log.txt
 
