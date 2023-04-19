@@ -446,13 +446,11 @@ local disabled_built_ins = {
   "2html_plugin",
   "getscript",
   "getscriptPlugin",
-  "gzip",
   "logipat",
   "netrw",
   "netrwPlugin",
   "netrwSettings",
   "netrwFileHandlers",
-  "tar",
   "tarPlugin",
   "tutor",
   "rplugin",
@@ -1356,6 +1354,14 @@ require("lazy").setup({
       "hrsh7th/cmp-path",
       "hrsh7th/cmp-cmdline",
       "saadparwaiz1/cmp_luasnip",
+      {
+        "Saecki/crates.nvim",
+        event = "BufRead",
+        ft = "toml",
+        dependencies = {
+          "nvim-lua/plenary.nvim",
+        },
+      },
       "dmitmel/cmp-digraphs",
       "zbirenbaum/copilot-cmp",
     },
@@ -1475,13 +1481,14 @@ require("lazy").setup({
           ['<C-e>'] = cmp.mapping({ i = cmp.mapping.close(), c = cmp.mapping.close() }),
         }),
         sources = cmp.config.sources({
-          { name = "digraphs", priority = 1 },
+          { name = "nvim_lsp", priority = 1, keyword_length = 3 },
+          { name = "buffer", priority = 1, keyword_length = 3 },
+          { name = "copilot", priority = 1, keyword_length = 3 },
           { name = 'luasnip', priority = 2 },
-          { name = "copilot", priority = 3, keyword_length = 3 },
-          { name = "nvim_lsp", priority = 3, keyword_length = 3 },
+          { name = "digraphs", priority = 3 },
         }, {
-          { name = "path", priority = 1, keyword_length = 3 },
-          { name = "buffer", priority = 2, keyword_length = 3 },
+          { name = "path", keyword_length = 3 },
+          { name = "crates", keyword_length = 3 },
         }),
         view = {
           entries = {
