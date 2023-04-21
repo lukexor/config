@@ -169,9 +169,8 @@ end, { desc = "Toggle Auto-completion" })
 
 map("<leader>pi", ":Lazy install<CR>", { desc = "Install Plugins" })
 map("<leader>ps", ":Lazy<CR>", { desc = "Plugin Status" })
-map("<leader>pS", ":Lazy sync<CR>", { desc = "Sync Plugins" })
 map("<leader>pu", ":Lazy check<CR>", { desc = "Check Plugin Updates" })
-map("<leader>pU", ":Lazy update", { desc = "Update Plugins" })
+map("<leader>pU", ":Lazy sync<CR>", { desc = "Update Plugins" })
 
 -- -----------------------------------------------------------------------------
 -- Manage Buffers
@@ -526,7 +525,7 @@ require("lazy").setup({
   -- -----------------------------------------------------------------------------
   "nathom/filetype.nvim", -- lua replacement of filetype.vim
   {
-    "nickeb96/fish.vim",  -- fish shell support
+    "dag/vim-fish",       -- fish shell support
     ft = "fish",
   },
   {
@@ -572,7 +571,7 @@ require("lazy").setup({
       { "S", "<Plug>(leap-backward-to)", mode = { "n", "x", "o" }, desc = "leap backward to" },
       { "z", "<Plug>(leap-forward-till)", mode = { "v", "o" }, desc = "leap forward till" },
       { "Z", "<Plug>(leap-backward-till)", mode = { "v", "o" }, desc = "leap backward till" },
-      { "gs", "<Plug>(leap-from-window)", mode = { "n", "x", "o" }, desc = "leap from window" },
+      { "gs", "<Plug>(leap-from-window)", mode = { "n", "o" }, desc = "leap from window" },
     },
   },
   "ypcrts/securemodelines",        -- Safe modelines
@@ -750,7 +749,26 @@ require("lazy").setup({
       { "<localleader>]", "ysip]", remap = true, desc = "surround paragraph with []" },
       { "<localleader>{", "ysip{", remap = true, desc = "surround paragraph with {}" },
       { "<localleader>}", "ysip{", remap = true, desc = "surround paragraph with {}" },
-    }
+    },
+    init = function()
+      vim.g.surround_no_mappings = 1
+    end,
+    config = function()
+      -- Just the defaults copied here.
+      vim.keymap.set("n", "ds", "<Plug>Dsurround")
+      vim.keymap.set("n", "cS", "<Plug>CSurround")
+      vim.keymap.set("n", "ys", "<Plug>Ysurround")
+      vim.keymap.set("n", "yS", "<Plug>YSurround")
+      vim.keymap.set("n", "yss", "<Plug>Yssurround")
+      vim.keymap.set("n", "ySs", "<Plug>YSsurround")
+      vim.keymap.set("n", "ySS", "<Plug>YSsurround")
+
+      -- The conflicting ones. Note that `<Plug>(leap-cross-window)`
+      -- _does_ work in Visual mode, if jumping to the same buffer,
+      -- so in theory, `gs` could be useful for Leap too...
+      vim.keymap.set("x", "gs", "<Plug>VSurround")
+      vim.keymap.set("x", "gS", "<Plug>VgSurround")
+    end
   },
   {
     "junegunn/vim-easy-align", -- Make aligning rows easier
@@ -837,7 +855,9 @@ require("lazy").setup({
   {
     "iamcco/markdown-preview.nvim", -- markdown browser viewer
     ft = { "markdown" },
-    build = ":call mkdp#util#install()",
+    build = function()
+      vim.fn["mkdp#util#install"]()
+    end,
     init = function()
       vim.g.mkdp_echo_preview_url = 1
     end
@@ -978,37 +998,43 @@ require("lazy").setup({
     opts = function()
       local function fg(name)
         return function()
-          ---@type {foreground?:number}?
           local hl = vim.api.nvim_get_hl_by_name(name, true)
           return hl and hl.foreground and { fg = string.format("#%06x", hl.foreground) }
         end
       end
       return {
         options = {
-          icons_enabled = true,
-          theme = "ayu",
-          always_divide_middle = true,
-          globalstatus = true,
           disabled_filetypes = { statusline = { "dashboard", "lazy" } },
+          globalstatus = true,
+          icons_enabled = true,
+          component_separators = { left = '', right = '' },
+          section_separators = { left = '', right = '' },
+          theme = "ayu_dark",
         },
         sections = {
           lualine_a = { "mode" },
-          lualine_b = { "branch", "SleuthIndicator" },
+          lualine_b = { "branch" },
           lualine_c = {
+            { "SleuthIndicator", color = fg("Comment") },
+            {
+              "filetype",
+              icon_only = true,
+              separator = "",
+              padding = { left = 1, right = 0 }
+            },
+            {
+              "filename",
+              path = 1,
+              symbols = { modified = "", readonly = "", unnamed = "--" },
+              color = fg("Special")
+            },
             { "diagnostics" },
-            { "filetype", icon_only = true, separator = "", padding = { left = 1, right = 0 } },
-            { "filename", path = 1, symbols = { modified = "  ", readonly = "", unnamed = "" } }
           },
           lualine_x = {
             { require("lazy.status").updates, cond = require("lazy.status").has_updates, color = fg("Special") },
-            {
-              "diff"
-            },
+            { "diff" },
           },
-          lualine_y = {
-            { "progress", separator = " ", padding = { left = 1, right = 0 } },
-            { "location", padding = { left = 0, right = 1 } },
-          },
+          lualine_y = { "progress", "location" },
           lualine_z = {
             function()
               return " " .. os.date("%m-%d %R")
@@ -1027,15 +1053,27 @@ require("lazy").setup({
     dependencies = {
       {
         "williamboman/mason.nvim",
-        cmd = "Mason",
+        cmd = { "Mason", "MasonUpdate" },
         keys = {
           { "<leader>pm", ":Mason<CR>", desc = "LSP Plugins" },
-          { "<leader>pM", ":MasonUpdate<CR>", desc = "LSP Update" },
+          { "<leader>pM", ":MasonUpdate<CR>:Mason<CR>", desc = "Update LSP Servers" },
         },
       },
+      "hrsh7th/cmp-nvim-lsp",
       "williamboman/mason-lspconfig.nvim",
-      "kosayoda/nvim-lightbulb",  -- Lightbulb next to code actions
-      "ray-x/lsp_signature.nvim", -- Shows function signatures as you type
+      "kosayoda/nvim-lightbulb",    -- Lightbulb next to code actions
+      {
+        "ray-x/lsp_signature.nvim", -- Shows function signatures as you type
+        opts = {
+          bind = true,
+          doc_lines = 0,
+          floating_window_above_cur_line = true,
+          handler_opts = {
+            border = "rounded"
+          },
+          toggle_key = "<M-x>",
+        }
+      },
       "simrat39/rust-tools.nvim",
       "jose-elias-alvarez/null-ls.nvim",
     },
@@ -1136,15 +1174,6 @@ require("lazy").setup({
         if vim.bo.filetype == "markdown" or vim.bo.filetype == "proto" then
           vim.o.formatexpr = ""
         end
-
-        require("lsp_signature").on_attach({
-          bind = true,
-          doc_lines = 5,
-          handler_opts = {
-            border = "rounded"
-          },
-          toggle_key = "<C-p>",
-        })
       end
       local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
@@ -1337,31 +1366,45 @@ require("lazy").setup({
   -- Auto-Completion
   -- -----------------------------------------------------------------------------
   {
-    "zbirenbaum/copilot.lua", -- AI auto-complete
-    build = ":Copilot auth",
-    event = "InsertEnter",
-    opts = {
-      suggestion = { enabled = false },
-      panel = { enabled = false },
-    }
+    "zbirenbaum/copilot-cmp", -- Copilot auto-complete. Must load after nvim-cmp.
+    dependencies =
+    {
+      "hrsh7th/nvim-cmp",
+      {
+        "zbirenbaum/copilot.lua", -- AI auto-complete
+        build = ":Copilot auth",
+        cmd = "Copilot",
+        opts = {
+          suggestion = { enabled = false, auto_trigger = true },
+          panel = { enabled = false, auto_refresh = true },
+        }
+      },
+    },
+    config = function()
+      require("copilot_cmp").setup()
+    end
   },
   {
     "hrsh7th/nvim-cmp", -- Auto-completion library
+    cmd = "CmpStatus",
     event = "InsertEnter",
     dependencies = {
-      "hrsh7th/cmp-nvim-lsp",
-      "hrsh7th/cmp-buffer",
-      "hrsh7th/cmp-path",
-      "hrsh7th/cmp-cmdline",
-      "saadparwaiz1/cmp_luasnip",
       "dmitmel/cmp-digraphs",
-      "zbirenbaum/copilot-cmp",
+      "f3fora/cmp-spell",
+      "FelipeLema/cmp-async-path",
+      "hrsh7th/cmp-buffer",
+      "hrsh7th/cmp-cmdline",
+      "hrsh7th/cmp-nvim-lsp",
+      "onsails/lspkind.nvim",
+      "saadparwaiz1/cmp_luasnip",
+      "uga-rosa/cmp-dictionary",
     },
     init = function()
       vim.g.cmp_enabled = true
     end,
     config = function()
       local luasnip = require("luasnip")
+      local lspkind = require("lspkind")
       local cmp = require("cmp")
       cmp.setup {
         enabled = function()
@@ -1373,10 +1416,6 @@ require("lazy").setup({
           expand = function(args)
             luasnip.lsp_expand(args.body)
           end,
-        },
-        window = {
-          completion = cmp.config.window.bordered(),
-          documentation = cmp.config.window.bordered(),
         },
         mapping = cmp.mapping.preset.insert({
           ["<Tab>"] = cmp.mapping({
@@ -1472,17 +1511,37 @@ require("lazy").setup({
           ['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(4), { 'i', 'c' }),
           ['<C-e>'] = cmp.mapping({ i = cmp.mapping.close(), c = cmp.mapping.close() }),
         }),
+        formatting = {
+          format = lspkind.cmp_format({
+            mode = "symbol",
+            menu = ({
+              luasnip = "[Snippet]",
+              nvim_lsp = "[LSP]",
+              copilot = "[Copilot]",
+              buffer = "[Buffer]",
+              digraphs = "[Digraphs]",
+              async_path = "[Path]",
+            })
+          }),
+        },
         sources = cmp.config.sources({
-          { name = "nvim_lsp", priority = 1, keyword_length = 3 },
-          { name = "buffer", priority = 1, keyword_length = 3 },
-          { name = "copilot", priority = 1, keyword_length = 3 },
-          { name = 'luasnip', priority = 2 },
-          { name = "digraphs", priority = 3 },
-          { name = "path", priority = 4 },
+          { name = "nvim_lsp", priority = 8 },
+          { name = 'luasnip', priority = 7 },
+          { name = "buffer", priority = 7 },
+          { name = "copilot", priority = 6 },
+          { name = "spell", keyword_length = 3, priority = 5, keyword_pattern = [[\w\+]] },
+          { name = "dictionary", keyword_length = 3, priority = 5, keyword_pattern = [[\w\+]] },
+          { name = "digraphs", priority = 4 },
+          { name = "async_path", priority = 3 },
         }),
-        view = {
-          entries = {
-            name = "custom",
+        sorting = {
+          priority_weight = 1.0,
+          comparators = {
+            cmp.config.compare.locality,
+            cmp.config.compare.recently_used,
+            cmp.config.compare.score, -- based on :  score = score + ((#sources - (source_index - 1)) * sorting.priority_weight)
+            cmp.config.compare.offset,
+            cmp.config.compare.order,
           },
         },
         cmdline = {
@@ -1495,7 +1554,7 @@ require("lazy").setup({
           [":"] = {
             mapping = cmp.mapping.preset.cmdline(),
             sources = cmp.config.sources({
-              { name = "path" }
+              { name = "async_path" }
             }, {
               {
                 name = "cmdline",
@@ -1716,7 +1775,12 @@ require("lazy").setup({
       }
     end
   },
-}, {})
+}, {
+  checker = {
+    enabled = true,
+    notify = false,
+  },
+})
 
 -- =============================================================================
 -- Abbreviations

@@ -19,9 +19,6 @@ install_linux() {
     bash \
     cc65 \
     cmake \
-    cargo-outdated \
-    cargo-udeps \
-    cargo-watch \
     coreutils \
     curl \
     docker \
@@ -96,9 +93,6 @@ install_macos() {
   brew install \
     bash \
     bat \
-    cargo-outdated \
-    cargo-udeps \
-    cargo-watch \
     cc65 \
     cmake \
     coreutils \
@@ -172,8 +166,7 @@ install_crates() {
 
   rustup component add \
     clippy \
-    llvm-tools-preview \
-    rust-analyzer
+    llvm-tools-preview
 
   cargo install \
     cargo-asm \
@@ -181,17 +174,21 @@ install_crates() {
     cargo-expand \
     cargo-generate \
     cargo-info \
+    cargo-outdated \
+    cargo-release \
     cargo-tree \
+    cargo-udeps \
+    cargo-watch \
     du-dust \
     flamegraph \
     irust \
     mprocs \
     porsmo \
     ripgrep \
+    runcc \
     sccache \
     speedtest-rs \
     wiki-tui \
-    runcc \
     rtx-cli
 
   cargo install nu --features=extra
@@ -214,6 +211,7 @@ install_npm() {
     @fsouza/prettierd \
     eslint_d \
     jsonlint \
+    neovim \
     markdownlint \
     markdownlint-cli \
     stylelint \

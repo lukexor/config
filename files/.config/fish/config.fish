@@ -72,27 +72,29 @@ starship init fish | source
 # =============================================================================
 
 fish_add_path -gm \
-    ~/bin \
-    $local_bin \
-    ~/snap/bin \
-    ~/.cargo/bin \
-    $npm_dir \
     ~/.fzf/bin \
-    /usr/local/go/bin \
-    /usr/local/bin \
-    /usr/bin \
-    /bin \
-    /usr/sbin \
-    /sbin
+    $npm_dir \
+    ~/.cargo/bin \
+    ~/snap/bin \
+    $local_bin \
+    ~/bin
 
 if macos
-    fish_add_path -gm \
+    fish_add_path -ga \
         /Applications/kitty.app/Contents/MacOS \
         (brew --prefix)/opt/llvm/bin
 else if linux 
-    fish_add_path -gm \
+    fish_add_path -ga \
         /usr/games
 end
+
+fish_add_path -ga \
+    /usr/local/bin \
+    /usr/local/go/bin
+    /usr/sbin \
+    /usr/bin \
+    /sbin \
+    /bin
 
 set -gx CLICOLOR 1
 set -gx EDITOR "nvim"
@@ -101,8 +103,8 @@ set -gx MANPAGER "nvim +Man!"
 
 # Tools
 set -gx FZF_DEFAULT_OPTS "--height 50% --layout=reverse --border --inline-info"
-set -gx FZF_CTRL_T_COMMAND "rg --files --hidden --no-ignore --glob !.git --glob !node_modules"
-set -gx FZF_DEFAULT_COMMAND "rg --files --hidden --no-ignore --glob !.git --glob !node_modules"
+set -gx FZF_CTRL_T_COMMAND "rg --files --hidden"
+set -gx FZF_DEFAULT_COMMAND "rg --files --hidden"
 set -gx LESS "-RFX"
 # NOTE: To debug rust-analyzer
 # set -gx RA_LOG "info,salsa=off,chalk=off"
