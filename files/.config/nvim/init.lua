@@ -129,7 +129,7 @@ local function bool2str(bool) return bool and "on" or "off" end
 -- Settings
 -- -----------------------------------------------------------------------------
 
-map("<localleader>w", [[&fo =~ 't' ? ":set fo-=t<CR>" : ":set fo+=t<CR>"]],
+map("<localleader>w", [[&fo =~ 't' ? "<cmd>set fo-=t<CR>" : "<cmd>set fo+=t<CR>"]],
   { expr = true, desc = "Toggle Text Auto-wrap" })
 
 vim.g.gutter_enabled = true
@@ -167,28 +167,28 @@ end, { desc = "Toggle Auto-completion" })
 -- Plugin Manager
 -- -----------------------------------------------------------------------------
 
-map("<leader>pi", ":Lazy install<CR>", { desc = "Install Plugins" })
-map("<leader>ps", ":Lazy<CR>", { desc = "Plugin Status" })
-map("<leader>pu", ":Lazy check<CR>", { desc = "Check Plugin Updates" })
-map("<leader>pU", ":Lazy sync<CR>", { desc = "Update Plugins" })
+map("<leader>pi", "<cmd>Lazy install<CR>", { desc = "Install Plugins" })
+map("<leader>ps", "<cmd>Lazy<CR>", { desc = "Plugin Status" })
+map("<leader>pu", "<cmd>Lazy check<CR>", { desc = "Check Plugin Updates" })
+map("<leader>pU", "<cmd>Lazy sync<CR>", { desc = "Update Plugins" })
 
 -- -----------------------------------------------------------------------------
 -- Manage Buffers
 -- -----------------------------------------------------------------------------
 
-map("<leader>w", ":w<CR>", { desc = "Save" })
-map("<leader>W", ":noa w<CR>", { desc = "Save/No Formatting" })
-map("<leader>q", ":confirm q<CR>", { desc = "Quit" })
-map("<leader>Q", ":confirm qall<CR>", { desc = "Quit All" })
-map("<leader>O", ":%bd|e#|bd#<CR>", { desc = "Quit all but current" })
-map("<leader>n", ":enew<CR>", { desc = "New Buffer" })
+map("<leader>w", "<cmd>w<CR>", { desc = "Save" })
+map("<leader>W", "<cmd>noa w<CR>", { desc = "Save/No Formatting" })
+map("<leader>q", "<cmd>confirm q<CR>", { desc = "Quit" })
+map("<leader>Q", "<cmd>confirm qall<CR>", { desc = "Quit All" })
+map("<leader>O", "<cmd>%bd|e#|bd#<CR>", { desc = "Quit all but current" })
+map("<leader>n", "<cmd>enew<CR>", { desc = "New Buffer" })
 
-map("<leader>h", ":bp<CR>", { silent = true, desc = "Go to Previous Buffer" })
-map("<leader>l", ":bn<CR>", { silent = true, desc = "Go to Next Buffer" })
+map("<leader>h", "<cmd>bp<CR>", { silent = true, desc = "Go to Previous Buffer" })
+map("<leader>l", "<cmd>bn<CR>", { silent = true, desc = "Go to Next Buffer" })
 map("<leader><leader>", "<C-^>", { desc = "Alternate Buffer" })
 
-map("|", ":vsplit<CR>", { desc = "Vertical Split" })
-map("\\", ":split<CR>", { desc = "Horizontal Split" })
+map("|", "<cmd>vsplit<CR>", { desc = "Vertical Split" })
+map("\\", "<cmd>split<CR>", { desc = "Horizontal Split" })
 
 -- -----------------------------------------------------------------------------
 -- Navigation
@@ -202,10 +202,10 @@ map("k", [[ v:count > 0 ? "m'" . v:count . 'k' : "gk" ]], { mode = { "n", "v" },
 map("<leader>-", "<C-w>_<C-w>|", { desc = "Maximize window" })
 map("<leader>=", "<C-w>=", { desc = "Equal Window Sizes" })
 
-map("<S-Down>", ":resize -5<CR>", { desc = "Reduce Height" })
-map("<S-Up>", ":resize +5<CR>", { desc = "Increase Height" })
-map("<S-Left>", ":vertical resize +5<CR>", { desc = "Reduce Width" })
-map("<S-Right>", ":vertical resize -5<CR>", { desc = "Increase Width" })
+map("<S-Down>", "<cmd>resize -5<CR>", { desc = "Reduce Height" })
+map("<S-Up>", "<cmd>resize +5<CR>", { desc = "Increase Height" })
+map("<S-Left>", "<cmd>vertical resize +5<CR>", { desc = "Reduce Width" })
+map("<S-Right>", "<cmd>vertical resize -5<CR>", { desc = "Increase Width" })
 
 map("<C-h>", "<C-w>h", { desc = "Go to Nth left window" })
 map("<C-j>", "<C-w>j", { desc = "Go to Nth below window" })
@@ -227,18 +227,18 @@ map("cd",
 -- Editing
 -- -----------------------------------------------------------------------------
 
-map("<leader>Ef", ":edit <cfile><CR>", { desc = "Edit File" })
+map("<leader>Ef", "<cmd>edit <cfile><CR>", { desc = "Edit File" })
 map("gx", system_open, { desc = "Open File Externally" })
 
-map("<leader>ve", ":edit $MYVIMRC<CR>", { desc = "Edit Nvim Config" })
-map("<leader>vr", ":source $MYVIMRC<CR>:edit<CR>", { desc = "Reload Nvim Config" })
+map("<leader>ve", "<cmd>edit $MYVIMRC<CR>", { desc = "Edit Nvim Config" })
+map("<leader>vr", "<cmd>source $MYVIMRC<CR>:edit<CR>", { desc = "Reload Nvim Config" })
 
 map("x", '"_x', { desc = "Delete Under" })
 map("X", '"_X', { desc = "Delete Before" })
 
 -- "==" honors indent
-map("<leader>j", ":m .+1<CR>==", { silent = true, desc = "Move Line Up" })
-map("<leader>k", ":m .-2<CR>==", { silent = true, desc = "Move Line Down" })
+map("<leader>j", "<cmd>m .+1<CR>==", { silent = true, desc = "Move Line Up" })
+map("<leader>k", "<cmd>m .-2<CR>==", { silent = true, desc = "Move Line Down" })
 
 -- Keep cursor centered
 map("n", "nzzzv", { desc = "repeat latest / or ?" })
@@ -262,7 +262,7 @@ map("+", 'V"_dP', { desc = "Replace current line with yank" })
 vim.api.nvim_create_user_command("DiffOrig",
   "vert new | set bt=nofile | r ++edit # | 0d_ | diffthis | wincmd p | diffthis", {})
 
-map("<localleader>Tb", ":%s/\\s\\+$//<CR>", { desc = "Trim Trailing Blanks" })
+map("<localleader>Tb", "<cmd>%s/\\s\\+$//<CR>", { desc = "Trim Trailing Blanks" })
 
 map("jj", "<Esc>", { mode = "i", remap = true, desc = "Escape" })
 map("<C-c>", "<Esc>", { mode = "i", remap = true, desc = "Escape" })
@@ -281,16 +281,16 @@ map(",", ",<C-g>u", { mode = "i", desc = "," })
 map("!", "!<C-g>u", { mode = "i", desc = "!" })
 map("?", "?<C-g>u", { mode = "i", desc = "?" })
 
-map("<localleader>ab", ":.!toilet -w 200 -f term -F border<CR>", { desc = "ASCII Border" })
-map("<localleader>as", ":.!figlet -w 200 -f standard<CR>", { desc = "ASCII Standard" })
-map("<localleader>aS", ":.!figlet -w 200 -f small<CR>", { desc = "ASCII Small" })
+map("<localleader>ab", "<cmd>.!toilet -w 200 -f term -F border<CR>", { desc = "ASCII Border" })
+map("<localleader>as", "<cmd>.!figlet -w 200 -f standard<CR>", { desc = "ASCII Standard" })
+map("<localleader>aS", "<cmd>.!figlet -w 200 -f small<CR>", { desc = "ASCII Small" })
 
 -- -----------------------------------------------------------------------------
 -- Git
 -- -----------------------------------------------------------------------------
 
-map("<leader>gS", ":Git<CR>", { desc = "Git Status" })
-map("<leader>gB", ":Git blame<CR>", { desc = "Git Blame" })
+map("<leader>gS", "<cmd>Git<CR>", { desc = "Git Status" })
+map("<leader>gB", "<cmd>Git blame<CR>", { desc = "Git Blame" })
 
 -- -----------------------------------------------------------------------------
 -- Disabled mappings
@@ -303,10 +303,10 @@ map("gQ", "<nop>", { desc = "Disable ExMode" })
 -- Search
 -- -----------------------------------------------------------------------------
 
-map("<leader><CR>", ":nohlsearch|diffupdate|normal !<C-l><CR>", { desc = "Clear Highlighting" })
+map("<leader><CR>", "<cmd>nohlsearch|diffupdate|normal !<C-l><CR>", { desc = "Clear Highlighting" })
 
-map("<leader>G", ":silent lgrep ", { desc = "Grep" })
-map("<localleader>S", ":%s//g<left><left>", { desc = "Global Search and Replace" })
+map("<leader>G", "<cmd>silent lgrep ", { desc = "Grep" })
+map("<localleader>S", "<cmd>%s//g<left><left>", { desc = "Global Search and Replace" })
 map("<C-r>", '"hy:%s/<C-r>h//g<left><left>', { mode = "v", desc = "Search and Replace Selection" });
 
 -- -----------------------------------------------------------------------------
@@ -324,35 +324,35 @@ map("cP", '"*P', { desc = "Paste from clipboard before cursor" })
 -- Text Objects
 -- -----------------------------------------------------------------------------
 
-map("in(", ":<C-u>normal! f(vi(<CR>", { mode = "o", silent = true, desc = "inner next () block" })
-map("il(", ":<C-u>normal! F)vi(<CR>", { mode = "o", silent = true, desc = "inner last () block" })
-map("an(", ":<C-u>normal! f(va(<CR>", { mode = "o", silent = true, desc = "around next () block" })
-map("al(", ":<C-u>normal! F)va(<CR>", { mode = "o", silent = true, desc = "around last () block" })
-map("in(", ":<C-u>normal! f(vi(<CR><Esc>gv", { mode = "v", silent = true, desc = "inner next () block" })
-map("il(", ":<C-u>normal! F)vi(<CR><Esc>gv", { mode = "v", silent = true, desc = "inner last () block" })
-map("an(", ":<C-u>normal! f(va(<CR><Esc>gv", { mode = "v", silent = true, desc = "around next () block" })
-map("al(", ":<C-u>normal! F)va(<CR><Esc>gv", { mode = "v", silent = true, desc = "around last () block" })
+map("in(", "<cmd><C-u>normal! f(vi(<CR>", { mode = "o", silent = true, desc = "inner next () block" })
+map("il(", "<cmd><C-u>normal! F)vi(<CR>", { mode = "o", silent = true, desc = "inner last () block" })
+map("an(", "<cmd><C-u>normal! f(va(<CR>", { mode = "o", silent = true, desc = "around next () block" })
+map("al(", "<cmd><C-u>normal! F)va(<CR>", { mode = "o", silent = true, desc = "around last () block" })
+map("in(", "<cmd><C-u>normal! f(vi(<CR><Esc>gv", { mode = "v", silent = true, desc = "inner next () block" })
+map("il(", "<cmd><C-u>normal! F)vi(<CR><Esc>gv", { mode = "v", silent = true, desc = "inner last () block" })
+map("an(", "<cmd><C-u>normal! f(va(<CR><Esc>gv", { mode = "v", silent = true, desc = "around next () block" })
+map("al(", "<cmd><C-u>normal! F)va(<CR><Esc>gv", { mode = "v", silent = true, desc = "around last () block" })
 
-map("in{", ":<C-u>normal! f{vi{<CR>", { mode = "o", silent = true, desc = "inner next {} block" })
-map("il{", ":<C-u>normal! F{vi{<CR>", { mode = "o", silent = true, desc = "inner last {} block" })
-map("an{", ":<C-u>normal! f{va{<CR>", { mode = "o", silent = true, desc = "around next {} block" })
-map("al{", ":<C-u>normal! F{va{<CR>", { mode = "o", silent = true, desc = "around last {} block" })
-map("in{", ":<C-u>normal! f{vi{<CR><Esc>gv", { mode = "v", silent = true, desc = "inner next {} block" })
-map("il{", ":<C-u>normal! F{vi{<CR><Esc>gv", { mode = "v", silent = true, desc = "inner last {} block" })
-map("an{", ":<C-u>normal! f{va{<CR><Esc>gv", { mode = "v", silent = true, desc = "around next {} block" })
-map("al{", ":<C-u>normal! F{va{<CR><Esc>gv", { mode = "v", silent = true, desc = "around last {} block" })
+map("in{", "<cmd><C-u>normal! f{vi{<CR>", { mode = "o", silent = true, desc = "inner next {} block" })
+map("il{", "<cmd><C-u>normal! F{vi{<CR>", { mode = "o", silent = true, desc = "inner last {} block" })
+map("an{", "<cmd><C-u>normal! f{va{<CR>", { mode = "o", silent = true, desc = "around next {} block" })
+map("al{", "<cmd><C-u>normal! F{va{<CR>", { mode = "o", silent = true, desc = "around last {} block" })
+map("in{", "<cmd><C-u>normal! f{vi{<CR><Esc>gv", { mode = "v", silent = true, desc = "inner next {} block" })
+map("il{", "<cmd><C-u>normal! F{vi{<CR><Esc>gv", { mode = "v", silent = true, desc = "inner last {} block" })
+map("an{", "<cmd><C-u>normal! f{va{<CR><Esc>gv", { mode = "v", silent = true, desc = "around next {} block" })
+map("al{", "<cmd><C-u>normal! F{va{<CR><Esc>gv", { mode = "v", silent = true, desc = "around last {} block" })
 
-map("in[", ":<C-u>normal! f[vi[<CR>", { mode = "o", silent = true, desc = "inner next [] block" })
-map("il[", ":<C-u>normal! F[vi[<CR>", { mode = "o", silent = true, desc = "inner last [] block" })
-map("an[", ":<C-u>normal! f[va[<CR>", { mode = "o", silent = true, desc = "around next [] block" })
-map("al[", ":<C-u>normal! F[va[<CR>", { mode = "o", silent = true, desc = "around last [] block" })
-map("in[", ":<C-u>normal! f[vi[<CR><Esc>gv", { mode = "v", silent = true, desc = "inner next [] block" })
-map("il[", ":<C-u>normal! F[vi[<CR><Esc>gv", { mode = "v", silent = true, desc = "inner last [] block" })
-map("an[", ":<C-u>normal! f[va[<CR><Esc>gv", { mode = "v", silent = true, desc = "around next [] block" })
-map("al[", ":<C-u>normal! F[va[<CR><Esc>gv", { mode = "v", silent = true, desc = "around last [] block" })
+map("in[", "<cmd><C-u>normal! f[vi[<CR>", { mode = "o", silent = true, desc = "inner next [] block" })
+map("il[", "<cmd><C-u>normal! F[vi[<CR>", { mode = "o", silent = true, desc = "inner last [] block" })
+map("an[", "<cmd><C-u>normal! f[va[<CR>", { mode = "o", silent = true, desc = "around next [] block" })
+map("al[", "<cmd><C-u>normal! F[va[<CR>", { mode = "o", silent = true, desc = "around last [] block" })
+map("in[", "<cmd><C-u>normal! f[vi[<CR><Esc>gv", { mode = "v", silent = true, desc = "inner next [] block" })
+map("il[", "<cmd><C-u>normal! F[vi[<CR><Esc>gv", { mode = "v", silent = true, desc = "inner last [] block" })
+map("an[", "<cmd><C-u>normal! f[va[<CR><Esc>gv", { mode = "v", silent = true, desc = "around next [] block" })
+map("al[", "<cmd><C-u>normal! F[va[<CR><Esc>gv", { mode = "v", silent = true, desc = "around last [] block" })
 
-map("af", ":<C-u>silent! normal! [zV]z<CR>", { mode = "v", silent = true, desc = "around fold" })
-map("af", ":normal Vaf<CR>", { mode = "o", silent = true, desc = "around fold" })
+map("af", "<cmd><C-u>silent! normal! [zV]z<CR>", { mode = "v", silent = true, desc = "around fold" })
+map("af", "<cmd>normal Vaf<CR>", { mode = "o", silent = true, desc = "around fold" })
 
 function IndentTextObj(around)
   local curcol = vim.fn.col(".")
@@ -415,10 +415,10 @@ function IndentTextObj(around)
   end
 end
 
-map("ii", ":<C-u>lua IndentTextObj(true)<CR>", { mode = "o", silent = true, desc = "inner indent" })
-map("ai", ":<C-u>lua IndentTextObj(false)<CR>", { mode = "o", silent = true, desc = "around indent" })
-map("ii", ":<C-u>lua IndentTextObj(true)<CR><Esc>gv", { mode = "v", silent = true, desc = "inner indent" })
-map("ai", ":<C-u>lua IndentTextObj(false)<CR><Esc>gv", { mode = "v", silent = true, desc = "around indent" })
+map("ii", "<cmd><C-u>lua IndentTextObj(true)<CR>", { mode = "o", silent = true, desc = "inner indent" })
+map("ai", "<cmd><C-u>lua IndentTextObj(false)<CR>", { mode = "o", silent = true, desc = "around indent" })
+map("ii", "<cmd><C-u>lua IndentTextObj(true)<CR><Esc>gv", { mode = "v", silent = true, desc = "inner indent" })
+map("ai", "<cmd><C-u>lua IndentTextObj(false)<CR><Esc>gv", { mode = "v", silent = true, desc = "around indent" })
 
 -- -----------------------------------------------------------------------------
 -- Debug
@@ -510,15 +510,6 @@ require("lazy").setup({
         return math.floor(vim.o.columns * 0.75)
       end,
     },
-    init = function()
-      local notify = require("notify")
-      vim.notify = function(msg, ...)
-        if msg:match("warning: multiple different client offset_encodings") then
-          return
-        end
-        notify(msg, ...)
-      end
-    end,
   },
   -- -----------------------------------------------------------------------------
   -- VIM Enhancements
@@ -531,14 +522,11 @@ require("lazy").setup({
   {
     "famiu/bufdelete.nvim", -- Keep window layout when deleting buffers
     keys = {
-      { "<leader>D", ":confirm Bdelete<CR>", desc = "Delete Buffer" }
+      { "<leader>D", "<cmd>confirm Bdelete<CR>", desc = "Delete Buffer" }
     }
   },
   {
     "ap/vim-buftabline", -- Better buffer management
-    enabled = function()
-      return vim.bo.filetype ~= "vpm"
-    end,
     event = "BufAdd",
     keys = {
       { "<leader>1", "<Plug>BufTabLine.Go(1)", desc = "go to buffer tab 1" },
@@ -553,9 +541,7 @@ require("lazy").setup({
       { "<leader>0", "<Plug>BufTabLine.Go(-1)", desc = "go to last buffer tab" },
     },
     init = function()
-      vim.g.buftabline_show = 2    -- always
-      vim.g.buftabline_numbers = 2 -- ordinal numbers
-      vim.g.buftabline_indicators = 1
+      vim.g.buftabline_show = 0 -- never
     end,
   },
   {
@@ -585,25 +571,25 @@ require("lazy").setup({
     keys = {
       {
         "<C-u>",
-        ":call smooth_scroll#up(&scroll, 5, 1)<CR>",
+        "<cmd>call smooth_scroll#up(&scroll, 5, 1)<CR>",
         desc = "small scroll up",
         silent = true,
       },
       {
         "<C-d>",
-        ":call smooth_scroll#down(&scroll, 5, 1)<CR>",
+        "<cmd>call smooth_scroll#down(&scroll, 5, 1)<CR>",
         desc = "small scroll down",
         silent = true,
       },
       {
         "<C-b>",
-        ":call smooth_scroll#up(&scroll*2, 10, 3)<CR>",
+        "<cmd>call smooth_scroll#up(&scroll*2, 10, 3)<CR>",
         desc = "large scroll up",
         silent = true,
       },
       {
         "<C-f>",
-        ":call smooth_scroll#down(&scroll*2, 10, 3)<CR>",
+        "<cmd>call smooth_scroll#down(&scroll*2, 10, 3)<CR>",
         desc = "large scroll down",
         silent = true,
       },
@@ -651,15 +637,15 @@ require("lazy").setup({
     "sudormrfbin/cheatsheet.nvim", -- Cheatsheet Search
     cmd = { "Cheatsheet", "CheatsheetEdit" },
     keys = {
-      { "<localleader>C", ":Cheatsheet<CR>", desc = "cheatsheet" },
-      { "<localleader>E", ":CheatsheetEdit<CR>", desc = "edit cheatsheet" },
+      { "<localleader>C", "<cmd>Cheatsheet<CR>", desc = "cheatsheet" },
+      { "<localleader>E", "<cmd>CheatsheetEdit<CR>", desc = "edit cheatsheet" },
     },
   },
   {
     "dbeniamine/cheat.sh-vim", -- Online Cheat.sh lookup
     cmd = { "Cheat" },
     keys = {
-      { "<leader>cs", ":Cheat ", desc = "search cheat.sh" },
+      { "<leader>cs", "<cmd>Cheat ", desc = "search cheat.sh" },
     },
     init = function()
       vim.g.CheatSheetStayInOrigBuf = 0
@@ -671,7 +657,7 @@ require("lazy").setup({
     "stevearc/aerial.nvim", -- File symbol outline to TagBar
     cmd = "AerialToggle",
     keys = {
-      { "<leader>to", ":AerialToggle<CR>", desc = "toggle symbol outline" },
+      { "<leader>to", "<cmd>AerialToggle<CR>", desc = "toggle symbol outline" },
     },
     opts = {
       layout = {
@@ -756,7 +742,7 @@ require("lazy").setup({
     config = function()
       -- Just the defaults copied here.
       vim.keymap.set("n", "ds", "<Plug>Dsurround")
-      vim.keymap.set("n", "cS", "<Plug>CSurround")
+      vim.keymap.set("n", "cS", "<Plug>Csurround")
       vim.keymap.set("n", "ys", "<Plug>Ysurround")
       vim.keymap.set("n", "yS", "<Plug>YSurround")
       vim.keymap.set("n", "yss", "<Plug>Yssurround")
@@ -848,7 +834,7 @@ require("lazy").setup({
         map("<leader>ghb", function() gs.blame_line({ full = true }) end, { desc = "Blame Line" })
         map("<leader>ghd", gs.diffthis, { desc = "Diff This" })
         map("<leader>ghD", function() gs.diffthis("~") end, { desc = "Diff This ~" })
-        map("ih", ":<C-U>Gitsigns select_hunk<CR>", { mode = { "o", "x" }, desc = "GitSigns Select Hunk" })
+        map("ih", "<cmd><C-U>Gitsigns select_hunk<CR>", { mode = { "o", "x" }, desc = "GitSigns Select Hunk" })
       end,
     },
   },
@@ -871,7 +857,7 @@ require("lazy").setup({
     },
     cmd = "Neotree",
     keys = {
-      { "<leader>e", ":Neotree toggle reveal reveal_force_cwd<CR>", desc = "Toggle Explorer" },
+      { "<leader>e", "<cmd>Neotree toggle reveal reveal_force_cwd<CR>", desc = "Toggle Explorer" },
       {
         "<leader>o",
         function()
@@ -917,7 +903,7 @@ require("lazy").setup({
     cmd = { "ImportCost" },
     ft = { "typescript", "typescriptreact" },
     keys = {
-      { "<localleader>I", ":ImportCost<CR>", desc = "calculate import sizes" },
+      { "<localleader>I", "<cmd>ImportCost<CR>", desc = "calculate import sizes" },
     },
     init = function()
       vim.g.import_cost_virtualtext_prefix = " ▸ "
@@ -947,6 +933,78 @@ require("lazy").setup({
         return vim.ui.input(...)
       end
     end,
+  },
+  {
+    "folke/noice.nvim", -- UI improvements
+    dependencies = {
+      "MunifTanjim/nui.nvim",
+      "rcarriga/nvim-notify",
+    },
+    opts = {
+      lsp = {
+        -- TODO: filter some progress messages
+        -- TODO: Fix code actions
+        -- progress = { enabled = false },
+        signature = {
+          view = "mini",
+        },
+        message = {
+          view = "popup",
+        },
+        override = {
+          ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+          ["vim.lsp.util.stylize_markdown"] = true,
+          ["cmp.entry.get_documentation"] = true,
+        },
+      },
+      presets = {
+        command_palette = true,
+        long_message_to_split = true,
+      },
+      views = {
+        mini = {
+          position = {
+            row = -3,
+          },
+          size = {
+            width = "auto",
+            height = "auto",
+            max_height = 20,
+          },
+          win_options = {
+            winhighlight = {
+              Normal = "NormalFloat",
+            },
+            winblend = 0,
+          },
+          border = {
+            style = "rounded",
+          },
+        },
+        cmdline_popup = {
+          position = {
+            row = "35",
+            col = "50%",
+          },
+        },
+        popupmenu = {
+          position = {
+            row = "38",
+            col = "50%",
+          },
+        },
+      },
+      routes = {
+        {
+          filter = {
+            event = "msg_show",
+            kind = "",
+            find = "written",
+          },
+          opts = { skip = true },
+        },
+      },
+    }
   },
   {
     "Shatur/neovim-ayu",
@@ -1002,36 +1060,48 @@ require("lazy").setup({
           return hl and hl.foreground and { fg = string.format("#%06x", hl.foreground) }
         end
       end
+      local function macro_recording()
+        local mode = require("noice").api.statusline.mode.get()
+        if mode then
+          return string.match(mode, "^recording @.*") or ""
+        end
+        return ""
+      end
       return {
         options = {
           disabled_filetypes = { statusline = { "dashboard", "lazy" } },
           globalstatus = true,
           icons_enabled = true,
-          component_separators = { left = '', right = '' },
-          section_separators = { left = '', right = '' },
+          component_separators = { left = "", right = "" },
+          section_separators = { left = "", right = "" },
           theme = "ayu_dark",
         },
         sections = {
-          lualine_a = { "mode" },
-          lualine_b = { "branch" },
+          lualine_a = {
+            "mode",
+          },
+          lualine_b = {
+            { macro_recording, color = fg("Special") },
+            {
+              "buffers",
+              mode = 2,
+              symbols = { modified = " ", alternate_file = "濫" },
+              buffers_color = {
+                active = fg("TabLineSel"),
+                inactive = "lualine_b_inactive",
+              },
+            },
+          },
           lualine_c = {
-            { "SleuthIndicator", color = fg("Comment") },
+            { "branch", color = { fg = "#c2d94c" } },
             {
-              "filetype",
-              icon_only = true,
-              separator = "",
-              padding = { left = 1, right = 0 }
+              "diagnostics",
+              sources = { "vim_lsp" },
             },
-            {
-              "filename",
-              path = 1,
-              symbols = { modified = "", readonly = "", unnamed = "--" },
-              color = fg("Special")
-            },
-            { "diagnostics" },
           },
           lualine_x = {
             { require("lazy.status").updates, cond = require("lazy.status").has_updates, color = fg("Special") },
+            { "SleuthIndicator", color = fg("Comment") },
             { "diff" },
           },
           lualine_y = { "progress", "location" },
@@ -1055,35 +1125,23 @@ require("lazy").setup({
         "williamboman/mason.nvim",
         cmd = { "Mason", "MasonUpdate" },
         keys = {
-          { "<leader>pm", ":Mason<CR>", desc = "LSP Plugins" },
-          { "<leader>pM", ":MasonUpdate<CR>:Mason<CR>", desc = "Update LSP Servers" },
+          { "<leader>pm", "<cmd>Mason<CR>", desc = "LSP Plugins" },
+          { "<leader>pM", "<cmd>MasonUpdate<CR>:Mason<CR>", desc = "Update LSP Servers" },
         },
       },
       "hrsh7th/cmp-nvim-lsp",
       "williamboman/mason-lspconfig.nvim",
-      "kosayoda/nvim-lightbulb",    -- Lightbulb next to code actions
-      {
-        "ray-x/lsp_signature.nvim", -- Shows function signatures as you type
-        opts = {
-          bind = true,
-          doc_lines = 0,
-          floating_window_above_cur_line = true,
-          handler_opts = {
-            border = "rounded"
-          },
-          toggle_key = "<M-x>",
-        }
-      },
+      "kosayoda/nvim-lightbulb", -- Lightbulb next to code actions
       "simrat39/rust-tools.nvim",
       "jose-elias-alvarez/null-ls.nvim",
     },
     lazy = false,
     keys = {
-      { "<leader>Li", ":LspInfo<CR>", desc = "lsp info" },
-      { "<leader>LI", ":LspInfo<CR>", desc = "lsp install info" },
-      { "<leader>Ls", ":LspStart<CR>", desc = "start lsp server" },
-      { "<leader>LS", ":LspStop<CR>", desc = "stop lsp server" },
-      { "<leader>Lr", ":LspRestart<CR>", desc = "restart lsp server" },
+      { "<leader>Li", "<cmd>LspInfo<CR>", desc = "lsp info" },
+      { "<leader>LI", "<cmd>LspInfo<CR>", desc = "lsp install info" },
+      { "<leader>Ls", "<cmd>LspStart<CR>", desc = "start lsp server" },
+      { "<leader>LS", "<cmd>LspStop<CR>", desc = "stop lsp server" },
+      { "<leader>Lr", "<cmd>LspRestart<CR>", desc = "restart lsp server" },
       { "gd", NoLspClient, desc = "go to definition" },
       { "gD", NoLspClient, desc = "go to type definition" },
       { "gh", NoLspClient, desc = "display symbol information" },
@@ -1119,30 +1177,22 @@ require("lazy").setup({
       -- Use an on_attach function to only map the following keys
       -- after the language server attaches to the current buffer
       local on_attach = function(client, bufnr)
-        if vim.notify ~= nil then
-          if bufnr == nil then
-            vim.notify_once("on_attach buffer error for " .. client.config.name, vim.log.levels.ERROR, { title = "lsp" })
-          else
-            vim.notify_once("attached " .. client.config.name, vim.log.levels.INFO, { title = "lsp" })
-          end
-        end
-
         vim.fn.sign_define("DiagnosticSignError", { text = "", texthl = "LspDiagnosticsSignError" })
         vim.fn.sign_define("DiagnosticSignWarn", { text = "", texthl = "LspDiagnosticsSignWarning" })
         vim.fn.sign_define("DiagnosticSignHint", { text = "ﳵ", texthl = "LspDiagnosticsSignHint" })
         vim.fn.sign_define("DiagnosticSignInformation", { text = "ℹ", texthl = "LspDiagnosticsSignInformation" })
 
         -- See `:help vim.lsp.*` for documentation on any of the below functions
-        map("gd", ":Telescope lsp_definitions<CR>", { desc = "Go To Definition", buffer = bufnr })
-        map("gD", ":Telescope lsp_type_definitions<CR>", { desc = "Go To Type Definition", buffer = bufnr })
+        map("gd", "<cmd>Telescope lsp_definitions<CR>", { desc = "Go To Definition", buffer = bufnr })
+        map("gD", "<cmd>Telescope lsp_type_definitions<CR>", { desc = "Go To Type Definition", buffer = bufnr })
         map("gh", vim.lsp.buf.hover, { desc = "Symbol Information", buffer = bufnr })
         map("gH", vim.lsp.buf.signature_help, { desc = "Signature Information", buffer = bufnr })
-        map("gi", ":Telescope lsp_implementations<CR>", { desc = "Go To Implementation", buffer = bufnr })
-        map("gr", ":Telescope lsp_references<CR>", { desc = "References", buffer = bufnr })
+        map("gi", "<cmd>Telescope lsp_implementations<CR>", { desc = "Go To Implementation", buffer = bufnr })
+        map("gr", "<cmd>Telescope lsp_references<CR>", { desc = "References", buffer = bufnr })
         map("gR", vim.lsp.buf.rename, { desc = "Rename References", buffer = bufnr })
         map("ga", vim.lsp.buf.code_action, { desc = "Code Action", buffer = bufnr })
         map("ge", vim.diagnostic.open_float, { desc = "Diagnostics", buffer = bufnr })
-        map("<leader>S", ":Telescope lsp_document_symbols<CR>", { desc = "LSP Symbols", buffer = bufnr })
+        map("<leader>S", "<cmd>Telescope lsp_document_symbols<CR>", { desc = "LSP Symbols", buffer = bufnr })
 
         if client.supports_method("textDocument/formatting") then
           map("<localleader>f", function() lsp_format(bufnr) end, { desc = "Format", buffer = bufnr })
@@ -1159,6 +1209,7 @@ require("lazy").setup({
           [80001] = true -- File is a CommonJS module; it may be converted to an ES module.
         }
 
+        client.server_capabilities.semanticTokensProvider = false -- TODO: Fix. Highlighting is garbage right now
         vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
           function(err, result, ctx, config)
             for i, diagnostic in pairs(result.diagnostics) do
@@ -1232,16 +1283,12 @@ require("lazy").setup({
         rust_analyzer = get_options(function(opts)
           opts.settings = {
             ["rust-analyzer"] = {
-              assist = {
-                emitMustUse = true,
-              },
+              assist = { emitMustUse = true },
               cargo = {
                 features = "all",
                 -- target = "x86_64-pc-windows-msvc",
                 -- target = "x86_64-unknown-linux-musl",
-                buildScripts = {
-                  enable = true,
-                },
+                buildScripts = { enable = true },
               },
               checkOnSave = {
                 command = "clippy",
@@ -1250,13 +1297,9 @@ require("lazy").setup({
                 extraEnv = { RUSTUP_TOOLCHAIN = "nightly" },
               },
               imports = {
-                group = {
-                  enable = false,
-                },
+                group = { enable = false },
               },
-              procMacro = {
-                enable = true,
-              },
+              procMacro = { enable = true },
               -- Uncomment for debugging
               -- trace = {
               --   server = "verbose",
@@ -1265,9 +1308,9 @@ require("lazy").setup({
           }
           opts.setup = function(server_opts)
             if vim.bo.filetype == "rust" then
-              map("<leader>R", ":Make run<CR>", { desc = "cargo run" });
-              map("<leader>M", ":Make build<CR>", { desc = "cargo build" });
-              map("<leader>C", ":Make clippy<CR>", { desc = "cargo clippy" });
+              map("<leader>R", "<cmd>Make run<CR>", { desc = "cargo run" });
+              map("<leader>M", "<cmd>Make build<CR>", { desc = "cargo build" });
+              map("<leader>C", "<cmd>Make clippy<CR>", { desc = "cargo clippy" });
             end
             require("rust-tools").setup {
               -- We don't want to call lspconfig.rust_analyzer.setup() when using
@@ -1351,15 +1394,15 @@ require("lazy").setup({
     "folke/trouble.nvim", -- quickfix LSP issues
     cmd = { "TroubleToggle" },
     keys = {
-      { "<leader>tt", ":TroubleToggle<CR>", desc = "toggle diagnostics" },
+      { "<leader>tt", "<cmd>TroubleToggle<CR>", desc = "toggle diagnostics" },
       {
         "<leader>tw",
-        ":TroubleToggle workspace_diagnostics<CR>",
+        "<cmd>TroubleToggle workspace_diagnostics<CR>",
         desc = "toggle workspace diagnostics"
       },
-      { "<leader>td", ":TroubleToggle document_diagnostics<CR>", desc = "toggle document diagnostics" },
-      { "<leader>tq", ":TroubleToggle quickfix<CR>", desc = "toggle quickfix list" },
-      { "<leader>tl", ":TroubleToggle loclist<CR>", desc = "toggle location list" },
+      { "<leader>td", "<cmd>TroubleToggle document_diagnostics<CR>", desc = "toggle document diagnostics" },
+      { "<leader>tq", "<cmd>TroubleToggle quickfix<CR>", desc = "toggle quickfix list" },
+      { "<leader>tl", "<cmd>TroubleToggle loclist<CR>", desc = "toggle location list" },
     },
   },
   -- -----------------------------------------------------------------------------
@@ -1578,7 +1621,7 @@ require("lazy").setup({
       "honza/vim-snippets",
     },
     keys = {
-      { "<leader>Es", ":lua require('luasnip.loaders').edit_snippet_files()<CR>", desc = "Edit Snippets" },
+      { "<leader>Es", "<cmd>lua require('luasnip.loaders').edit_snippet_files()<CR>", desc = "Edit Snippets" },
     },
     init = function()
       vim.g.snips_author = vim.fn.system("git config --get user.name | tr -d '\n'")
@@ -1630,6 +1673,7 @@ require("lazy").setup({
         "markdown",
         "markdown_inline",
         "python",
+        "regex",
         "rust",
         "tsx",
         "typescript",
@@ -1660,6 +1704,7 @@ require("lazy").setup({
       },
       "benfowler/telescope-luasnip.nvim",
       "nvim-telescope/telescope-symbols.nvim",
+      "folke/noice.nvim",
     },
     opts = {
       defaults = {
@@ -1670,29 +1715,30 @@ require("lazy").setup({
       }
     },
     keys = {
-      { "<leader>f", ":Telescope fd<CR>", desc = "Find File" },
+      { "<leader>f", "<cmd>Telescope fd<CR>", desc = "Find File" },
       {
         "<leader>A",
-        ":Telescope fd find_command=rg,--files,--hidden,--no-ignore,--glob,!.git<CR>",
+        "<cmd>Telescope fd find_command=rg,--files,--hidden,--no-ignore,--glob,!.git<CR>",
         desc = "Find Hidden File"
       },
-      { "<leader>B", ":Telescope buffers<CR>", desc = "Buffers" },
-      { "<leader>cc", ":Telescope commands<CR>", desc = "Commands" },
-      { "<leader>F", ":Telescope resume<CR>", desc = "Resume Search" },
-      { "<leader>gb", ":Telescope git_branches<CR>", desc = "Git Branches" },
-      { "<leader>gc", ":Telescope git_bcommits<CR>", desc = "Buffer Git Commits" },
-      { "<leader>gC", ":Telescope git_commits<CR>", desc = "Git Commits" },
-      { "<leader>gf", ":Telescope git_files<CR>", desc = "Git Files" },
-      { "<leader>gt", ":Telescope git_status<CR>", desc = "Git Status" },
-      { "<leader>H", ":Telescope oldfiles<CR>", desc = "Recent Files" },
-      { "<leader>K", ":Telescope keymaps<CR>", desc = "Keymaps" },
-      { "<leader>m", ":Telescope marks<CR>", desc = "Marks" },
-      { "<leader>r", ":Telescope live_grep<CR>", desc = "Live Grep" },
-      { "<leader>gs", ":Telescope grep_string<CR>", desc = "Grep String" },
-      { "<leader>s", ":Telescope current_buffer_fuzzy_find<CR>", desc = "Buffer Search" },
-      { "<leader>dD", ":Telescope diagnostics<CR>", desc = "Diagnostics" },
-      { "<leader>Th", ":Telescope help_tags<CR>", desc = "Help Tags" },
-      { "<leader>U", ":Telescope luasnip<CR>", desc = "Snippets" },
+      { "<leader>B", "<cmd>Telescope buffers<CR>", desc = "Buffers" },
+      { "<leader>cc", "<cmd>Telescope commands<CR>", desc = "Commands" },
+      { "<leader>F", "<cmd>Telescope resume<CR>", desc = "Resume Search" },
+      { "<leader>gb", "<cmd>Telescope git_branches<CR>", desc = "Git Branches" },
+      { "<leader>gc", "<cmd>Telescope git_bcommits<CR>", desc = "Buffer Git Commits" },
+      { "<leader>gC", "<cmd>Telescope git_commits<CR>", desc = "Git Commits" },
+      { "<leader>gf", "<cmd>Telescope git_files<CR>", desc = "Git Files" },
+      { "<leader>gt", "<cmd>Telescope git_status<CR>", desc = "Git Status" },
+      { "<leader>H", "<cmd>Telescope oldfiles<CR>", desc = "Recent Files" },
+      { "<leader>K", "<cmd>Telescope keymaps<CR>", desc = "Keymaps" },
+      { "<leader>m", "<cmd>Telescope marks<CR>", desc = "Marks" },
+      { "<leader>M", "<cmd>Telescope notify<CR>", desc = "Notify Messages" },
+      { "<leader>r", "<cmd>Telescope live_grep<CR>", desc = "Live Grep" },
+      { "<leader>gs", "<cmd>Telescope grep_string<CR>", desc = "Grep String" },
+      { "<leader>s", "<cmd>Telescope current_buffer_fuzzy_find<CR>", desc = "Buffer Search" },
+      { "<leader>dD", "<cmd>Telescope diagnostics<CR>", desc = "Diagnostics" },
+      { "<leader>Th", "<cmd>Telescope help_tags<CR>", desc = "Help Tags" },
+      { "<leader>U", "<cmd>Telescope luasnip<CR>", desc = "Snippets" },
       { "<c-s>", "<Esc>h:Telescope symbols<CR>", mode = "i", desc = "Symbols" },
     },
     config = function()
@@ -1700,6 +1746,7 @@ require("lazy").setup({
       telescope.load_extension("notify")
       telescope.load_extension('luasnip')
       telescope.load_extension("fzf")
+      telescope.load_extension("noice")
     end
   },
   -- -----------------------------------------------------------------------------
@@ -1707,23 +1754,21 @@ require("lazy").setup({
   -- -----------------------------------------------------------------------------
   {
     "romainl/vim-qf", -- Tame the quickfix window
-    lazy = true,
-    -- cmd = { ":<Plug>(qf_qf_toggle)", ":<Plug>(qf_qf_next)", ":<Plug>(qf_qf_previous)" },
     keys = {
       { "[q", "<Plug>(qf_qf_previous)", desc = "previous quickfix" },
       { "]q", "<Plug>(qf_qf_next)", desc = "next quickfix" },
-      { "<leader>cq", ":cexpr []<CR>", desc = "clears quickfix list" },
+      { "<leader>cq", "<cmd>cexpr []<CR>", desc = "clears quickfix list" },
     }
   },
   {
     "vim-test/vim-test", -- run unit tests
     cmd = { "TestNearest", "TestFile", "TestSuite", "TestLast", "TestVisit" },
     keys = {
-      { "<leader>Tn", ":TestNearest<CR>", desc = "run nearest test" },
-      { "<leader>Tf", ":TestFile<CR>", desc = "run test file" },
-      { "<leader>Ts", ":TestSuite<CR>", desc = "run test suite" },
-      { "<leader>Tl", ":TestLast<CR>", desc = "run last test" },
-      { "<leader>Tv", ":TestVisit<CR>", desc = "open last test file" },
+      { "<leader>Tn", "<cmd>TestNearest<CR>", desc = "run nearest test" },
+      { "<leader>Tf", "<cmd>TestFile<CR>", desc = "run test file" },
+      { "<leader>Ts", "<cmd>TestSuite<CR>", desc = "run test suite" },
+      { "<leader>Tl", "<cmd>TestLast<CR>", desc = "run last test" },
+      { "<leader>Tv", "<cmd>TestVisit<CR>", desc = "open last test file" },
     }
   },
   {
@@ -1737,9 +1782,6 @@ require("lazy").setup({
   {
     "puremourning/vimspector", -- Debugger
     cmd = {
-      -- ":<Plug>VimspectorLaunch",
-      -- ":<Plug>VimspectorToggleBreakpoint",
-      -- ":<Plug>VimspectorToggleConditionalBreakpoint",
       "VimspectorUpdate",
     },
     keys = {
@@ -1748,10 +1790,10 @@ require("lazy").setup({
       { "<leader>dc", "<Plug>VimspectorToggleConditionalBreakpoint", desc = "toggle conditional breakpoint" },
       -- TODO: Make shortcuts easier to use when debugging
       { "<leader>dl", "<Plug>VimspectorBreakpoints", desc = "list breakpoints" },
-      { "<leader>dC", ":call vimspector#ClearBreakpoints()<CR>", desc = "clear breakpoints" },
+      { "<leader>dC", "<cmd>call vimspector#ClearBreakpoints()<CR>", desc = "clear breakpoints" },
       { "<leader>/", "<Plug>VimspectorContinue", desc = "continue execution" },
       { "<leader>!", "<Plug>VimspectorPause", desc = "pause debugger" },
-      { "<leader>ds", ":VimspectorReset<CR>", desc = "reset debugger" },
+      { "<leader>ds", "<cmd>VimspectorReset<CR>", desc = "reset debugger" },
       { "<leader>dS", "<Plug>VimspectorStop", desc = "stop debugger" },
       { "<leader>'", "<Plug>VimspectorStepOver", desc = "step over" },
       { "<leader>;", "<Plug>VimspectorStepInto", desc = "step into" },
@@ -1760,8 +1802,8 @@ require("lazy").setup({
       { "<leader>dR", "<Plug>VimspectorRestart", desc = "restart debugger" },
       { "<leader>de", "<Plug>VimspectorBalloonEval", desc = "evaluate value" },
       { "<leader>de", "<Plug>VimspectorBalloonEval", mode = "v", desc = "evaluate selection" },
-      { "<leader>dw", ":VimspectorWatch ", mode = "v", desc = "watch expression" },
-      { "<leader>dE", ":VimspectorEval ", mode = "v", desc = "evaluate expression" },
+      { "<leader>dw", "<cmd>VimspectorWatch ", mode = "v", desc = "watch expression" },
+      { "<leader>dE", "<cmd>VimspectorEval ", mode = "v", desc = "evaluate expression" },
     },
     init = function()
       vim.g.vimspector_install_gadgets = {

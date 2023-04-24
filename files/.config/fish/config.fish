@@ -89,12 +89,12 @@ else if linux
 end
 
 fish_add_path -ga \
-    /usr/local/bin \
-    /usr/local/go/bin
-    /usr/sbin \
-    /usr/bin \
+    /bin \
     /sbin \
-    /bin
+    /usr/bin \
+    /usr/sbin \
+    /usr/local/bin \
+    /usr/local/go/bin \
 
 set -gx CLICOLOR 1
 set -gx EDITOR "nvim"
