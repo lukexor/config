@@ -30,7 +30,7 @@ vim.g.python3_host_prog = "python3"
 vim.g.c_comment_strings = 1
 
 vim.o.breakindent = true
-vim.o.cmdheight = 2
+vim.o.cmdheight = 1
 vim.o.completeopt = "menu,menuone,noselect"
 vim.o.confirm = true
 vim.o.cursorline = true
@@ -39,6 +39,7 @@ vim.o.dictionary = "/usr/share/dict/words"
 vim.opt.diffopt:append { "iwhite", "algorithm:patience", "indent-heuristic" }
 vim.o.expandtab = true
 vim.o.incsearch = true
+vim.o.laststatus = 2
 vim.o.list = true
 vim.o.listchars = "tab:│ ,trail:+,extends:,precedes:,nbsp:‗"
 vim.opt.matchpairs:append { "<:>" }
@@ -48,6 +49,7 @@ vim.opt.path:append { "**" }
 vim.o.redrawtime = 10000 -- Allow more time for loading syntax on large files
 vim.o.relativenumber = true
 vim.o.scrolloff = 8
+vim.o.shortmess = ""
 vim.o.shiftround = true
 vim.o.shiftwidth = 2
 vim.o.showmatch = true
@@ -324,35 +326,35 @@ map("cP", '"*P', { desc = "Paste from clipboard before cursor" })
 -- Text Objects
 -- -----------------------------------------------------------------------------
 
-map("in(", "<cmd><C-u>normal! f(vi(<CR>", { mode = "o", silent = true, desc = "inner next () block" })
-map("il(", "<cmd><C-u>normal! F)vi(<CR>", { mode = "o", silent = true, desc = "inner last () block" })
-map("an(", "<cmd><C-u>normal! f(va(<CR>", { mode = "o", silent = true, desc = "around next () block" })
-map("al(", "<cmd><C-u>normal! F)va(<CR>", { mode = "o", silent = true, desc = "around last () block" })
-map("in(", "<cmd><C-u>normal! f(vi(<CR><Esc>gv", { mode = "v", silent = true, desc = "inner next () block" })
-map("il(", "<cmd><C-u>normal! F)vi(<CR><Esc>gv", { mode = "v", silent = true, desc = "inner last () block" })
-map("an(", "<cmd><C-u>normal! f(va(<CR><Esc>gv", { mode = "v", silent = true, desc = "around next () block" })
-map("al(", "<cmd><C-u>normal! F)va(<CR><Esc>gv", { mode = "v", silent = true, desc = "around last () block" })
+map("in(", ":<C-u>normal! f(vi(<CR>", { mode = "o", silent = true, desc = "inner next () block" })
+map("il(", ":<C-u>normal! F)vi(<CR>", { mode = "o", silent = true, desc = "inner last () block" })
+map("an(", ":<C-u>normal! f(va(<CR>", { mode = "o", silent = true, desc = "around next () block" })
+map("al(", ":<C-u>normal! F)va(<CR>", { mode = "o", silent = true, desc = "around last () block" })
+map("in(", ":<C-u>normal! f(vi(<CR><Esc>gv", { mode = "v", silent = true, desc = "inner next () block" })
+map("il(", ":<C-u>normal! F)vi(<CR><Esc>gv", { mode = "v", silent = true, desc = "inner last () block" })
+map("an(", ":<C-u>normal! f(va(<CR><Esc>gv", { mode = "v", silent = true, desc = "around next () block" })
+map("al(", ":<C-u>normal! F)va(<CR><Esc>gv", { mode = "v", silent = true, desc = "around last () block" })
 
-map("in{", "<cmd><C-u>normal! f{vi{<CR>", { mode = "o", silent = true, desc = "inner next {} block" })
-map("il{", "<cmd><C-u>normal! F{vi{<CR>", { mode = "o", silent = true, desc = "inner last {} block" })
-map("an{", "<cmd><C-u>normal! f{va{<CR>", { mode = "o", silent = true, desc = "around next {} block" })
-map("al{", "<cmd><C-u>normal! F{va{<CR>", { mode = "o", silent = true, desc = "around last {} block" })
-map("in{", "<cmd><C-u>normal! f{vi{<CR><Esc>gv", { mode = "v", silent = true, desc = "inner next {} block" })
-map("il{", "<cmd><C-u>normal! F{vi{<CR><Esc>gv", { mode = "v", silent = true, desc = "inner last {} block" })
-map("an{", "<cmd><C-u>normal! f{va{<CR><Esc>gv", { mode = "v", silent = true, desc = "around next {} block" })
-map("al{", "<cmd><C-u>normal! F{va{<CR><Esc>gv", { mode = "v", silent = true, desc = "around last {} block" })
+map("in{", ":<C-u>normal! f{vi{<CR>", { mode = "o", silent = true, desc = "inner next {} block" })
+map("il{", ":<C-u>normal! F{vi{<CR>", { mode = "o", silent = true, desc = "inner last {} block" })
+map("an{", ":<C-u>normal! f{va{<CR>", { mode = "o", silent = true, desc = "around next {} block" })
+map("al{", ":<C-u>normal! F{va{<CR>", { mode = "o", silent = true, desc = "around last {} block" })
+map("in{", ":<C-u>normal! f{vi{<CR><Esc>gv", { mode = "v", silent = true, desc = "inner next {} block" })
+map("il{", ":<C-u>normal! F{vi{<CR><Esc>gv", { mode = "v", silent = true, desc = "inner last {} block" })
+map("an{", ":<C-u>normal! f{va{<CR><Esc>gv", { mode = "v", silent = true, desc = "around next {} block" })
+map("al{", ":<C-u>normal! F{va{<CR><Esc>gv", { mode = "v", silent = true, desc = "around last {} block" })
 
-map("in[", "<cmd><C-u>normal! f[vi[<CR>", { mode = "o", silent = true, desc = "inner next [] block" })
-map("il[", "<cmd><C-u>normal! F[vi[<CR>", { mode = "o", silent = true, desc = "inner last [] block" })
-map("an[", "<cmd><C-u>normal! f[va[<CR>", { mode = "o", silent = true, desc = "around next [] block" })
-map("al[", "<cmd><C-u>normal! F[va[<CR>", { mode = "o", silent = true, desc = "around last [] block" })
-map("in[", "<cmd><C-u>normal! f[vi[<CR><Esc>gv", { mode = "v", silent = true, desc = "inner next [] block" })
-map("il[", "<cmd><C-u>normal! F[vi[<CR><Esc>gv", { mode = "v", silent = true, desc = "inner last [] block" })
-map("an[", "<cmd><C-u>normal! f[va[<CR><Esc>gv", { mode = "v", silent = true, desc = "around next [] block" })
-map("al[", "<cmd><C-u>normal! F[va[<CR><Esc>gv", { mode = "v", silent = true, desc = "around last [] block" })
+map("in[", ":<C-u>normal! f[vi[<CR>", { mode = "o", silent = true, desc = "inner next [] block" })
+map("il[", ":<C-u>normal! F[vi[<CR>", { mode = "o", silent = true, desc = "inner last [] block" })
+map("an[", ":<C-u>normal! f[va[<CR>", { mode = "o", silent = true, desc = "around next [] block" })
+map("al[", ":<C-u>normal! F[va[<CR>", { mode = "o", silent = true, desc = "around last [] block" })
+map("in[", ":<C-u>normal! f[vi[<CR><Esc>gv", { mode = "v", silent = true, desc = "inner next [] block" })
+map("il[", ":<C-u>normal! F[vi[<CR><Esc>gv", { mode = "v", silent = true, desc = "inner last [] block" })
+map("an[", ":<C-u>normal! f[va[<CR><Esc>gv", { mode = "v", silent = true, desc = "around next [] block" })
+map("al[", ":<C-u>normal! F[va[<CR><Esc>gv", { mode = "v", silent = true, desc = "around last [] block" })
 
-map("af", "<cmd><C-u>silent! normal! [zV]z<CR>", { mode = "v", silent = true, desc = "around fold" })
-map("af", "<cmd>normal Vaf<CR>", { mode = "o", silent = true, desc = "around fold" })
+map("af", ":<C-u>silent! normal! [zV]z<CR>", { mode = "v", silent = true, desc = "around fold" })
+map("af", ":normal Vaf<CR>", { mode = "o", silent = true, desc = "around fold" })
 
 function IndentTextObj(around)
   local curcol = vim.fn.col(".")
@@ -415,10 +417,10 @@ function IndentTextObj(around)
   end
 end
 
-map("ii", "<cmd><C-u>lua IndentTextObj(true)<CR>", { mode = "o", silent = true, desc = "inner indent" })
-map("ai", "<cmd><C-u>lua IndentTextObj(false)<CR>", { mode = "o", silent = true, desc = "around indent" })
-map("ii", "<cmd><C-u>lua IndentTextObj(true)<CR><Esc>gv", { mode = "v", silent = true, desc = "inner indent" })
-map("ai", "<cmd><C-u>lua IndentTextObj(false)<CR><Esc>gv", { mode = "v", silent = true, desc = "around indent" })
+map("ii", ":<C-u>lua IndentTextObj(true)<CR>", { mode = "o", silent = true, desc = "inner indent" })
+map("ai", ":<C-u>lua IndentTextObj(false)<CR>", { mode = "o", silent = true, desc = "around indent" })
+map("ii", ":<C-u>lua IndentTextObj(true)<CR><Esc>gv", { mode = "v", silent = true, desc = "inner indent" })
+map("ai", ":<C-u>lua IndentTextObj(false)<CR><Esc>gv", { mode = "v", silent = true, desc = "around indent" })
 
 -- -----------------------------------------------------------------------------
 -- Debug
@@ -942,9 +944,6 @@ require("lazy").setup({
     },
     opts = {
       lsp = {
-        -- TODO: filter some progress messages
-        -- TODO: Fix code actions
-        -- progress = { enabled = false },
         signature = {
           view = "mini",
         },
@@ -963,48 +962,46 @@ require("lazy").setup({
       },
       views = {
         mini = {
-          position = {
-            row = -3,
-          },
+          position = { row = -3 },
           size = {
             width = "auto",
             height = "auto",
             max_height = 20,
           },
           win_options = {
-            winhighlight = {
-              Normal = "NormalFloat",
-            },
+            winhighlight = { Normal = "NormalFloat" },
             winblend = 0,
           },
-          border = {
-            style = "rounded",
-          },
+          border = { style = "rounded" },
         },
         cmdline_popup = {
-          position = {
-            row = "35",
-            col = "50%",
-          },
+          position = { row = -5, col = "50%" },
         },
         popupmenu = {
-          position = {
-            row = "38",
-            col = "50%",
-          },
+          position = { row = -8, col = "50%" },
         },
       },
       routes = {
         {
           filter = {
-            event = "msg_show",
-            kind = "",
-            find = "written",
+            any = {
+              { event = "msg_show", kind = "", find = "written" },
+              {
+                event = "lsp",
+                kind = "progress",
+                any = {
+                  { find = "code_action" },
+                  { find = "cargo clippy" },
+                  { find = "formatting" },
+                  { find = "diagnostics" },
+                }
+              },
+            },
           },
           opts = { skip = true },
         },
       },
-    }
+    },
   },
   {
     "Shatur/neovim-ayu",
@@ -1078,22 +1075,18 @@ require("lazy").setup({
         },
         sections = {
           lualine_a = {
-            "mode",
-          },
-          lualine_b = {
-            { macro_recording, color = fg("Special") },
             {
               "buffers",
               mode = 2,
               symbols = { modified = " ", alternate_file = "濫" },
-              buffers_color = {
-                active = fg("TabLineSel"),
-                inactive = "lualine_b_inactive",
-              },
+              use_mode_colors = true,
             },
           },
-          lualine_c = {
+          lualine_b = {
             { "branch", color = { fg = "#c2d94c" } },
+          },
+          lualine_c = {
+            { macro_recording, color = fg("Special") },
             {
               "diagnostics",
               sources = { "vim_lsp" },
@@ -1568,10 +1561,10 @@ require("lazy").setup({
           }),
         },
         sources = cmp.config.sources({
-          { name = "nvim_lsp", priority = 8 },
-          { name = 'luasnip', priority = 7 },
-          { name = "buffer", priority = 7 },
-          { name = "copilot", priority = 6 },
+          { name = 'luasnip', priority = 8 },
+          { name = "nvim_lsp", priority = 7 },
+          { name = "copilot", priority = 7 },
+          { name = "buffer", priority = 6 },
           { name = "spell", keyword_length = 3, priority = 5, keyword_pattern = [[\w\+]] },
           { name = "dictionary", keyword_length = 3, priority = 5, keyword_pattern = [[\w\+]] },
           { name = "digraphs", priority = 4 },

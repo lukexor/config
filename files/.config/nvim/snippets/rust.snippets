@@ -74,10 +74,17 @@ snippet stn "Struct with new constructor"
         }
     }
 
-snippet pst "Pub struct definition"
+snippet pst "pub struct"
     #[derive(Debug, Clone)]
     #[must_use]
     pub struct ${1:`!p snip.rv = ''.join(word.title() for word in snip.basename.split('_'))`} {
+        ${VISUAL}$0
+    }
+
+snippet pcst "pub(crate) struct"
+    #[derive(Debug, Clone)]
+    #[must_use]
+    pub(crate) struct ${1:`!p snip.rv = ''.join(word.title() for word in snip.basename.split('_'))`} {
         ${VISUAL}$0
     }
 
@@ -85,16 +92,23 @@ snippet ty "Type alias"
     type ${1:Type} = $0;
 
 snippet en "enum"
-    #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+    #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
     #[must_use]
     enum ${1:name} {
         ${VISUAL}$0
     }
 
 snippet pen "pub enum"
-    #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+    #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
     #[must_use]
     pub enum ${1:name} {
+        ${VISUAL}$0
+    }
+
+snippet pcen "pub(crate) enum"
+    #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+    #[must_use]
+    pub(crate) enum ${1:name} {
         ${VISUAL}$0
     }
 

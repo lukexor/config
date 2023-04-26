@@ -71,7 +71,7 @@ starship init fish | source
 # Environment   {{{1
 # =============================================================================
 
-fish_add_path -gm \
+fish_add_path --path -gm \
     ~/.fzf/bin \
     $npm_dir \
     ~/.cargo/bin \
@@ -80,15 +80,15 @@ fish_add_path -gm \
     ~/bin
 
 if macos
-    fish_add_path -ga \
+    fish_add_path --path -ga \
         /Applications/kitty.app/Contents/MacOS \
         (brew --prefix)/opt/llvm/bin
 else if linux 
-    fish_add_path -ga \
+    fish_add_path --path -ga \
         /usr/games
 end
 
-fish_add_path -ga \
+fish_add_path --path -ga \
     /bin \
     /sbin \
     /usr/bin \
@@ -260,6 +260,9 @@ alias mv="mv -i"
 alias rm="rm -i"
 
 alias dirsize="fd -t d | xargs du -sh"
+function path
+    echo $PATH | string split " "
+end
 
 alias gmd="git pull && git merge origin/develop"
 alias gmm="git pull && git merge origin/main"
