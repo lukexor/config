@@ -23,7 +23,7 @@
 vim.env.PAGER = "bat"
 -- Ensure a vim-compatible shell
 vim.env.SHELL = "/bin/bash"
-vim.o.shell = vim.env.SHELL
+
 -- https://neovim.io/doc/user/provider.html
 vim.g.python3_host_prog = "python3"
 -- Highlight strings and numbers inside comments
@@ -50,6 +50,7 @@ vim.opt.path:append { "**" }
 vim.o.redrawtime = 10000 -- Allow more time for loading syntax on large files
 vim.o.relativenumber = true
 vim.o.scrolloff = 8
+vim.o.shell = vim.env.SHELL
 vim.o.shiftround = true
 vim.o.shiftwidth = 2
 vim.o.showmatch = true
@@ -528,9 +529,8 @@ require("lazy").setup({
   -- -----------------------------------------------------------------------------
   -- VIM Enhancements
   -- -----------------------------------------------------------------------------
-  "nathom/filetype.nvim", -- lua replacement of filetype.vim
   {
-    "dag/vim-fish",       -- fish shell support
+    "dag/vim-fish", -- fish shell support
     ft = "fish",
   },
   {
@@ -1414,7 +1414,8 @@ require("lazy").setup({
   -- Auto-Completion
   -- -----------------------------------------------------------------------------
   {
-    "zbirenbaum/copilot-cmp", -- Copilot auto-complete. Must load after nvim-cmp.
+    "zbirenbaum/copilot-cmp", -- Copilot auto-complete. Must load after nvim-cmp
+    event = "InsertEnter",
     dependencies =
     {
       "hrsh7th/nvim-cmp",
@@ -1428,8 +1429,11 @@ require("lazy").setup({
         }
       },
     },
-    config = function()
-      require("copilot_cmp").setup()
+    config = function(_, opts)
+      local copilot_cmp = require("copilot_cmp")
+      copilot_cmp.setup(opts)
+      -- Fixes lazy loading on attach
+      copilot_cmp._on_insert_enter()
     end
   },
   {
