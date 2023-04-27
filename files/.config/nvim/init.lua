@@ -78,7 +78,6 @@ else
 end
 
 
-
 -- =============================================================================
 -- Key Maps
 -- =============================================================================
@@ -189,8 +188,12 @@ map("<leader>h", "<cmd>bp<CR>", { silent = true, desc = "Go to Previous Buffer" 
 map("<leader>l", "<cmd>bn<CR>", { silent = true, desc = "Go to Next Buffer" })
 map("<leader><leader>", "<C-^>", { desc = "Alternate Buffer" })
 
-map("|", "<cmd>vsplit<CR>", { desc = "Vertical Split" })
-map("\\", "<cmd>split<CR>", { desc = "Horizontal Split" })
+-- Skip split macros in temporary files like editing fish command line in
+-- $EDITOR to avoid causing unnecessary split on startup due to errant "|"
+if not string.find(vim.fn.expand("%:h"), "/tmp") then
+  map("|", "<cmd>vsplit<CR>", { desc = "Vertical Split" })
+  map("\\", "<cmd>split<CR>", { desc = "Horizontal Split" })
+end
 
 -- -----------------------------------------------------------------------------
 -- Navigation
@@ -462,7 +465,6 @@ local disabled_built_ins = {
   "netrwPlugin",
   "netrwSettings",
   "netrwFileHandlers",
-  "tarPlugin",
   "tutor",
   "rplugin",
   "rrhelper",
@@ -572,10 +574,9 @@ require("lazy").setup({
       { "gs", "<Plug>(leap-from-window)", mode = { "n", "o" }, desc = "leap from window" },
     },
   },
-  "ypcrts/securemodelines",        -- Safe modelines
-  "editorconfig/editorconfig-vim", -- Parses .editorconfig
+  "ypcrts/securemodelines",  -- Safe modelines
   {
-    "kshenoy/vim-signature",       -- Show marks in gutter
+    "kshenoy/vim-signature", -- Show marks in gutter
     event = "VeryLazy"
   },
   {
@@ -1223,17 +1224,18 @@ require("lazy").setup({
             vim.lsp.diagnostic.on_publish_diagnostics(err, result, ctx, config)
           end, { update_in_insert = false }
         )
-
-        -- vim.lsp.formatexpr() seems broken with markdownlint/prettier
-        if vim.bo.filetype == "markdown" or vim.bo.filetype == "proto" then
-          vim.o.formatexpr = ""
-        end
       end
       local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
       local null_ls = require("null-ls")
       null_ls.setup {
-        on_attach = on_attach,
+        on_attach = function(client, bufnr)
+          on_attach(client, bufnr)
+          -- Disable formatexpr if not supported
+          if not require("null-ls.generators").can_run(vim.bo[bufnr].filetype, "textDocument/formatting") then
+            vim.bo[bufnr].formatexpr = nil
+          end
+        end,
         sources = {
           null_ls.builtins.code_actions.eslint_d,
           null_ls.builtins.code_actions.shellcheck,

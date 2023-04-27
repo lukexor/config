@@ -15,6 +15,9 @@
 #
 #    Personal nushell env configuration of Luke Petherbridge <me@lukeworks.tech>
 
+# Bail out if not interactive
+status is-interactive; or exit $status
+
 # =============================================================================
 # OS Utils   {{{1
 # =============================================================================
@@ -97,6 +100,7 @@ fish_add_path --path -ga \
     /usr/local/go/bin \
 
 set -gx CLICOLOR 1
+set -gx VISUAL "nvim"
 set -gx EDITOR "nvim"
 set -gx PAGER "nvim +Man!"
 set -gx MANPAGER "nvim +Man!"
