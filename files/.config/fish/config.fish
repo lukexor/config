@@ -137,14 +137,11 @@ end
 # =============================================================================
 
 function fish_user_key_bindings
-    fish_vi_key_bindings
+    fish_default_key_bindings -M insert
+    fish_vi_key_bindings --no-erase insert
 
-    bind -M insert \cw backward-kill-path-component
-    bind -M insert \cb prevd-or-backward-word
-    bind -M insert \cf nextd-or-forward-word
-    bind -M insert \co beginning-of-line
-    bind -M insert \ce end-of-line
-    bind -M insert \ct forward-char
+    bind -M insert \eb prevd-or-backward-word
+    bind -M insert \ef nextd-or-forward-word
     bind -M insert \cr fzf_history
     bind -M insert \cs fzf_file
     bind -M insert \cy fzf_dir

@@ -39,6 +39,7 @@ vim.o.dictionary = "/usr/share/dict/words"
 vim.opt.diffopt:append { "iwhite", "algorithm:patience", "indent-heuristic" }
 vim.o.expandtab = true
 vim.o.incsearch = true
+vim.o.jumpoptions = "stack,view"
 vim.o.laststatus = 2
 vim.o.list = true
 vim.o.listchars = "tab:│ ,trail:+,extends:,precedes:,nbsp:‗"
@@ -49,7 +50,6 @@ vim.opt.path:append { "**" }
 vim.o.redrawtime = 10000 -- Allow more time for loading syntax on large files
 vim.o.relativenumber = true
 vim.o.scrolloff = 8
-vim.o.shortmess = ""
 vim.o.shiftround = true
 vim.o.shiftwidth = 2
 vim.o.showmatch = true
@@ -215,6 +215,16 @@ map("<C-k>", "<C-w>k", { desc = "Go to Nth above window" })
 map("<C-l>", "<C-w>l", { desc = "Go to Nth right window" })
 
 map("gt", "<C-]>", { desc = "Go to Tag" })
+
+map("<C-a>", "<Home>", { mode = "c", desc = "Go to start of line" })
+map("<C-b>", "<Left>", { mode = "c", desc = "Go back one character" })
+map("<C-d>", "<Del>", { mode = "c", desc = "Delete one character under cursor" })
+map("<C-e>", "<End>", { mode = "c", desc = "Go to the end of line" })
+map("<C-f>", "<Right>", { mode = "c", desc = "Go forward one character" })
+map("<C-n>", "<Down>", { mode = "c", desc = "Recall newer command-line" })
+map("<C-p>", "<Up>", { mode = "c", desc = "Recall previous command-line" })
+map("<M-b>", "<S-Left>", { mode = "c", desc = "Go back one word" })
+map("<M-f>", "<S-Right>", { mode = "c", desc = "Go forward one word" })
 
 map("cd",
   function()
