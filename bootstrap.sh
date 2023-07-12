@@ -13,7 +13,6 @@ install_linux() {
 
   $sudo add-apt-repository -y ppa:neovim-ppa/stable
   $sudo apt update -y
-  set +e
   $sudo apt install -y \
     bat \
     bash \
@@ -21,9 +20,9 @@ install_linux() {
     cmake \
     coreutils \
     curl \
+    diodon \
     docker \
     exa \
-    fd \
     fish \
     fzf \
     gcc-multilib \
@@ -31,37 +30,34 @@ install_linux() {
     gnutls-bin \
     hexedit \
     hyperfine \
+    libfuse2 \
+    librust-alsa-sys-dev \
     libssl-dev \
     libx11-dev \
     libxcb-composite0-dev \
     llvm \
-    ncspot \
     node-latest-version \
     npm \
     openssl \
     pkg-config \
     postgresql \
-    procs \
     python2 \
     python3 \
-    python3-pip
+    python3-pip \
+    python3.10-venv \
     shellcheck \
     software-properties-common \
     sqlite \
-    starship \
     stow \
-    tealdeer \
     tidy \
-    tokei \
     tree \
     watchman \
-    wasm-pack \
     wget \
     yamllint
   $sudo apt autoremove
-  set -e
 
   [ ! -f ~/.local/bin/kitty ] \
+    && mkdir -p ~/.local/bin \
     && ln -s ~/.local/kitty.app/bin/kitty ~/.local/bin/kitty
 
   mkdir -p ~/.local/share/fonts
@@ -78,9 +74,7 @@ install_linux() {
 install_macos() {
   echo "Installing Packages..."
 
-  set +e
   xcode-select --install
-  set -e
   open ./assets/*.ttf
 
   if command -v brew &>/dev/null; then
@@ -89,7 +83,6 @@ install_macos() {
     bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   fi
 
-  set +e
   brew install \
     bash \
     bat \
@@ -99,7 +92,6 @@ install_macos() {
     docker \
     exa \
     exercism \
-    fd \
     fish \
     fzf \
     git \
@@ -112,25 +104,20 @@ install_macos() {
     openssl \
     postgresql \
     prettier \
-    procs \
     pylint \
     python \
     python3 \
     shellcheck \
     sqlite \
-    starship \
     stow \
-    tealdeer \
     tidy-html5 \
-    tokei \
     tree \
     watchman \
-    wasm-pack \
     wget \
     yamllint
-  set -e
 
   [ ! -f ~/.local/bin/kitty ] \
+    && mkdir -p ~/.local/bin \
     && ln -s /Applications/kitty.app/Contents/MacOS/kitty ~/.local/bin/kitty
   [ ! -f ~/Library/LaunchAgents/environment.plist ] \
     && ln -s ~/.config/environment.plist ~/Library/LaunchAgents/environment.plist
@@ -147,9 +134,7 @@ install_terminal() {
   echo "Installing Terminal..."
 
   mkdir -p ~/.local/bin
-  set +e
   curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin launch=n
-  set -e
 
   return 0
 }
@@ -157,7 +142,6 @@ install_terminal() {
 install_crates() {
   echo "Installing Crates..."
 
-  set +e
   if command -v rustup &> /dev/null; then
     rustup update
   else
@@ -180,21 +164,22 @@ install_crates() {
     cargo-udeps \
     cargo-watch \
     du-dust \
+    fd-find \
     flamegraph \
     irust \
     mprocs \
+    ncspot \
     porsmo \
+    procs \
     ripgrep \
     runcc \
-    sccache \
+    rtx-cli \
     speedtest-rs \
-    wiki-tui \
-    rtx-cli
-
-  cargo install nu --features=extra
-  nushell=$HOME/.cargo/bin/nu
-  sudo grep -qxF "$nushell" /etc/shells | wc -l || echo "$nushell" | sudo tee -a /etc/shells
-  set -e
+    starship \
+    tealdeer \
+    tokei \
+    wasm-pack \
+    wiki-tui
 
   return 0
 }
@@ -206,7 +191,6 @@ install_npm() {
   mkdir -p "$npm_dir"
   npm config set prefix "$npm_dir"
 
-  set +e
   npm install -g \
     @fsouza/prettierd \
     eslint_d \
@@ -217,7 +201,6 @@ install_npm() {
     stylelint \
     stylelint-config-standard \
     yarn
-  set -e
 
   return 0
 }
@@ -229,9 +212,8 @@ install_lolcat() {
   rm -rf lolcat
   git clone https://github.com/jaseg/lolcat
   pushd lolcat
-  set +e
   make lolcat
-  set -e
+  mkdir -p ~/.local/bin 
   cp lolcat ~/.local/bin/
   popd
   rm -rf lolcat
@@ -247,8 +229,8 @@ setup_config() {
   set -o pipefail
 
   for file in $conflicts; do
+    mv ~/"$file"{,.orig}
     echo "Moved $file to ${file}.orig"
-    mv "$file"{,.orig}
   done
 
   stow -Rv files
@@ -256,7 +238,7 @@ setup_config() {
   nvim +VimspectorUpdate \
     +qall
 
-
+  echo "Setting fish as default shell"
   shell=$(which fish)
   $sudo grep -qxF "$shell" /etc/shells | wc -l || echo "$shell" | $sudo tee -a /etc/shells
   [ "$SHELL" == "$shell" ] || chsh -s "$shell"
@@ -270,6 +252,8 @@ bootstrap() {
 
   PATH=~/bin:~/.local/bin:~/.cargo/bin:~/.npm-packages/bin:~/.fzf/bin:"$PATH"
 
+  install_terminal
+
   case "$(uname -s)" in
     Linux*)
       install_linux
@@ -282,7 +266,6 @@ bootstrap() {
       ;;
   esac
 
-  install_terminal
   install_crates
   install_npm
   install_lolcat

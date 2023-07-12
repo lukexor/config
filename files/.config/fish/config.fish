@@ -76,10 +76,10 @@ starship init fish | source
 
 fish_add_path --path -gm \
     ~/.fzf/bin \
-    $npm_dir \
+    ~/.npm-packages \
     ~/.cargo/bin \
     ~/snap/bin \
-    $local_bin \
+    ~/.local/bin \
     ~/bin
 
 if macos
@@ -113,8 +113,6 @@ set -gx LESS "-RFX"
 # NOTE: To debug rust-analyzer
 # set -gx RA_LOG "info,salsa=off,chalk=off"
 set -gx CARGO_TARGET_DIR ~/.cargo-target
-set -gx CARGO_INCREMENTAL 0 # Required for SCCACHE
-set -gx RUSTC_WRAPPER ~/.cargo/bin/sccache
 set -g activity_log ~/.activity_log.txt
 
 # ssh-agent
@@ -217,6 +215,7 @@ abbr -aU gst git status
 abbr -aU gt git tag
 abbr -aU gun git reset HEAD --
 abbr -aU h "history | head -"
+abbr -aU ir irust
 abbr -aU ls exa
 abbr -aU la exa -a
 abbr -aU lk exa -lrs size
@@ -227,8 +226,7 @@ abbr -aU nci npm ci
 abbr -aU ni npm i
 abbr -aU nr npm run
 abbr -aU ns npm start
-abbr -aU pc procs
-abbr -aU pg "ps -Ao user,uid,pid,pcpu,tty,comm | rg"
+abbr -aU ps procs
 abbr -aU py python3
 abbr -aU rd rmdir
 abbr -aU slp ssh caeledh@138.197.217.136
@@ -237,6 +235,10 @@ abbr -aU v nvim
 abbr -aU vi nvim
 abbr -aU vim nvim
 abbr -aU vimdif nvim -d
+
+function pg
+    procs | rg "PID|$argv"
+end
 
 if macos
     abbr -aU topc "ps -Ao user,uid,pid,pcpu,tty,comm -r | head"
