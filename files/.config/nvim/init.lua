@@ -1265,7 +1265,8 @@ require("lazy").setup({
       local server_opts = {
         bashls = get_options(),
         cssls = get_options(),
-        gopls = get_options(),
+        -- TODO: disabled as it's not used very much
+        -- gopls = get_options(),
         html = get_options(),
         jsonls = get_options(function(opts)
           -- Range formatting for entire document
@@ -1357,8 +1358,10 @@ require("lazy").setup({
         }
       })
       require("mason-lspconfig").setup({
+        -- TODO: disabled as it's not used very much
+        -- "gopls",
         ensure_installed = {
-          "bashls", "cssls", "gopls", "html", "jsonls", "pylsp", "clangd", "rust_analyzer", "lua_ls",
+          "bashls", "cssls", "html", "jsonls", "pylsp", "clangd", "rust_analyzer", "lua_ls",
           "tsserver", "vimls", "yamlls"
         },
         automatic_installation = true,

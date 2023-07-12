@@ -219,11 +219,11 @@ abbr -aU gt git tag
 abbr -aU gun git reset HEAD --
 abbr -aU h "history | head -"
 abbr -aU ir irust
-abbr -aU ls exa --icons --git
-abbr -aU lt exa --icons --git --tree
-abbr -aU la exa --icons --git -a
-abbr -aU lk exa --icons --git -lrs size
-abbr -aU ll exa --icons --git -l
+abbr -aU ls exa --icons
+abbr -aU lt exa --icons --tree
+abbr -aU la exa --icons -a
+abbr -aU lk exa --icons -lrs size
+abbr -aU ll exa --icons -l
 abbr -aU mkdir mkdir -p
 abbr -aU myip curl -s api.ipify.org
 abbr -aU nci npm ci

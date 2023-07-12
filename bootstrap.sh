@@ -11,8 +11,10 @@ install_linux() {
 
   LANG=${LANG:-C.UTF-8}
 
+  $sudo curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
   $sudo add-apt-repository -y ppa:neovim-ppa/stable
   $sudo apt update -y
+  $sudo apt remove nodejs libnode-dev libnode72
   $sudo apt install -y \
     bat \
     bash \
@@ -37,6 +39,7 @@ install_linux() {
     libxcb-composite0-dev \
     llvm \
     node-latest-version \
+    nodejs \
     npm \
     openssl \
     pkg-config \
@@ -56,9 +59,13 @@ install_linux() {
     yamllint
   $sudo apt autoremove
 
+  mkdir -p ~/.local/bin
+
   [ ! -f ~/.local/bin/kitty ] \
-    && mkdir -p ~/.local/bin \
     && ln -s ~/.local/kitty.app/bin/kitty ~/.local/bin/kitty
+
+  [ ! -f ~/.local/bin/bat ] \
+    && ln -s /usr/bin/batcat ~/.local/bin/bat
 
   mkdir -p ~/.local/share/fonts
   cp ./assets/*.ttf ~/.local/share/fonts/
