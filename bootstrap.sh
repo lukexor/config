@@ -172,14 +172,17 @@ install_crates() {
     porsmo \
     procs \
     ripgrep \
+    rtx-cli \
     runcc \
     rtx-cli \
+    sd \
     speedtest-rs \
     starship \
     tealdeer \
     tokei \
     wasm-pack \
-    wiki-tui
+    wiki-tui \
+    xh
 
   return 0
 }

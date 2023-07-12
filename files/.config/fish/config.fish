@@ -100,6 +100,8 @@ fish_add_path --path -ga \
     /usr/local/go/bin \
 
 set -gx CLICOLOR 1
+set -gx TERMINAL "kitty"
+set -gx KITTY_ENV "other"
 set -gx VISUAL "nvim"
 set -gx EDITOR "nvim"
 set -gx PAGER "nvim +Man!"
@@ -183,6 +185,7 @@ abbr -aU crr cargo run --release
 abbr -aU cw cargo watch
 abbr -aU ct cargo test --workspace --all-targets
 abbr -aU ct cargo test --workspace
+abbr -aU curl xh
 abbr -aU da "date +'%Y-%m-%d %H:%M:%S'"
 abbr -aU du dust
 abbr -aU find fd
@@ -216,10 +219,11 @@ abbr -aU gt git tag
 abbr -aU gun git reset HEAD --
 abbr -aU h "history | head -"
 abbr -aU ir irust
-abbr -aU ls exa
-abbr -aU la exa -a
-abbr -aU lk exa -lrs size
-abbr -aU ll exa -l
+abbr -aU ls exa --icons --git
+abbr -aU lt exa --icons --git --tree
+abbr -aU la exa --icons --git -a
+abbr -aU lk exa --icons --git -lrs size
+abbr -aU ll exa --icons --git -l
 abbr -aU mkdir mkdir -p
 abbr -aU myip curl -s api.ipify.org
 abbr -aU nci npm ci
@@ -229,6 +233,7 @@ abbr -aU ns npm start
 abbr -aU ps procs
 abbr -aU py python3
 abbr -aU rd rmdir
+abbr -aU sed sd
 abbr -aU slp ssh caeledh@138.197.217.136
 abbr -aU sshl ssh-add -L
 abbr -aU v nvim
