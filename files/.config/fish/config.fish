@@ -76,7 +76,7 @@ starship init fish | source
 
 fish_add_path --path -gm \
     ~/.fzf/bin \
-    ~/.npm-packages \
+    ~/.npm-packages/bin \
     ~/.cargo/bin \
     ~/snap/bin \
     ~/.local/bin \
@@ -187,6 +187,7 @@ abbr -aU ct cargo test --workspace --all-targets
 abbr -aU ct cargo test --workspace
 abbr -aU curl xh
 abbr -aU da "date +'%Y-%m-%d %H:%M:%S'"
+abbr -aU docker "sudo docker"
 abbr -aU du dust
 abbr -aU find fd
 abbr -aU flg CARGO_PROFILE_RELEASE_DEBUG=true cargo flamegraph --root
@@ -266,6 +267,8 @@ alias lal="cat $activity_log | head"
 alias cp="cp -i"
 alias mv="mv -i"
 alias rm="rm -i"
+
+alias start_kitty="kitty --start-as fullscreen"
 
 alias dirsize="fd -t d | xargs du -sh"
 function path

@@ -67,8 +67,8 @@ install_linux() {
   [ ! -f ~/.local/bin/bat ] \
     && ln -s /usr/bin/batcat ~/.local/bin/bat
 
-  mkdir -p ~/.local/share/fonts
-  cp ./assets/*.ttf ~/.local/share/fonts/
+  mkdir -p ~/.fonts
+  cp ./assets/*.ttf ~/.fonts/
   fc-cache -f -v
 
   curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim.appimage
