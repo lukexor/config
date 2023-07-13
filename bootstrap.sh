@@ -159,7 +159,12 @@ install_crates() {
     clippy \
     llvm-tools-preview
 
-  cargo install \
+  curl -L --proto '=https' --tlsv1.2 -sSf \
+    https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.sh \
+    | bash
+
+  cargo binstall \
+    --no-confirm --no-symlinks \
     cargo-asm \
     cargo-bloat \
     cargo-expand \
@@ -167,6 +172,7 @@ install_crates() {
     cargo-info \
     cargo-outdated \
     cargo-release \
+    cargo-tarpaulin \
     cargo-tree \
     cargo-udeps \
     cargo-watch \
@@ -174,6 +180,7 @@ install_crates() {
     fd-find \
     flamegraph \
     irust \
+    just \
     mprocs \
     ncspot \
     porsmo \
