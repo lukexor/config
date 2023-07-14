@@ -6,13 +6,24 @@ set -euo pipefail
 sudo=
 [ "$EUID" -ne 0 ] && sudo=sudo
 
+install_terminal() {
+  echo "Installing Terminal..."
+
+  mkdir -p ~/.local/bin
+  curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin launch=n
+
+  return 0
+}
+
 install_linux() {
   echo "Installing Packages..."
 
   LANG=${LANG:-C.UTF-8}
 
   $sudo curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
-  $sudo add-apt-repository -y ppa:neovim-ppa/stable
+  $sudo add-apt-repository -y \
+    ppa:neovim-ppa/stable \
+    pa:kisak/kisak-mesa
   $sudo apt update -y
   $sudo apt remove nodejs libnode-dev libnode72
   $sudo apt install -y \
@@ -26,6 +37,7 @@ install_linux() {
     docker \
     exa \
     fish \
+    fuse \
     fzf \
     gcc-multilib \
     git \
@@ -62,6 +74,7 @@ install_linux() {
   mkdir -p ~/.local/bin
 
   [ ! -f ~/.local/bin/kitty ] \
+    && mkdir -p ~/.local/bin \
     && ln -s ~/.local/kitty.app/bin/kitty ~/.local/bin/kitty
 
   [ ! -f ~/.local/bin/bat ] \
@@ -137,15 +150,6 @@ install_macos() {
   return 0
 }
 
-install_terminal() {
-  echo "Installing Terminal..."
-
-  mkdir -p ~/.local/bin
-  curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin launch=n
-
-  return 0
-}
-
 install_crates() {
   echo "Installing Crates..."
 
@@ -188,7 +192,6 @@ install_crates() {
     ripgrep \
     rtx-cli \
     runcc \
-    rtx-cli \
     sd \
     speedtest-rs \
     starship \

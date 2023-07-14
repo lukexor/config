@@ -67,7 +67,7 @@ set fish_pager_color_prefix 'normal' '--bold'
 # Prompt   {{{1
 # =============================================================================
 
-starship init fish | source
+~/.cargo/bin/starship init fish | source
 
 
 # =============================================================================
@@ -263,6 +263,7 @@ end
 # Aliases   {{{1
 # =============================================================================
 
+alias start_kitty="kitty --start-as fullscreen"
 alias cal="echo -n "" > $activity_log"
 alias lal="cat $activity_log | head"
 

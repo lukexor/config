@@ -1279,9 +1279,9 @@ require("lazy").setup({
           }
         end),
         pylsp = get_options(),
-        clangd = get_options(function(opts)
-          opts.filetypes = { "c", "cpp" }
-        end),
+        -- clangd = get_options(function(opts)
+        --   opts.filetypes = { "c", "cpp" }
+        -- end),
         rust_analyzer = get_options(function(opts)
           opts.settings = {
             ["rust-analyzer"] = {
