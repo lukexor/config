@@ -20,12 +20,9 @@ install_linux() {
 
   LANG=${LANG:-C.UTF-8}
 
-  $sudo curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
-  $sudo add-apt-repository -y \
-    ppa:neovim-ppa/stable \
-    pa:kisak/kisak-mesa
+  $sudo add-apt-repository -y ppa:neovim-ppa/stable
+  $sudo add-apt-repository -y ppa:kisak/kisak-mesa
   $sudo apt update -y
-  $sudo apt remove nodejs libnode-dev libnode72
   $sudo apt install -y \
     bat \
     bash \
@@ -50,9 +47,6 @@ install_linux() {
     libx11-dev \
     libxcb-composite0-dev \
     llvm \
-    node-latest-version \
-    nodejs \
-    npm \
     openssl \
     pkg-config \
     postgresql \
@@ -120,7 +114,6 @@ install_macos() {
     hyperfine \
     llvm \
     ncspot \
-    node \
     openssl \
     postgresql \
     prettier \
@@ -200,6 +193,8 @@ install_crates() {
     wasm-pack \
     wiki-tui \
     xh
+
+  ~/.cargo/bin/rtx install node@lts
 
   return 0
 }
