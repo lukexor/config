@@ -567,13 +567,9 @@ require("lazy").setup({
   {
     "ggandor/leap.nvim", -- Better movement with s/S, x/X, and gS
     event = "InsertEnter",
-    keys = {
-      { "s", "<Plug>(leap-forward-to)", mode = { "n", "x", "o" }, desc = "leap forward to" },
-      { "S", "<Plug>(leap-backward-to)", mode = { "n", "x", "o" }, desc = "leap backward to" },
-      { "z", "<Plug>(leap-forward-till)", mode = { "v", "o" }, desc = "leap forward till" },
-      { "Z", "<Plug>(leap-backward-till)", mode = { "v", "o" }, desc = "leap backward till" },
-      { "gs", "<Plug>(leap-from-window)", mode = { "n", "o" }, desc = "leap from window" },
-    },
+    init = function()
+      require('leap').add_default_mappings()
+    end,
   },
   "ypcrts/securemodelines",  -- Safe modelines
   {
@@ -711,6 +707,10 @@ require("lazy").setup({
     event = "VeryLazy",
   },
   {
+    "NoahTheDuke/vim-just", -- justfile support
+    event = "VeryLazy",
+  },
+  {
     "tpope/vim-surround",
     event = "VeryLazy",
     keys = {
@@ -756,7 +756,8 @@ require("lazy").setup({
     config = function()
       -- Just the defaults copied here.
       vim.keymap.set("n", "ds", "<Plug>Dsurround")
-      vim.keymap.set("n", "cS", "<Plug>Csurround")
+      vim.keymap.set("n", "cs", "<Plug>Csurround")
+      vim.keymap.set("n", "cS", "<Plug>CSurround")
       vim.keymap.set("n", "ys", "<Plug>Ysurround")
       vim.keymap.set("n", "yS", "<Plug>YSurround")
       vim.keymap.set("n", "yss", "<Plug>Yssurround")
