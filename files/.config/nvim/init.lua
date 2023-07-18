@@ -249,6 +249,7 @@ map("gx", system_open, { desc = "Open File Externally" })
 map("<leader>ve", "<cmd>edit $MYVIMRC<CR>", { desc = "Edit Nvim Config" })
 map("<leader>vr", "<cmd>source $MYVIMRC<CR>:edit<CR>", { desc = "Reload Nvim Config" })
 
+map("<leader>b", '"_', { desc = "Use the blackhole register" })
 map("x", '"_x', { desc = "Delete Under" })
 map("X", '"_X', { desc = "Delete Before" })
 
