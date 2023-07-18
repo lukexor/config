@@ -34,14 +34,12 @@ install_linux() {
     docker \
     exa \
     fish \
-    fuse \
     fzf \
     gcc-multilib \
     git \
     gnutls-bin \
     hexedit \
     hyperfine \
-    libfuse2 \
     librust-alsa-sys-dev \
     libssl-dev \
     libx11-dev \
@@ -63,7 +61,7 @@ install_linux() {
     watchman \
     wget \
     yamllint
-  $sudo apt autoremove
+  $sudo apt autoremove -y
 
   mkdir -p ~/.local/bin
 
