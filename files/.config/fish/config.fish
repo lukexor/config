@@ -189,7 +189,6 @@ abbr -aU ct cargo test --workspace --all-targets
 abbr -aU ct cargo test --workspace
 abbr -aU curl xh
 abbr -aU da "date +'%Y-%m-%d %H:%M:%S'"
-abbr -aU docker "sudo docker"
 abbr -aU du dust
 abbr -aU find fd
 abbr -aU flg CARGO_PROFILE_RELEASE_DEBUG=true cargo flamegraph --root
