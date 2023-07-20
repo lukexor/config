@@ -897,6 +897,28 @@ require("lazy").setup({
           ["<space>"] = "none",
         },
       },
+      default_component_configs = {
+        name = {
+          trailing_slash = false,
+          use_git_status_colors = true,
+          highlight = "NeoTreeFileName",
+        },
+        git_status = {
+          symbols = {
+            -- Change type
+            added     = "",  -- or "✚", but this is redundant info if you use git_status_colors on the name
+            modified  = "",  -- or "", but this is redundant info if you use git_status_colors on the name
+            deleted   = "✖", -- this can only be used in the git_status source
+            renamed   = "󰁕", -- this can only be used in the git_status source
+            -- Status type
+            untracked = "",
+            ignored   = "",
+            unstaged  = "󰄱",
+            staged    = "",
+            conflict  = "",
+          }
+        }
+      }
     },
     init = function()
       vim.g.neo_tree_remove_legacy_commands = 1
@@ -1160,7 +1182,7 @@ require("lazy").setup({
       { "<localleader>f", "gq", desc = "format buffer" },
     },
     config = function()
-      vim.fn.sign_define("LightBulbSign", { text = "", texthl = "", linehl = "", numhl = "" })
+      vim.fn.sign_define("LightBulbSign", { text = "󰌵", texthl = "", linehl = "", numhl = "" })
       require("nvim-lightbulb").setup { autocmd = { enabled = true } }
 
       vim.cmd("au! DiagnosticChanged * lua vim.diagnostic.setqflist({ open = false })")
@@ -1180,10 +1202,10 @@ require("lazy").setup({
       -- Use an on_attach function to only map the following keys
       -- after the language server attaches to the current buffer
       local on_attach = function(client, bufnr)
-        vim.fn.sign_define("DiagnosticSignError", { text = "", texthl = "LspDiagnosticsSignError" })
-        vim.fn.sign_define("DiagnosticSignWarn", { text = "", texthl = "LspDiagnosticsSignWarning" })
-        vim.fn.sign_define("DiagnosticSignHint", { text = "ﳵ", texthl = "LspDiagnosticsSignHint" })
-        vim.fn.sign_define("DiagnosticSignInformation", { text = "ℹ", texthl = "LspDiagnosticsSignInformation" })
+        vim.fn.sign_define("DiagnosticSignError", { text = "", texthl = "LspDiagnosticsSignError" })
+        vim.fn.sign_define("DiagnosticSignWarn", { text = "", texthl = "LspDiagnosticsSignWarning" })
+        vim.fn.sign_define("DiagnosticSignHint", { text = "󰌵", texthl = "LspDiagnosticsSignHint" })
+        vim.fn.sign_define("DiagnosticSignInformation", { text = "", texthl = "LspDiagnosticsSignInformation" })
 
         -- See `:help vim.lsp.*` for documentation on any of the below functions
         map("gd", "<cmd>Telescope lsp_definitions<CR>", { desc = "Go To Definition", buffer = bufnr })
