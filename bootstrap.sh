@@ -165,6 +165,7 @@ install_crates() {
     cargo-expand \
     cargo-generate \
     cargo-info \
+    cargo-leptos \
     cargo-outdated \
     cargo-release \
     cargo-tarpaulin \

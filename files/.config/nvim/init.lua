@@ -1365,6 +1365,7 @@ require("lazy").setup({
             }
           }
         end),
+        tailwindcss = get_options(),
         tsserver = get_options(),
         vimls = get_options(),
         yamlls = get_options(function(opts)
