@@ -299,8 +299,10 @@ map("!", "!<C-g>u", { mode = "i", desc = "!" })
 map("?", "?<C-g>u", { mode = "i", desc = "?" })
 
 map("<localleader>ab", "<cmd>.!toilet -w 200 -f term -F border<CR>", { desc = "ASCII Border" })
-map("<localleader>as", "<cmd>.!figlet -w 200 -f standard<CR>", { desc = "ASCII Standard" })
 map("<localleader>aS", "<cmd>.!figlet -w 200 -f small<CR>", { desc = "ASCII Small" })
+map("<localleader>as", "<cmd>.!figlet -w 200 -f standard<CR>", { desc = "ASCII Standard" })
+
+map("<leader>s", ":'<,'>!sort<CR>", { mode = "x", silent = true, desc = "Sort selection", })
 
 -- -----------------------------------------------------------------------------
 -- Git
@@ -534,6 +536,10 @@ require("lazy").setup({
   {
     "dag/vim-fish", -- fish shell support
     ft = "fish",
+  },
+  {
+    "dcharbon/vim-flatbuffers", -- Flatbuffer file support
+    ft = "fbs",
   },
   {
     "famiu/bufdelete.nvim", -- Keep window layout when deleting buffers
@@ -1111,7 +1117,7 @@ require("lazy").setup({
             {
               "buffers",
               mode = 2,
-              symbols = { modified = " ", alternate_file = "濫" },
+              symbols = { modified = " ", alternate_file = " " },
               use_mode_colors = true,
             },
           },
@@ -1297,8 +1303,7 @@ require("lazy").setup({
             }
           }
         end),
-        -- TODO: disabled as it's not used very much
-        -- gopls = get_options(),
+        gopls = get_options(),
         html = get_options(),
         jsonls = get_options(function(opts)
           -- Range formatting for entire document
@@ -1373,6 +1378,7 @@ require("lazy").setup({
             }
           }
         end),
+        matlab = get_options(),
         tailwindcss = get_options(function(opts)
           opts.filetypes = {
             "css",
