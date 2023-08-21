@@ -213,6 +213,7 @@ install_npm() {
 
   npm install -g \
     @fsouza/prettierd \
+    eslint \
     eslint_d \
     lighthouse \
     jsonlint \
