@@ -31,6 +31,7 @@ install_linux() {
     coreutils \
     curl \
     diodon \
+    direnv \
     docker \
     exa \
     fish \
@@ -67,7 +68,9 @@ install_linux() {
 
   [ ! -f ~/.local/bin/kitty ] \
     && mkdir -p ~/.local/bin \
-    && ln -s ~/.local/kitty.app/bin/kitty ~/.local/bin/kitty
+    && ln -s ~/.local/kitty.app/bin/kitty ~/.local/bin/kitty \
+    && mkdir -p ~/.local/kitty \
+    && ln -s ~/.config/kitty/linux-keybinds.conf ~/.local/kitty/keybinds.conf
 
   [ ! -f ~/.local/bin/bat ] \
     && ln -s /usr/bin/batcat ~/.local/bin/bat
@@ -102,6 +105,7 @@ install_macos() {
     cmake \
     coreutils \
     docker \
+    direnv \
     exa \
     exercism \
     fish \
@@ -129,7 +133,9 @@ install_macos() {
 
   [ ! -f ~/.local/bin/kitty ] \
     && mkdir -p ~/.local/bin \
-    && ln -s /Applications/kitty.app/Contents/MacOS/kitty ~/.local/bin/kitty
+    && ln -s /Applications/kitty.app/Contents/MacOS/kitty ~/.local/bin/kitty \
+    && mkdir -p ~/.local/kitty \
+    && ln -s ~/.config/kitty/macos-keybinds.conf ~/.local/kitty/keybinds.conf
   [ ! -f ~/Library/LaunchAgents/environment.plist ] \
     && ln -s ~/.config/environment.plist ~/Library/LaunchAgents/environment.plist
 
@@ -208,6 +214,7 @@ install_npm() {
   npm install -g \
     @fsouza/prettierd \
     eslint_d \
+    lighthouse \
     jsonlint \
     neovim \
     markdownlint \

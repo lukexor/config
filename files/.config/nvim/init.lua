@@ -906,8 +906,8 @@ require("lazy").setup({
         git_status = {
           symbols = {
             -- Change type
-            added     = "",  -- or "✚", but this is redundant info if you use git_status_colors on the name
-            modified  = "",  -- or "", but this is redundant info if you use git_status_colors on the name
+            added     = "", -- or "✚", but this is redundant info if you use git_status_colors on the name
+            modified  = "", -- or "", but this is redundant info if you use git_status_colors on the name
             deleted   = "✖", -- this can only be used in the git_status source
             renamed   = "󰁕", -- this can only be used in the git_status source
             -- Status type
@@ -1263,7 +1263,7 @@ require("lazy").setup({
           null_ls.builtins.diagnostics.jsonlint,
           null_ls.builtins.diagnostics.markdownlint,
           null_ls.builtins.diagnostics.protolint,
-          -- null_ls.builtins.diagnostics.pylint,
+          null_ls.builtins.diagnostics.pylint,
           null_ls.builtins.diagnostics.shellcheck,
           null_ls.builtins.diagnostics.stylelint,
           null_ls.builtins.diagnostics.tidy,
@@ -1288,7 +1288,15 @@ require("lazy").setup({
 
       local server_opts = {
         bashls = get_options(),
-        cssls = get_options(),
+        cssls = get_options(function(opts)
+          opts.settings = {
+            css = {
+              lint = {
+                unknownAtRules = "ignore",
+              }
+            }
+          }
+        end),
         -- TODO: disabled as it's not used very much
         -- gopls = get_options(),
         html = get_options(),
@@ -1303,9 +1311,9 @@ require("lazy").setup({
           }
         end),
         pylsp = get_options(),
-        -- clangd = get_options(function(opts)
-        --   opts.filetypes = { "c", "cpp" }
-        -- end),
+        clangd = get_options(function(opts)
+          opts.filetypes = { "c", "cpp" }
+        end),
         rust_analyzer = get_options(function(opts)
           opts.settings = {
             ["rust-analyzer"] = {
@@ -1365,7 +1373,25 @@ require("lazy").setup({
             }
           }
         end),
-        tailwindcss = get_options(),
+        tailwindcss = get_options(function(opts)
+          opts.filetypes = {
+            "css",
+            "html",
+            "javascript",
+            "javascriptreact",
+            "markdown",
+            "mdx",
+            "rust",
+            "typescript",
+            "typescriptreact",
+          }
+          opts.init_options = {
+            classAttributes = { "class", "className" },
+            userLanguages = {
+              rust = "html",
+            }
+          }
+        end),
         tsserver = get_options(),
         vimls = get_options(),
         yamlls = get_options(function(opts)
@@ -1387,7 +1413,7 @@ require("lazy").setup({
         -- "gopls",
         ensure_installed = {
           "bashls", "cssls", "html", "jsonls", "pylsp", "clangd", "rust_analyzer", "lua_ls",
-          "tsserver", "vimls", "yamlls"
+          "tailwindcss", "tsserver", "vimls", "yamlls"
         },
         automatic_installation = true,
       })

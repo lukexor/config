@@ -284,6 +284,8 @@ alias gmm="git pull && git merge origin/main"
 # Init   {{{1
 # =============================================================================
 
+direnv hook fish | source
+
 function fish_greeting
     echo "
                i  t
