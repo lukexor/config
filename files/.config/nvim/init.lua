@@ -607,7 +607,7 @@ require("lazy").setup({
     },
   },
   {
-    "kevinhwang91/nvim-ufo",
+    "kevinhwang91/nvim-ufo", -- improved vim folds
     dependencies = {
       "kevinhwang91/promise-async",
     },
@@ -634,7 +634,7 @@ require("lazy").setup({
       end
     },
     init = function()
-      vim.o.foldcolumn = 'auto'
+      vim.o.foldcolumn = '1'
       vim.o.foldlevel = 99
       vim.o.foldlevelstart = 99
       vim.o.foldenable = true
@@ -712,7 +712,7 @@ require("lazy").setup({
     event = "VeryLazy",
   },
   {
-    "tpope/vim-surround",
+    "tpope/vim-surround", -- Easy changes of surrounding quotes & brackets
     event = "VeryLazy",
     keys = {
       -- Surround text with punctuation easier 'you surround' + motion
@@ -830,7 +830,7 @@ require("lazy").setup({
     cmd = { "Git", "Gdiffsplit", "Gvdiffsplit", "GMove", "GBrowse", "GDelete" }
   },
   {
-    "lewis6991/gitsigns.nvim",
+    "lewis6991/gitsigns.nvim", -- Show added/removed/modified signs
     event = { "BufReadPre", "BufNewFile" },
     opts = {
       signs = {
@@ -936,7 +936,7 @@ require("lazy").setup({
   },
   -- TODO: Create TODO list shortcuts
   {
-    "yardnsm/vim-import-cost", -- Javascrpt import sizes
+    "yardnsm/vim-import-cost", -- Javascript import sizes
     build = "npm install --production",
     cmd = { "ImportCost" },
     ft = { "typescript", "typescriptreact" },
@@ -980,9 +980,6 @@ require("lazy").setup({
     },
     opts = {
       lsp = {
-        signature = {
-          view = "mini",
-        },
         message = {
           view = "popup",
         },
@@ -1036,7 +1033,7 @@ require("lazy").setup({
     },
   },
   {
-    "Shatur/neovim-ayu",
+    "Shatur/neovim-ayu", -- colorscheme
     init = function()
       vim.o.background = "dark"
     end,
@@ -1068,7 +1065,7 @@ require("lazy").setup({
           TabLine = { bg = "none" },
           TabLineFill = { bg = "none" },
           TabLineSel = { fg = colors.tag, bg = "none" },
-          VirtualTextInfo = { fg = colors.special },
+          VirtualTextInfo = { fg = colors.comment },
           Visual = { bg = colors.selection_bg },
           DiffAdd = { bg = "none", fg = colors.vcs_added },
           DiffDelete = { bg = "none", fg = colors.vcs_removed },
@@ -1145,7 +1142,7 @@ require("lazy").setup({
   -- LSP
   -- -----------------------------------------------------------------------------
   {
-    "neovim/nvim-lspconfig",
+    "neovim/nvim-lspconfig", -- language server
     dependencies = {
       {
         "williamboman/mason.nvim",
@@ -1318,20 +1315,52 @@ require("lazy").setup({
           opts.settings = {
             ["rust-analyzer"] = {
               assist = { emitMustUse = true },
+              cargo = {
+                features = "all",
+              },
               check = {
                 command = "clippy",
                 features = "all",
-                invocationStrategy = "once",
+              },
+              hover = {
+                actions = {
+                  references = { enable = true },
+                },
               },
               files = {
-                excludeDirs = { os.getenv("CARGO_TARGET_DIR") }
+                excludeDirs = { os.getenv("CARGO_TARGET_DIR"), "target", os.getenv("HOME") .. "/.rustup" }
               },
               imports = {
                 group = { enable = false },
                 granularity = { enforce = true },
+                prefix = "crate",
+              },
+              inlayHints = {
+                bindingModeHints = { enable = true },
+                closingBraceHints = { minLines = 1 },
+                closureCaptureHints = { enable = true },
+                discriminantHints = { enable = true },
+                expressionAdjustmentHints = { enable = true },
+                lifetimeElisionHints = { enable = true },
               },
               interpret = { tests = true },
-              lru = { capacity = 512 }
+              lens = {
+                references = {
+                  adt = { enable = true },
+                  enumVariant = { enable = true },
+                  method = { enable = true },
+                  trait = { enable = true },
+                },
+              },
+              lru = { capacity = 512 },
+              procMacro = {
+                ignored = {},
+              },
+              workspace = {
+                symbol = {
+                  search = { limit = 512 },
+                },
+              },
               -- Uncomment for debugging
               -- trace = {
               --   server = "verbose",
@@ -1350,8 +1379,8 @@ require("lazy").setup({
               server = server_opts,
               tools = {
                 inlay_hints = {
-                  parameter_hints_prefix = " ← ",
-                  other_hints_prefix = " ▸ ",
+                  parameter_hints_prefix = "← ",
+                  other_hints_prefix = "▸ ",
                   highlight = "VirtualTextInfo",
                 },
               },
@@ -1464,8 +1493,7 @@ require("lazy").setup({
   {
     "zbirenbaum/copilot-cmp", -- Copilot auto-complete. Must load after nvim-cmp
     event = "InsertEnter",
-    dependencies =
-    {
+    dependencies = {
       "hrsh7th/nvim-cmp",
       {
         "zbirenbaum/copilot.lua", -- AI auto-complete
@@ -1776,11 +1804,11 @@ require("lazy").setup({
     }
   },
   {
-    "nvim-lua/plenary.nvim", -- Async library for other plugins
+    "nvim-lua/plenary.nvim", -- Async library
     lazy = true,
   },
   {
-    "nvim-lua/popup.nvim",
+    "nvim-lua/popup.nvim", -- UI popup library
     lazy = true,
   },
   {
@@ -1863,11 +1891,11 @@ require("lazy").setup({
     }
   },
   {
-    "tpope/vim-dispatch",
+    "tpope/vim-dispatch", -- background build and test dispatcher
     cmd = { "Make", "Dispatch" }
   },
   {
-    "radenling/vim-dispatch-neovim",
+    "radenling/vim-dispatch-neovim", -- Adds neoverm terminal support to vim-dispatch
     cmd = { "Make", "Dispatch" }
   },
   {
