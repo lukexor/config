@@ -23,22 +23,22 @@ install_linux() {
   $sudo add-apt-repository -y ppa:neovim-ppa/stable
   $sudo add-apt-repository -y ppa:kisak/kisak-mesa
   $sudo apt update -y
+  # curl is not always installed on all systems
+  # diodon is a GTK+ clipboard manager
+  # gcc-multilib is used to cross-compile
   $sudo apt install -y \
     bash \
     bat \
     cc65 \
     cmake \
     coreutils \
-    # Not always installed on all systems
     curl \
-    # GTK+ clipboard manager
     diodon \
     direnv \
     docker \
     exa \
     fish \
     fzf \
-    # Used to cross-compile
     gcc-multilib \
     git \
     gnutls-bin \
@@ -83,11 +83,11 @@ install_linux() {
   cp ./assets/*.ttf ~/.fonts/
   fc-cache -f -v
 
-  curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim.appimage \
+  curl -LO --compressed https://github.com/neovim/neovim/releases/latest/download/nvim.appimage \
     && chmod u+x nvim.appimage \
     && mv nvim.appimage ~/.local/bin/nvim
 
-  curl -LO https://static.snyk.io/cli/latest/snyk-linux \
+  curl -LO --compressed https://static.snyk.io/cli/latest/snyk-linux \
     && chmod u+x snyk-linux \
     && mv snyk-linux ~/.local/bin/snyk
 
