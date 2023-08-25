@@ -24,18 +24,21 @@ install_linux() {
   $sudo add-apt-repository -y ppa:kisak/kisak-mesa
   $sudo apt update -y
   $sudo apt install -y \
-    bat \
     bash \
+    bat \
     cc65 \
     cmake \
     coreutils \
+    # Not always installed on all systems
     curl \
+    # GTK+ clipboard manager
     diodon \
     direnv \
     docker \
     exa \
     fish \
     fzf \
+    # Used to cross-compile
     gcc-multilib \
     git \
     gnutls-bin \
@@ -49,6 +52,7 @@ install_linux() {
     openssl \
     pkg-config \
     postgresql \
+    pylint \
     python2 \
     python3 \
     python3-pip \
@@ -79,9 +83,13 @@ install_linux() {
   cp ./assets/*.ttf ~/.fonts/
   fc-cache -f -v
 
-  curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim.appimage
-  chmod u+x nvim.appimage
-  mv nvim.appimage ~/.local/bin/nvim
+  curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim.appimage \
+    && chmod u+x nvim.appimage \
+    && mv nvim.appimage ~/.local/bin/nvim
+
+  curl -LO https://static.snyk.io/cli/latest/snyk-linux \
+    && chmod u+x snyk-linux \
+    && mv snyk-linux ~/.local/bin/snyk
 
   return 0
 }
@@ -90,8 +98,6 @@ install_macos() {
   echo "Installing Packages..."
 
   xcode-select --install
-  open ./assets/*.ttf
-
   if command -v brew &>/dev/null; then
     brew update
   else
@@ -104,10 +110,9 @@ install_macos() {
     cc65 \
     cmake \
     coreutils \
-    docker \
     direnv \
+    docker \
     exa \
-    exercism \
     fish \
     fzf \
     git \
@@ -115,7 +120,6 @@ install_macos() {
     hexedit \
     hyperfine \
     llvm \
-    ncspot \
     openssl \
     postgresql \
     prettier \
@@ -139,10 +143,16 @@ install_macos() {
   [ ! -f ~/Library/LaunchAgents/environment.plist ] \
     && ln -s ~/.config/environment.plist ~/Library/LaunchAgents/environment.plist
 
-  curl -LO https://github.com/neovim/neovim/releases/download/nightly/nvim-macos.tar.gz
-  tar xzf nvim-macos.tar.gz
-  mv nvim-macos/bin/nvim ~/.local/bin/nvim
-  rm -rf nvim-macos*
+  open ./assets/*.ttf
+
+  curl -LO https://github.com/neovim/neovim/releases/download/nightly/nvim-macos.tar.gz \
+    && tar xzf nvim-macos.tar.gz \
+    && mv nvim-macos/bin/nvim ~/.local/bin/nvim \
+    && rm -rf nvim-macos*
+
+  curl -LO https://static.snyk.io/cli/latest/snyk-macos \
+    && chmod u+x snyk-macos \
+    && mv snyk-macos ~/.local/bin/snyk
 
   return 0
 }
@@ -169,6 +179,7 @@ install_crates() {
     cargo-asm \
     cargo-audit \
     cargo-bloat \
+    cargo-deny \
     cargo-expand \
     cargo-generate \
     cargo-info \

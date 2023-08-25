@@ -333,12 +333,12 @@ map("<C-r>", '"hy:%s/<C-r>h//g<left><left>', { mode = "v", desc = "Search and Re
 -- Clipboard
 -- -----------------------------------------------------------------------------
 
-map("cy", '"*y', { desc = "Yank to clipboard" })
-map("cY", '"*Y', { desc = "Yank line to clipboard" })
-map("cyy", '"*yy', { desc = "Yank line to clipbard" })
-map("cy", '"*y', { mode = "v", desc = "Yank selection to clipboard" })
-map("cp", '"*p', { desc = "Paste from clipboard after cursor" })
-map("cP", '"*P', { desc = "Paste from clipboard before cursor" })
+map("cy", '"+y', { desc = "Yank to clipboard" })
+map("cY", '"+Y', { desc = "Yank line to clipboard" })
+map("cyy", '"+yy', { desc = "Yank line to clipbard" })
+map("cy", '"+y', { mode = "v", desc = "Yank selection to clipboard" })
+map("cp", '"+p', { desc = "Paste from clipboard after cursor" })
+map("cP", '"+P', { desc = "Paste from clipboard before cursor" })
 
 -- -----------------------------------------------------------------------------
 -- Text Objects
@@ -1300,7 +1300,6 @@ require("lazy").setup({
             }
           }
         end),
-        gopls = get_options(),
         html = get_options(),
         jsonls = get_options(function(opts)
           -- Range formatting for entire document
@@ -1444,8 +1443,6 @@ require("lazy").setup({
         }
       })
       require("mason-lspconfig").setup({
-        -- TODO: disabled as it's not used very much
-        -- "gopls",
         ensure_installed = {
           "bashls", "cssls", "html", "jsonls", "pylsp", "clangd", "rust_analyzer", "lua_ls",
           "tailwindcss", "tsserver", "vimls", "yamlls"
