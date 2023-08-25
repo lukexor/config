@@ -167,6 +167,7 @@ install_crates() {
   cargo binstall \
     --no-confirm --no-symlinks \
     cargo-asm \
+    cargo-audit \
     cargo-bloat \
     cargo-expand \
     cargo-generate \
