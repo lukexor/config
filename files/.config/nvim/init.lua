@@ -715,7 +715,6 @@ require("lazy").setup({
   },
   {
     "NoahTheDuke/vim-just", -- justfile support
-    event = "VeryLazy",
   },
   {
     "tpope/vim-surround", -- Easy changes of surrounding quotes & brackets
@@ -822,6 +821,12 @@ require("lazy").setup({
       { "<S-Down>", "<Plug>SchleppDown", mode = "v", desc = "move selection down" },
       { "<S-Left>", "<Plug>SchleppLeft", mode = "v", desc = "move selection left" },
       { "<S-Right>", "<Plug>SchleppRight", mode = "v", desc = "move selection right" },
+    }
+  },
+  {
+    "brenoprata10/nvim-highlight-colors",
+    opts = {
+      enable_tailwind = true,
     }
   },
   -- -----------------------------------------------------------------------------
