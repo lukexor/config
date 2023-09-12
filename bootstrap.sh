@@ -51,7 +51,6 @@ install_linux() {
     llvm \
     openssl \
     pkg-config \
-    postgresql \
     pylint \
     python2 \
     python3 \
@@ -83,13 +82,13 @@ install_linux() {
   cp ./assets/*.ttf ~/.fonts/
   fc-cache -f -v
 
-  curl -LO --compressed https://github.com/neovim/neovim/releases/latest/download/nvim.appimage \
+  curl -LO -sSf --compressed https://github.com/neovim/neovim/releases/download/stable/nvim.appimage \
     && chmod u+x nvim.appimage \
-    && mv nvim.appimage ~/.local/bin/nvim
+    && mv -f nvim.appimage ~/.local/bin/nvim
 
-  curl -LO --compressed https://static.snyk.io/cli/latest/snyk-linux \
+  curl -LO -sSf --compressed https://static.snyk.io/cli/latest/snyk-linux \
     && chmod u+x snyk-linux \
-    && mv snyk-linux ~/.local/bin/snyk
+    && mv -f snyk-linux ~/.local/bin/snyk
 
   return 0
 }
@@ -97,11 +96,14 @@ install_linux() {
 install_macos() {
   echo "Installing Packages..."
 
+  set +e
   xcode-select --install
+  set -e
   if command -v brew &>/dev/null; then
     brew update
   else
-    bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    curl -L -sSf --compressed https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh \
+    | bash
   fi
 
   brew install \
@@ -121,7 +123,6 @@ install_macos() {
     hyperfine \
     llvm \
     openssl \
-    postgresql \
     prettier \
     pylint \
     python \
@@ -145,14 +146,14 @@ install_macos() {
 
   open ./assets/*.ttf
 
-  curl -LO https://github.com/neovim/neovim/releases/download/nightly/nvim-macos.tar.gz \
+  curl -LO -sSf --compressed https://github.com/neovim/neovim/releases/download/stable/nvim-macos.tar.gz \
     && tar xzf nvim-macos.tar.gz \
-    && mv nvim-macos/bin/nvim ~/.local/bin/nvim \
+    && mv -f nvim-macos/bin/nvim ~/.local/bin/nvim \
     && rm -rf nvim-macos*
 
-  curl -LO https://static.snyk.io/cli/latest/snyk-macos \
+  curl -LO -sSf --compressed https://static.snyk.io/cli/latest/snyk-macos \
     && chmod u+x snyk-macos \
-    && mv snyk-macos ~/.local/bin/snyk
+    && mv -f snyk-macos ~/.local/bin/snyk
 
   return 0
 }
@@ -170,12 +171,13 @@ install_crates() {
     clippy \
     llvm-tools-preview
 
-  curl -L --proto '=https' --tlsv1.2 -sSf \
+  curl -L \
     https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.sh \
     | bash
 
   cargo binstall \
     --no-confirm --no-symlinks \
+    bottom \
     cargo-asm \
     cargo-audit \
     cargo-bloat \

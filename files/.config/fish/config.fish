@@ -170,91 +170,91 @@ end
 # Abbreviations   {{{1
 # =============================================================================
 
-abbr -aU _ sudo
-abbr -aU cat bat -P
-abbr -aU cb cargo build
-abbr -aU cbr cargo build --release
-abbr -aU cc cargo clippy
-abbr -aU cca cargo clippy --all-targets
-abbr -aU cdoc cargo doc
-abbr -aU cdoco cargo doc --open
-abbr -aU cfg cd ~/config
-abbr -aU cp cp -ia
-abbr -aU cr cargo run
-abbr -aU crd cargo run --profile dev-opt
-abbr -aU cre cargo run --example
-abbr -aU crr cargo run --release
-abbr -aU cw cargo watch
-abbr -aU ct cargo test --workspace --all-targets
-abbr -aU ct cargo test --workspace
-abbr -aU curl xh
-abbr -aU da "date +'%Y-%m-%d %H:%M:%S'"
-abbr -aU du dust
-abbr -aU find fd
-abbr -aU flg CARGO_PROFILE_RELEASE_DEBUG=true cargo flamegraph --root
-abbr -aU ga git add
-abbr -aU gb git branch -v
-abbr -aU gba git branch -a
-abbr -aU gbd git branch -d
-abbr -aU gbm git branch -v --merged
-abbr -aU gbnm git branch -v --no-merged
-abbr -aU gc git commit
-abbr -aU gcam git commit --amend
-abbr -aU gcb git checkout -b
-abbr -aU gco git checkout
-abbr -aU gcp git cherry-pick
-abbr -aU gd git diff
-abbr -aU gdc git diff --cached
-abbr -aU gdt git difftool
-abbr -aU gf git fetch origin
-abbr -aU gm git merge
-abbr -aU gpl git pull
-abbr -aU gps git push
-abbr -aU gr git restore
-abbr -aU grep rg
-abbr -aU grhh git reset HEAD --hard
-abbr -aU grm git rm
-abbr -aU gs git switch
-abbr -aU gsl git stash list
-abbr -aU gst git status
-abbr -aU gt git tag
-abbr -aU gun git reset HEAD --
-abbr -aU h "history | head -"
-abbr -aU ir irust
-abbr -aU ls exa --icons
-abbr -aU lt exa --icons --tree
-abbr -aU la exa --icons -a
-abbr -aU lk exa --icons -lrs size
-abbr -aU ll exa --icons -l
-abbr -aU mkdir mkdir -p
-abbr -aU myip curl -s api.ipify.org
-abbr -aU nci npm ci
-abbr -aU ni npm i
-abbr -aU nr npm run
-abbr -aU ns npm start
-abbr -aU ps procs
-abbr -aU py python3
-abbr -aU rd rmdir
-abbr -aU sed sd
-abbr -aU slp ssh caeledh@138.197.217.136
-abbr -aU sshl ssh-add -L
-abbr -aU v nvim
-abbr -aU vi nvim
-abbr -aU vim nvim
-abbr -aU vimdif nvim -d
+abbr -a _ sudo
+abbr -a cat bat -P
+abbr -a cb cargo build
+abbr -a cbr cargo build --release
+abbr -a cc cargo clippy
+abbr -a cca cargo clippy --all-targets
+abbr -a cdoc cargo doc
+abbr -a cdoco cargo doc --open
+abbr -a cfg cd ~/config
+abbr -a cp cp -ia
+abbr -a cr cargo run
+abbr -a crd cargo run --profile dev-opt
+abbr -a cre cargo run --example
+abbr -a crr cargo run --release
+abbr -a cw cargo watch
+abbr -a ct cargo test --workspace --all-targets
+abbr -a ct cargo test --workspace
+abbr -a curl xh
+abbr -a da "date +'%Y-%m-%d %H:%M:%S'"
+abbr -a du dust
+abbr -a find fd
+abbr -a flg CARGO_PROFILE_RELEASE_DEBUG=true cargo flamegraph --root
+abbr -a ga git add
+abbr -a gb git branch -v
+abbr -a gba git branch -a
+abbr -a gbd git branch -d
+abbr -a gbm git branch -v --merged
+abbr -a gbnm git branch -v --no-merged
+abbr -a gc git commit
+abbr -a gcam git commit --amend
+abbr -a gcb git checkout -b
+abbr -a gco git checkout
+abbr -a gcp git cherry-pick
+abbr -a gd git diff
+abbr -a gdc git diff --cached
+abbr -a gdt git difftool
+abbr -a gf git fetch origin
+abbr -a gm git merge
+abbr -a gpl git pull
+abbr -a gps git push
+abbr -a gr git restore
+abbr -a grep rg
+abbr -a grhh git reset HEAD --hard
+abbr -a grm git rm
+abbr -a gs git switch
+abbr -a gsl git stash list
+abbr -a gst git status
+abbr -a gt git tag
+abbr -a gun git reset HEAD --
+abbr -a h "history | head -"
+abbr -a ir irust
+abbr -a ls exa --icons
+abbr -a lt exa --icons --tree
+abbr -a la exa --icons -a
+abbr -a lk exa --icons -lrs size
+abbr -a ll exa --icons -l
+abbr -a mkdir mkdir -p
+abbr -a myip curl -s api.ipify.org
+abbr -a nci npm ci
+abbr -a ni npm i
+abbr -a nr npm run
+abbr -a ns npm start
+abbr -a ps procs
+abbr -a py python3
+abbr -a rd rmdir
+abbr -a sed sd
+abbr -a slp ssh caeledh@138.197.217.136
+abbr -a sshl ssh-add -L
+abbr -a v nvim
+abbr -a vi nvim
+abbr -a vim nvim
+abbr -a vimdif nvim -d
 
 function pg
     procs | rg "PID|$argv"
 end
 
 if macos
-    abbr -aU topc "ps -Ao user,uid,pid,pcpu,tty,comm -r | head"
-    abbr -aU topm "ps -Ao user,uid,pid,pmem,tty,comm -m | head"
-    abbr -aU o open
+    abbr -a topc "ps -Ao user,uid,pid,pcpu,tty,comm -r | head"
+    abbr -a topm "ps -Ao user,uid,pid,pmem,tty,comm -m | head"
+    abbr -a o open
 else if linux
-    abbr -aU topc "ps -Ao user,uid,pid,pcpu,tty,comm --sort=-pcpu | head"
-    abbr -aU topm "ps -Ao user,uid,pid,pmem,tty,comm --sort=-pmem | head"
-    abbr -aU o xdg-open
+    abbr -a topc "ps -Ao user,uid,pid,pcpu,tty,comm --sort=-pcpu | head"
+    abbr -a topm "ps -Ao user,uid,pid,pmem,tty,comm --sort=-pmem | head"
+    abbr -a o xdg-open
 end
 
 
