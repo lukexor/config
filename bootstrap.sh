@@ -102,8 +102,8 @@ install_macos() {
   if command -v brew &>/dev/null; then
     brew update
   else
-    curl -L -sSf --compressed https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh \
-    | bash
+    mkdir ~/.local/homebrew && curl -L https://github.com/Homebrew/brew/tarball/master | tar xz --strip 1 -C ~/.local/homebrew
+    ln -s ~/.local/homebrew/bin/brew ~/.local/bin/brew
   fi
 
   brew install \
@@ -122,8 +122,10 @@ install_macos() {
     hexedit \
     hyperfine \
     llvm \
+    neovim \
     openssl \
     prettier \
+    pulseaudio \
     pylint \
     python \
     python3 \
@@ -141,15 +143,8 @@ install_macos() {
     && ln -s /Applications/kitty.app/Contents/MacOS/kitty ~/.local/bin/kitty \
     && mkdir -p ~/.local/kitty \
     && ln -s ~/.config/kitty/macos-keybinds.conf ~/.local/kitty/keybinds.conf
-  [ ! -f ~/Library/LaunchAgents/environment.plist ] \
-    && ln -s ~/.config/environment.plist ~/Library/LaunchAgents/environment.plist
 
   open ./assets/*.ttf
-
-  curl -LO -sSf --compressed https://github.com/neovim/neovim/releases/download/stable/nvim-macos.tar.gz \
-    && tar xzf nvim-macos.tar.gz \
-    && mv -f nvim-macos/bin/nvim ~/.local/bin/nvim \
-    && rm -rf nvim-macos*
 
   curl -LO -sSf --compressed https://static.snyk.io/cli/latest/snyk-macos \
     && chmod u+x snyk-macos \
@@ -175,6 +170,7 @@ install_crates() {
     https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.sh \
     | bash
 
+  # TODO: Handle github rate-limiting
   cargo binstall \
     --no-confirm --no-symlinks \
     bottom \
@@ -213,14 +209,13 @@ install_crates() {
     wiki-tui \
     xh
 
-  ~/.cargo/bin/rtx install node@lts
-
   return 0
 }
 
 install_npm() {
   echo "Installing Npm..."
 
+  rtx install node@lts
   npm_dir=~/.npm-packages
   mkdir -p "$npm_dir"
   npm config set prefix "$npm_dir"
@@ -302,11 +297,11 @@ bootstrap() {
       ;;
   esac
 
+  # TODO: Set up kity/fish/lolcat first, then install packages
+  setup_config
   install_crates
   install_npm
   install_lolcat
-
-  setup_config
 
   echo "Bootstrap Complete!"
 
