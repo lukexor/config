@@ -189,6 +189,7 @@ abbr -a ct cargo test --workspace --all-targets
 abbr -a ct cargo test --workspace
 abbr -a curl xh
 abbr -a da "date +'%Y-%m-%d %H:%M:%S'"
+abbr -a dc docker compose
 abbr -a du dust
 abbr -a find fd
 abbr -a flg CARGO_PROFILE_RELEASE_DEBUG=true cargo flamegraph --root
@@ -262,7 +263,6 @@ end
 # Aliases   {{{1
 # =============================================================================
 
-alias start_kitty="kitty --start-as fullscreen"
 alias cal="echo -n "" > $activity_log"
 alias lal="cat $activity_log | head"
 
@@ -287,6 +287,9 @@ alias gmm="git pull && git merge origin/main"
 direnv hook fish | source
 
 function fish_greeting
+    if test $SHLVL -gt 1
+        return
+    end
     echo "
                i  t
               LE  ED.
