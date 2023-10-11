@@ -1316,7 +1316,8 @@ require("lazy").setup({
             }
           }
         end),
-        pylsp = get_options(),
+        ruff = get_options(),
+        ruff_lsp = get_options(),
         clangd = get_options(function(opts)
           opts.filetypes = { "c", "cpp" }
         end),
