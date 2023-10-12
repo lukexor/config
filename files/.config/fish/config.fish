@@ -80,6 +80,7 @@ fish_add_path --path -gm \
     ~/.cargo/bin \
     ~/snap/bin \
     ~/.local/bin \
+    ~/.local/share/nvim/mason/bin/ \
     ~/bin
 
 if macos

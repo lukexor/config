@@ -51,20 +51,16 @@ install_linux() {
     llvm \
     openssl \
     pkg-config \
-    pylint \
     python2 \
     python3 \
     python3-pip \
     python3.10-venv \
-    shellcheck \
     software-properties-common \
     sqlite \
     stow \
-    tidy \
     tree \
     watchman \
-    wget \
-    yamllint
+    wget
   $sudo apt autoremove -y
 
   mkdir -p ~/.local/bin
@@ -124,19 +120,14 @@ install_macos() {
     llvm \
     neovim \
     openssl \
-    prettier \
     pulseaudio \
-    pylint \
     python \
     python3 \
-    shellcheck \
     sqlite \
     stow \
-    tidy-html5 \
     tree \
     watchman \
-    wget \
-    yamllint
+    wget
 
   [ ! -f ~/.local/bin/kitty ] \
     && mkdir -p ~/.local/bin \
@@ -221,16 +212,8 @@ install_npm() {
   npm config set prefix "$npm_dir"
 
   npm install -g \
-    @fsouza/prettierd \
-    eslint \
-    eslint_d \
     lighthouse \
-    jsonlint \
     neovim \
-    markdownlint \
-    markdownlint-cli \
-    stylelint \
-    stylelint-config-standard \
     yarn
 
   return 0
