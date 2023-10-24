@@ -78,6 +78,35 @@ else
   vim.notify_once("rg is not installed", vim.log.levels.ERROR)
 end
 
+local codelldb_ext_path = vim.env.HOME .. "/.local/share/nvim/mason/packages/codelldb/extension"
+local codelldb_path = codelldb_ext_path .. "/adapter/codelldb"
+local liblldb_path = codelldb_ext_path .. "/lldb/lib/liblldb"
+local os = vim.loop.os_uname().sysname
+liblldb_path = liblldb_path .. (os == "Linux" and ".so" or ".dylib")
+
+local function notify_output(command, opts)
+  local output = ""
+  local notification
+  local notify = function(msg, level)
+    local notify_opts =
+      vim.tbl_extend("keep", opts or {}, { title = table.concat(command, " "), replace = notification })
+    notification = vim.notify(msg, level, notify_opts)
+  end
+  local on_data = function(_, data)
+    output = output .. table.concat(data, "\n")
+    notify(output, "info")
+  end
+  return vim.fn.jobstart(command, {
+    on_stdout = on_data,
+    on_stderr = on_data,
+    on_exit = function(_, code)
+      if #output == 0 then
+        notify("No output of command, exit code: " .. code, "warn")
+      end
+    end,
+  })
+end
+
 -- =============================================================================
 -- Key Maps
 -- =============================================================================
@@ -109,6 +138,12 @@ local map = function(lhs, rhs, options)
   local mode = opts.mode or "n"
   opts.mode = nil
   vim.keymap.set(mode, lhs, rhs, opts)
+end
+local del_map = function(lhs, options)
+  local opts = vim.deepcopy(options)
+  local mode = opts.mode or "n"
+  opts.mode = nil
+  vim.keymap.del(mode, lhs, options)
 end
 
 local function system_open(path)
@@ -526,9 +561,10 @@ require("lazy").setup({
       },
     },
     opts = {
-      timeout = 500,
-      background_colour = "#000000",
-      render = "minimal",
+      timeout = 1000,
+      background_colour = "#111111",
+      render = "wrapped-compact",
+      stages = "fade_in_slide_out",
       max_height = function()
         return math.floor(vim.o.lines * 0.75)
       end,
@@ -741,12 +777,25 @@ require("lazy").setup({
       lint.linters.protolint = {
         cmd = "protolint",
       }
+      lint.linters.tidy_xml = {
+        cmd = "tidy",
+        stdin = true,
+        stream = "stderr",
+        args = {
+          "-quiet",
+          "-errors",
+          "-language",
+          "en",
+          "-xml",
+        },
+      }
       lint.linters_by_ft = {
         bash = { "shellcheck" },
         css = { "stylelint" },
         cpp = { "cpplint" },
         glslc = { "glslc" },
-        html = { "tidy" },
+        html = { "tidy_xml" },
+        xml = { "tidy_xml" },
         javascript = { "eslint_d" },
         javascriptreact = { "eslint_d" },
         json = { "jsonlint" },
@@ -1242,6 +1291,14 @@ require("lazy").setup({
   -- LSP
   -- -----------------------------------------------------------------------------
   {
+    "folke/neodev.nvim",
+    config = function()
+      require("neodev").setup({
+        library = { plugins = { "nvim-dap-ui" }, types = true },
+      })
+    end,
+  },
+  {
     "neovim/nvim-lspconfig", -- language server
     dependencies = {
       {
@@ -1250,6 +1307,14 @@ require("lazy").setup({
         keys = {
           { "<leader>pm", "<cmd>MasonUpdate<CR>:Mason<CR>", desc = "Update LSP Servers" },
         },
+      },
+      {
+        "jay-babu/mason-nvim-dap.nvim",
+        config = function()
+          require("mason-nvim-dap").setup({
+            ensure_installed = { "codelldb" },
+          })
+        end,
       },
       "hrsh7th/cmp-nvim-lsp",
       "williamboman/mason-lspconfig.nvim",
@@ -1282,7 +1347,6 @@ require("lazy").setup({
             yaml = { prettierd },
           }
           formatter.setup({
-            logging = true,
             log_level = vim.log.levels.DEBUG,
             filetype = Formatters,
             ["*"] = { require("formatter.filetypes.any").remove_trailing_whitespace },
@@ -1400,6 +1464,11 @@ require("lazy").setup({
         ruff_lsp = get_options(),
         clangd = get_options(function(opts)
           opts.filetypes = { "c", "cpp" }
+          opts.offsetEncoding = { "utf-16" }
+          opts.cmd = {
+            "clangd",
+            "--offset-encoding=utf-16",
+          }
         end),
         rust_analyzer = get_options(function(opts)
           opts.settings = {
@@ -1418,7 +1487,7 @@ require("lazy").setup({
                 },
               },
               files = {
-                excludeDirs = { os.getenv("CARGO_TARGET_DIR"), "target", os.getenv("HOME") .. "/.rustup" },
+                excludeDirs = { vim.env.CARGO_TARGET_DIR, "target", vim.env.HOME .. "/.rustup" },
               },
               imports = {
                 group = { enable = false },
@@ -1463,9 +1532,12 @@ require("lazy").setup({
               map("<leader>M", "<cmd>Make build<CR>", { desc = "cargo build" })
               map("<leader>C", "<cmd>Make clippy<CR>", { desc = "cargo clippy" })
             end
+            -- We don't want to call lspconfig.rust_analyzer.setup() when using
+            -- rust-tools. See https://github.com/simrat39/rust-tools.nvim/issues/89
             require("rust-tools").setup({
-              -- We don't want to call lspconfig.rust_analyzer.setup() when using
-              -- rust-tools. See https://github.com/simrat39/rust-tools.nvim/issues/89
+              dap = {
+                adapter = require("rust-tools.dap").get_codelldb_adapter(codelldb_path, liblldb_path),
+              },
               server = server_opts,
               tools = {
                 inlay_hints = {
@@ -2018,45 +2090,184 @@ require("lazy").setup({
     cmd = { "Make", "Dispatch" },
   },
   {
-    "radenling/vim-dispatch-neovim", -- Adds neoverm terminal support to vim-dispatch
+    "radenling/vim-dispatch-neovim", -- Adds neovim terminal support to vim-dispatch
     cmd = { "Make", "Dispatch" },
   },
   {
-    "puremourning/vimspector", -- Debugger
-    cmd = {
-      "VimspectorUpdate",
-    },
-    keys = {
-      { "<leader>dd", "<Plug>VimspectorLaunch", desc = "launch debugger" },
-      { "<leader>db", "<Plug>VimspectorToggleBreakpoint", desc = "toggle breakpoint" },
-      { "<leader>dc", "<Plug>VimspectorToggleConditionalBreakpoint", desc = "toggle conditional breakpoint" },
-      -- TODO: Make shortcuts easier to use when debugging
-      { "<leader>dl", "<Plug>VimspectorBreakpoints", desc = "list breakpoints" },
-      { "<leader>dC", "<cmd>call vimspector#ClearBreakpoints()<CR>", desc = "clear breakpoints" },
-      { "<leader>/", "<Plug>VimspectorContinue", desc = "continue execution" },
-      { "<leader>!", "<Plug>VimspectorPause", desc = "pause debugger" },
-      { "<leader>ds", "<cmd>VimspectorReset<CR>", desc = "reset debugger" },
-      { "<leader>dS", "<Plug>VimspectorStop", desc = "stop debugger" },
-      { "<localleader>'", "<Plug>VimspectorStepOver", desc = "step over" },
-      { "<localleader>;", "<Plug>VimspectorStepInto", desc = "step into" },
-      { "<localleader>:", "<Plug>VimspectorStepOut", desc = "step out" },
-      { "<leader>dr", "<Plug>VimspectorRunToCursor", desc = "run until cursor" },
-      { "<leader>dR", "<Plug>VimspectorRestart", desc = "restart debugger" },
-      { "<leader>de", "<Plug>VimspectorBalloonEval", desc = "evaluate value" },
-      { "<leader>de", "<Plug>VimspectorBalloonEval", mode = "v", desc = "evaluate selection" },
-      { "<leader>dw", ":VimspectorWatch ", mode = "v", desc = "watch expression" },
-      { "<leader>dE", ":VimspectorEval ", mode = "v", desc = "evaluate expression" },
-    },
-    init = function()
-      vim.g.vimspector_install_gadgets = {
-        "CodeLLDB", -- C/C++/Rust
-        "vscode-bash-debug",
-        "vscode-node-debug2",
-        "local-lua-debugger-vscode",
-        "debugger-for-chrome",
-        "debugpy",
-        "delve", -- For Golang
+    "mfussenegger/nvim-dap",
+    config = function()
+      vim.fn.sign_define("DapBreakpoint", { text = "🔴" })
+      vim.fn.sign_define("DapBreakpointCondition", { text = "🟡" })
+      vim.fn.sign_define("DapLogPoint", { text = "📕" })
+      vim.fn.sign_define("DapStopped", { text = "󰏤" })
+      vim.fn.sign_define("DapBreakpointRejected", { text = "❌" })
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = "dap-repl",
+        callback = function()
+          require("dap.ext.autocompl").attach()
+        end,
+      })
+
+      local dap = require("dap")
+      dap.adapters.codelldb = require("rust-tools.dap").get_codelldb_adapter(codelldb_path, liblldb_path)
+      dap.adapters.python = function(cb, config)
+        if config.request == "attach" then
+          local port = (config.connect or config).port
+          local host = (config.connect or config).host or "127.0.0.1"
+          cb({
+            type = "server",
+            port = assert(port, "`connect.port` is required for a python `attach` configuration"),
+            host = host,
+            options = {
+              source_filetype = "python",
+            },
+          })
+        else
+          cb({
+            type = "executable",
+            command = vim.env.HOME .. ".virtualenvs/debugpy/bin/python",
+            args = { "-m", "debugpy.adapter" },
+            options = {
+              source_filetype = "python",
+            },
+          })
+        end
+      end
+      dap.configurations.rust = {
+        {
+          name = "Launch",
+          type = "codelldb",
+          request = "launch",
+          cwd = "${workspaceFolder}",
+          program = function()
+            local pickers = require("telescope.pickers")
+            local finders = require("telescope.finders")
+            local conf = require("telescope.config").values
+            local actions = require("telescope.actions")
+            local action_state = require("telescope.actions.state")
+
+            vim.cmd.write()
+            local build_job = notify_output({ "cargo", "build" })
+            local build_status = vim.fn.jobwait({ build_job })
+            if build_status[build_job] ~= 0 then
+              return
+            end
+            return coroutine.create(function(co)
+              local opts = {}
+              pickers
+                .new(opts, {
+                  prompt_title = "Path to executable",
+                  finder = finders.new_oneshot_job({
+                    "fd",
+                    "--hidden",
+                    "--no-ignore",
+                    "--type",
+                    "x",
+                    "--max-depth",
+                    "2",
+                    ".",
+                    vim.env.CARGO_TARGET_DIR,
+                  }, {}),
+                  sorter = conf.generic_sorter(opts),
+                  attach_mappings = function(buffer_number)
+                    actions.select_default:replace(function()
+                      actions.close(buffer_number)
+                      coroutine.resume(co, action_state.get_selected_entry()[1])
+                    end)
+                    return true
+                  end,
+                })
+                :find()
+            end)
+          end,
+        },
+        {
+          name = "Attach",
+          type = "codelldb",
+          request = "attach",
+          cwd = "${workspaceFolder}",
+          pid = "${command:pickProcess}",
+        },
       }
+      dap.configurations.c = dap.configurations.rust
+      dap.configurations.cpp = dap.configurations.rust
+      dap.configurations.python = {
+        {
+          name = "Launch",
+          type = "python",
+          request = "launch",
+          cwd = "${workspaceFolder}",
+          program = "${file}",
+          pythonPath = function()
+            local cwd = vim.fn.getcwd()
+            if vim.fn.executable(cwd .. "/venv/bin/python") == 1 then
+              return cwd .. "/venv/bin/python"
+            elseif vim.fn.executable(cwd .. "/.venv/bin/python") == 1 then
+              return cwd .. "/.venv/bin/python"
+            else
+              return "/usr/bin/python"
+            end
+          end,
+        },
+        {
+          name = "Attach",
+          type = "codelldb",
+          request = "attach",
+          cwd = "${workspaceFolder}",
+          pid = "${command:pickProcess}",
+        },
+      }
+
+      map("<leader>db", "<cmd>lua require('dap').toggle_breakpoint()<CR>", { desc = "Toggle breakpoint" })
+      map("<leader>dc", ":lua require('dap').toggle_breakpoint()<left>", { desc = "Toggle conditional breakpoint" })
+      map("<leader>dC", "<cmd>lua require('dap').clear_breakpoints()<CR>", { desc = "Clear breakpoints" })
+      map(
+        "<leader>lp",
+        "<cmd>lua require('dap').set_breakpoint(nil, nil, vim.fn.input('Log point message: '))<CR>",
+        { desc = "Set logpoint" }
+      )
+      map("<c-/>", "<cmd>lua require('dap').continue()<CR>", { desc = "Debug/Continue" })
+      map("<leader>dl", "<cmd>lua require('dap').run_last()<CR>", { desc = "Run Last Debugger" })
+      map("<leader>dL", "<cmd>lua require('dap').list_breakpoints()<CR>", { desc = "List breakpoints" })
+
+      local dapui = require("dapui")
+      dap.listeners.after.event_initialized.dapui_config = function()
+        map("<leader>dr", "<cmd>lua require('dap').run_to_cursor()<CR>", { desc = "Run until cursor" })
+        map("<leader>dR", "<cmd>lua require('dap').restart()<CR>", { desc = "Restart debugger" })
+        map("<leader>dS", "<cmd>lua require('dap').terminate()<CR>", { desc = "Stop debugger" })
+        map("<c-\\>", "<cmd>lua require('dap').pause()", { desc = "Pause Debugger" })
+        map("<c-'>", "<cmd>lua require('dap').step_over()<CR>", { desc = "Step over" })
+        map("<c-;>", "<cmd>lua require('dap').step_into()<CR>", { desc = "Step into" })
+        map("<c-:>", "<cmd>lua require('dap').step_out()<CR>", { desc = "Step out" })
+        map(
+          "K",
+          "<cmd>lua require('dap.ui.widgets').hover()<CR>",
+          { mode = { "n", "v" }, desc = "Evaluate expression" }
+        )
+        dapui.open()
+      end
+      dap.listeners.after.event_terminated.dapui_config = function()
+        dapui.close()
+        del_map("<leader>dr")
+        del_map("<leader>dR")
+        del_map("<leader>dS")
+        del_map("<c-\\>")
+        del_map("<c-'>")
+        del_map("<c-;>")
+        del_map("<c-;>")
+        del_map("<c-:>")
+        del_map("K")
+      end
+      dap.listeners.after.event_exited.dapui_config = dap.listeners.after.event_terminated.dapui_config
+    end,
+  },
+  {
+    "rcarriga/nvim-dap-ui",
+    dependencies = {
+      "mfussenegger/nvim-dap",
+    },
+    config = function()
+      require("dapui").setup()
     end,
   },
 }, {
@@ -2088,8 +2299,9 @@ vim.cmd("iabbrev waht what")
 vim.cmd([[
   aug FiletypeOverrides
     au!
-    au TermOpen * setlocal nospell nonu nornu | startinsert
+    au TermOpen * setlocal nospell nonu nornu
     au BufRead,BufNewFile *.nu set ft=nu
+    au BufRead,BufNewFile *.mdx set ft=markdown
     au BufRead,BufNewFile Vagrantfile set filetype=ruby
     au BufRead,BufNewFile *.vert,*.frag set ft=glsl
     au Filetype help set nu rnu

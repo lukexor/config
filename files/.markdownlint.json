@@ -1,8 +1,10 @@
 {
-  "MD013": {
+  "first-line-h1": false,
+  "line-length": {
+    "code_blocks": false,
     "tables": false
   },
-  "MD024": {
+  "no-duplicate-header": {
     "allow_different_nesting": true,
     "siblings_only": true
   }

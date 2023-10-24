@@ -77,10 +77,7 @@ let menu_style = {
   description_text: yellow
 }
 
-let-env config = {
-  cd: {
-    abbreviations: false
-  }
+$env.config = {
   completions: {
     case_sensitive: false
     quick: true
@@ -124,8 +121,24 @@ let-env config = {
   float_precision: 2
   use_ansi_coloring: true
   edit_mode: vi
-  log_level: error
   hooks: {
+    pre_prompt: [{ ||
+      let direnv = (direnv export json | from json | default {})
+      if ($direnv | is-empty) {
+        return
+      }
+      $direnv
+      | items { |key, value|
+        {
+          key: $key
+          value: (if $key in $env.ENV_CONVERSIONS {
+            do ($env.ENV_CONVERSIONS | get $key | get from_string) $value
+          } else {
+            $value
+          })
+        }
+      } | transpose -ird | load-env
+    }]
     env_change: {
       PWD: []
     }
@@ -245,14 +258,20 @@ let-env config = {
       mode: vi_insert
       event: {
         until: [
-          { send: menu name: history_menu }
+          { 
+            send: executehostcommand
+            cmd: "commandline (history
+            | get command
+            | to text
+            | fzf +s --history-size=200)"
+          }
           { send: menupagenext }
         ]
       }
     }
     {
       name: history_previous
-      modifier: "control | shift"
+      modifier: shift_control
       keycode: char_r
       mode: vi_insert
       event: { send: menupageprevious }
@@ -283,33 +302,24 @@ let-env config = {
       event: { send: clearscreen }
     }
     {
-      name: fzf_cd
+      name: fzf_dir
       modifier: control
       keycode: char_y
       mode: vi_insert
       event: {
         send: executehostcommand
-        cmd: "cd (ls
-        | where type == dir
-        | get name
-        | str collect (char nl)
-        | fzf)" }
+        cmd: "commandline -i (fzf_dir)"
       }
     }
     {
-      name: fzf_edit
+      name: fzf_file
       modifier: control
       keycode: char_s
       mode: vi_insert
       event: [
         {
           send: executehostcommand
-          cmd: "do {
-            |$file| if (not ($file | is-empty)) {
-              echo $file; echo $'vim ($file)'
-              | clipboard; vim $file
-            }
-          } (fzfile)"
+          cmd: "commandline -i (fzf_file)"
         }
       ]
     }
@@ -344,17 +354,8 @@ def make-completion [command_name: string] {
       }) (if ($it.description | is-empty) == false {
           build-string "\t\t# " $it.description
       })
-  } | str collect "\n") "\n\t...args\n]"
+  } | str join "\n") "\n\t...args\n]"
 }
-
-# =============================================================================
-# Libs   {{{1
-# =============================================================================
-
-use ~/.config/nu/libs/jobs.nu *
-
-module dotenv {}
-use ~/.config/nu/libs/auto-env.nu *
 
 # =============================================================================
 # Aliases   {{{1
@@ -370,25 +371,29 @@ alias cdoc = cargo doc
 alias cdoco = cargo doc --open
 alias cfg = cd ~/config
 alias clipboard = if $os == "linux" { xclip } else if $os == "macos" { pbcopy } else { echo $"clipboard not supported on ($os)" }
+alias cm = cargo make
+# FIXME: Switch to default cp when ctrl-c is fixed
 alias cp = ^cp -ia
-alias cr = ^cargo run
-alias crd = ^cargo run --profile dev-opt
-alias cre = cargo run --example
+alias cr = cargo run
+alias crd = cargo run --profile dev-opt
+alias cre = ^cargo run --example
 alias crr = cargo run --release
-alias ct = cargo test
+alias ct = cargo test --workspace --all-targets
+alias curl = xh
 alias cw = cargo watch
-alias da = (date now | date format '%Y-%m-%d %H:%M:%S')
-alias find = ^fd
+alias dc = docker compose
+alias du = dust
+alias find = fd
 alias flg = CARGO_PROFILE_RELEASE_DEBUG=true cargo flamegraph --root
 alias ga = git add
 alias gb = git branch -v
 alias gba = git branch -a
 alias gbd = git branch -d
-alias gbm = git branch -v --merged
-alias gbnm = git branch -v --no-merged
+alias gbm = ^git branch -v --merged
+alias gbnm = ^git branch -v --no-merged
 alias gc = git commit
 alias gcam = git commit --amend
-alias gcb = git checkout -b
+alias gcb = ^git checkout -b
 alias gco = git checkout
 alias gcp = git cherry-pick
 alias gd = git diff
@@ -409,27 +414,27 @@ alias gsl = git stash list
 alias gst = git status
 alias gt = git tag
 alias gun = git reset HEAD --
+alias ir = irust
+alias ls = exa --icons
 alias la = ls -a
-alias lc = (ls | sort-by modified | reverse)
-alias lk = (ls | sort-by size | reverse)
+alias lk = ls -lrs size
 alias ll = ls -l
+alias lt = ls --tree
 alias md = ^mkdir -p
-alias mv = ^mv -i
+alias mkdir = md
+alias mv = mv -if
 alias myip = curl -s api.ipify.org
 alias nci = npm ci
 alias ni = npm i
 alias nr = npm run
 alias ns = npm start
 alias pc = procs
-alias pwd = (^pwd | str replace $nu.home-path '~')
 alias py = python3
 alias rd = rmdir
 alias rm = ^rm -i
-alias slp = kitty +kitten ssh caeledh@138.197.217.136
+alias sed = sd
 alias sopen = ^open
 alias sshl = ssh-add -L
-alias topc = (ps | sort-by -r cpu | first 10)
-alias topm = (ps | sort-by -r mem | first 10)
 alias v = nvim
 alias vi = nvim
 alias vim = nvim
@@ -438,6 +443,31 @@ alias vimdiff = nvim -d
 # =============================================================================
 # Commands   {{{1
 # =============================================================================
+
+# Current date.
+def da [] {
+  date now | format date "%Y-%m-%d %H:%M:%S"
+}
+
+# Calculate directory sizes.
+def dirsize [] {
+  fd -t d | xargs du -sh
+}
+
+# Current directory.
+def pwd [] {
+  ^pwd | str replace $nu.home-path "~"
+}
+
+# Top CPU usage.
+def topc [] {
+  ps | sort-by -r cpu | first 10
+}
+
+# Top MEM usage.
+def topm [] {
+  ps | sort-by -r mem | first 10
+}
 
 # Show last $count history entries
 def h [count: int = 10] {
@@ -465,15 +495,9 @@ def gmd [] {
 }
 
 # Find broken symlinks
-def fbroken [path: path] {
+def fbroken [path: path = "."] {
   ^find $path -maxdepth 1 -type l ! -exec test -e '{}' ';' -print
 }
-
-# Edit neovim configuration.
-def "config nvim" [] { nvim ([$nu.home-path .config/nvim/init.lua] | path join) }
-
-# Edit kitty configuration.
-def "config kitty" [] { nvim ([$nu.home-path .config/kitty/kitty.conf] | path join) }
 
 # List installed Node versions.
 def "nvm list" [] {
@@ -496,7 +520,7 @@ def "tag_version" [semver?: string] {
     ($old_version | inc --major)
   } else if $semver == "minor" {
     ($old_version | inc --minor)
-  } else if $semver == null || $semver == "patch" {
+  } else if $semver == null or $semver == "patch" {
     ($old_version | inc --patch)
   } else if $semver != null {
     echo "invalid semver - major | minor | patch"
@@ -508,20 +532,20 @@ def "tag_version" [semver?: string] {
   git tag -a $new_version -m $"Release v$new_version"
 }
 
-# Fuzzy search a file to edit.
-def vf [] {
-  echo "use ctrl+s"
+# Fuzzy search file
+def fzf_file [flags: string = ""] {
+  fzf | str trim
 }
 
-def fzfile [flags: string = ""] {
-  let-env FZF_DEFAULT_COMMAND = $"rg --files --hidden ($flags)"
-  fzf | str trim
+# Fuzzy search directory
+def fzf_dir [flags: string = ""] {
+  fd -t d | fzf | str trim
 }
 
 # Fuzzy cargo run a file.
 def crf [] {
-  let file = (fzfile)
-  if ($file | is-empty | first) {} else {
+  let file = (fzf_file)
+  if ($file | is-empty) {} else {
     echo $"crd ($file)"
     echo $file | clipboard
     crd $file
@@ -529,33 +553,39 @@ def crf [] {
 }
 
 let log_file = ([$nu.home-path .activity_log.txt] | path join);
-if not ($log_file | path exists) {
-  touch $log_file
+
+# Last 10 lines of activity log.
+def lal [] {
+  open $log_file | lines | last 10
 }
-alias lal = (open $log_file | lines | last 10)
-# Log activity
-def al [...rest: string] {
-  open $log_file
-  | append (build-string (date format "[%Y-%m-%d %H:%M]: ") (
-    $rest
-    | str collect " ") (char nl))
-  | str collect
-  | save $log_file
+
+# Log activity.
+def al [
+  ...rest: string # activity message to log
+] {
+  if not ($log_file | path exists) {
+    touch $log_file
+  }
+
+  let date = (date now | format date "%Y-%m-%d %H:%M")
+  $"[($date)]: ($rest | str join ' ')(char nl)" | save -a $log_file
 }
+
+# Clear activity log.
 def cl [] {
-  echo "" | save $log_file
+  echo "" | save -f $log_file
 }
 
 # Fuzzy search a file to edit.
 def ff [] {
-  let file = (fzfile)
+  let file = (fzf_file)
   echo $file | clipboard
   echo $file
 }
 
 # Fuzzy search a file to edit, including .gitignore.
 def ffi [] {
-  let file = (fzfile "--no-ignore-vcs")
+  let file = (fzf_file "--no-ignore-vcs")
   echo $file | clipboard
   echo $file
 }
@@ -582,17 +612,19 @@ def pg [search: string] {
 # Restart ssh-agent.
 def-env ra [] {
   pg ssh-agent | each { |p| kill $p.pid }
-  ^rm -f /tmp/ssh-agent-info /tmp/ssh-agent
-  let agent = (ssh-agent -s -a /tmp/ssh-agent)
-  $agent | save /tmp/ssh-agent-info
-  let-env SSH_AUTH_SOCK = "/tmp/ssh-agent"
-  let-env SSH_AGENT_PID = (rg -o '=\d+' /tmp/ssh-agent-info | str replace = '' | str trim)
-  if (echo ~/.ssh/id_rsa | path exists) {
-    ssh-add ~/.ssh/id_rsa
-  }
-  if (echo ~/.ssh/id_ed25519 | path exists) {
-    ssh-add ~/.ssh/id_ed25519
-  }
+  ^rm -f $env.AGENT_INFO $env.AGENT_FILE
+
+  let agent = (ssh-agent -s -a $env.AGENT_FILE)
+  $agent | save $env.AGENT_INFO
+  $env.SSH_AUTH_SOCK = $env.AGENT_FILE
+  $env.SSH_AGENT_PID = (rg -o '=\d+' $env.AGENT_INFO | str replace = '' | str trim)
+
+  [id_rsa id_ed25519] | each { |file|
+    let file = ([$nu.home-path .ssh $file] | path join)
+    if ($file | path exists) {
+      ssh-add $file
+    }
+  } | ignore
 }
 
 # Output commits since yesterday.
@@ -600,17 +632,69 @@ def gnew [] {
   ^git --no-pager log --graph --pretty=format:'%C(yellow)%h %ad%Cred%d %Creset%Cblue[%cn]%Creset  %s (%ar)' --date=iso --all --since='23 hours ago'
 }
 
-# Output ^git branches with last commit.
+# Output git branches sorted by last commit date.
 def gage [] {
-  # substring 2, skips the currently checked out branch: "* "
-  ^git branch -a | lines | str substring 2, | wrap name | where name !~ HEAD | insert "last commit" {
-      get name | par-each { |commit| ^git show $commit --no-patch --format=%as | str collect | str trim }
-  } | sort-by "last commit"
+  # substring 2.. skips the currently checked out branch marker "* "
+  ^git branch -a
+    | lines
+    | str substring 2..
+    | wrap name
+    | where name !~ HEAD
+    | insert "last commit" {
+        get name | par-each { |commit| ^git show $commit --no-patch --format=%as | str join | str trim }
+      }
+    | sort-by "last commit"
 }
 
 # Clean old ^git branches.
-def gb-clean [] {
-  ^git branch -vl | lines | str substring 2, | split column " " branch hash st      atus --collapse-empty | where status == '[gone]' | par-each { |line| ^git branch -d $line.branch }
+def gclean [
+  --force (-f) # force delete
+] {
+  let branches = ^git branch -vl
+    | lines
+    | str substring 2..
+    | split column " " branch hash status --collapse-empty
+    | where status == '[gone]'
+
+  if not ($branches | is-empty) {
+    branches | par-each { |line|
+      if $force {
+        ^git branch -d -f $line.branch 
+      } else {
+        ^git branch -d $line.branch 
+      }
+    }
+  }
+}
+
+def config_files [] {
+  [nvim kitty fish fishl nu nul nu_env starship]
+}
+
+# Edit configuration files
+def config [
+  config: string@config_files # config file to edit
+] {
+  let home = $nu.home-path
+  if $config == "nvim" {
+    nvim $"($home)/.config/nvim/init.lua"
+  } else if $config == "kitty" {
+    nvim $"($home)/.config/kitty/kitty.conf"
+  } else if $config == "fish" {
+    nvim $"($home)/.config/fish/config.fish"
+  } else if $config == "fishl" {
+    nvim $"($home)/.local/config.fish"
+  } else if $config == "nu" {
+    nvim $"($home)/.config/nu/config.nu"
+  } else if $config == "nul" {
+    nvim $"($home)/.local/config.nu"
+  } else if $config == "nu_env" {
+    nvim $"($home)/.config/nu/env.nu"
+  } else if $config == "starship" {
+    nvim $"($home)/.config/starship.toml"
+  } else {
+    echo $"Error! `($config)` is not a valid config"
+  }
 }
 
 ## Community Commands
@@ -619,13 +703,20 @@ def gb-clean [] {
 def dict [
   ...word # word(s) to query the dictionary API but they have to make sense together like "martial law", not "cats dogs"
 ] {
-  let query = ($word | str collect %20)
-  let link = (build-string 'https://api.dictionaryapi.dev/api/v2/entries/en/' ($query | str replace ' ' '%20'))
-  let output = (fetch $link)
-  if ($output | any title == "No Definitions Found") {
+  let query = ($word | str join %20)
+  let link = $"https://api.dictionaryapi.dev/api/v2/entries/en/($query | str replace ' ' '%20')"
+  let output = (http get -e $link)
+  if "title" in $output and $output.title == "No Definitions Found" {
     echo $output.title
   } else {
-    echo $output | get meanings.definitions | flatten | flatten | select definition example
+    echo $output
+      | get meanings
+      | flatten
+      | select partOfSpeech definitions
+      | flatten
+      | flatten
+      | reject "synonyms"
+      | reject "antonyms"
   }
 }
 
@@ -682,13 +773,13 @@ def "commands search" [] {
   def pad-tabs [input_name] {
     let input_length = ($input_name | str length)
     let required_tabs = $max_indent - ($"($input_length / $tablen | into int)" | into int)
-    "" | str rpad -l $required_tabs -c (char tab)
+    "" | fill -a right -w $required_tabs -c (char tab)
   }
 
   let command = (help commands | par-each { |cmd|
       let name = ($cmd.name | ansi strip)
       $"($name)(pad-tabs $name)($cmd.usage)"
-    } | str collect (char nl) | fzf)
+    } | str join (char nl) | fzf)
 
   if (not ($command | is-empty)) {
     help ($command | split column (char tab) | get column1 | first)
@@ -700,33 +791,20 @@ def "commands search" [] {
 # Startup   {{{1
 # =============================================================================
 
-load-env (
-  fnm env --shell bash
-    | lines
-    | str replace 'export ' ''
-    | str replace -a '"' ''
-    | split column =
-    | rename name value
-    | where name != "FNM_ARCH" && name != "PATH"
-    | reduce -f {} { |it, acc| $acc | upsert $it.name $it.value }
-)
-let-env PATH = ($env.PATH | prepend $"($env.FNM_MULTISHELL_PATH)/bin")
+use ~/.local/config.nu *
+use ~/.local/rtx.nu *
 
+# Load ssh-agent.
 def-env load-ssh-agent [] {
-  let agent_info = "/tmp/ssh-agent-info"
-  let agent_active = ($agent_info | path exists) and (not (ps | where name =~ ssh-agent | is-empty))
-  let-env SSH_AUTH_SOCK = if $agent_active { "/tmp/ssh-agent" } else { "" }
-  let-env SSH_AGENT_PID = if $agent_active { rg -o '=\d+' $agent_info | str replace = '' | str trim } else { "" }
+  let agent_active = ($env.AGENT_INFO | path exists) and (not (ps | where name =~ ssh-agent | is-empty))
+  $env.SSH_AUTH_SOCK = if $agent_active { $env.AGENT_FILE } else { "" }
+  $env.SSH_AGENT_PID = if $agent_active { rg -o '=\d+' $env.AGENT_INFO | str replace = '' | str trim } else { "" }
 }
 
+let level = if ("SHLVL" in $env) { $env.SHLVL | into int } else { 0 }
+$env.SHLVL = $level + 1
+
 # Print out personalized ASCII logo.
-let level = if (env | any name == SHLVL) { $env.SHLVL | into int } else { 0 }
-let-env SHLVL = (if (env | any name == TMUX) && $level >= 3 {
-    $level - 2
-  } else {
-    $level + 1
-  }
-)
 def logo [] {
   if ($env.SHLVL | into int) == 1 {
     echo $"

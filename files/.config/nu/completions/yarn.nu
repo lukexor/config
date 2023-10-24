@@ -29,7 +29,7 @@ def yarn-scripts [] {
 }
 
 # Install dependencies.
-export extern "yarn" [
+export extern "main" [
 ]
 
 # Add dependencies to the project.

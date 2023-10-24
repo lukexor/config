@@ -9,7 +9,7 @@ def color [] {
 }
 
 # Cheatsheets for console commands
-export extern "tldr" [
+export extern "main" [
   string?
   --list(-l)                       # Lists all commands in the cache
   --render(-f): string             # Render a specific markdown file

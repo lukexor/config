@@ -24,10 +24,10 @@ status is-interactive; or exit $status
 
 set -U os (uname)
 function macos
-    test $os = "Darwin"
+    test $os = Darwin
 end
 function linux
-    test $os = "Linux"
+    test $os = Linux
 end
 
 # =============================================================================
@@ -60,7 +60,7 @@ set -U fish_pager_color_description B3A06D yellow
 set -U fish_pager_color_prefix normal --bold --underline
 set -U fish_pager_color_progress brwhite --background=cyan
 set fish_color_valid_path
-set fish_pager_color_prefix 'normal' '--bold'
+set fish_pager_color_prefix normal --bold
 
 
 # =============================================================================
@@ -76,43 +76,41 @@ set fish_pager_color_prefix 'normal' '--bold'
 
 fish_add_path --path -gm \
     ~/.fzf/bin \
+    ~/snap/bin \
     ~/.npm-packages/bin \
     ~/.cargo/bin \
-    ~/snap/bin \
-    ~/.local/bin \
     ~/.local/share/nvim/mason/bin/ \
+    ~/.local/bin \
     ~/bin
 
 if macos
     fish_add_path --path -ga \
         /Applications/kitty.app/Contents/MacOS \
         (brew --prefix)/opt/llvm/bin
-else if linux 
+else if linux
     fish_add_path --path -ga \
         /usr/games
 end
 
 fish_add_path --path -ga \
-    /bin \
     /sbin \
-    /usr/bin \
+    /bin \
     /usr/sbin \
+    /usr/bin \
     /usr/local/bin \
-    /usr/local/go/bin \
-
+    /usr/local/go/bin
 set -gx CLICOLOR 1
-set -gx TERMINAL "kitty"
-set -gx KITTY_ENV "other"
-set -gx VISUAL "nvim"
-set -gx EDITOR "nvim"
+set -gx TERMINAL kitty
+set -gx VISUAL nvim
+set -gx EDITOR nvim
 set -gx PAGER "nvim +Man!"
 set -gx MANPAGER "nvim +Man!"
+set -gx LESS -RFX
 
 # Tools
 set -gx FZF_DEFAULT_OPTS "--height 50% --layout=reverse --border --inline-info"
-set -gx FZF_CTRL_T_COMMAND "rg --files --hidden"
-set -gx FZF_DEFAULT_COMMAND "rg --files --hidden"
-set -gx LESS "-RFX"
+set -gx FZF_CTRL_T_COMMAND "rg --files --hidden --no-ignore --glob !.git --glob !node_modules"
+set -gx FZF_DEFAULT_COMMAND "rg --files --hidden --no-ignore --glob !.git --glob !node_modules"
 # NOTE: To debug rust-analyzer
 # set -gx RA_LOG "info,salsa=off,chalk=off"
 set -gx CARGO_TARGET_DIR ~/.cargo-target
@@ -130,7 +128,7 @@ end
 
 function fish_title
     set -q argv[1]; or set argv fish
-    echo (fish_prompt_pwd_dir_length=1 prompt_pwd): $argv;
+    echo (fish_prompt_pwd_dir_length=1 prompt_pwd): $argv
 end
 
 if test -e ~/.local/config.fish
@@ -179,6 +177,7 @@ abbr -a cc cargo clippy
 abbr -a cca cargo clippy --all-targets
 abbr -a cdoc cargo doc
 abbr -a cdoco cargo doc --open
+abbr -a cm cargo make
 abbr -a cfg cd ~/config
 abbr -a cp cp -ia
 abbr -a cr cargo run
@@ -187,7 +186,6 @@ abbr -a cre cargo run --example
 abbr -a crr cargo run --release
 abbr -a cw cargo watch
 abbr -a ct cargo test --workspace --all-targets
-abbr -a ct cargo test --workspace
 abbr -a curl xh
 abbr -a da "date +'%Y-%m-%d %H:%M:%S'"
 abbr -a dc docker compose
@@ -238,7 +236,6 @@ abbr -a ps procs
 abbr -a py python3
 abbr -a rd rmdir
 abbr -a sed sd
-abbr -a slp ssh caeledh@138.197.217.136
 abbr -a sshl ssh-add -L
 abbr -a v nvim
 abbr -a vi nvim

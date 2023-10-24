@@ -30,7 +30,7 @@ def cargo-features [] {
 }
 # Cargo commands
 def cargo-commands [] {
-  ^cargo --list | lines | skip 1 | str collect "\n" | from ssv --noheaders | rename name description | get name
+  ^cargo --list | lines | skip 1 | str join "\n" | from ssv --noheaders | rename name description | get name
 }
 
 # Cargo vcs options
@@ -55,7 +55,7 @@ def outdated-format [] {
 }
 
 # Rust's package manager
-export extern "cargo"  [
+export extern "main"  [
   ...args: any
   --version(-V)                         # Print version info and exit
   --list                                # List installed commands

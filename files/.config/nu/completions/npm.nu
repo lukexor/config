@@ -9,7 +9,7 @@ def npm-scripts [] {
 }
 
 # Node package manager
-export extern "npm" [
+export extern "main" [
   command: string@npm-commands # command to execute
   ...args: any
   -l                           # display usage info for all commands
