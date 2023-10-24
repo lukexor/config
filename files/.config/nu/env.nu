@@ -39,9 +39,6 @@
 # abbreviated: green bold = gb, red underline = ru, blue dimmed = ud
 # or verbose: green_bold, red_underline, blue_dimmed
 
-
-# vim: foldmethod=marker foldlevel=0
-
 # =============================================================================
 # Prompt   {{{1
 # =============================================================================
@@ -55,13 +52,13 @@ $env.PROMPT_INDICATOR_VI_INSERT = ""
 # =============================================================================
 
 $env.PATH = [
-  ([$nu.home-path bin] | path join)
-  ([$nu.home-path .local/bin] | path join)
-  ([$nu.home-path .local/share/nvim/mason/bin/] | path join)
-  ([$nu.home-path .cargo/bin] | path join)
-  ([$nu.home-path .npm-packages/bin] | path join)
-  ([$nu.home-path snap/bin] | path join)
-  ([$nu.home-path .fzf/bin] | path join)
+  ~/bin
+  ~/.local/bin
+  ~/.local/share/nvim/mason/bin/
+  ~/.cargo/bin
+  ~/.npm-packages/bin
+  ~/snap/bin
+  ~/.fzf/bin
   /usr/local/go/bin
   /usr/local/bin
   /usr/bin
@@ -72,9 +69,9 @@ $env.PATH = [
 
 $env.PATH = if $nu.os-info.name == "macos" {
   ($env.PATH | append [
-    "/Applications/kitty.app/Contents/MacOS",
-    ([(brew --prefix | str trim) opt/llvm/bin] | path join)]
-  )
+    "/Applications/kitty.app/Contents/MacOS"
+    "~/.local/opt/llvm/bin"
+  ])
 } else {
   $env.PATH | append [
     /usr/games
@@ -86,14 +83,14 @@ $env.PATH = if $nu.os-info.name == "macos" {
 # - converted from a value back to a string when running external commands (to_string)
 # Note: The conversions happen *after* config.nu is loaded
 $env.ENV_CONVERSIONS = {
-  "PATH": {
-    from_string: { |s| $s | split row (char esep) }
-    to_string: { |v| $v | str join (char esep) }
-  }
-  "Path": {
-    from_string: { |s| $s | split row (char esep) }
-    to_string: { |v| $v | str join (char esep) }
-  }
+    "PATH": {
+        from_string: { |s| $s | split row (char esep) | path expand --no-symlink }
+        to_string: { |v| $v | path expand --no-symlink | str join (char esep) }
+    }
+    "Path": {
+        from_string: { |s| $s | split row (char esep) | path expand --no-symlink }
+        to_string: { |v| $v | path expand --no-symlink | str join (char esep) }
+    }
 }
 
 # =============================================================================
@@ -119,22 +116,23 @@ $env.ACTIVITY_LOG = ([$nu.home-path .activity_log.txt] | path join)
 
 $env.AGENT_INFO = "/tmp/ssh-agent-info"
 $env.AGENT_FILE = "/tmp/ssh-agent"
-let agents_running = (ps | where name =~ ssh-agent | length)
-if ($env.AGENT_INFO | path exists) and $agents_running > 0 {
+if ($env.AGENT_INFO | path exists) {
     $env.SSH_AUTH_SOCK = $env.AGENT_FILE
-    $env.SSH_AGENT_PID = (rg -o '=\d+' $env.AGENT_INFO | str replace '=' '')
+    $env.SSH_AGENT_PID = (~/.cargo/bin/rg -o '=\d+' $env.AGENT_INFO | str replace = '' | str trim)
 }
 
 # Directories to search for scripts when calling source or use
 #
 # By default, <nushell-config-dir>/scripts is added
 $env.NU_LIB_DIRS = [
-    ($nu.config-path | path dirname | path join 'scripts')
+  ~/.config/nu/scripts
 ]
 
 # Directories to search for plugin binaries when calling register
 #
 # By default, <nushell-config-dir>/plugins is added
 $env.NU_PLUGIN_DIRS = [
-    ($nu.config-path | path dirname | path join 'plugins')
+  ~/.config/nu/plugins
 ]
+
+# vim: foldmethod=marker foldlevel=0

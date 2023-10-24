@@ -22,53 +22,67 @@
 # =============================================================================
 
 let os = ($nu.os-info.name)
-
 let theme = {
-    separator: yellow_dimmed
-    leading_trailing_space_bg: white_bold
-    header: cyan_bold
-    empty: yellow_bold
-    bool: purple
-    int: green
-    filesize: yellow
-    duration: blue
-    date: blue
-    range: green
-    float: green
+    # color for nushell primitives
+    separator: white
+    leading_trailing_space_bg: { attr: n } # no fg, no bg, attr none effectively turns this off
+    header: green_bold
+    empty: blue
+    # Closures can be used to choose colors for specific values.
+    # The value (in this case, a bool) is piped into the closure.
+    # eg. { || if $in { 'light_cyan' } else { 'light_gray' } }
+    bool: light_cyan
+    int: white
+    filesize: cyan
+    duration: white
+    date: purple
+    range: white
+    float: white
     string: white
-    nothing: yellow_bold
-    binary: cyan
-    cellpath: cyan
-    row_index: red_dimmed
+    nothing: white
+    binary: white
+    cell-path: white
+    row_index: green_bold
     record: white
     list: white
     block: white
     hints: dark_gray
-
-    # shapes are used to change the cli syntax highlighting
-    shape_garbage: { fg: "#FFFFFF" bg: "#FF0000" attr: b}
+    search_result: {bg: red fg: white}
+    shape_and: purple_bold
+    shape_binary: purple_bold
+    shape_block: blue_bold
     shape_bool: light_cyan
-    shape_int: purple_bold
-    shape_float: purple_bold
-    shape_range: yellow_bold
-    shape_internalcall: cyna_bold
+    shape_closure: green_bold
+    shape_custom: green
+    shape_datetime: cyan_bold
+    shape_directory: cyan
     shape_external: cyan
     shape_externalarg: green_bold
+    shape_filepath: cyan
+    shape_flag: blue_bold
+    shape_float: purple_bold
+    # shapes are used to change the cli syntax highlighting
+    shape_garbage: { fg: white bg: red attr: b}
+    shape_globpattern: cyan_bold
+    shape_int: purple_bold
+    shape_internalcall: cyan_bold
+    shape_list: cyan_bold
     shape_literal: blue
+    shape_match_pattern: green
+    shape_matching_brackets: { attr: u }
+    shape_nothing: light_cyan
     shape_operator: yellow
+    shape_or: purple_bold
+    shape_pipe: purple_bold
+    shape_range: yellow_bold
+    shape_record: cyan_bold
+    shape_redirection: purple_bold
     shape_signature: green_bold
     shape_string: green
     shape_string_interpolation: cyan_bold
-    shape_list: cyan_bold
     shape_table: blue_bold
-    shape_record: cyan_bold
-    shape_block: blue_bold
-    shape_filepath: cyan
-    shape_globpattern: cyan_bold
     shape_variable: purple
-    shape_flag: blue_bold
-    shape_custom: green
-    shape_nothing: light_cyan
+    shape_vardecl: purple
 }
 
 let menu_style = {
@@ -82,7 +96,7 @@ $env.config = {
     case_sensitive: false
     quick: true
     partial: true
-    algorithm: "fuzzy"
+    algorithm: "prefix"
     external: {
       enable: true
       max_results: 100
@@ -106,20 +120,25 @@ $env.config = {
     always_trash: true
   }
   show_banner: false
+  error_style: "fancy"
   table: {
     mode: rounded
     index_mode: always
+    show_empty: false,
     trim: {
       methodology: wrapping
       wrapping_try_keep_words: true
       truncating_suffix: "..."
     }
+    header_on_separator: false
   }
   color_config: $theme
   use_grid_icons: true
   footer_mode: "30"
   float_precision: 2
   use_ansi_coloring: true
+  shell_integration: true
+  use_kitty_protocol: true
   edit_mode: vi
   hooks: {
     pre_prompt: [{ ||
@@ -197,41 +216,6 @@ $env.config = {
     }
   ]
   keybindings: [
-    {
-      name: backspaceword
-      modifier: control
-      keycode: char_w
-      mode: vi_insert
-      event: { edit: backspaceword }
-    }
-    {
-      name: movewordleft
-      modifier: control
-      keycode: char_b
-      mode: vi_insert
-      event:{ edit: movewordleft }
-    }
-    {
-      name: movewordright
-      modifier: control
-      keycode: char_f
-      mode: vi_insert
-      event: { edit: movewordright }
-    }
-    {
-      name: movetolinestart
-      modifier: control
-      keycode: char_o
-      mode: vi_insert
-      event: { edit: movetolinestart }
-    }
-    {
-      name: movetolineend
-      modifier: control
-      keycode: char_e
-      mode: vi_insert
-      event: { edit: movetolineend }
-    }
     {
       name: completion_menu
       modifier: none
@@ -361,61 +345,61 @@ def make-completion [command_name: string] {
 # Aliases   {{{1
 # =============================================================================
 
-alias _ = sudo
-alias cat = bat -P
-alias cb = cargo build
-alias cbr = cargo build --release
-alias cc = cargo clippy
-alias cca = cargo clippy --all-targets
-alias cdoc = cargo doc
-alias cdoco = cargo doc --open
+alias _ = ^sudo
+alias cat = ^bat -P
+alias cb = ^cargo build
+alias cbr = ^cargo build --release
+alias cc = ^cargo clippy
+alias cca = ^cargo clippy --all-targets
+alias cdoc = ^cargo doc
+alias cdoco = ^cargo doc --open
 alias cfg = cd ~/config
-alias clipboard = if $os == "linux" { xclip } else if $os == "macos" { pbcopy } else { echo $"clipboard not supported on ($os)" }
-alias cm = cargo make
+# alias clipboard = if $os == "linux" { xclip } else if $os == "macos" { pbcopy } else { echo $"clipboard not supported on ($os)" }
+alias cm = ^cargo make
 # FIXME: Switch to default cp when ctrl-c is fixed
 alias cp = ^cp -ia
-alias cr = cargo run
-alias crd = cargo run --profile dev-opt
+alias cr = ^cargo run
+alias crd = ^cargo run --profile dev-opt
 alias cre = ^cargo run --example
-alias crr = cargo run --release
-alias ct = cargo test --workspace --all-targets
+alias crr = ^cargo run --release
+alias ct = ^cargo test --workspace --all-targets
 alias curl = xh
-alias cw = cargo watch
-alias dc = docker compose
-alias du = dust
+alias cw = ^cargo watch
+alias dc = ^docker compose
+alias du = ^dust
 alias find = fd
 alias flg = CARGO_PROFILE_RELEASE_DEBUG=true cargo flamegraph --root
-alias ga = git add
-alias gb = git branch -v
-alias gba = git branch -a
-alias gbd = git branch -d
+alias ga = ^git add
+alias gb = ^git branch -v
+alias gba = ^git branch -a
+alias gbd = ^git branch -d
 alias gbm = ^git branch -v --merged
 alias gbnm = ^git branch -v --no-merged
-alias gc = git commit
-alias gcam = git commit --amend
+alias gc = ^git commit
+alias gcam = ^git commit --amend
 alias gcb = ^git checkout -b
-alias gco = git checkout
-alias gcp = git cherry-pick
-alias gd = git diff
-alias gdc = git diff --cached
-alias gdt = git difftool
-alias gf = git fetch origin
-alias glg = git log --graph --pretty=format:'%C(yellow)%h (%p) %ai%Cred%d %Creset%Cblue[%ae]%Creset %s (%ar). %b %N'
-alias gm = git merge
-alias gops = git push origin (git rev-parse --abbrev-ref HEAD | str trim) -u
-alias gopsn = git push origin (git rev-parse --abbrev-ref HEAD | str trim) -u --no-verify
-alias gpl = git pull
-alias gps = git push
-alias gr = git restore
-alias grhh = git reset HEAD --hard
-alias grm = git rm
-alias gs = git switch
-alias gsl = git stash list
-alias gst = git status
-alias gt = git tag
-alias gun = git reset HEAD --
-alias ir = irust
-alias ls = exa --icons
+alias gco = ^git checkout
+alias gcp = ^git cherry-pick
+alias gd = ^git diff
+alias gdc = ^git diff --cached
+alias gdt = ^git difftool
+alias gf = ^git fetch origin
+alias glg = ^git log --graph --pretty=format:'%C(yellow)%h (%p) %ai%Cred%d %Creset%Cblue[%ae]%Creset %s (%ar). %b %N'
+alias gm = ^git merge
+alias gops = ^git push origin (git rev-parse --abbrev-ref HEAD | str trim) -u
+alias gopsn = ^git push origin (git rev-parse --abbrev-ref HEAD | str trim) -u --no-verify
+alias gpl = ^git pull
+alias gps = ^git push
+alias gr = ^git restore
+alias grhh = ^git reset HEAD --hard
+alias grm = ^git rm
+alias gs = ^git switch
+alias gsl = ^git stash list
+alias gst = ^git status
+alias gt = ^git tag
+alias gun = ^git reset HEAD --
+alias ir = ^irust
+alias ls = ^exa --icons
 alias la = ls -a
 alias lk = ls -lrs size
 alias ll = ls -l
@@ -423,22 +407,23 @@ alias lt = ls --tree
 alias md = ^mkdir -p
 alias mkdir = md
 alias mv = mv -if
-alias myip = curl -s api.ipify.org
-alias nci = npm ci
-alias ni = npm i
-alias nr = npm run
-alias ns = npm start
-alias pc = procs
-alias py = python3
-alias rd = rmdir
+alias myip = ^curl -s api.ipify.org
+alias nci = ^npm ci
+alias ni = ^npm i
+alias nr = ^npm run
+alias ns = ^npm start
+alias pc = ^procs
+alias py = ^python3
+alias rd = ^rmdir
 alias rm = ^rm -i
-alias sed = sd
+alias sed = ^sd
 alias sopen = ^open
-alias sshl = ssh-add -L
-alias v = nvim
-alias vi = nvim
-alias vim = nvim
-alias vimdiff = nvim -d
+alias sshl = ^ssh-add -L
+alias st = echo ($nu).startup-time
+alias v = ^nvim
+alias vi = ^nvim
+alias vim = ^nvim
+alias vimdiff = ^nvim -d
 
 # =============================================================================
 # Commands   {{{1
@@ -668,7 +653,7 @@ def gclean [
 }
 
 def config_files [] {
-  [nvim kitty fish fishl nu nul nu_env starship]
+  [nvim kitty fish fishl nu nul nue starship]
 }
 
 # Edit configuration files
@@ -688,7 +673,7 @@ def config [
     nvim $"($home)/.config/nu/config.nu"
   } else if $config == "nul" {
     nvim $"($home)/.local/config.nu"
-  } else if $config == "nu_env" {
+  } else if $config == "nue" {
     nvim $"($home)/.config/nu/env.nu"
   } else if $config == "starship" {
     nvim $"($home)/.config/starship.toml"
@@ -697,7 +682,7 @@ def config [
   }
 }
 
-## Community Commands
+# Community Commands
 
 # Function querying free online English dictionary API for definition of given word(s)
 def dict [
@@ -796,7 +781,7 @@ use ~/.local/rtx.nu *
 
 # Load ssh-agent.
 def-env load-ssh-agent [] {
-  let agent_active = ($env.AGENT_INFO | path exists) and (not (ps | where name =~ ssh-agent | is-empty))
+  let agent_active = ($env.AGENT_INFO | path exists)
   $env.SSH_AUTH_SOCK = if $agent_active { $env.AGENT_FILE } else { "" }
   $env.SSH_AGENT_PID = if $agent_active { rg -o '=\d+' $env.AGENT_INFO | str replace = '' | str trim } else { "" }
 }
@@ -820,8 +805,6 @@ def logo [] {
      .W#G         E#t
     :W##########WtE#t
     :,,,,,,,,,,,,,.
-
-    (uptime)
 " | lolcat
   }
 }
