@@ -412,6 +412,7 @@ alias nci = ^npm ci
 alias ni = ^npm i
 alias nr = ^npm run
 alias ns = ^npm start
+alias nc = ^ncspot
 alias pc = ^procs
 alias py = ^python3
 alias rd = ^rmdir
@@ -748,7 +749,6 @@ def x [
 # Fuzzy search commands.
 # on selection, will display `help` for the commands
 # and paste command into clipboard for you to paste right away
-alias cs = commands search
 def "commands search" [] {
   # calculate required tabs/spaces to get a nicely aligned table
   let tablen = 8
@@ -770,14 +770,15 @@ def "commands search" [] {
     help ($command | split column (char tab) | get column1 | first)
   }
 }
+alias cs = commands search
 
 
 # =============================================================================
 # Startup   {{{1
 # =============================================================================
 
-use ~/.local/config.nu *
 use ~/.local/rtx.nu *
+use ~/.local/config.nu *
 
 # Load ssh-agent.
 def-env load-ssh-agent [] {

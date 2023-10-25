@@ -1515,6 +1515,13 @@ require("lazy").setup({
               procMacro = {
                 ignored = {},
               },
+              rustfmt = {
+                overrideCommand = {
+                "leptosfmt",
+                "--stdin",
+                "--rustfmt",
+              }
+              },
               workspace = {
                 symbol = {
                   search = { limit = 512 },

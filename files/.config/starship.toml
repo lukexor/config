@@ -4,6 +4,8 @@ format = """
 $directory\
 $git_branch\
 $git_commit\
+$git_state\
+$git_status\
 $c\
 $golang\
 $kotlin\
@@ -45,17 +47,8 @@ style = "bold yellow"
 [aws]
 symbol = "  "
 
-[buf]
-symbol = " "
-
 [c]
 symbol = " "
-
-[conda]
-symbol = " "
-
-[dart]
-symbol = " "
 
 [directory]
 truncate_to_repo = false
@@ -65,32 +58,14 @@ read_only = "  "
 [docker_context]
 symbol = " "
 
-[elixir]
-symbol = " "
-
-[elm]
-symbol = " "
-
-[fossil_branch]
-symbol = " "
-
 [git_branch]
 symbol = " "
 
 [golang]
 symbol = " "
 
-[guix_shell]
-symbol = " "
-
 [haskell]
 symbol = " "
-
-[haxe]
-symbol = "⌘ "
-
-[hg_branch]
-symbol = " "
 
 [hostname]
 ssh_symbol = " "
@@ -98,17 +73,11 @@ ssh_symbol = " "
 [java]
 symbol = " "
 
-[julia]
-symbol = " "
-
 [lua]
 symbol = " "
 
 [memory_usage]
-symbol = " "
-
-[nix_shell]
-symbol = " "
+symbol = "󰍛 "
 
 [nodejs]
 symbol = " "
@@ -151,7 +120,7 @@ Unknown = " "
 Windows = " "
 
 [package]
-symbol = " "
+symbol = " "
 
 [python]
 python_binary = "python3"
@@ -163,9 +132,3 @@ symbol = " "
 
 [rust]
 symbol = " "
-
-[scala]
-symbol = " "
-
-[spack]
-symbol = "🅢 "
