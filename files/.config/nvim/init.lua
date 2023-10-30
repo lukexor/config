@@ -1515,13 +1515,6 @@ require("lazy").setup({
               procMacro = {
                 ignored = {},
               },
-              rustfmt = {
-                overrideCommand = {
-                "leptosfmt",
-                "--stdin",
-                "--rustfmt",
-              }
-              },
               workspace = {
                 symbol = {
                   search = { limit = 512 },
@@ -2246,11 +2239,7 @@ require("lazy").setup({
         map("<c-'>", "<cmd>lua require('dap').step_over()<CR>", { desc = "Step over" })
         map("<c-;>", "<cmd>lua require('dap').step_into()<CR>", { desc = "Step into" })
         map("<c-:>", "<cmd>lua require('dap').step_out()<CR>", { desc = "Step out" })
-        map(
-          "K",
-          "<cmd>lua require('dap.ui.widgets').hover()<CR>",
-          { mode = { "n", "v" }, desc = "Evaluate expression" }
-        )
+        map("K", "<cmd>lua require('dapui').eval()<CR>", { mode = { "n", "v" }, desc = "Evaluate expression" })
         dapui.open()
       end
       dap.listeners.after.event_terminated.dapui_config = function()

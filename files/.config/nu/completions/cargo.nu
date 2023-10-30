@@ -1,3 +1,15 @@
+export alias cb = cargo build
+export alias cbr = cargo build --release
+export alias cc = cargo clippy
+export alias cca = cargo clippy --all-targets
+export alias cdoc = cargo doc
+export alias cdoco = cargo doc --open
+export alias cr = cargo run
+export alias crd = cargo run --profile dev-opt
+export alias crr = cargo run --release
+export alias ct = cargo test --workspace --all-targets
+export alias cw = cargo watch
+
 # Cargo targets
 def cargo-targets [type: string] {
   ^cargo metadata --format-version 1 --offline --no-deps | from json | get packages.targets | flatten | where ($type in $it.kind) | get name
@@ -52,6 +64,11 @@ def build-types [] {
 # Cargo outdated format
 def outdated-format [] {
   [List, Json]
+}
+
+# Run cargo example
+export def cre [example: string@cargo-examples] {
+  cargo run --example $example
 }
 
 # Rust's package manager

@@ -290,13 +290,15 @@ $env.config = {
       modifier: control
       keycode: char_y
       mode: vi_insert
-      event: {
-        send: executehostcommand
-        cmd: "commandline -i (fzf_dir)"
-      }
+      event: [
+        {
+          send: executehostcommand
+          cmd: "commandline -i (fzf_dir)"
+        }
+      ]
     }
     {
-      name: fzf_file
+      name: fzf_edit
       modifier: control
       keycode: char_s
       mode: vi_insert
@@ -345,90 +347,53 @@ def make-completion [command_name: string] {
 # Aliases   {{{1
 # =============================================================================
 
-alias _ = ^sudo
-alias cat = ^bat -P
-alias cb = ^cargo build
-alias cbr = ^cargo build --release
-alias cc = ^cargo clippy
-alias cca = ^cargo clippy --all-targets
-alias cdoc = ^cargo doc
-alias cdoco = ^cargo doc --open
+alias _ = sudo
+alias cat = bat -P
 alias cfg = cd ~/config
 # alias clipboard = if $os == "linux" { xclip } else if $os == "macos" { pbcopy } else { echo $"clipboard not supported on ($os)" }
-alias cm = ^cargo make
+alias cm = cargo make
 # FIXME: Switch to default cp when ctrl-c is fixed
 alias cp = ^cp -ia
-alias cr = ^cargo run
-alias crd = ^cargo run --profile dev-opt
-alias cre = ^cargo run --example
-alias crr = ^cargo run --release
-alias ct = ^cargo test --workspace --all-targets
 alias curl = xh
-alias cw = ^cargo watch
-alias dc = ^docker compose
-alias du = ^dust
+alias dc = docker compose
+alias du = dust
 alias find = fd
 alias flg = CARGO_PROFILE_RELEASE_DEBUG=true cargo flamegraph --root
-alias ga = ^git add
-alias gb = ^git branch -v
-alias gba = ^git branch -a
-alias gbd = ^git branch -d
-alias gbm = ^git branch -v --merged
-alias gbnm = ^git branch -v --no-merged
-alias gc = ^git commit
-alias gcam = ^git commit --amend
-alias gcb = ^git checkout -b
-alias gco = ^git checkout
-alias gcp = ^git cherry-pick
-alias gd = ^git diff
-alias gdc = ^git diff --cached
-alias gdt = ^git difftool
-alias gf = ^git fetch origin
-alias glg = ^git log --graph --pretty=format:'%C(yellow)%h (%p) %ai%Cred%d %Creset%Cblue[%ae]%Creset %s (%ar). %b %N'
-alias gm = ^git merge
-alias gops = ^git push origin (git rev-parse --abbrev-ref HEAD | str trim) -u
-alias gopsn = ^git push origin (git rev-parse --abbrev-ref HEAD | str trim) -u --no-verify
-alias gpl = ^git pull
-alias gps = ^git push
-alias gr = ^git restore
-alias grhh = ^git reset HEAD --hard
-alias grm = ^git rm
-alias gs = ^git switch
-alias gsl = ^git stash list
-alias gst = ^git status
-alias gt = ^git tag
-alias gun = ^git reset HEAD --
-alias ir = ^irust
-alias ls = ^exa --icons
+alias ir = irust
+alias ls = exa --icons
 alias la = ls -a
 alias lk = ls -lrs size
 alias ll = ls -l
 alias lt = ls --tree
-alias md = ^mkdir -p
 alias mkdir = md
 alias mv = mv -if
-alias myip = ^curl -s api.ipify.org
-alias nci = ^npm ci
-alias ni = ^npm i
-alias nr = ^npm run
-alias ns = ^npm start
-alias nc = ^ncspot
-alias pc = ^procs
-alias py = ^python3
-alias rd = ^rmdir
+alias myip = curl -s api.ipify.org
+alias nci = npm ci
+alias ni = npm i
+alias nr = npm run
+alias ns = npm start
+alias nc = ncspot
+alias pc = procs
+alias py = python3
+alias rd = rmdir
 alias rm = ^rm -i
-alias sed = ^sd
-alias sopen = ^open
-alias sshl = ^ssh-add -L
+alias sed = sd
+alias sopen = open
+alias sshl = ssh-add -L
 alias st = echo ($nu).startup-time
-alias v = ^nvim
-alias vi = ^nvim
-alias vim = ^nvim
-alias vimdiff = ^nvim -d
+alias v = nvim
+alias vi = nvim
+alias vim = nvim
+alias vimdiff = nvim -d
 
 # =============================================================================
 # Commands   {{{1
 # =============================================================================
+
+# Make directory
+def md [dir: string] {
+  mkdir -p $dir
+}
 
 # Current date.
 def da [] {
@@ -578,7 +543,7 @@ def ffi [] {
 
 # Output last N ^git commits.
 def gl [count: int] {
-  ^git log --pretty=%h»¦«%s»¦«%aN»¦«%aD
+  git log --pretty=%h»¦«%s»¦«%aN»¦«%aD
   | lines
   | first $count
   | split column "»¦«" commit message name date
@@ -598,7 +563,7 @@ def pg [search: string] {
 # Restart ssh-agent.
 def-env ra [] {
   pg ssh-agent | each { |p| kill $p.pid }
-  ^rm -f $env.AGENT_INFO $env.AGENT_FILE
+  rm -f $env.AGENT_INFO $env.AGENT_FILE
 
   let agent = (ssh-agent -s -a $env.AGENT_FILE)
   $agent | save $env.AGENT_INFO
@@ -615,19 +580,19 @@ def-env ra [] {
 
 # Output commits since yesterday.
 def gnew [] {
-  ^git --no-pager log --graph --pretty=format:'%C(yellow)%h %ad%Cred%d %Creset%Cblue[%cn]%Creset  %s (%ar)' --date=iso --all --since='23 hours ago'
+  git --no-pager log --graph --pretty=format:'%C(yellow)%h %ad%Cred%d %Creset%Cblue[%cn]%Creset  %s (%ar)' --date=iso --all --since='23 hours ago'
 }
 
 # Output git branches sorted by last commit date.
 def gage [] {
   # substring 2.. skips the currently checked out branch marker "* "
-  ^git branch -a
+  git branch -a
     | lines
     | str substring 2..
     | wrap name
     | where name !~ HEAD
     | insert "last commit" {
-        get name | par-each { |commit| ^git show $commit --no-patch --format=%as | str join | str trim }
+        get name | par-each { |commit| git show $commit --no-patch --format=%as | str join | str trim }
       }
     | sort-by "last commit"
 }
@@ -636,18 +601,20 @@ def gage [] {
 def gclean [
   --force (-f) # force delete
 ] {
-  let branches = ^git branch -vl
+  let branches = git branch -vl
     | lines
     | str substring 2..
     | split column " " branch hash status --collapse-empty
     | where status == '[gone]'
 
-  if not ($branches | is-empty) {
+  if ($branches | is-empty) {
+    echo "All clean!"
+  } else {
     branches | par-each { |line|
       if $force {
-        ^git branch -d -f $line.branch 
+        git branch -d -f $line.branch 
       } else {
-        ^git branch -d $line.branch 
+        git branch -d $line.branch 
       }
     }
   }

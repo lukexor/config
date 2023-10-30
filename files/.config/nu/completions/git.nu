@@ -1,3 +1,32 @@
+export alias ga = git add
+export alias gb = git branch -v
+export alias gba = git branch -a
+export alias gbd = git branch -d
+export alias gbm = git branch -v --merged
+export alias gbnm = git branch -v --no-merged
+export alias gc = git commit
+export alias gcam = git commit --amend
+export alias gco = git checkout
+export alias gcp = git cherry-pick
+export alias gd = git diff
+export alias gdc = git diff --cached
+export alias gdt = git difftool
+export alias gf = git fetch origin
+export alias glg = git log --graph --pretty=format:'%C(yellow)%h (%p) %ai%Cred%d %Creset%Cblue[%ae]%Creset %s (%ar). %b %N'
+export alias gm = git merge
+export alias gops = git push origin (git rev-parse --abbrev-ref HEAD | str trim) -u
+export alias gopsn = git push origin (git rev-parse --abbrev-ref HEAD | str trim) -u --no-verify
+export alias gpl = git pull
+export alias gps = git push
+export alias gr = git restore
+export alias grhh = git reset HEAD --hard
+export alias grm = git rm
+export alias gs = git switch
+export alias gsl = git stash list
+export alias gst = git status
+export alias gt = git tag
+export alias gun = git reset HEAD --
+
 # Git local branches
 def git-branches [] {
   ^git branch | lines | each { |line| $line | str replace '\* ' "" | str trim }
@@ -48,6 +77,11 @@ def merge-strategy-opts [] {
 # Merge Conflict styles
 def conflict-style [] {
   [merge diff3]
+}
+
+# Checkout git branch
+export def gcb [branch: string@git-branches] {
+  git checkout -b $branch
 }
 
 # Join two or more development histories together
@@ -103,10 +137,10 @@ export extern "git branch" [
   --help(-h)                                        # help
   --ignore-case(-i)                                 # sorting and filtering are case insensitive
   --list(-l)                                        # list branch names
-  --merged: string                                  # print only branches that are merged
+  --merged?: string                                 # print only branches that are merged
   --move(-m)                                        # move/rename a branch and its reflog
   --no-contains: string                             # print only branches that don't contain the commit
-  --no-merged: string                               # print only branches that are not merged
+  --no-emerged?: string                             # print only branches that are not merged
   --points-at: string                               # print only branches of the object
   --quiet(-q)                                       # suppress informational messages
   --remotes(-r)                                     # act on remote-tracking branches
