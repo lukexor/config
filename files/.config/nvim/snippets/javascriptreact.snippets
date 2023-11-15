@@ -1,0 +1,148 @@
+extends javascript
+
+snippet ir "import React" b
+    import React from 'react';
+
+snippet irc "import React and Component" b
+    import React, { Component } from 'react';
+
+snippet irh "import React hook" b
+    import { use$1 } from 'react';
+
+snippet cdm "componentDidMount" b
+    componentDidMount() {
+        ${0:${VISUAL}
+    };
+
+snippet cdup "componentDidUpdate" b
+    componentDidUpdate(prevProps, prevState) {
+        ${0:${VISUAL}
+    };
+
+snippet cwm "componentWillMount" b
+    componentWillMount() {
+        ${0:${VISUAL}
+    };
+
+snippet cwr "componentWillReceiveProps" b
+    componentWillReceiveProps(nextProps) {
+        ${0:${VISUAL}
+    };
+
+snippet cwun "componentWillUnmount" b
+    componentWillUnmount() {
+        ${0:${VISUAL}
+    };
+
+snippet cwu "componentWillUpdate" b
+    componentWillUpdate(nextProps, nextState) {
+        ${0:${VISUAL}
+    };
+
+snippet scu "shouldComponentUpdate" b
+    shouldComponentUpdate(nextProps, nextState) {
+        ${0:${VISUAL}
+    }
+
+snippet spt "static propTypes" b
+    static propTypes = {
+        $1: PropTypes.$2
+    };
+
+snippet pt "propTypes" b
+    $1.propTypes = {
+        $2: PropTypes.${2}
+    };
+
+snippet sdp "static defaultProps" b
+    static defaultProps = {
+        $1: $2  
+    };
+
+snippet dp "defaultProps" b
+    $1.defaultProps = {
+        $2: $3
+    };
+
+snippet pp "props"
+    props.$1;
+
+snippet tp "this props"
+    this.props.$1;
+
+# State
+snippet st "state" b
+    state = {
+        $1: $2,
+    };
+
+snippet sst "set state" b
+    this.setState({
+        $1: $2
+    });
+
+snippet tst "this state"
+    this.state.$1;
+
+snippet rcla "class component" b
+    class ${1:ClassName} extends Component {
+        render() {
+            return (
+                <>
+                    ${0:${VISUAL}
+                </>
+            );
+        }
+    }
+
+snippet ercla "export default class component" b
+    export default class ${1:ClassName} extends Component {
+        render() {
+            return (
+                <>
+                    ${0:${VISUAL}
+                </>
+            );
+        };
+    };
+
+snippet ctor "constructor" b
+    constructor() {
+        super();
+
+        ${1:state}
+    }
+
+snippet ren "render" b
+    render() {
+        return (
+            <>
+                ${0:${VISUAL}
+            </>
+        );
+    }
+
+snippet uses "useState" b
+    const [$1, set${1/(.)/${1:/upcase}/}] = useState($3);
+
+snippet usee "useEffect" b
+    useEffect(() => {
+        ${0:${VISUAL}
+    }, [$1]);
+
+snippet userd "useReducer" b
+    const [${1:state}, ${2:dispatch}] = useReducer($3);
+
+snippet userf "useRef" b
+    const ${1:ref} = useRef($2);
+
+snippet usect "useContext" b
+    const ${1:ctx} = useContext($2);
+
+snippet usecb "useCallback" b
+    const ${1:fn} = useCallback(() => {
+        ${0:${VISUAL}
+    }, [$2]);
+
+snippet usem "useMemo" b
+    const ${1:value} = useMemo(() => ${0:${VISUAL}, [$2]);

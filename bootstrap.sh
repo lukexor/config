@@ -189,6 +189,7 @@ install_crates() {
     cargo-audit \
     cargo-bloat \
     cargo-deny \
+    cargo-dist \
     cargo-expand \
     cargo-generate \
     cargo-info \
@@ -202,6 +203,7 @@ install_crates() {
     du-dust \
     fd-find \
     flamegraph \
+    git-cliff \
     irust \
     just \
     mprocs \

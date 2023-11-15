@@ -78,6 +78,10 @@ $env.PATH = if $nu.os-info.name == "macos" {
   ]
 }
 
+if $nu.os-info.name == "macos" {
+  $env.LIBRARY_PATH = $"($nu.home-path)/.local/lib"
+}
+
 # Specifies how environment variables are:
 # - converted from a string to a value on Nushell startup (from_string)
 # - converted from a value back to a string when running external commands (to_string)

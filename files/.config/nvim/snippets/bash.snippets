@@ -1,0 +1,18 @@
+extends sh
+
+snippet #! "shebang" b
+    #!/usr/bin/env bash
+    set -euo pipefail
+    IFS=$'\n\t'
+
+snippet if "if" b
+    if [[ $1 ]]; then
+        ${0:${VISUAL}}
+    fi
+snippet elif "elif" b
+    elif [[ $1 ]]; then
+        ${0:${VISUAL}}
+snippet wh "while" b
+    while [[ $1 ]]; do
+        ${0:${VISUAL}}
+    done

@@ -1,0 +1,181 @@
+snippet fn "function" b
+    function $1($2) {
+        ${0:${VISUAL}}
+    }
+snippet afn "async function" b
+    async function $1($2) {
+        ${0:${VISUAL}}
+    }
+snippet if "if" b
+    if ($1) {
+        ${0:${VISUAL}}
+    }
+snippet ife "if/else" b
+    if ($1) {
+        $2
+    } else {
+        ${0:${VISUAL}}
+    }
+snippet t "ternary"
+    $1 ? $2: $0
+snippet sw "switch" b
+    switch ($1) {
+        case $3:
+            $4
+            break;
+        $0
+        default:
+            $2
+    }
+snippet case "case" b
+    case $1:
+        ${0:${VISUAL}}
+        break;
+snippet try "try/catch" b
+    try {
+        ${0:${VISUAL}}
+    } catch (${1:err}) {
+        $2
+    }
+snippet tryf "try/catch/finally" b
+    try {
+        ${0:${VISUAL}}
+    } catch (${1:e}) {
+        $2
+    } finally {
+        $3
+    }
+snippet terr "throw error" b
+    throw new Error('$1')
+snippet ret "return" b
+    return $0;
+snippet for "for" b
+    for (let ${1:i} = 0, ${2:len} = ${3:Things.length}; $1 < $2; ++$1) {
+        ${0:${VISUAL}}
+    }
+snippet forr "reversed for" b
+    for (let ${2:i} = ${1:Things.length} - 1; $2 >= 0; $2--) {
+        ${0:${VISUAL}}
+    }
+snippet wh "(condition) { ... }" b
+    while ($1) {
+        ${0:${VISUAL}}
+    }
+snippet do "do/while" b
+    do {
+        ${0:${VISUAL}}
+    } while ($1);
+snippet fori "for in" b
+    for (let ${1:prop} in ${2:object}) {
+        ${0:$2[$1]}
+    }
+snippet /** "doc string" b
+    /**
+     * ${0:description}
+     *
+     */
+snippet @par "@param"
+    @param {${1:type}} ${2:name} ${0:description}
+snippet @ret "@return"
+    @return {${1:type}} ${0:description}
+snippet jsonp "parse json"
+    JSON.parse($0);
+snippet jsons "stringify json"
+    JSON.stringify($0);
+snippet get "get element"
+    getElementBy${1:Id}('$0')
+snippet gets "get elements"
+    getElementsBy${1:TagName}('$0')
+snippet by. "get by class"
+    ${1:document}.getElementsByClassName('${0:class}')
+snippet by# "get by id"
+    ${1:document}.getElementById('${0:element ID}')
+snippet qs "query selector"
+    ${1:document}.querySelector('${0:CSS selector}')
+snippet qsa "query selector all"
+    ${1:document}.querySelectorAll('${0:CSS selector}')
+snippet dbg "debugger"
+    debugger;
+snippet cl "console.log"
+    console.log($0);
+snippet cd "console.debug"
+    console.debug($0);
+snippet ce "console.error"
+    console.error($0);
+snippet cw "console.warn"
+    console.warn($0);
+snippet ci "console.info"
+    console.info($0);
+snippet ct "console.trace"
+    console.trace(${0:label});
+snippet ctime "console.time ... console.timeEnd" b
+    console.time("${1:label}");
+    ${0:${VISUAL}}
+    console.timeEnd("$1");
+snippet ctimestamp "console.timeStamp"
+    console.timeStamp("${1:label}");
+snippet ca "console.assert"
+    console.assert(${1:expression}, ${0:obj});
+snippet cclear "console.clear"
+    console.clear();
+snippet cdir "console.dir"
+    console.dir(${0:obj});
+snippet cdirx "console.dirxml"
+    console.dirxml(${1:object});
+snippet cgroup "console.group" b
+    console.group("${1:label}");
+    ${0:${VISUAL}}
+    console.groupEnd();
+snippet cgroupc "console.groupCollapsed" b
+    console.groupCollapsed("${1:label}");
+    ${0:${VISUAL}}
+    console.groupEnd();
+snippet cprof "console.profile" b
+    console.profile("${1:label}");
+    ${0:${VISUAL}}
+    console.profileEnd();
+snippet ctable "console.table"
+    console.table(${1:"${2:value}"});
+snippet cljsons "console.log stringified json"
+    console.log(JSON.stringify($0, null, 2));
+snippet timeout "timeout"
+    setTimeout(function () {$0}$2, ${1:1000});
+snippet const b
+    const $1 = $0;
+snippet constn b
+    const $1 = new $0;
+snippet let b
+    let $1 = $0;
+snippet im "import" b
+    import $1 from '${2:$1}';
+snippet imas "import *" b b
+    import * as $1 from '${2:$1}';
+snippet imm "import member" b
+    import { $1 } from '$2';
+snippet foro "for const of" b
+    for (const ${1:prop} of ${2:object}) {
+        ${0:$1}
+    }
+snippet forl "for let of" b
+    for (let ${1:prop} of ${2:object}) {
+        ${0:$1}
+    }
+snippet cfn "const arrow function" b
+    const ${1:function_name} = ($2) => {
+        ${0:${VISUAL}}
+    }
+snippet cafn "const async arrow function" b
+    const ${1:function_name} = async ($2) => {
+        ${0:${VISUAL}}
+    }
+snippet => "arrow function"
+    ($1) => {
+        ${0:${VISUAL}}
+    }
+snippet af "arrow function"
+    ($1) => { ${0:${VISUAL}} }
+snippet ed "export default" b
+    export default $0
+snippet aw "await" b
+    await ${0:${VISUAL}}
+

@@ -24,9 +24,12 @@ vim.env.PAGER = "bat"
 -- Ensure a vim-compatible shell
 vim.env.SHELL = "/bin/bash"
 
+-- Require latest binaries for neovim, even if individual projects might use
+-- older/outdated versions.
 -- https://neovim.io/doc/user/provider.html
-vim.g.python3_host_prog = "python3"
--- Highlight strings and numbers inside comments
+vim.g.python3_host_prog = vim.env.HOME .. "/.local/bin/python3"
+vim.g.node_host_prog = vim.env.HOME .. "/.local/bin/node"
+--- Highlight strings and numbers inside comments
 vim.g.c_comment_strings = 1
 
 vim.o.breakindent = true
@@ -322,16 +325,11 @@ vim.api.nvim_create_user_command(
 
 map("<localleader>Tb", "<cmd>%s/\\s\\+$//<CR>", { desc = "Trim Trailing Blanks" })
 
-map("jj", "<Esc>", { mode = "i", remap = true, desc = "Escape" })
 map("<C-c>", "<Esc>", { mode = "i", remap = true, desc = "Escape" })
 
 -- Case statements in bash use `;;`
 map("<leader>;", "A;<Esc>", { desc = "Append ;" })
-if vim.bo.filetype ~= "sh" then
-  map(";;", "<Esc>A;<Esc>", { mode = "i", desc = "Append ;" })
-end
 map("<leader>,", "A,<Esc>", { desc = "Append ," })
-map(",,", "<Esc>A,<Esc>", { mode = "i", desc = "Append ," })
 
 -- Add breaks in undo chain when typing punctuation
 map(".", ".<C-g>u", { mode = "i", desc = "." })
@@ -1340,7 +1338,6 @@ require("lazy").setup({
             json = { prettierd },
             lua = { require("formatter.filetypes.lua").stylua },
             markdown = { prettierd },
-            python = { require("formatter.filetypes.python").black },
             toml = { require("formatter.filetypes.toml").taplo },
             typescript = { prettierd },
             typescriptreact = { prettierd },
@@ -1461,7 +1458,19 @@ require("lazy").setup({
         end),
         html = get_options(),
         jsonls = get_options(),
-        ruff_lsp = get_options(),
+        pylsp = get_options(function(opts)
+          opts.settings = {
+            pylsp = {
+              plugins = {
+                -- TODO: Figure out how to disable per project
+                autopep8 = { enabled = false },
+                pycodestyle = {
+                  maxLineLength = 120,
+                },
+              },
+            },
+          }
+        end),
         clangd = get_options(function(opts)
           opts.filetypes = { "c", "cpp" }
           opts.offsetEncoding = { "utf-16" }
@@ -1602,7 +1611,6 @@ require("lazy").setup({
       require("mason-tool-installer").setup({
         ensure_installed = {
           "bashls",
-          "black",
           "clang-format",
           "clangd",
           "cpplint",
@@ -1615,8 +1623,7 @@ require("lazy").setup({
           "markdownlint",
           "prettierd",
           "protolint",
-          "ruff",
-          "ruff_lsp",
+          "pylsp",
           "rust_analyzer",
           "shellcheck",
           "stylelint",
@@ -1686,6 +1693,7 @@ require("lazy").setup({
         opts = {
           suggestion = { enabled = false, auto_trigger = false },
           panel = { enabled = false },
+          copilot_node_command = vim.g.node_host_prog,
         },
       },
     },
@@ -1928,13 +1936,14 @@ require("lazy").setup({
     keys = {
       { "<leader>Es", "<cmd>lua require('luasnip.loaders').edit_snippet_files()<CR>", desc = "Edit Snippets" },
     },
+    build = "make install_jsregexp",
     init = function()
       vim.g.snips_author = vim.fn.system("git config --get user.name | tr -d '\n'")
-      vim.g.snips_author_email = vim.fn.system("git config --get user.email | tr -d '\n'")
+      vim.g.snips_email = vim.fn.system("git config --get user.email | tr -d '\n'")
       vim.g.snips_github = "https://github.com/lukexor"
     end,
     config = function()
-      require("luasnip.loaders.from_snipmate").lazy_load()
+      require("luasnip.loaders.from_snipmate").lazy_load({ paths = "./snippets" })
       require("luasnip.loaders.from_lua").lazy_load({ paths = "./snippets" })
     end,
   },
@@ -2053,7 +2062,8 @@ require("lazy").setup({
       { "<leader>dD", "<cmd>Telescope diagnostics<CR>", desc = "Diagnostics" },
       { "<leader>Th", "<cmd>Telescope help_tags<CR>", desc = "Help Tags" },
       { "<leader>U", "<cmd>Telescope luasnip<CR>", desc = "Snippets" },
-      { "<c-s>", "<Esc>h:Telescope symbols<CR>", mode = "i", desc = "Symbols" },
+      { "<c-u>", "<cmd>Telescope luasnip<CR>", mode = "i", desc = "Snippets" },
+      { "<c-s>", "<cmd>Telescope symbols<CR>", desc = "Symbols" },
     },
     config = function()
       local telescope = require("telescope")
@@ -2272,7 +2282,6 @@ require("lazy").setup({
     notify = false,
   },
 })
-
 -- =============================================================================
 -- Abbreviations
 -- =============================================================================

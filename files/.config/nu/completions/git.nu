@@ -84,6 +84,84 @@ export def gcb [branch: string@git-branches] {
   git checkout -b $branch
 }
 
+# Merge latest origin/develop into current branch.
+export def gmd [] {
+  git pull
+  git merge origin/develop
+}
+
+# Git tag a new cargo version
+export def "tag_version" [semver?: string] {
+  let old_version = (open Cargo.toml | get package.version)
+  let new_version = if $semver == "major" {
+    ($old_version | inc --major)
+  } else if $semver == "minor" {
+    ($old_version | inc --minor)
+  } else if $semver == null or $semver == "patch" {
+    ($old_version | inc --patch)
+  } else if $semver != null {
+    echo "invalid semver - major | minor | patch"
+    return
+  }
+  perl -i -pe $"s/^version = \"($old_version)\"/version = \"($new_version)\"/" Cargo.toml
+  cargo update -w
+  git commit -m $"Released v$new_version"
+  git tag -a $new_version -m $"Release v$new_version"
+}
+
+# Output last N ^git commits.
+export def gl [count: int] {
+  git log --pretty=%h»¦«%s»¦«%aN»¦«%aD
+  | lines
+  | first $count
+  | split column "»¦«" commit message name date
+  | update date { get date | into datetime }
+}
+
+
+# Output commits since yesterday.
+export def gnew [] {
+  git --no-pager log --graph --pretty=format:'%C(yellow)%h %ad%Cred%d %Creset%Cblue[%cn]%Creset  %s (%ar)' --date=iso --all --since='23 hours ago'
+}
+
+# Output git branches sorted by last commit date.
+export def gage [] {
+  # substring 2.. skips the currently checked out branch marker "* "
+  git branch -a
+    | lines
+    | str substring 2..
+    | wrap name
+    | where name !~ HEAD
+    | insert "last commit" {
+        get name | par-each { |commit| git show $commit --no-patch --format=%as | str join | str trim }
+      }
+    | sort-by "last commit"
+}
+
+# Clean old ^git branches.
+export def gclean [
+  --force (-f) # force delete
+] {
+  let branches = git branch -vl
+    | lines
+    | str substring 2..
+    | split column " " branch hash status --collapse-empty
+    | where status == '[gone]'
+
+  if ($branches | is-empty) {
+    echo "All clean!"
+  } else {
+    $branches | par-each { |line|
+      if $force {
+        git branch -d -f $line.branch
+      } else {
+        git branch -d $line.branch
+      }
+    }
+  }
+}
+
+
 # Join two or more development histories together
 export extern "git merge" [
   ...commits: string@git-all-branches               # name of the branch to merge

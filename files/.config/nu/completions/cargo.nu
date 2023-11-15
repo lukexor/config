@@ -15,9 +15,9 @@ def cargo-targets [type: string] {
   ^cargo metadata --format-version 1 --offline --no-deps | from json | get packages.targets | flatten | where ($type in $it.kind) | get name
 }
 # Cargo binaries
-def cargo-bins [] { nu-comp cargo target bins }
+def cargo-bins [] { cargo-targets bins }
 # Cargo examples
-def cargo-examples [] { nu-comp cargo target example }
+def cargo-examples [] { cargo-targets example }
 # Cargo packages
 def cargo-packages [] {
   ^cargo metadata --format-version 1 --offline --no-deps | from json | get workspace_members | split column ' ' name version source | get name

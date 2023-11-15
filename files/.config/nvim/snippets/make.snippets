@@ -1,0 +1,37 @@
+snippet base
+	.PHONY: clean
+	CC = gcc
+	CFLAGS = -g -Wall
+
+	all: $1
+
+	%.o: %.c
+		$(CC) $(CFLAGS) -c -o $@ $<
+	
+	${1:out}: $1.o
+		$(CC) $(CFLAGS) -o $@ $+
+
+	clean:
+		rm -f *.o core.*
+snippet add
+	${1:out}: $1.o
+		$(CC) $(CFLAGS) -o $@ $+
+snippet print
+	print-%: ; @echo $*=$($*)
+snippet if
+	ifeq (${1:cond0}, ${2:cond1})
+		${0:${VISUAL}}
+	endif
+snippet ife
+	ifeq (${1:cond0}, ${2:cond1})
+		${3:${VISUAL}}
+	else
+		${0}
+	endif
+snippet el
+	else
+		${0:${VISUAL}}
+snippet help
+	help: ## Prints help for targets with comments
+		@cat $(MAKEFILE_LIST) | grep -E '^[a-zA-Z_-]+:.*?## .*$$' | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $\$1, $\$2}'
+	${0}

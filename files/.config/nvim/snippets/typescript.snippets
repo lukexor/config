@@ -1,0 +1,10 @@
+extends javascript
+
+snippet tconst "ts const" b
+    const $1: $2 = $3;
+snippet tlet "ts let"
+    let $1: $2 = $3;
+snippet tfn "ts function"
+    function $1($2): $3 {
+        ${0:${VISUAL}
+    }
