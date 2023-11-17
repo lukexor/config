@@ -384,10 +384,9 @@ map("<C-r>", '"hy:%s/<C-r>h//g<left><left>', { mode = "v", desc = "Search and Re
 -- Clipboard
 -- -----------------------------------------------------------------------------
 
-map("cy", '"+y', { desc = "Yank to clipboard" })
+map("cy", '"+y', { mode = { "n", "v" }, desc = "Yank to clipboard" })
 map("cY", '"+Y', { desc = "Yank line to clipboard" })
 map("cyy", '"+yy', { desc = "Yank line to clipbard" })
-map("cy", '"+y', { mode = "v", desc = "Yank selection to clipboard" })
 map("cp", '"+p', { desc = "Paste from clipboard after cursor" })
 map("cP", '"+P', { desc = "Paste from clipboard before cursor" })
 
@@ -514,11 +513,13 @@ local disabled_built_ins = {
   "2html_plugin",
   "getscript",
   "getscriptPlugin",
+  "gzip",
   "logipat",
   "netrw",
   "netrwPlugin",
   "netrwSettings",
   "netrwFileHandlers",
+  "tarPlugin",
   "tutor",
   "rplugin",
   "rrhelper",
@@ -740,6 +741,7 @@ require("lazy").setup({
       { "<localleader>C", "<cmd>Cheatsheet<CR>", desc = "cheatsheet" },
       { "<localleader>E", "<cmd>CheatsheetEdit<CR>", desc = "edit cheatsheet" },
     },
+    opts = {},
   },
   {
     "dbeniamine/cheat.sh-vim", -- Online Cheat.sh lookup
@@ -769,9 +771,7 @@ require("lazy").setup({
   {
     "folke/which-key.nvim", -- Show mappings as you type
     event = "VeryLazy",
-    opts = {
-      plugins = { spelling = true },
-    },
+    opts = {},
   },
   -- -----------------------------------------------------------------------------
   -- Code Assists
@@ -827,7 +827,10 @@ require("lazy").setup({
     "windwp/nvim-ts-autotag", -- Auto-close HTML/JSX tags
     ft = {
       "html",
+      "javascriptriptreact",
+      "rust",
       "typescriptreact",
+      "xml",
     },
     opts = {
       autotag = {
@@ -845,6 +848,8 @@ require("lazy").setup({
   },
   {
     "NoahTheDuke/vim-just", -- justfile support
+    event = { "BufReadPre", "BufNewFile" },
+    ft = { "\\cjustfile", "*.just", ".justfile" },
   },
   {
     "tpope/vim-surround", -- Easy changes of surrounding quotes & brackets
@@ -912,10 +917,10 @@ require("lazy").setup({
     cmd = "EasyAlign",
     keys = {
       { "gA", "<Plug>(EasyAlign)", desc = "align text" },
-      { "<CR>", "<Plug>(EasyAlign)", mode = "v", desc = "align selection" },
-      { "<leader>a/", "gAii/", remap = true, desc = "align indent level to /" },
-      { "<leader>a:", "gAii:", remap = true, desc = "align indent level to :" },
-      { "<leader>a=", "gAii:", remap = true, desc = "align indent level to =" },
+      { "=", "<Plug>(EasyAlign)", mode = "v", desc = "align selection" },
+      { "<leader>=/", "gAii/", remap = true, desc = "align indent level to /" },
+      { "<leader>=:", "gAii:", remap = true, desc = "align indent level to :" },
+      { "<leader>==", "gAii=", remap = true, desc = "align indent level to =" },
     },
     init = function()
       vim.g.easy_align_delimiters = {
@@ -1109,6 +1114,7 @@ require("lazy").setup({
   {
     "stevearc/dressing.nvim", -- Window UI enhancements, popups, input, etc
     event = "VeryLazy",
+    opts = {},
   },
   {
     "folke/noice.nvim", -- UI improvements
@@ -1297,81 +1303,41 @@ require("lazy").setup({
   -- LSP
   -- -----------------------------------------------------------------------------
   {
+    "williamboman/mason.nvim",
+    cmd = { "Mason", "MasonUpdate" },
+    keys = {
+      { "<leader>pm", "<cmd>MasonUpdate<CR>:Mason<CR>", desc = "Update LSP Servers" },
+    },
+  },
+  {
+    "WhoIsSethDaniel/mason-tool-installer.nvim",
+    lazy = true,
+  },
+  {
+    "jay-babu/mason-nvim-dap.nvim",
+    cmd = { "DapInstall" },
+  },
+  {
     "neovim/nvim-lspconfig", -- language server
     event = { "BufReadPre", "BufNewFile" },
     dependencies = {
-      {
-        "williamboman/mason.nvim",
-        cmd = { "Mason", "MasonUpdate" },
-        keys = {
-          { "<leader>pm", "<cmd>MasonUpdate<CR>:Mason<CR>", desc = "Update LSP Servers" },
-        },
-      },
-      {
-        "jay-babu/mason-nvim-dap.nvim",
-        config = function()
-          require("mason-nvim-dap").setup({
-            ensure_installed = { "codelldb" },
-          })
-        end,
-      },
       "hrsh7th/cmp-nvim-lsp",
       "williamboman/mason-lspconfig.nvim",
-      "WhoIsSethDaniel/mason-tool-installer.nvim",
       {
         "kosayoda/nvim-lightbulb", -- Lightbulb next to code actions
-        config = function()
-          vim.fn.sign_define("LightBulbSign", { text = "󰌵", texthl = "", linehl = "", numhl = "" })
-          require("nvim-lightbulb").setup({ autocmd = { enabled = true } })
-        end,
+        opts = {
+          autocmd = { enabled = true },
+          sign = {
+            text = "",
+          },
+        },
       },
       "simrat39/rust-tools.nvim",
       {
         "folke/neodev.nvim",
-        config = function()
-          require("neodev").setup({
-            library = { plugins = { "nvim-dap-ui" }, types = true },
-          })
-        end,
-      },
-      {
-        "mhartington/formatter.nvim",
-        config = function()
-          local formatter = require("formatter")
-          local default_formatters = require("formatter.defaults")
-          local prettierd = default_formatters.prettierd
-          local clangformat = default_formatters.clangformat
-          Formatters = {
-            c = { clangformat },
-            cpp = { clangformat },
-            css = { prettierd },
-            fish = { default_formatters.fishindent },
-            graphql = { prettierd },
-            html = { prettierd },
-            javascript = { prettierd },
-            javascriptreact = { prettierd },
-            json = { prettierd },
-            lua = { require("formatter.filetypes.lua").stylua },
-            markdown = { prettierd },
-            toml = { require("formatter.filetypes.toml").taplo },
-            typescript = { prettierd },
-            typescriptreact = { prettierd },
-            yaml = { prettierd },
-          }
-          formatter.setup({
-            log_level = vim.log.levels.DEBUG,
-            filetype = Formatters,
-            ["*"] = { require("formatter.filetypes.any").remove_trailing_whitespace },
-          })
-
-          local format_augroup = vim.api.nvim_create_augroup("Format", {})
-          vim.api.nvim_create_autocmd({ "BufWritePost" }, {
-            group = format_augroup,
-            callback = function()
-              vim.cmd([[Format]])
-            end,
-          })
-        end,
+        opts = {
+          library = { plugins = { "nvim-dap-ui" }, types = true },
+        },
       },
     },
     keys = {
@@ -1637,6 +1603,46 @@ require("lazy").setup({
           lspconfig[server].setup(opts)
         end
       end
+    end,
+  },
+  {
+    "mhartington/formatter.nvim",
+    event = "VeryLazy",
+    config = function()
+      local formatter = require("formatter")
+      local default_formatters = require("formatter.defaults")
+      local prettierd = default_formatters.prettierd
+      local clangformat = default_formatters.clangformat
+      Formatters = {
+        c = { clangformat },
+        cpp = { clangformat },
+        css = { prettierd },
+        fish = { default_formatters.fishindent },
+        graphql = { prettierd },
+        html = { prettierd },
+        javascript = { prettierd },
+        javascriptreact = { prettierd },
+        json = { prettierd },
+        lua = { require("formatter.filetypes.lua").stylua },
+        markdown = { prettierd },
+        toml = { require("formatter.filetypes.toml").taplo },
+        typescript = { prettierd },
+        typescriptreact = { prettierd },
+        yaml = { prettierd },
+      }
+      formatter.setup({
+        log_level = vim.log.levels.DEBUG,
+        filetype = Formatters,
+        ["*"] = { require("formatter.filetypes.any").remove_trailing_whitespace },
+      })
+
+      local format_augroup = vim.api.nvim_create_augroup("Format", {})
+      vim.api.nvim_create_autocmd({ "BufWritePost" }, {
+        group = format_augroup,
+        callback = function()
+          vim.cmd([[Format]])
+        end,
+      })
     end,
   },
   {
@@ -1936,27 +1942,9 @@ require("lazy").setup({
     event = { "BufReadPost", "BufNewFile" },
     dependencies = {
       "nvim-treesitter/nvim-treesitter-context",
-      {
-        "nvim-treesitter/nvim-treesitter-textobjects",
-        init = function()
-          -- PERF: no need to load the plugin, if we only need its queries for mini.ai
-          local plugin = require("lazy.core.config").spec.plugins["nvim-treesitter"]
-          local opts = require("lazy.core.plugin").values(plugin, "opts", false)
-          local enabled = false
-          if opts.textobjects then
-            for _, mod in ipairs({ "move", "select", "swap", "lsp_interop" }) do
-              if opts.textobjects[mod] and opts.textobjects[mod].enable then
-                enabled = true
-                break
-              end
-            end
-          end
-          if not enabled then
-            require("lazy.core.loader").disable_rtp_plugin("nvim-treesitter-textobjects")
-          end
-        end,
-      },
+      "nvim-treesitter/nvim-treesitter-textobjects",
     },
+    -- setup is deferred until later
   },
   {
     "nvim-lua/plenary.nvim", -- Async library
@@ -2268,9 +2256,7 @@ require("lazy").setup({
         desc = "Dap UI",
       },
     },
-    config = function()
-      require("dapui").setup()
-    end,
+    opts = {},
   },
 }, {
   checker = {
@@ -2314,12 +2300,68 @@ vim.defer_fn(function()
       disable = { "rust" },
     },
     indent = { enable = true },
+    incremental_selection = {
+      enable = true,
+      keymaps = {
+        init_selection = "<c-space>",
+        node_incremental = "<c-space>",
+        scope_incremental = "<c-s>",
+        node_decremental = "<c-m-space>",
+      },
+    },
+    textobjects = {
+      select = {
+        enable = true,
+        lookahead = true, -- Automatically jump forward to textobj, similar to targets.vim
+        keymaps = {
+          -- You can use the capture groups defined in textobjects.scm
+          ["aa"] = "@parameter.outer",
+          ["ia"] = "@parameter.inner",
+          ["af"] = "@function.outer",
+          ["if"] = "@function.inner",
+          ["ac"] = "@class.outer",
+          ["ic"] = "@class.inner",
+        },
+      },
+      move = {
+        enable = true,
+        set_jumps = true, -- whether to set jumps in the jumplist
+        goto_next_start = {
+          ["]m"] = "@function.outer",
+          ["]]"] = "@class.outer",
+        },
+        goto_next_end = {
+          ["]M"] = "@function.outer",
+          ["]["] = "@class.outer",
+        },
+        goto_previous_start = {
+          ["[m"] = "@function.outer",
+          ["[["] = "@class.outer",
+        },
+        goto_previous_end = {
+          ["[M"] = "@function.outer",
+          ["[]"] = "@class.outer",
+        },
+      },
+      swap = {
+        enable = true,
+        swap_next = {
+          ["<leader>a"] = "@parameter.inner",
+        },
+        swap_previous = {
+          ["<leader>A"] = "@parameter.inner",
+        },
+      },
+    },
   })
 
   require("mason").setup({
     ui = {
       check_outdated_servers_on_open = true,
     },
+  })
+  require("mason-nvim-dap").setup({
+    ensure_installed = { "codelldb" },
   })
   require("mason-tool-installer").setup({
     ensure_installed = {
