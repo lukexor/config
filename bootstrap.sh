@@ -117,7 +117,6 @@ install_core_packages() {
   return 0
 }
 
-
 # Link dot configs
 link_configs() {
   echo "Setting up configs..."
@@ -248,7 +247,6 @@ install_npm() {
   return 0
 }
 
-
 # Install extra packages
 install_extra_packages() {
   echo "Installing extra packages..."
@@ -302,6 +300,11 @@ install_extra_packages() {
       && mv -f snyk-macos ~/.local/bin/snyk
   fi
 
+  # nvim relies on reliable python3 and node executables
+  # that don't change with virtual environments per project
+  symlink "$(which python3)" ~/.local/bin/python3
+  symlink "$(which node)" ~/.local/bin/node
+
   echo "Successfully installed extra packages..."
 
   return 0
@@ -323,8 +326,8 @@ bootstrap() {
 
   PATH=~/bin:~/.local/bin:~/.cargo/bin:~/.npm-packages/bin:~/.fzf/bin:"$PATH"
 
-  # install_terminal
-  # install_core_packages
+  install_terminal
+  install_core_packages
   link_configs
   set_shell
   setup_neovim

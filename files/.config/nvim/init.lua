@@ -69,7 +69,8 @@ vim.o.textwidth = 80
 vim.o.title = true
 vim.o.undofile = true
 vim.o.updatecount = 50 -- Save more often than 200 characters typed.
-vim.o.updatetime = 300 -- Save more often than 4 seconds.
+vim.o.updatetime = 250 -- Save more often than 4 seconds.
+vim.o.timeoutlen = 300
 vim.o.virtualedit = "block"
 vim.o.wildmode = "longest:full,full"
 vim.o.wrap = false
@@ -82,10 +83,21 @@ else
 end
 
 local codelldb_ext_path = vim.env.HOME .. "/.local/share/nvim/mason/packages/codelldb/extension"
-local codelldb_path = codelldb_ext_path .. "/adapter/codelldb"
-local liblldb_path = codelldb_ext_path .. "/lldb/lib/liblldb"
 local os = vim.loop.os_uname().sysname
-liblldb_path = liblldb_path .. (os == "Linux" and ".so" or ".dylib")
+local codellb_adaptor = {
+  executable = {
+    args = {
+      "--liblldb",
+      codelldb_ext_path .. "/lldb/lib/liblldb" .. (os == "Linux" and ".so" or ".dylib"),
+      "--port",
+      "${port}",
+    },
+    command = codelldb_ext_path .. "/adapter/codelldb",
+  },
+  host = "127.0.0.1",
+  port = "${port}",
+  type = "server",
+}
 
 local function notify_output(command, opts)
   local output = ""
@@ -159,7 +171,7 @@ local function system_open(path)
     cmd = { "open" }
   end
   if not cmd then
-    vim.notify("Available system opening command not found!", "error")
+    vim.notify("Available system opening command not found!", vim.log.levels.ERROR)
   end
   vim.fn.jobstart(vim.fn.extend(cmd, { path or vim.fn.expand("<cfile>") }), { detach = true })
 end
@@ -290,7 +302,7 @@ map("gx", system_open, { desc = "Open File Externally" })
 map("<leader>ve", "<cmd>edit $MYVIMRC<CR>", { desc = "Edit Nvim Config" })
 map("<leader>vr", "<cmd>source $MYVIMRC<CR>:edit<CR>", { desc = "Reload Nvim Config" })
 
-map("<leader>b", '"_', { desc = "Use the blackhole register" })
+map("<leader>B", '"_', { desc = "Use the blackhole register" })
 map("x", '"_x', { desc = "Delete Under" })
 map("X", '"_X', { desc = "Delete Before" })
 
@@ -372,10 +384,9 @@ map("<C-r>", '"hy:%s/<C-r>h//g<left><left>', { mode = "v", desc = "Search and Re
 -- Clipboard
 -- -----------------------------------------------------------------------------
 
-map("cy", '"+y', { desc = "Yank to clipboard" })
+map("cy", '"+y', { mode = { "n", "v" }, desc = "Yank to clipboard" })
 map("cY", '"+Y', { desc = "Yank line to clipboard" })
 map("cyy", '"+yy', { desc = "Yank line to clipbard" })
-map("cy", '"+y', { mode = "v", desc = "Yank selection to clipboard" })
 map("cp", '"+p', { desc = "Paste from clipboard after cursor" })
 map("cP", '"+P', { desc = "Paste from clipboard before cursor" })
 
@@ -450,7 +461,7 @@ function IndentTextObj(around)
     end
 
     vim.cmd("normal! 0V")
-    vim.fn.cursor(curline, curcol)
+    vim.fn.cursor({ curline, curcol })
 
     p = get_pos(1)
     pp = get_pos(2)
@@ -502,11 +513,13 @@ local disabled_built_ins = {
   "2html_plugin",
   "getscript",
   "getscriptPlugin",
+  "gzip",
   "logipat",
   "netrw",
   "netrwPlugin",
   "netrwSettings",
   "netrwFileHandlers",
+  "tarPlugin",
   "tutor",
   "rplugin",
   "rrhelper",
@@ -729,6 +742,7 @@ require("lazy").setup({
       { "<localleader>C", "<cmd>Cheatsheet<CR>", desc = "cheatsheet" },
       { "<localleader>E", "<cmd>CheatsheetEdit<CR>", desc = "edit cheatsheet" },
     },
+    opts = {},
   },
   {
     "dbeniamine/cheat.sh-vim", -- Online Cheat.sh lookup
@@ -758,9 +772,7 @@ require("lazy").setup({
   {
     "folke/which-key.nvim", -- Show mappings as you type
     event = "VeryLazy",
-    opts = {
-      plugins = { spelling = true },
-    },
+    opts = {},
   },
   -- -----------------------------------------------------------------------------
   -- Code Assists
@@ -812,20 +824,23 @@ require("lazy").setup({
       })
     end,
   },
-  -- {
-  --   "windwp/nvim-ts-autotag", -- Auto-close HTML/JSX tags
-  --   ft = {
-  --     "html",
-  --     "typescriptreact",
-  --   },
-  --   opts = {
-  --     autotag = {
-  --       enable = false,
-  --       enable_rename = true,
-  --       enable_close_on_slash = false,
-  --     },
-  --   },
-  -- },
+  {
+    "windwp/nvim-ts-autotag", -- Auto-close HTML/JSX tags
+    ft = {
+      "html",
+      "typescriptreact",
+      "rust",
+      "typescriptreact",
+      "xml",
+    },
+    opts = {
+      autotag = {
+        enable = false,
+        enable_rename = true,
+        enable_close_on_slash = false,
+      },
+    },
+  },
   {
     "tpope/vim-endwise", -- Auto-add endings for control structures: if, for, etc
     event = "InsertEnter",
@@ -836,6 +851,8 @@ require("lazy").setup({
   },
   {
     "NoahTheDuke/vim-just", -- justfile support
+    event = { "BufReadPre", "BufNewFile" },
+    ft = { "\\cjustfile", "*.just", ".justfile" },
   },
   {
     "tpope/vim-surround", -- Easy changes of surrounding quotes & brackets
@@ -903,10 +920,10 @@ require("lazy").setup({
     cmd = "EasyAlign",
     keys = {
       { "gA", "<Plug>(EasyAlign)", desc = "align text" },
-      { "<CR>", "<Plug>(EasyAlign)", mode = "v", desc = "align selection" },
-      { "<leader>a/", "gAii/", remap = true, desc = "align indent level to /" },
-      { "<leader>a:", "gAii:", remap = true, desc = "align indent level to :" },
-      { "<leader>a=", "gAii:", remap = true, desc = "align indent level to =" },
+      { "=", "<Plug>(EasyAlign)", mode = "v", desc = "align selection" },
+      { "<leader>=/", "gAii/", remap = true, desc = "align indent level to /" },
+      { "<leader>=:", "gAii:", remap = true, desc = "align indent level to :" },
+      { "<leader>==", "gAii=", remap = true, desc = "align indent level to =" },
     },
     init = function()
       vim.g.easy_align_delimiters = {
@@ -1074,6 +1091,9 @@ require("lazy").setup({
   {
     "yardnsm/vim-import-cost", -- Javascript import sizes
     build = "npm install --production",
+    cond = function()
+      return vim.fn.executable("npm") == 1
+    end,
     cmd = { "ImportCost" },
     ft = { "javascript", "javascriptreact", "typescript", "typescriptreact" },
     keys = {
@@ -1096,17 +1116,8 @@ require("lazy").setup({
   -- -----------------------------------------------------------------------------
   {
     "stevearc/dressing.nvim", -- Window UI enhancements, popups, input, etc
-    lazy = true,
-    init = function()
-      vim.ui.select = function(...)
-        require("lazy").load({ plugins = { "dressing.nvim" } })
-        return vim.ui.select(...)
-      end
-      vim.ui.input = function(...)
-        require("lazy").load({ plugins = { "dressing.nvim" } })
-        return vim.ui.input(...)
-      end
-    end,
+    event = "VeryLazy",
+    opts = {},
   },
   {
     "folke/noice.nvim", -- UI improvements
@@ -1277,11 +1288,14 @@ require("lazy").setup({
             { "SleuthIndicator", color = fg("Comment") },
             { "diff" },
           },
-          lualine_y = { "progress", "location" },
+          lualine_y = { "progress", "location", "selectioncount" },
           lualine_z = {
-            function()
-              return " " .. os.date("%m-%d %R")
-            end,
+            {
+              "os.date('%Y-%m-%d %R')",
+              fmt = function(date)
+                return " " .. date
+              end,
+            },
           },
         },
         extensions = { "aerial", "fugitive", "lazy", "neo-tree", "quickfix", "trouble" },
@@ -1292,77 +1306,43 @@ require("lazy").setup({
   -- LSP
   -- -----------------------------------------------------------------------------
   {
-    "folke/neodev.nvim",
-    config = function()
-      require("neodev").setup({
-        library = { plugins = { "nvim-dap-ui" }, types = true },
-      })
-    end,
+    "williamboman/mason.nvim",
+    cmd = { "Mason", "MasonUpdate" },
+    keys = {
+      { "<leader>pm", "<cmd>MasonUpdate<CR>:Mason<CR>", desc = "Update LSP Servers" },
+    },
+  },
+  {
+    "WhoIsSethDaniel/mason-tool-installer.nvim",
+    lazy = true,
+  },
+  {
+    "jay-babu/mason-nvim-dap.nvim",
+    cmd = { "DapInstall" },
   },
   {
     "neovim/nvim-lspconfig", -- language server
+    event = { "BufReadPre", "BufNewFile" },
     dependencies = {
-      {
-        "williamboman/mason.nvim",
-        cmd = { "Mason", "MasonUpdate" },
-        keys = {
-          { "<leader>pm", "<cmd>MasonUpdate<CR>:Mason<CR>", desc = "Update LSP Servers" },
-        },
-      },
-      {
-        "jay-babu/mason-nvim-dap.nvim",
-        config = function()
-          require("mason-nvim-dap").setup({
-            ensure_installed = { "codelldb" },
-          })
-        end,
-      },
       "hrsh7th/cmp-nvim-lsp",
       "williamboman/mason-lspconfig.nvim",
-      "WhoIsSethDaniel/mason-tool-installer.nvim",
-      "kosayoda/nvim-lightbulb", -- Lightbulb next to code actions
+      {
+        "kosayoda/nvim-lightbulb", -- Lightbulb next to code actions
+        opts = {
+          autocmd = { enabled = true },
+          sign = {
+            text = "",
+          },
+        },
+      },
       "simrat39/rust-tools.nvim",
       {
-        "mhartington/formatter.nvim",
-        config = function()
-          local formatter = require("formatter")
-          local default_formatters = require("formatter.defaults")
-          local prettierd = default_formatters.prettierd
-          local clangformat = default_formatters.clangformat
-          Formatters = {
-            c = { clangformat },
-            cpp = { clangformat },
-            css = { prettierd },
-            fish = { default_formatters.fishindent },
-            graphql = { prettierd },
-            html = { prettierd },
-            javascript = { prettierd },
-            javascriptreact = { prettierd },
-            json = { prettierd },
-            lua = { require("formatter.filetypes.lua").stylua },
-            markdown = { prettierd },
-            toml = { require("formatter.filetypes.toml").taplo },
-            typescript = { prettierd },
-            typescriptreact = { prettierd },
-            yaml = { prettierd },
-          }
-          formatter.setup({
-            log_level = vim.log.levels.DEBUG,
-            filetype = Formatters,
-            ["*"] = { require("formatter.filetypes.any").remove_trailing_whitespace },
-          })
-
-          local format_augroup = vim.api.nvim_create_augroup("Format", {})
-          vim.api.nvim_create_autocmd({ "BufWritePost" }, {
-            group = format_augroup,
-            callback = function()
-              vim.cmd([[Format]])
-            end,
-          })
-        end,
+        "folke/neodev.nvim",
+        opts = {
+          library = { plugins = { "nvim-dap-ui" }, types = true },
+        },
       },
     },
-    lazy = false,
     keys = {
       { "<leader>Li", "<cmd>LspInfo<CR>", desc = "lsp info" },
       { "<leader>LI", "<cmd>LspInfo<CR>", desc = "lsp install info" },
@@ -1384,11 +1364,6 @@ require("lazy").setup({
       { "<localleader>f", "gq", desc = "format buffer" },
     },
     config = function()
-      vim.fn.sign_define("LightBulbSign", { text = "󰌵", texthl = "", linehl = "", numhl = "" })
-      require("nvim-lightbulb").setup({ autocmd = { enabled = true } })
-
-      vim.cmd("au! DiagnosticChanged * lua vim.diagnostic.setqflist({ open = false })")
-
       -- Use an on_attach function to only map the following keys
       -- after the language server attaches to the current buffer
       local on_attach = function(client, bufnr)
@@ -1409,6 +1384,7 @@ require("lazy").setup({
         map("ge", vim.diagnostic.open_float, { desc = "Diagnostics", buffer = bufnr })
         map("<leader>S", "<cmd>Telescope lsp_document_symbols<CR>", { desc = "LSP Symbols", buffer = bufnr })
 
+        -- formatting autocmd on save
         if Formatters[vim.bo.filetype] == nil and client.supports_method("textDocument/formatting") then
           vim.api.nvim_create_autocmd({ "BufWritePre" }, {
             group = "Format",
@@ -1419,10 +1395,10 @@ require("lazy").setup({
           })
         end
 
+        -- Filter out diagnostics that are not useful
         local filtered_diagnostics = {
           [80001] = true, -- File is a CommonJS module; it may be converted to an ES module.
         }
-
         vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(function(err, result, ctx, config)
           for i, diagnostic in pairs(result.diagnostics) do
             if filtered_diagnostics[diagnostic.code] ~= nil then
@@ -1432,8 +1408,9 @@ require("lazy").setup({
           vim.lsp.diagnostic.on_publish_diagnostics(err, result, ctx, config)
         end, { update_in_insert = false })
       end
-      local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
+      local capabilities = vim.lsp.protocol.make_client_capabilities()
+      capabilities = require("cmp_nvim_lsp").default_capabilities(capabilities)
       local get_options = function(enhance)
         local opts = {
           on_attach = on_attach,
@@ -1448,7 +1425,7 @@ require("lazy").setup({
         return opts
       end
 
-      local server_opts = {
+      local servers = {
         bashls = get_options(),
         cssls = get_options(function(opts)
           opts.settings = {
@@ -1540,15 +1517,15 @@ require("lazy").setup({
           }
           opts.setup = function(server_opts)
             if vim.bo.filetype == "rust" then
-              map("<leader>R", "<cmd>Make run<CR>", { desc = "cargo run" })
-              map("<leader>M", "<cmd>Make build<CR>", { desc = "cargo build" })
-              map("<leader>C", "<cmd>Make clippy<CR>", { desc = "cargo clippy" })
+              map("<leader>cr", "<cmd>Make run<CR>", { desc = "cargo run" })
+              map("<leader>cb", "<cmd>Make build<CR>", { desc = "cargo build" })
+              map("<leader>cc", "<cmd>Make clippy<CR>", { desc = "cargo clippy" })
             end
             -- We don't want to call lspconfig.rust_analyzer.setup() when using
             -- rust-tools. See https://github.com/simrat39/rust-tools.nvim/issues/89
             require("rust-tools").setup({
               dap = {
-                adapter = require("rust-tools.dap").get_codelldb_adapter(codelldb_path, liblldb_path),
+                adapter = codellb_adaptor,
               },
               server = server_opts,
               tools = {
@@ -1606,43 +1583,8 @@ require("lazy").setup({
         end),
       }
 
-      require("mason").setup({
-        ui = {
-          check_outdated_servers_on_open = true,
-        },
-      })
-      require("mason-tool-installer").setup({
-        ensure_installed = {
-          "bashls",
-          "clang-format",
-          "clangd",
-          "cpplint",
-          "cssls",
-          "eslint_d",
-          "html",
-          "jsonlint",
-          "jsonls",
-          "lua_ls",
-          "markdownlint",
-          "prettierd",
-          "protolint",
-          "pylsp",
-          "rust_analyzer",
-          "shellcheck",
-          "stylelint",
-          "stylelint-lsp",
-          "stylua",
-          "tailwindcss",
-          "taplo",
-          "tsserver",
-          "vimls",
-          "yamllint",
-          "yamlls",
-        },
-      })
-
       local lspconfig = require("lspconfig")
-      for server, opts in pairs(server_opts) do
+      for server, opts in pairs(servers) do
         -- Custom config overrides per-project
         -- e.g.
         -- return {
@@ -1664,6 +1606,46 @@ require("lazy").setup({
           lspconfig[server].setup(opts)
         end
       end
+    end,
+  },
+  {
+    "mhartington/formatter.nvim",
+    event = "VeryLazy",
+    config = function()
+      local formatter = require("formatter")
+      local default_formatters = require("formatter.defaults")
+      local prettierd = default_formatters.prettierd
+      local clangformat = default_formatters.clangformat
+      Formatters = {
+        c = { clangformat },
+        cpp = { clangformat },
+        css = { prettierd },
+        fish = { default_formatters.fishindent },
+        graphql = { prettierd },
+        html = { prettierd },
+        javascript = { prettierd },
+        javascriptreact = { prettierd },
+        json = { prettierd },
+        lua = { require("formatter.filetypes.lua").stylua },
+        markdown = { prettierd },
+        toml = { require("formatter.filetypes.toml").taplo },
+        typescript = { prettierd },
+        typescriptreact = { prettierd },
+        yaml = { prettierd },
+      }
+      formatter.setup({
+        log_level = vim.log.levels.DEBUG,
+        filetype = Formatters,
+        ["*"] = { require("formatter.filetypes.any").remove_trailing_whitespace },
+      })
+
+      local format_augroup = vim.api.nvim_create_augroup("Format", {})
+      vim.api.nvim_create_autocmd({ "BufWritePost" }, {
+        group = format_augroup,
+        callback = function()
+          vim.cmd([[Format]])
+        end,
+      })
     end,
   },
   {
@@ -1692,6 +1674,9 @@ require("lazy").setup({
       {
         "zbirenbaum/copilot.lua", -- AI auto-complete
         build = ":Copilot auth",
+        cond = function()
+          return vim.fn.executable("node") == 1
+        end,
         cmd = "Copilot",
         opts = {
           suggestion = { enabled = false, auto_trigger = false },
@@ -1723,6 +1708,29 @@ require("lazy").setup({
       "onsails/lspkind.nvim",
       "saadparwaiz1/cmp_luasnip",
       "uga-rosa/cmp-dictionary",
+      {
+        "L3MON4D3/LuaSnip", -- Snippets
+        event = "InsertEnter",
+        dependencies = {
+          "honza/vim-snippets",
+        },
+        keys = {
+          { "<leader>Es", "<cmd>lua require('luasnip.loaders').edit_snippet_files()<CR>", desc = "Edit Snippets" },
+        },
+        build = "make install_jsregexp",
+        cond = function()
+          return vim.fn.executable("make") == 1
+        end,
+        init = function()
+          vim.g.snips_author = vim.fn.system("git config --get user.name | tr -d '\n'")
+          vim.g.snips_email = vim.fn.system("git config --get user.email | tr -d '\n'")
+          vim.g.snips_github = "https://github.com/lukexor"
+        end,
+        config = function()
+          require("luasnip.loaders.from_snipmate").lazy_load({ paths = "./snippets" })
+          require("luasnip.loaders.from_lua").lazy_load({ paths = "./snippets" })
+        end,
+      },
     },
     init = function()
       vim.g.cmp_enabled = true
@@ -1931,84 +1939,15 @@ require("lazy").setup({
     end,
   },
   {
-    "L3MON4D3/LuaSnip", -- Snippets
-    event = "InsertEnter",
-    dependencies = {
-      "honza/vim-snippets",
-    },
-    keys = {
-      { "<leader>Es", "<cmd>lua require('luasnip.loaders').edit_snippet_files()<CR>", desc = "Edit Snippets" },
-    },
-    build = "make install_jsregexp",
-    init = function()
-      vim.g.snips_author = vim.fn.system("git config --get user.name | tr -d '\n'")
-      vim.g.snips_email = vim.fn.system("git config --get user.email | tr -d '\n'")
-      vim.g.snips_github = "https://github.com/lukexor"
-    end,
-    config = function()
-      require("luasnip.loaders.from_snipmate").lazy_load({ paths = "./snippets" })
-      require("luasnip.loaders.from_lua").lazy_load({ paths = "./snippets" })
-    end,
-  },
-  {
     "nvim-treesitter/nvim-treesitter", -- AST Parser and highlighter
     version = false,
     build = ":TSUpdate",
     event = { "BufReadPost", "BufNewFile" },
     dependencies = {
       "nvim-treesitter/nvim-treesitter-context",
-      {
-        "nvim-treesitter/nvim-treesitter-textobjects",
-        init = function()
-          -- PERF: no need to load the plugin, if we only need its queries for mini.ai
-          local plugin = require("lazy.core.config").spec.plugins["nvim-treesitter"]
-          local opts = require("lazy.core.plugin").values(plugin, "opts", false)
-          local enabled = false
-          if opts.textobjects then
-            for _, mod in ipairs({ "move", "select", "swap", "lsp_interop" }) do
-              if opts.textobjects[mod] and opts.textobjects[mod].enable then
-                enabled = true
-                break
-              end
-            end
-          end
-          if not enabled then
-            require("lazy.core.loader").disable_rtp_plugin("nvim-treesitter-textobjects")
-          end
-        end,
-      },
+      "nvim-treesitter/nvim-treesitter-textobjects",
     },
-    config = function()
-      require("nvim-treesitter.configs").setup({
-        ensure_installed = {
-          "bash",
-          "c",
-          "cpp",
-          "css",
-          "dockerfile",
-          "fish",
-          "glsl",
-          "graphql",
-          "html",
-          "javascript",
-          "json",
-          "lua",
-          "make",
-          "markdown",
-          "markdown_inline",
-          "proto",
-          "python",
-          "regex",
-          "rust",
-          "toml",
-          "tsx",
-          "typescript",
-          "vim",
-          "vimdoc",
-          "yaml",
-        },
-      })
-    end,
+    -- setup is deferred until later
   },
   {
     "nvim-lua/plenary.nvim", -- Async library
@@ -2026,6 +1965,9 @@ require("lazy").setup({
       {
         "nvim-telescope/telescope-fzf-native.nvim", -- Search dependency of telescope
         build = "make",
+        cond = function()
+          return vim.fn.executable("make") == 1
+        end,
         lazy = true,
       },
       "benfowler/telescope-luasnip.nvim",
@@ -2043,19 +1985,18 @@ require("lazy").setup({
     keys = {
       { "<leader>f", "<cmd>Telescope fd<CR>", desc = "Find File" },
       {
-        "<leader>A",
+        "<leader>F",
         "<cmd>Telescope fd find_command=rg,--files,--hidden,--no-ignore,--glob,!.git<CR>",
         desc = "Find Hidden File",
       },
-      { "<leader>B", "<cmd>Telescope buffers<CR>", desc = "Buffers" },
+      { "<leader>b", "<cmd>Telescope buffers<CR>", desc = "Buffers" },
       { "<leader>cc", "<cmd>Telescope commands<CR>", desc = "Commands" },
-      { "<leader>F", "<cmd>Telescope resume<CR>", desc = "Resume Search" },
       { "<leader>gb", "<cmd>Telescope git_branches<CR>", desc = "Git Branches" },
       { "<leader>gc", "<cmd>Telescope git_bcommits<CR>", desc = "Buffer Git Commits" },
       { "<leader>gC", "<cmd>Telescope git_commits<CR>", desc = "Git Commits" },
       { "<leader>gf", "<cmd>Telescope git_files<CR>", desc = "Git Files" },
       { "<leader>gt", "<cmd>Telescope git_status<CR>", desc = "Git Status" },
-      { "<leader>H", "<cmd>Telescope oldfiles<CR>", desc = "Recent Files" },
+      { "<leader>h", "<cmd>Telescope oldfiles<CR>", desc = "Recent Files" },
       { "<leader>K", "<cmd>Telescope keymaps<CR>", desc = "Keymaps" },
       { "<leader>m", "<cmd>Telescope marks<CR>", desc = "Marks" },
       { "<leader>M", "<cmd>Telescope notify<CR>", desc = "Notify Messages" },
@@ -2063,7 +2004,7 @@ require("lazy").setup({
       { "<leader>gs", "<cmd>Telescope grep_string<CR>", desc = "Grep String" },
       { "<leader>s", "<cmd>Telescope current_buffer_fuzzy_find<CR>", desc = "Buffer Search" },
       { "<leader>dD", "<cmd>Telescope diagnostics<CR>", desc = "Diagnostics" },
-      { "<leader>Th", "<cmd>Telescope help_tags<CR>", desc = "Help Tags" },
+      { "<leader>H", "<cmd>Telescope help_tags<CR>", desc = "Help" },
       { "<leader>U", "<cmd>Telescope luasnip<CR>", desc = "Snippets" },
       { "<c-u>", "<cmd>Telescope luasnip<CR>", mode = "i", desc = "Snippets" },
       { "<c-s>", "<cmd>Telescope symbols<CR>", mode = { "n", "i" }, desc = "Symbols" },
@@ -2084,7 +2025,8 @@ require("lazy").setup({
     keys = {
       { "[q", "<Plug>(qf_qf_previous)", desc = "previous quickfix" },
       { "]q", "<Plug>(qf_qf_next)", desc = "next quickfix" },
-      { "<leader>cq", "<cmd>cexpr []<CR>", desc = "clears quickfix list" },
+      { "<leader>gq", "<Plug>(qf_qf_toggle)", desc = "toggle quickfix list" },
+      { "<leader>gQ", "<cmd>cexpr []<CR>", desc = "clears quickfix list" },
     },
   },
   {
@@ -2108,6 +2050,51 @@ require("lazy").setup({
   },
   {
     "mfussenegger/nvim-dap",
+    keys = {
+      {
+        "<leader>db",
+        function()
+          require("dap").toggle_breakpoint()
+        end,
+        desc = "Toggle breakpoint",
+      },
+      { "<leader>dc", ":lua require('dap').toggle_breakpoint()<left>", desc = "Toggle conditional breakpoint" },
+      {
+        "<leader>dC",
+        function()
+          require("dap").clear_breakpoints()
+        end,
+        desc = "Clear breakpoints",
+      },
+      {
+        "<leader>lp",
+        function()
+          require("dap").set_breakpoint(nil, nil, vim.fn.input("Log point message: "))
+        end,
+        desc = "Set logpoint",
+      },
+      {
+        "<c-/>",
+        function()
+          require("dap").continue()
+        end,
+        desc = "Debug/Continue",
+      },
+      {
+        "<leader>dl",
+        function()
+          require("dap").run_last()
+        end,
+        desc = "Run Last Debugger",
+      },
+      {
+        "<leader>dL",
+        function()
+          require("dap").list_breakpoints()
+        end,
+        desc = "List breakpoints",
+      },
+    },
     config = function()
       vim.fn.sign_define("DapBreakpoint", { text = "🔴" })
       vim.fn.sign_define("DapBreakpointCondition", { text = "🟡" })
@@ -2122,7 +2109,7 @@ require("lazy").setup({
       })
 
       local dap = require("dap")
-      dap.adapters.codelldb = require("rust-tools.dap").get_codelldb_adapter(codelldb_path, liblldb_path)
+      dap.adapters.codelldb = codellb_adaptor
       dap.adapters.python = function(cb, config)
         if config.request == "attach" then
           local port = (config.connect or config).port
@@ -2231,18 +2218,6 @@ require("lazy").setup({
         },
       }
 
-      map("<leader>db", "<cmd>lua require('dap').toggle_breakpoint()<CR>", { desc = "Toggle breakpoint" })
-      map("<leader>dc", ":lua require('dap').toggle_breakpoint()<left>", { desc = "Toggle conditional breakpoint" })
-      map("<leader>dC", "<cmd>lua require('dap').clear_breakpoints()<CR>", { desc = "Clear breakpoints" })
-      map(
-        "<leader>lp",
-        "<cmd>lua require('dap').set_breakpoint(nil, nil, vim.fn.input('Log point message: '))<CR>",
-        { desc = "Set logpoint" }
-      )
-      map("<c-/>", "<cmd>lua require('dap').continue()<CR>", { desc = "Debug/Continue" })
-      map("<leader>dl", "<cmd>lua require('dap').run_last()<CR>", { desc = "Run Last Debugger" })
-      map("<leader>dL", "<cmd>lua require('dap').list_breakpoints()<CR>", { desc = "List breakpoints" })
-
       local dapui = require("dapui")
       dap.listeners.after.event_initialized.dapui_config = function()
         map("<leader>dr", "<cmd>lua require('dap').run_to_cursor()<CR>", { desc = "Run until cursor" })
@@ -2275,9 +2250,16 @@ require("lazy").setup({
     dependencies = {
       "mfussenegger/nvim-dap",
     },
-    config = function()
-      require("dapui").setup()
-    end,
+    keys = {
+      {
+        "<leader>du",
+        function()
+          require("dapui").toggle({})
+        end,
+        desc = "Dap UI",
+      },
+    },
+    opts = {},
   },
 }, {
   checker = {
@@ -2285,6 +2267,136 @@ require("lazy").setup({
     notify = false,
   },
 })
+
+-- Defer treesitter setup to improve initial startup time
+vim.defer_fn(function()
+  require("nvim-treesitter.configs").setup({
+    ensure_installed = {
+      "bash",
+      "c",
+      "cpp",
+      "css",
+      "dockerfile",
+      "fish",
+      "glsl",
+      "graphql",
+      "html",
+      "javascript",
+      "json",
+      "lua",
+      "make",
+      "markdown",
+      "markdown_inline",
+      "proto",
+      "python",
+      "regex",
+      "rust",
+      "toml",
+      "tsx",
+      "typescript",
+      "vim",
+      "vimdoc",
+      "yaml",
+    },
+    highlight = {
+      enable = true,
+      disable = { "rust" },
+    },
+    indent = { enable = true },
+    incremental_selection = {
+      enable = true,
+      keymaps = {
+        init_selection = "<c-space>",
+        node_incremental = "<c-space>",
+        scope_incremental = "<c-s>",
+        node_decremental = "<c-m-space>",
+      },
+    },
+    textobjects = {
+      select = {
+        enable = true,
+        lookahead = true, -- Automatically jump forward to textobj, similar to targets.vim
+        keymaps = {
+          -- You can use the capture groups defined in textobjects.scm
+          ["aa"] = "@parameter.outer",
+          ["ia"] = "@parameter.inner",
+          ["af"] = "@function.outer",
+          ["if"] = "@function.inner",
+          ["ac"] = "@class.outer",
+          ["ic"] = "@class.inner",
+        },
+      },
+      move = {
+        enable = true,
+        set_jumps = true, -- whether to set jumps in the jumplist
+        goto_next_start = {
+          ["]m"] = "@function.outer",
+          ["]]"] = "@class.outer",
+        },
+        goto_next_end = {
+          ["]M"] = "@function.outer",
+          ["]["] = "@class.outer",
+        },
+        goto_previous_start = {
+          ["[m"] = "@function.outer",
+          ["[["] = "@class.outer",
+        },
+        goto_previous_end = {
+          ["[M"] = "@function.outer",
+          ["[]"] = "@class.outer",
+        },
+      },
+      swap = {
+        enable = true,
+        swap_next = {
+          ["<leader>a"] = "@parameter.inner",
+        },
+        swap_previous = {
+          ["<leader>A"] = "@parameter.inner",
+        },
+      },
+    },
+  })
+
+  require("mason").setup({
+    ui = {
+      check_outdated_servers_on_open = true,
+    },
+  })
+  require("mason-nvim-dap").setup({
+    ensure_installed = { "codelldb" },
+  })
+  require("mason-tool-installer").setup({
+    ensure_installed = {
+      "bashls",
+      "clang-format",
+      "clangd",
+      "cpplint",
+      "cssls",
+      "eslint_d",
+      "html",
+      "jsonlint",
+      "jsonls",
+      "lua_ls",
+      "markdownlint",
+      "prettierd",
+      "protolint",
+      "pylsp",
+      "rust_analyzer",
+      "shellcheck",
+      "stylelint",
+      "stylelint-lsp",
+      "stylua",
+      "tailwindcss",
+      "taplo",
+      "tsserver",
+      "vimls",
+      "yamllint",
+      "yamlls",
+    },
+  })
+end, 0)
+
 -- =============================================================================
 -- Abbreviations
 -- =============================================================================
@@ -2322,6 +2434,7 @@ vim.cmd([[
 vim.cmd([[
   aug Init
     au!
+    au DiagnosticChanged * lua vim.diagnostic.setqflist({ open = false })
     " Jump to the last known cursor position. See |last-position-jump|.
     au BufReadPost *
       \ if &ft !~# 'commit\|rebase' && line("'\"") > 1 && line("'\"") <= line("$") |
