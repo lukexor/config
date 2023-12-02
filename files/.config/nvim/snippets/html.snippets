@@ -5,7 +5,6 @@ snippet html
             <meta charset="utf-8" />
             <meta name="viewport" content="width=device-width, initial-scale=1.0" />
             <title>${1:`substitute(vim_snippets#Filename('', 'Page Title'), '^.', '\u&', '')`}</title>
-            <link rel="stylesheet" type="text/css" href="main.css" />
             ${3:<link rel="stylesheet" type="text/css" href="main.css" />}
         </head>
         <body>

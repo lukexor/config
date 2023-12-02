@@ -578,6 +578,7 @@ require("lazy").setup({
     "dag/vim-fish", -- fish shell support
     ft = "fish",
   },
+  "mustache/vim-mustache-handlebars", -- Template parsing
   {
     "dcharbon/vim-flatbuffers", -- Flatbuffer file support
     ft = "fbs",
@@ -811,18 +812,20 @@ require("lazy").setup({
       })
     end,
   },
-  {
-    "windwp/nvim-ts-autotag", -- Auto-close HTML/JSX tags
-    ft = {
-      "html",
-      "typescriptreact",
-    },
-    opts = {
-      autotag = {
-        enable = true,
-      },
-    },
-  },
+  -- {
+  --   "windwp/nvim-ts-autotag", -- Auto-close HTML/JSX tags
+  --   ft = {
+  --     "html",
+  --     "typescriptreact",
+  --   },
+  --   opts = {
+  --     autotag = {
+  --       enable = false,
+  --       enable_rename = true,
+  --       enable_close_on_slash = false,
+  --     },
+  --   },
+  -- },
   {
     "tpope/vim-endwise", -- Auto-add endings for control structures: if, for, etc
     event = "InsertEnter",
@@ -2063,7 +2066,7 @@ require("lazy").setup({
       { "<leader>Th", "<cmd>Telescope help_tags<CR>", desc = "Help Tags" },
       { "<leader>U", "<cmd>Telescope luasnip<CR>", desc = "Snippets" },
       { "<c-u>", "<cmd>Telescope luasnip<CR>", mode = "i", desc = "Snippets" },
-      { "<c-s>", "<cmd>Telescope symbols<CR>", desc = "Symbols" },
+      { "<c-s>", "<cmd>Telescope symbols<CR>", mode = { "n", "i" }, desc = "Symbols" },
     },
     config = function()
       local telescope = require("telescope")
@@ -2135,7 +2138,7 @@ require("lazy").setup({
         else
           cb({
             type = "executable",
-            command = vim.env.HOME .. ".virtualenvs/debugpy/bin/python",
+            command = vim.env.HOME .. "/.virtualenvs/debugpy/bin/python3",
             args = { "-m", "debugpy.adapter" },
             options = {
               source_filetype = "python",
@@ -2215,7 +2218,7 @@ require("lazy").setup({
             elseif vim.fn.executable(cwd .. "/.venv/bin/python") == 1 then
               return cwd .. "/.venv/bin/python"
             else
-              return "/usr/bin/python"
+              return vim.g.python3_host_prog
             end
           end,
         },

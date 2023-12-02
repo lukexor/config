@@ -54,6 +54,7 @@ $env.PROMPT_INDICATOR_VI_INSERT = ""
 $env.PATH = [
   ~/bin
   ~/.local/bin
+  ~/.local/sbin
   ~/.local/share/nvim/mason/bin/
   ~/.cargo/bin
   ~/.npm-packages/bin

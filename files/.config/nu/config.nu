@@ -634,8 +634,8 @@ def x [
   let command = ($exten | where $name =~ $it.ex | first)
   if ($command | is-empty) {
     echo 'Error! Unsupported file extension'
-  } else {
-    nu -c (build-string $command.com ' ' $name)
+''  } else {
+    nu -c $"($command.com) ($name)"
   }
 }
 
