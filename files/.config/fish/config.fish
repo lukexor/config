@@ -169,49 +169,49 @@ end
 # Abbreviations   {{{1
 # =============================================================================
 
-abbr -a _ sudo
 abbr -a cat bat -P
 abbr -a cb cargo build
 abbr -a cbr cargo build --release
-abbr -a cc cargo clippy
 abbr -a cca cargo clippy --all-targets
+abbr -a cc cargo clippy
 abbr -a cdoc cargo doc
 abbr -a cdoco cargo doc --open
-abbr -a cm cargo make
 abbr -a cfg cd ~/config
+abbr -a cm cargo make
 abbr -a cp cp -ia
+abbr -a cr cargo run
 abbr -a cr cargo run
 abbr -a crd cargo run --profile dev-opt
 abbr -a cre cargo run --example
 abbr -a crr cargo run --release
-abbr -a cw cargo watch
 abbr -a ct cargo test --workspace --all-targets
 abbr -a curl xh
+abbr -a cw cargo watch
 abbr -a da "date +'%Y-%m-%d %H:%M:%S'"
 abbr -a dc docker compose
 abbr -a du dust
 abbr -a find fd
 abbr -a flg CARGO_PROFILE_RELEASE_DEBUG=true cargo flamegraph --root
 abbr -a ga git add
-abbr -a gb git branch -v
 abbr -a gba git branch -a
 abbr -a gbd git branch -d
+abbr -a gb git branch -v
 abbr -a gbm git branch -v --merged
 abbr -a gbnm git branch -v --no-merged
-abbr -a gc git commit
 abbr -a gcam git commit --amend
 abbr -a gcb git checkout -b
+abbr -a gc git commit
 abbr -a gco git checkout
 abbr -a gcp git cherry-pick
-abbr -a gd git diff
 abbr -a gdc git diff --cached
+abbr -a gd git diff
 abbr -a gdt git difftool
 abbr -a gf git fetch origin
 abbr -a gm git merge
 abbr -a gpl git pull
 abbr -a gps git push
-abbr -a gr git restore
 abbr -a grep rg
+abbr -a gr git restore
 abbr -a grhh git reset HEAD --hard
 abbr -a grm git rm
 abbr -a gs git switch
@@ -221,11 +221,11 @@ abbr -a gt git tag
 abbr -a gun git reset HEAD --
 abbr -a h "history | head -"
 abbr -a ir irust
-abbr -a ls exa --icons
-abbr -a lt exa --icons --tree
 abbr -a la exa --icons -a
 abbr -a lk exa --icons -lrs size
 abbr -a ll exa --icons -l
+abbr -a ls exa --icons
+abbr -a lt exa --icons --tree
 abbr -a mkdir mkdir -p
 abbr -a myip curl -s api.ipify.org
 abbr -a nci npm ci
@@ -236,11 +236,13 @@ abbr -a ps procs
 abbr -a py python3
 abbr -a rd rmdir
 abbr -a sed sd
+abbr -a s fd --type f --exec sd
 abbr -a sshl ssh-add -L
-abbr -a v nvim
-abbr -a vi nvim
-abbr -a vim nvim
+abbr -a _ sudo
 abbr -a vimdif nvim -d
+abbr -a vim nvim
+abbr -a vi nvim
+abbr -a v nvim
 
 function pg
     procs | rg "PID|$argv"

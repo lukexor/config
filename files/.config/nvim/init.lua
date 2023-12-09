@@ -855,6 +855,12 @@ require("lazy").setup({
     ft = { "\\cjustfile", "*.just", ".justfile" },
   },
   {
+    "nastevens/vim-cargo-make", -- cargo make support
+  },
+  {
+    "cespare/vim-toml", -- TOML support
+  },
+  {
     "tpope/vim-surround", -- Easy changes of surrounding quotes & brackets
     event = "VeryLazy",
     keys = {
@@ -2424,6 +2430,7 @@ vim.cmd([[
     au BufRead,BufNewFile *.mdx set ft=markdown
     au BufRead,BufNewFile Vagrantfile set filetype=ruby
     au BufRead,BufNewFile *.vert,*.frag set ft=glsl
+    au BufRead,BufNewFile Makefile.toml set ft=cargo-make
     au Filetype help set nu rnu
     au Filetype * set formatoptions=croqnjp
     au Filetype markdown set comments=
