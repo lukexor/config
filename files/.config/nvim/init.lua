@@ -84,20 +84,26 @@ end
 
 local codelldb_ext_path = vim.env.HOME .. "/.local/share/nvim/mason/packages/codelldb/extension"
 local os = vim.loop.os_uname().sysname
-local codellb_adaptor = {
-  executable = {
-    args = {
-      "--liblldb",
-      codelldb_ext_path .. "/lldb/lib/liblldb" .. (os == "Linux" and ".so" or ".dylib"),
-      "--port",
-      "${port}",
+local codellb_adaptor = function(cb, config)
+  vim.cmd.write()
+  if config.preLaunchTask then
+    vim.fn.system(config.preLaunchTask)
+  end
+  cb({
+    executable = {
+      args = {
+        "--liblldb",
+        codelldb_ext_path .. "/lldb/lib/liblldb" .. (os == "Linux" and ".so" or ".dylib"),
+        "--port",
+        "${port}",
+      },
+      command = codelldb_ext_path .. "/adapter/codelldb",
     },
-    command = codelldb_ext_path .. "/adapter/codelldb",
-  },
-  host = "127.0.0.1",
-  port = "${port}",
-  type = "server",
-}
+    host = "127.0.0.1",
+    port = "${port}",
+    type = "server",
+  })
+end
 
 local function notify_output(command, opts)
   local output = ""
@@ -149,13 +155,13 @@ function Merge(a, b)
 end
 
 local map = function(lhs, rhs, options)
-  local opts = vim.deepcopy(options)
+  local opts = vim.deepcopy(options or {})
   local mode = opts.mode or "n"
   opts.mode = nil
   vim.keymap.set(mode, lhs, rhs, opts)
 end
 local del_map = function(lhs, options)
-  local opts = vim.deepcopy(options)
+  local opts = vim.deepcopy(options or {})
   local mode = opts.mode or "n"
   opts.mode = nil
   vim.keymap.del(mode, lhs, options)
@@ -387,8 +393,8 @@ map("<C-r>", '"hy:%s/<C-r>h//g<left><left>', { mode = "v", desc = "Search and Re
 map("cy", '"+y', { mode = { "n", "v" }, desc = "Yank to clipboard" })
 map("cY", '"+Y', { desc = "Yank line to clipboard" })
 map("cyy", '"+yy', { desc = "Yank line to clipbard" })
-map("cp", '"+p', { desc = "Paste from clipboard after cursor" })
-map("cP", '"+P', { desc = "Paste from clipboard before cursor" })
+map("cp", '"+p', { mode = { "n", "v" }, desc = "Paste from clipboard after cursor" })
+map("cP", '"+P', { mode = { "n", "v" }, desc = "Paste from clipboard before cursor" })
 
 -- -----------------------------------------------------------------------------
 -- Text Objects
@@ -828,17 +834,12 @@ require("lazy").setup({
     "windwp/nvim-ts-autotag", -- Auto-close HTML/JSX tags
     ft = {
       "html",
-      "typescriptreact",
+      "javascript",
+      "javascriptreact",
       "rust",
+      "typescript",
       "typescriptreact",
       "xml",
-    },
-    opts = {
-      autotag = {
-        enable = false,
-        enable_rename = true,
-        enable_close_on_slash = false,
-      },
     },
   },
   {
@@ -1412,7 +1413,7 @@ require("lazy").setup({
             end
           end
           vim.lsp.diagnostic.on_publish_diagnostics(err, result, ctx, config)
-        end, { update_in_insert = false })
+        end, { update_in_insert = true })
       end
 
       local capabilities = vim.lsp.protocol.make_client_capabilities()
@@ -1444,14 +1445,14 @@ require("lazy").setup({
         end),
         html = get_options(),
         jsonls = get_options(),
+        pyright = get_options(),
         pylsp = get_options(function(opts)
           opts.settings = {
             pylsp = {
               plugins = {
-                -- TODO: Figure out how to disable per project
-                autopep8 = { enabled = false },
+                autopep8 = { enabled = true },
                 pycodestyle = {
-                  maxLineLength = 120,
+                  maxLineLength = 140,
                 },
               },
             },
@@ -1578,7 +1579,12 @@ require("lazy").setup({
             },
           }
         end),
-        tsserver = get_options(),
+        tsserver = get_options(function(opts)
+          opts.filetypes = {
+            "typescript",
+            "typescriptreact",
+          }
+        end),
         vimls = get_options(),
         yamlls = get_options(function(opts)
           opts.settings = {
@@ -1634,6 +1640,15 @@ require("lazy").setup({
         json = { prettierd },
         lua = { require("formatter.filetypes.lua").stylua },
         markdown = { prettierd },
+        rust = {
+          function()
+            return {
+              exe = "rustfmt",
+              args = { "--edition 2021", "--emit=stdout" },
+              stdin = true,
+            }
+          end,
+        },
         toml = { require("formatter.filetypes.toml").taplo },
         typescript = { prettierd },
         typescriptreact = { prettierd },
@@ -2002,7 +2017,7 @@ require("lazy").setup({
       { "<leader>gC", "<cmd>Telescope git_commits<CR>", desc = "Git Commits" },
       { "<leader>gf", "<cmd>Telescope git_files<CR>", desc = "Git Files" },
       { "<leader>gt", "<cmd>Telescope git_status<CR>", desc = "Git Status" },
-      { "<leader>h", "<cmd>Telescope oldfiles<CR>", desc = "Recent Files" },
+      { "<leader>H", "<cmd>Telescope oldfiles<CR>", desc = "Recent Files" },
       { "<leader>K", "<cmd>Telescope keymaps<CR>", desc = "Keymaps" },
       { "<leader>m", "<cmd>Telescope marks<CR>", desc = "Marks" },
       { "<leader>M", "<cmd>Telescope notify<CR>", desc = "Notify Messages" },
@@ -2010,7 +2025,7 @@ require("lazy").setup({
       { "<leader>gs", "<cmd>Telescope grep_string<CR>", desc = "Grep String" },
       { "<leader>s", "<cmd>Telescope current_buffer_fuzzy_find<CR>", desc = "Buffer Search" },
       { "<leader>dD", "<cmd>Telescope diagnostics<CR>", desc = "Diagnostics" },
-      { "<leader>H", "<cmd>Telescope help_tags<CR>", desc = "Help" },
+      { "<leader>T", "<cmd>Telescope help_tags<CR>", desc = "Help" },
       { "<leader>U", "<cmd>Telescope luasnip<CR>", desc = "Snippets" },
       { "<c-u>", "<cmd>Telescope luasnip<CR>", mode = "i", desc = "Snippets" },
       { "<c-s>", "<cmd>Telescope symbols<CR>", mode = { "n", "i" }, desc = "Symbols" },
@@ -2048,11 +2063,9 @@ require("lazy").setup({
   },
   {
     "tpope/vim-dispatch", -- background build and test dispatcher
-    cmd = { "Make", "Dispatch" },
   },
   {
     "radenling/vim-dispatch-neovim", -- Adds neovim terminal support to vim-dispatch
-    cmd = { "Make", "Dispatch" },
   },
   {
     "mfussenegger/nvim-dap",
@@ -2139,25 +2152,39 @@ require("lazy").setup({
           })
         end
       end
+      -- Find Rust types
+      local initCommands = function()
+        -- Find out where to look for the pretty printer Python module
+        local rustc_sysroot = vim.fn.trim(vim.fn.system("rustc --print sysroot"))
+
+        local script_import = 'command script import "' .. rustc_sysroot .. '/lib/rustlib/etc/lldb_lookup.py"'
+        local commands_file = rustc_sysroot .. "/lib/rustlib/etc/lldb_commands"
+
+        local commands = {}
+        local file = io.open(commands_file, "r")
+        if file then
+          for line in file:lines() do
+            table.insert(commands, line)
+          end
+          file:close()
+        end
+        table.insert(commands, 1, script_import)
+
+        return commands
+      end
       dap.configurations.rust = {
         {
           name = "Launch",
           type = "codelldb",
           request = "launch",
           cwd = "${workspaceFolder}",
+          preLaunchTask = "cargo build",
           program = function()
             local pickers = require("telescope.pickers")
             local finders = require("telescope.finders")
             local conf = require("telescope.config").values
             local actions = require("telescope.actions")
             local action_state = require("telescope.actions.state")
-
-            vim.cmd.write()
-            local build_job = notify_output({ "cargo", "build" })
-            local build_status = vim.fn.jobwait({ build_job })
-            if build_status[build_job] ~= 0 then
-              return
-            end
             return coroutine.create(function(co)
               local opts = {}
               pickers
@@ -2165,8 +2192,8 @@ require("lazy").setup({
                   prompt_title = "Path to executable",
                   finder = finders.new_oneshot_job({
                     "fd",
-                    "--hidden",
-                    "--no-ignore",
+                    "--exclude",
+                    "*.dylib",
                     "--type",
                     "x",
                     "--max-depth",
@@ -2186,6 +2213,7 @@ require("lazy").setup({
                 :find()
             end)
           end,
+          initCommands = initCommands,
         },
         {
           name = "Attach",
@@ -2193,6 +2221,7 @@ require("lazy").setup({
           request = "attach",
           cwd = "${workspaceFolder}",
           pid = "${command:pickProcess}",
+          initCommands = initCommands,
         },
       }
       dap.configurations.c = dap.configurations.rust
@@ -2226,29 +2255,32 @@ require("lazy").setup({
 
       local dapui = require("dapui")
       dap.listeners.after.event_initialized.dapui_config = function()
-        map("<leader>dr", "<cmd>lua require('dap').run_to_cursor()<CR>", { desc = "Run until cursor" })
-        map("<leader>dR", "<cmd>lua require('dap').restart()<CR>", { desc = "Restart debugger" })
-        map("<leader>dS", "<cmd>lua require('dap').terminate()<CR>", { desc = "Stop debugger" })
-        map("<c-\\>", "<cmd>lua require('dap').pause()", { desc = "Pause Debugger" })
-        map("<c-'>", "<cmd>lua require('dap').step_over()<CR>", { desc = "Step over" })
-        map("<c-;>", "<cmd>lua require('dap').step_into()<CR>", { desc = "Step into" })
-        map("<c-:>", "<cmd>lua require('dap').step_out()<CR>", { desc = "Step out" })
-        map("K", "<cmd>lua require('dapui').eval()<CR>", { mode = { "n", "v" }, desc = "Evaluate expression" })
         dapui.open()
+        map("<leader>dr", "<cmd>lua require('dap').run_to_cursor()<CR>", { desc = "Run until cursor", buffer = true })
+        map("<leader>dR", "<cmd>lua require('dap').restart()<CR>", { desc = "Restart debugger", buffer = true })
+        map("<leader>dS", "<cmd>lua require('dap').terminate()<CR>", { desc = "Stop debugger", buffer = true })
+        map("<c-\\>", "<cmd>lua require('dap').pause()", { desc = "Pause Debugger", buffer = true })
+        map("<c-'>", "<cmd>lua require('dap').step_over()<CR>", { desc = "Step over", buffer = true })
+        map("<c-;>", "<cmd>lua require('dap').step_into()<CR>", { desc = "Step into", buffer = true })
+        map("<c-:>", "<cmd>lua require('dap').step_out()<CR>", { desc = "Step out", buffer = true })
+        map(
+          "K",
+          "<cmd>lua require('dapui').eval()<CR>",
+          { mode = { "n", "v" }, desc = "Evaluate expression", buffer = true }
+        )
       end
       dap.listeners.after.event_terminated.dapui_config = function()
         dapui.close()
-        del_map("<leader>dr")
-        del_map("<leader>dR")
-        del_map("<leader>dS")
-        del_map("<c-\\>")
-        del_map("<c-'>")
-        del_map("<c-;>")
-        del_map("<c-;>")
-        del_map("<c-:>")
-        del_map("K")
+        del_map("<leader>dr", { buffer = true })
+        del_map("<leader>dR", { buffer = true })
+        del_map("<leader>dS", { buffer = true })
+        del_map("<c-\\>", { buffer = true })
+        del_map("<c-'>", { buffer = true })
+        del_map("<c-;>", { buffer = true })
+        del_map("<c-;>", { buffer = true })
+        del_map("<c-:>", { buffer = true })
+        del_map("K", { mode = { "n", "v" }, buffer = true })
       end
-      dap.listeners.after.event_exited.dapui_config = dap.listeners.after.event_terminated.dapui_config
     end,
   },
   {
@@ -2277,6 +2309,20 @@ require("lazy").setup({
 -- Defer treesitter setup to improve initial startup time
 vim.defer_fn(function()
   require("nvim-treesitter.configs").setup({
+    autotag = {
+      enable = true,
+      enable_rename = true,
+      enable_close_on_slash = false,
+      filetypes = {
+        "html",
+        "javascript",
+        "javascriptreact",
+        "rust",
+        "typescript",
+        "typescriptreact",
+        "xml",
+      },
+    },
     ensure_installed = {
       "bash",
       "c",
@@ -2388,6 +2434,7 @@ vim.defer_fn(function()
       "prettierd",
       "protolint",
       "pylsp",
+      "pyright",
       "rust_analyzer",
       "shellcheck",
       "stylelint",
