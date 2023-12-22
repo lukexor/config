@@ -1627,6 +1627,7 @@ require("lazy").setup({
       local formatter = require("formatter")
       local default_formatters = require("formatter.defaults")
       local prettierd = default_formatters.prettierd
+      local eslint_d = default_formatters.eslint_d
       local clangformat = default_formatters.clangformat
       Formatters = {
         c = { clangformat },
@@ -1635,8 +1636,8 @@ require("lazy").setup({
         fish = { default_formatters.fishindent },
         graphql = { prettierd },
         html = { prettierd },
-        javascript = { prettierd },
-        javascriptreact = { prettierd },
+        javascript = { eslint_d, prettierd },
+        javascriptreact = { eslint_d, prettierd },
         json = { prettierd },
         lua = { require("formatter.filetypes.lua").stylua },
         markdown = { prettierd },
@@ -1650,8 +1651,14 @@ require("lazy").setup({
           end,
         },
         toml = { require("formatter.filetypes.toml").taplo },
-        typescript = { prettierd },
-        typescriptreact = { prettierd },
+        typescript = {
+          eslint_d,
+          prettierd,
+        },
+        typescriptreact = {
+          eslint_d,
+          prettierd,
+        },
         yaml = { prettierd },
       }
       formatter.setup({
@@ -1664,7 +1671,7 @@ require("lazy").setup({
       vim.api.nvim_create_autocmd({ "BufWritePost" }, {
         group = format_augroup,
         callback = function()
-          vim.cmd([[Format]])
+          vim.cmd([[FormatWrite]])
         end,
       })
     end,

@@ -2,6 +2,14 @@ snippet fn "function" b
     function $1($2) {
         ${0:${VISUAL}}
     }
+snippet efn "export function" b
+    export function $1($2) {
+        ${0:${VISUAL}}
+    }
+snippet edfn "export default function" b
+    export default function ${1:`substitute(vim_snippets#Filename(), '\(_\|^\)\(.\)', '\u\2', 'g')`}($2) {
+        ${0:${VISUAL}}
+    }
 snippet afn "async function" b
     async function $1($2) {
         ${0:${VISUAL}}
@@ -142,6 +150,8 @@ snippet timeout "timeout"
     setTimeout(function () {$0}$2, ${1:1000});
 snippet const b
     const $1 = $0;
+snippet econst b
+    export const $1 = $0;
 snippet constn b
     const $1 = new $0;
 snippet let b
