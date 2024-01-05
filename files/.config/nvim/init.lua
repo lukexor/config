@@ -783,8 +783,6 @@ require("lazy").setup({
   -- -----------------------------------------------------------------------------
   -- Code Assists
   -- -----------------------------------------------------------------------------
-  -- TODO: code_actions.eslint_d,
-  -- TODO: code_actions.shellcheck,
 
   {
     "mfussenegger/nvim-lint",
@@ -1380,12 +1378,12 @@ require("lazy").setup({
         vim.fn.sign_define("DiagnosticSignInformation", { text = "", texthl = "LspDiagnosticsSignInformation" })
 
         -- See `:help vim.lsp.*` for documentation on any of the below functions
-        map("gd", "<cmd>Telescope lsp_definitions<CR>", { desc = "Go To Definition", buffer = bufnr })
-        map("gD", "<cmd>Telescope lsp_type_definitions<CR>", { desc = "Go To Type Definition", buffer = bufnr })
+        map("gd", "m'<cmd>Telescope lsp_definitions<CR>", { desc = "Go To Definition", buffer = bufnr })
+        map("gD", "m'<cmd>Telescope lsp_type_definitions<CR>", { desc = "Go To Type Definition", buffer = bufnr })
         map("gh", vim.lsp.buf.hover, { desc = "Symbol Information", buffer = bufnr })
         map("gH", vim.lsp.buf.signature_help, { desc = "Signature Information", buffer = bufnr })
-        map("gi", "<cmd>Telescope lsp_implementations<CR>", { desc = "Go To Implementation", buffer = bufnr })
-        map("gr", "<cmd>Telescope lsp_references<CR>", { desc = "References", buffer = bufnr })
+        map("gi", "m'<cmd>Telescope lsp_implementations<CR>", { desc = "Go To Implementation", buffer = bufnr })
+        map("gr", "m'<cmd>Telescope lsp_references<CR>", { desc = "References", buffer = bufnr })
         map("gR", vim.lsp.buf.rename, { desc = "Rename References", buffer = bufnr })
         map("ga", vim.lsp.buf.code_action, { desc = "Code Action", buffer = bufnr })
         map("ge", vim.diagnostic.open_float, { desc = "Diagnostics", buffer = bufnr })
@@ -1472,6 +1470,7 @@ require("lazy").setup({
               assist = { emitMustUse = true },
               cargo = {
                 features = "all",
+                target = "wasm32-unknown-unknown",
               },
               check = {
                 command = "clippy",
@@ -1483,7 +1482,12 @@ require("lazy").setup({
                 },
               },
               files = {
-                excludeDirs = { vim.env.CARGO_TARGET_DIR, "target", vim.env.HOME .. "/.rustup" },
+                excludeDirs = {
+                  vim.env.CARGO_TARGET_DIR,
+                  "target",
+                  vim.env.HOME .. "/.rustup",
+                  vim.env.HOME .. "/.cargo",
+                },
               },
               imports = {
                 group = { enable = false },
@@ -1639,6 +1643,7 @@ require("lazy").setup({
         javascript = { eslint_d, prettierd },
         javascriptreact = { eslint_d, prettierd },
         json = { prettierd },
+        jsonc = { prettierd },
         lua = { require("formatter.filetypes.lua").stylua },
         markdown = { prettierd },
         rust = {
@@ -1660,9 +1665,12 @@ require("lazy").setup({
           prettierd,
         },
         yaml = { prettierd },
+        ["*"] = {
+          require("formatter.filetypes.any").remove_trailing_whitespace,
+        },
       }
       formatter.setup({
-        log_level = vim.log.levels.DEBUG,
+        log_level = vim.log.levels.WARN,
         filetype = Formatters,
         ["*"] = { require("formatter.filetypes.any").remove_trailing_whitespace },
       })
