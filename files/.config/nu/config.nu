@@ -529,7 +529,7 @@ def pg [search: string] {
 }
 
 # Restart ssh-agent.
-def-env ra [] {
+def --env ra [] {
   pg ssh-agent | each { |p| kill $p.pid }
   rm -f $env.AGENT_INFO $env.AGENT_FILE
 
@@ -674,7 +674,7 @@ use ~/.local/rtx.nu *
 use ~/.local/config.nu *
 
 # Load ssh-agent.
-def-env load-ssh-agent [] {
+def --env load-ssh-agent [] {
   let agent_active = ($env.AGENT_INFO | path exists)
   $env.SSH_AUTH_SOCK = if $agent_active { $env.AGENT_FILE } else { "" }
   $env.SSH_AGENT_PID = if $agent_active { rg -o '=\d+' $env.AGENT_INFO | str replace = '' | str trim } else { "" }

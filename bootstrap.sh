@@ -152,9 +152,14 @@ setup_neovim() {
 set_shell() {
   echo "Setting default shell..."
 
-  local shell=$(command which $DEFAULT_SHELL)
+  local shell
+  shell=$(command which $DEFAULT_SHELL)
   $sudo grep -qxF "$shell" /etc/shells | wc -l || echo "$shell" | $sudo tee -a /etc/shells
   [ "$SHELL" == "$shell" ] || chsh -s "$shell"
+  rm '/Users/lukepetherbridge/Library/Application Support/nushell/config.nu'
+  rm '/Users/lukepetherbridge/Library/Application Support/nushell/env.nu'
+  symlink ~/.config/nu/config.nu '/Users/lukepetherbridge/Library/Application Support/nushell/config.nu'
+  symlink ~/.config/nu/env.nu '/Users/lukepetherbridge/Library/Application Support/nushell/env.nu'
 
   echo "Successfully set default shell"
 
@@ -207,6 +212,7 @@ install_crates() {
     just \
     mprocs \
     ncspot \
+    nu \
     porsmo \
     procs \
     ripgrep \
@@ -215,6 +221,7 @@ install_crates() {
     sd \
     speedtest-rs \
     starship \
+    stylua \
     tealdeer \
     tokei \
     wasm-pack \
@@ -238,8 +245,16 @@ install_npm() {
   npm config set prefix "$npm_dir"
 
   npm install -g \
+    @fsouza/prettierd \
+    eslint \
+    eslint_d \
     lighthouse \
+    jsonlint \
     neovim \
+    markdownlint \
+    markdownlint-cli \
+    stylelint \
+    stylelint-config-standard \
     yarn
 
   echo "Successfully installed npm..."
@@ -326,7 +341,7 @@ bootstrap() {
 
   PATH=~/bin:~/.local/bin:~/.cargo/bin:~/.npm-packages/bin:~/.fzf/bin:"$PATH"
 
-  install_terminal
+  # install_terminal
   install_core_packages
   link_configs
   set_shell

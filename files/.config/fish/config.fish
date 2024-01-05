@@ -80,6 +80,7 @@ fish_add_path --path -gm \
     ~/.npm-packages/bin \
     ~/.cargo/bin \
     ~/.local/share/nvim/mason/bin/ \
+    ~/.local/sbin \
     ~/.local/bin \
     ~/bin
 
