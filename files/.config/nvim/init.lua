@@ -645,6 +645,23 @@ require("lazy").setup({
     event = "VeryLazy",
   },
   {
+    "mbbill/undotree",
+    event = "VeryLazy",
+    keys = {
+      {
+        "<leader>U",
+        "<cmd>UndotreeToggle<CR>",
+        desc = "Toggle Undo Tree",
+        silent = true,
+      },
+    },
+    init = function()
+      vim.g.undotree_WindowLayout = 2
+      vim.g.undotree_ShortIndicators = 1
+      vim.g.undotree_SplitWidth = 40
+    end,
+  },
+  {
     "terryma/vim-smooth-scroll", -- Less jarring scroll
     keys = {
       {
@@ -822,6 +839,7 @@ require("lazy").setup({
       }
 
       vim.api.nvim_create_autocmd({ "BufReadPost", "InsertLeave", "BufWritePost" }, {
+        desc = "Lint file",
         callback = function()
           lint.try_lint()
         end,
@@ -1235,7 +1253,7 @@ require("lazy").setup({
     opts = function()
       local function fg(name)
         return function()
-          local hl = vim.api.nvim_get_hl_by_name(name, true)
+          local hl = vim.api.nvim_get_hl(0, { name = name })
           return hl and hl.foreground and { fg = string.format("#%06x", hl.foreground) }
         end
       end
@@ -1264,8 +1282,6 @@ require("lazy").setup({
           disabled_filetypes = { statusline = { "dashboard", "lazy" } },
           globalstatus = true,
           icons_enabled = true,
-          component_separators = { left = "", right = "" },
-          section_separators = { left = "", right = "" },
           theme = "ayu_dark",
         },
         sections = {
@@ -1388,17 +1404,6 @@ require("lazy").setup({
         map("ga", vim.lsp.buf.code_action, { desc = "Code Action", buffer = bufnr })
         map("ge", vim.diagnostic.open_float, { desc = "Diagnostics", buffer = bufnr })
         map("<leader>S", "<cmd>Telescope lsp_document_symbols<CR>", { desc = "LSP Symbols", buffer = bufnr })
-
-        -- formatting autocmd on save
-        if Formatters[vim.bo.filetype] == nil and client.supports_method("textDocument/formatting") then
-          vim.api.nvim_create_autocmd({ "BufWritePre" }, {
-            group = "Format",
-            buffer = bufnr,
-            callback = function()
-              vim.lsp.buf.format({ bufnr = bufnr })
-            end,
-          })
-        end
 
         -- Filter out diagnostics that are not useful
         local filtered_diagnostics = {
@@ -1641,6 +1646,9 @@ require("lazy").setup({
   {
     "mhartington/formatter.nvim",
     event = "VeryLazy",
+    keys = {
+      { "<leader>F", "<cmd>Format<CR>", desc = "format buffer" },
+    },
     config = function()
       local formatter = require("formatter")
       local default_formatters = require("formatter.defaults")
@@ -1692,6 +1700,7 @@ require("lazy").setup({
       local format_augroup = vim.api.nvim_create_augroup("Format", {})
       vim.api.nvim_create_autocmd({ "BufWritePost" }, {
         group = format_augroup,
+        desc = "Format file",
         callback = function()
           vim.cmd([[FormatWrite]])
         end,
@@ -1807,7 +1816,7 @@ require("lazy").setup({
           ["<Tab>"] = cmp.mapping({
             i = function(fallback)
               if cmp.visible() then
-                cmp.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = true })
+                cmp.confirm({ behavior = cmp.ConfirmBehavior.Insert, select = true })
               else
                 fallback()
               end
@@ -2035,7 +2044,7 @@ require("lazy").setup({
     keys = {
       { "<leader>f", "<cmd>Telescope fd<CR>", desc = "Find File" },
       {
-        "<leader>F",
+        "<leader>H",
         "<cmd>Telescope fd find_command=rg,--files,--hidden,--no-ignore,--glob,!.git<CR>",
         desc = "Find Hidden File",
       },
@@ -2046,7 +2055,7 @@ require("lazy").setup({
       { "<leader>gC", "<cmd>Telescope git_commits<CR>", desc = "Git Commits" },
       { "<leader>gf", "<cmd>Telescope git_files<CR>", desc = "Git Files" },
       { "<leader>gt", "<cmd>Telescope git_status<CR>", desc = "Git Status" },
-      { "<leader>H", "<cmd>Telescope oldfiles<CR>", desc = "Recent Files" },
+      { "<leader>I", "<cmd>Telescope oldfiles<CR>", desc = "Recent Files" },
       { "<leader>K", "<cmd>Telescope keymaps<CR>", desc = "Keymaps" },
       { "<leader>m", "<cmd>Telescope marks<CR>", desc = "Marks" },
       { "<leader>M", "<cmd>Telescope notify<CR>", desc = "Notify Messages" },
@@ -2055,7 +2064,7 @@ require("lazy").setup({
       { "<leader>s", "<cmd>Telescope current_buffer_fuzzy_find<CR>", desc = "Buffer Search" },
       { "<leader>dD", "<cmd>Telescope diagnostics<CR>", desc = "Diagnostics" },
       { "<leader>T", "<cmd>Telescope help_tags<CR>", desc = "Help" },
-      { "<leader>U", "<cmd>Telescope luasnip<CR>", desc = "Snippets" },
+      { "<leader>N", "<cmd>Telescope luasnip<CR>", desc = "Snippets" },
       { "<c-u>", "<cmd>Telescope luasnip<CR>", mode = "i", desc = "Snippets" },
       { "<c-s>", "<cmd>Telescope symbols<CR>", mode = { "n", "i" }, desc = "Symbols" },
     },
@@ -2151,6 +2160,7 @@ require("lazy").setup({
       vim.fn.sign_define("DapBreakpointRejected", { text = "❌" })
       vim.api.nvim_create_autocmd("FileType", {
         pattern = "dap-repl",
+        desc = "Set up DAP autocomplete",
         callback = function()
           require("dap.ext.autocompl").attach()
         end,

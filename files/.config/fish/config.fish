@@ -100,6 +100,11 @@ fish_add_path --path -ga \
     /usr/bin \
     /usr/local/bin \
     /usr/local/go/bin
+
+set -gx LDFLAGS -L(brew --prefix)/lib
+set -gx CPPFLAGS -I(brew --prefix)/include
+set -gx LIBRARY_PATH (brew --prefix)/lib
+
 set -gx CLICOLOR 1
 set -gx TERMINAL kitty
 set -gx VISUAL nvim
@@ -110,8 +115,8 @@ set -gx LESS -RFX
 
 # Tools
 set -gx FZF_DEFAULT_OPTS "--height 50% --layout=reverse --border --inline-info"
-set -gx FZF_CTRL_T_COMMAND "rg --files --hidden --no-ignore --glob !.git --glob !node_modules"
-set -gx FZF_DEFAULT_COMMAND "rg --files --hidden --no-ignore --glob !.git --glob !node_modules"
+set -gx FZF_CTRL_T_COMMAND "rg --files --hidden"
+set -gx FZF_DEFAULT_COMMAND "rg --files --hidden"
 # NOTE: To debug rust-analyzer
 # set -gx RA_LOG "info,salsa=off,chalk=off"
 set -gx CARGO_TARGET_DIR ~/.cargo-target
@@ -189,7 +194,10 @@ abbr -a ct cargo test --workspace --all-targets
 abbr -a curl xh
 abbr -a cw cargo watch
 abbr -a da "date +'%Y-%m-%d %H:%M:%S'"
+abbr -a d docker
 abbr -a dc docker compose
+abbr -a dcr docker compose run
+abbr -a dsp docker system prune
 abbr -a du dust
 abbr -a find fd
 abbr -a flg CARGO_PROFILE_RELEASE_DEBUG=true cargo flamegraph --root
@@ -227,6 +235,7 @@ abbr -a lk exa --icons -lrs size
 abbr -a ll exa --icons -l
 abbr -a ls exa --icons
 abbr -a lt exa --icons --tree
+abbr -a k kubectl
 abbr -a mkdir mkdir -p
 abbr -a myip curl -s api.ipify.org
 abbr -a nci npm ci

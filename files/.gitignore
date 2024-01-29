@@ -7,6 +7,8 @@ build
 dist
 target
 node_modules
+virtualenv
+venv
 *.spv
 
 # Temporary files

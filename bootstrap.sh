@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-DEFAULT_SHELL=nu
+DEFAULT_SHELL=fish
 [ -n "$DEBUG" ] && set -x
 set -euo pipefail
 
@@ -341,7 +341,7 @@ bootstrap() {
 
   PATH=~/bin:~/.local/bin:~/.cargo/bin:~/.npm-packages/bin:~/.fzf/bin:"$PATH"
 
-  # install_terminal
+  install_terminal
   install_core_packages
   link_configs
   set_shell
