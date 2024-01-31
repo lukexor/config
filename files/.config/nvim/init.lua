@@ -574,7 +574,7 @@ require("lazy").setup({
         function()
           require("notify").dismiss({ silent = true, pending = true })
         end,
-        desc = "Delete all Notifications",
+        desc = "Dismiss Notifications",
       },
     },
     opts = {
@@ -2081,9 +2081,12 @@ require("lazy").setup({
   -- -----------------------------------------------------------------------------
   {
     "romainl/vim-qf", -- Tame the quickfix window
+    event = "VeryLazy",
     keys = {
       { "[q", "<Plug>(qf_qf_previous)", desc = "previous quickfix" },
       { "]q", "<Plug>(qf_qf_next)", desc = "next quickfix" },
+      { "[l", "<Plug>(qf_loc_previous)", desc = "previous location" },
+      { "]l", "<Plug>(qf_loc_next)", desc = "next location" },
       { "<leader>gq", "<Plug>(qf_qf_toggle)", desc = "toggle quickfix list" },
       { "<leader>gQ", "<cmd>cexpr []<CR>", desc = "clears quickfix list" },
     },

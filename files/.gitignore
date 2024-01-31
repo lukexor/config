@@ -10,6 +10,7 @@ node_modules
 virtualenv
 venv
 *.spv
+_*
 
 # Temporary files
 *.cache
