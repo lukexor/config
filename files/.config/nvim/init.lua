@@ -1596,6 +1596,8 @@ require("lazy").setup({
         end),
         tsserver = get_options(function(opts)
           opts.filetypes = {
+            "javascript",
+            "javascriptreact",
             "typescript",
             "typescriptreact",
           }
