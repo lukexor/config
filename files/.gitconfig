@@ -13,6 +13,9 @@
   editor = nvim -i NONE
   pager = less -F -X -x1,5
   autocrlf = input
+  fsmonitor = true
+[rerere]
+  enabled = true
 [pager]
   log = less -+F -+X -x1,5
   diff = less -+F -+X -x1,5

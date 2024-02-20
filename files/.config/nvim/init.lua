@@ -580,13 +580,13 @@ require("lazy").setup({
     opts = {
       timeout = 1000,
       background_colour = "#111111",
-      render = "wrapped-compact",
-      stages = "fade_in_slide_out",
+      render = "minimal",
+      stages = "static",
       max_height = function()
-        return math.floor(vim.o.lines * 0.75)
+        return math.floor(vim.o.lines * 0.50)
       end,
       max_width = function()
-        return math.floor(vim.o.columns * 0.75)
+        return math.floor(vim.o.columns * 0.50)
       end,
     },
   },
@@ -800,7 +800,6 @@ require("lazy").setup({
   -- -----------------------------------------------------------------------------
   -- Code Assists
   -- -----------------------------------------------------------------------------
-
   {
     "mfussenegger/nvim-lint",
     config = function()
@@ -1158,9 +1157,17 @@ require("lazy").setup({
           ["vim.lsp.util.stylize_markdown"] = true,
           ["cmp.entry.get_documentation"] = true,
         },
+        hover = {
+          enabled = false,
+        },
+        signature = {
+          enabled = true,
+          auto_open = {
+            enabled = false,
+          },
+        },
       },
       presets = {
-        command_palette = true,
         long_message_to_split = true,
       },
       views = {
@@ -1254,7 +1261,7 @@ require("lazy").setup({
       local function fg(name)
         return function()
           local hl = vim.api.nvim_get_hl(0, { name = name })
-          return hl and hl.foreground and { fg = string.format("#%06x", hl.foreground) }
+          return hl and hl.fg and { fg = string.format("#%06x", hl.fg) }
         end
       end
       local function macro_recording()
@@ -1294,7 +1301,7 @@ require("lazy").setup({
             },
           },
           lualine_b = {
-            { "branch", color = { fg = "#c2d94c" } },
+            { "branch", color = fg("SpecialComment") },
           },
           lualine_c = {
             { macro_recording, color = fg("Special") },
@@ -1356,7 +1363,6 @@ require("lazy").setup({
           },
         },
       },
-      "simrat39/rust-tools.nvim",
       {
         "folke/neodev.nvim",
         opts = {
@@ -1470,12 +1476,18 @@ require("lazy").setup({
           }
         end),
         rust_analyzer = get_options(function(opts)
+          opts.on_attach = function(client, bufnr)
+            on_attach(client, bufnr)
+            map("<leader>cr", "<cmd>Make run<CR>", { desc = "cargo run" })
+            map("<leader>cb", "<cmd>Make build<CR>", { desc = "cargo build" })
+            map("<leader>cc", "<cmd>Make clippy<CR>", { desc = "cargo clippy" })
+          end
           opts.settings = {
             ["rust-analyzer"] = {
               assist = { emitMustUse = true },
               cargo = {
                 features = "all",
-                target = "wasm32-unknown-unknown",
+                -- target = "wasm32-unknown-unknown",
               },
               check = {
                 command = "clippy",
@@ -1506,6 +1518,8 @@ require("lazy").setup({
                   "static",
                   "target",
                   "tmp",
+                  "roms",
+                  "test_roms",
                 },
               },
               imports = {
@@ -1545,28 +1559,6 @@ require("lazy").setup({
               -- },
             },
           }
-          opts.setup = function(server_opts)
-            if vim.bo.filetype == "rust" then
-              map("<leader>cr", "<cmd>Make run<CR>", { desc = "cargo run" })
-              map("<leader>cb", "<cmd>Make build<CR>", { desc = "cargo build" })
-              map("<leader>cc", "<cmd>Make clippy<CR>", { desc = "cargo clippy" })
-            end
-            -- We don't want to call lspconfig.rust_analyzer.setup() when using
-            -- rust-tools. See https://github.com/simrat39/rust-tools.nvim/issues/89
-            require("rust-tools").setup({
-              dap = {
-                adapter = codellb_adaptor,
-              },
-              server = server_opts,
-              tools = {
-                inlay_hints = {
-                  parameter_hints_prefix = "← ",
-                  other_hints_prefix = "▸ ",
-                  highlight = "VirtualTextInfo",
-                },
-              },
-            })
-          end
         end),
         lua_ls = get_options(function(opts)
           opts.settings = {
@@ -1702,7 +1694,7 @@ require("lazy").setup({
         group = format_augroup,
         desc = "Format file",
         callback = function()
-          vim.cmd([[FormatWrite]])
+          vim.cmd([[FormatWriteLock]])
         end,
       })
     end,
@@ -2458,36 +2450,36 @@ vim.defer_fn(function()
     },
   })
   require("mason-nvim-dap").setup({
-    ensure_installed = { "codelldb" },
+    ensure_installed = { "codelldb", "debugpy", "node-debug2-adapter" },
   })
   require("mason-tool-installer").setup({
     ensure_installed = {
-      "bashls",
+      "bash-language-server",
       "clang-format",
       "clangd",
       "cpplint",
-      "cssls",
+      "css-lsp",
       "eslint_d",
-      "html",
+      "html-lsp",
+      "json-lsp",
       "jsonlint",
-      "jsonls",
-      "lua_ls",
+      "lua-language-server",
       "markdownlint",
       "prettierd",
       "protolint",
-      "pylsp",
+      "python-lsp-server",
       "pyright",
       "rust_analyzer",
       "shellcheck",
       "stylelint",
       "stylelint-lsp",
       "stylua",
-      "tailwindcss",
+      "tailwindcss-language-server",
       "taplo",
-      "tsserver",
-      "vimls",
+      "typescript-language-server",
+      "vim-language-server",
       "yamllint",
-      "yamlls",
+      "yaml-language-server",
     },
   })
 end, 0)
