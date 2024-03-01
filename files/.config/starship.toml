@@ -123,8 +123,6 @@ Windows = " "
 symbol = " "
 
 [python]
-python_binary = "python3"
-disabled = true
 symbol = " "
 
 [ruby]
