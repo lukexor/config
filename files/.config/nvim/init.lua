@@ -1302,6 +1302,7 @@ require("lazy").setup({
           },
           lualine_b = {
             { "branch", color = fg("SpecialComment") },
+            { "filename", path = 4 },
           },
           lualine_c = {
             { macro_recording, color = fg("Special") },
