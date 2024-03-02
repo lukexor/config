@@ -1636,7 +1636,7 @@ require("lazy").setup({
         typescript = { "eslint_d", "rustywind", "prettierd" },
         typescriptreact = { "eslint_d", "rustywind", "prettierd" },
         yaml = { "prettierd" },
-        ["*"] = { "codespell", "trim_whitespace" },
+        ["*"] = { "trim_whitespace" },
       },
     },
   },
