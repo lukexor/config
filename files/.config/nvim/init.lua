@@ -243,7 +243,7 @@ map("<leader>W", "<cmd>noa w<CR>", { desc = "Save/No Formatting" })
 map("<leader>q", "<cmd>confirm q<CR>", { desc = "Quit" })
 map("<leader>Q", "<cmd>confirm qall<CR>", { desc = "Quit All" })
 map("<leader>O", "<cmd>%bd|e#|bd#<CR>", { desc = "Quit all but current" })
-map("<leader>n", "<cmd>enew<CR>", { desc = "New Buffer" })
+map("<leader>n", "<cmd>new<CR>", { desc = "New Buffer" })
 
 map("<leader>h", "<cmd>bp<CR>", { silent = true, desc = "Go to Previous Buffer" })
 map("<leader>l", "<cmd>bn<CR>", { silent = true, desc = "Go to Next Buffer" })
