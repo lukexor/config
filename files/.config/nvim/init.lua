@@ -1412,16 +1412,11 @@ require("lazy").setup({
         end),
         html = get_options(),
         jsonls = get_options(),
-        pyright = get_options(),
-        pylsp = get_options(function(opts)
+        pyright = get_options(function(opts)
           opts.settings = {
-            pylsp = {
-              plugins = {
-                autopep8 = { enabled = true },
-                pycodestyle = {
-                  maxLineLength = 140,
-                },
-              },
+            python = {
+              -- just in case
+              -- analysis = { typeCheckingMode = "off" },
             },
           }
         end),
@@ -2422,7 +2417,6 @@ vim.defer_fn(function()
       "markdownlint",
       "prettierd",
       "protolint",
-      "python-lsp-server",
       "pyright",
       -- "rust_analyzer", -- Prefer rustup component
       "shellcheck",
