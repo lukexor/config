@@ -2393,6 +2393,10 @@ vim.defer_fn(function()
       },
     },
   })
+  -- Disable treesitter indentexpr for Python since it's wonky atm
+  if vim.bo.filetype == "python" then
+    vim.cmd([[set indentexpr=]])
+  end
 
   require("mason").setup({
     ui = {
