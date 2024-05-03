@@ -104,7 +104,7 @@ local codellb_adaptor = function(cb)
         "--port",
         "${port}",
       },
-      command = codelldb_ext_path .. "/adapter/codelldb",
+      command = codelldb_path,
     },
     host = "127.0.0.1",
     port = "${port}",
@@ -118,25 +118,6 @@ end
 
 vim.g.mapleader = " "
 vim.g.maplocalleader = ","
-
-function Merge(a, b)
-  function MergeR(t1, t2)
-    for k, v in pairs(t2) do
-      if type(v) == "table" then
-        if type(t1[k] or false) == "table" then
-          MergeR(t1[k] or {}, t2[k] or {})
-        else
-          t1[k] = v
-        end
-      else
-        t1[k] = v
-      end
-    end
-    return t1
-  end
-
-  return MergeR(MergeR({}, a or {}), b or {})
-end
 
 local map = function(lhs, rhs, options)
   local opts = vim.deepcopy(options or {})
@@ -173,6 +154,8 @@ end
 -- Use an on_attach function to only map the following keys
 -- after the language server attaches to the current buffer
 local lsp_on_attach = function(client, bufnr)
+  require("lsp-status").on_attach(client, bufnr)
+
   vim.fn.sign_define("DiagnosticSignError", { text = "", texthl = "LspDiagnosticsSignError" })
   vim.fn.sign_define("DiagnosticSignWarn", { text = "", texthl = "LspDiagnosticsSignWarning" })
   vim.fn.sign_define("DiagnosticSignHint", { text = "󰌵", texthl = "LspDiagnosticsSignHint" })
@@ -202,6 +185,12 @@ local lsp_on_attach = function(client, bufnr)
     end
     vim.lsp.diagnostic.on_publish_diagnostics(err, result, ctx, config)
   end, { update_in_insert = true })
+end
+
+local lsp_capabilities = function()
+  local client_capabilities = vim.lsp.protocol.make_client_capabilities()
+  local capabilities = require("cmp_nvim_lsp").default_capabilities(client_capabilities)
+  return vim.tbl_extend("keep", capabilities, require("lsp-status").capabilities)
 end
 
 -- -----------------------------------------------------------------------------
@@ -681,35 +670,6 @@ require("lazy").setup({
     end,
   },
   {
-    "terryma/vim-smooth-scroll", -- Less jarring scroll
-    keys = {
-      {
-        "<C-u>",
-        "<cmd>call smooth_scroll#up(&scroll, 5, 1)<CR>",
-        desc = "small scroll up",
-        silent = true,
-      },
-      {
-        "<C-d>",
-        "<cmd>call smooth_scroll#down(&scroll, 5, 1)<CR>",
-        desc = "small scroll down",
-        silent = true,
-      },
-      {
-        "<C-b>",
-        "<cmd>call smooth_scroll#up(&scroll*2, 10, 3)<CR>",
-        desc = "large scroll up",
-        silent = true,
-      },
-      {
-        "<C-f>",
-        "<cmd>call smooth_scroll#down(&scroll*2, 10, 3)<CR>",
-        desc = "large scroll down",
-        silent = true,
-      },
-    },
-  },
-  {
     "kevinhwang91/nvim-ufo", -- improved vim folds
     dependencies = {
       "kevinhwang91/promise-async",
@@ -1152,6 +1112,9 @@ require("lazy").setup({
         hover = {
           enabled = false,
         },
+        progress = {
+          enabled = false,
+        },
         signature = {
           enabled = true,
           auto_open = {
@@ -1202,48 +1165,48 @@ require("lazy").setup({
     },
   },
   {
-    "Shatur/neovim-ayu", -- colorscheme
-    init = function()
-      vim.o.background = "dark"
-    end,
-    priority = 1000,
+    "rebelot/kanagawa.nvim",
     config = function()
-      local colors = require("ayu.colors")
-      colors.generate()
-
-      vim.cmd(([[
-        aug CursorLine
-          au!
-          au InsertEnter * hi! CursorLine guibg=%s
-          au InsertLeave * hi! CursorLine guibg=%s
-        aug END
-      ]]):format(colors.selection_inactive, colors.panel_bg))
-
-      local ayu = require("ayu")
-      ayu.setup({
-        overrides = {
-          BufTabLineActive = { bg = "none" },
-          BufTabLineModifiedActive = { bg = "none" },
-          CursorLine = { bg = colors.panel_bg },
-          LineNr = { fg = colors.fg },
-          Comment = { fg = colors.vcs_modified, italic = true },
-          SpecialComment = { fg = colors.vcs_added, italic = true },
-          Normal = { bg = "none" },
-          FloatermBorder = { bg = "none" },
-          SignColumn = { bg = "none" },
-          TabLine = { bg = "none" },
-          TabLineFill = { bg = "none" },
-          TabLineSel = { fg = colors.tag, bg = "none" },
-          VirtualTextInfo = { fg = colors.comment },
-          Visual = { bg = colors.selection_bg },
-          DiffAdd = { bg = "none", fg = colors.vcs_added },
-          DiffDelete = { bg = "none", fg = colors.vcs_removed },
-          DiffChange = { bg = "none", fg = colors.vcs_modified },
-          DiffText = { bg = "none", fg = colors.special },
+      require("kanagawa").setup({
+        colors = {
+          theme = {
+            all = {
+              ui = {
+                bg = "none",
+                bg_gutter = "none",
+              },
+            },
+          },
         },
+        transparent = true,
+        dimInactive = true,
+        overrides = function(colors)
+          local theme = colors.theme
+          vim.cmd(([[
+            aug CursorLine
+              au!
+              au InsertEnter * hi! CursorLine guibg=%s
+              au InsertLeave * hi! CursorLine guibg=%s
+            aug END
+          ]]):format(theme.ui.bg_visual, theme.ui.bg_p2))
+          return {
+            NormalFloat = { bg = "none" },
+            FloatBorder = { bg = "none" },
+            FloatTitle = { bg = "none" },
+
+            -- Save an hlgroup with dark background and dimmed foreground
+            -- so that you can use it where your still want darker windows.
+            -- E.g.: autocmd TermOpen * setlocal winhighlight=Normal:NormalDark
+            NormalDark = { fg = theme.ui.fg_dim, bg = theme.ui.bg_m3 },
+
+            -- Popular plugins that open floats will link to NormalFloat by default;
+            -- set their background accordingly if you wish to keep them dark and borderless
+            LazyNormal = { bg = theme.ui.bg_m3, fg = theme.ui.fg_dim },
+            MasonNormal = { bg = theme.ui.bg_m3, fg = theme.ui.fg_dim },
+          }
+        end,
       })
-      ayu.colorscheme()
-      vim.api.nvim_set_hl(0, "@lsp.type.comment.rust", {})
+      vim.cmd("colorscheme kanagawa")
     end,
   },
   {
@@ -1269,7 +1232,7 @@ require("lazy").setup({
           disabled_filetypes = { statusline = { "dashboard", "lazy" } },
           globalstatus = true,
           icons_enabled = true,
-          theme = "ayu_dark",
+          theme = "kanagawa",
         },
         sections = {
           lualine_a = {
@@ -1289,6 +1252,11 @@ require("lazy").setup({
             {
               "diagnostics",
               sources = { "vim_lsp" },
+            },
+            {
+              function()
+                return require("lsp-status").status()
+              end,
             },
           },
           lualine_x = {
@@ -1343,7 +1311,7 @@ require("lazy").setup({
         "protolint",
         "python-lsp-server",
         "pyright",
-        -- "rust_analyzer", -- Prefer rustup component
+        "rust_analyzer",
         "shellcheck",
         "stylelint",
         "stylelint-lsp",
@@ -1370,20 +1338,8 @@ require("lazy").setup({
     ft = { "rust" },
     init = function()
       vim.g.rustaceanvim = function()
-        local targets = {
-          "wasm32-unknown-unknown",
-        }
-        local machine = vim.loop.os_uname().machine
-        if os:find("Darwin") then
-          table.insert(targets, machine .. "-apple-darwin")
-        elseif os:find("Linux") then
-          table.insert(targets, machine .. "-unknown-linux-gnu")
-        elseif os:find("Windows") then
-          table.insert(targets, machine .. "-pc-windows-gnu")
-          table.insert(targets, machine .. "-pc-windows-msvc")
-        end
-
         local cfg = require("rustaceanvim.config")
+        local capabilities = lsp_capabilities()
         return {
           -- LSP config
           server = {
@@ -1395,16 +1351,17 @@ require("lazy").setup({
               map("<leader>cb", "<cmd>Make build<CR>", { desc = "cargo build" })
               map("<leader>cc", "<cmd>Make clippy<CR>", { desc = "cargo clippy" })
             end,
+            capabilities = capabilities,
             default_settings = {
               ["rust-analyzer"] = {
                 assist = { emitMustUse = true },
                 cargo = {
                   features = "all",
+                  -- target = "wasm32-unknown-unknown",
                 },
                 check = {
                   command = "clippy",
                   features = "all",
-                  targets = targets,
                 },
                 hover = {
                   actions = {
@@ -1414,23 +1371,11 @@ require("lazy").setup({
                 files = {
                   excludeDirs = {
                     vim.env.CARGO_TARGET_DIR,
-                    ".rustup",
-                    ".cargo",
-                    ".git",
-                    ".github",
-                    ".gitlab",
-                    ".gitlab-ci",
-                    "assets",
-                    "bin",
-                    "data",
-                    "dist",
+                    "_",
                     "docs",
-                    "images",
+                    "dist",
                     "node_modules",
-                    "public",
-                    "static",
-                    "target",
-                    "tmp",
+                    ".git",
                   },
                 },
                 imports = {
@@ -1457,15 +1402,17 @@ require("lazy").setup({
                 },
                 lru = { capacity = 512 },
                 procMacro = {
-                  -- enable = false,
-                  ignored = {},
+                  ignored = {
+                    "Error",
+                    "Serialize",
+                    "Deserialize",
+                  },
                 },
                 workspace = {
                   symbol = {
                     search = { limit = 512 },
                   },
                 },
-                -- Uncomment for debugging
                 -- trace = {
                 --   server = "verbose",
                 -- },
@@ -1498,6 +1445,16 @@ require("lazy").setup({
           library = { plugins = { "nvim-dap-ui" }, types = true },
         },
       },
+      {
+        "nvim-lua/lsp-status.nvim",
+        config = function()
+          local lsp_status = require("lsp-status")
+          lsp_status.register_progress()
+          lsp_status.config({
+            status_symbol = "",
+          })
+        end,
+      },
     },
     keys = {
       { "<leader>Li", "<cmd>LspInfo<CR>", desc = "lsp info" },
@@ -1520,8 +1477,7 @@ require("lazy").setup({
       { "<localleader>f", "gq", desc = "format buffer" },
     },
     config = function()
-      local capabilities = vim.lsp.protocol.make_client_capabilities()
-      capabilities = require("cmp_nvim_lsp").default_capabilities(capabilities)
+      local capabilities = lsp_capabilities()
       local get_options = function(enhance)
         local opts = {
           on_attach = lsp_on_attach,
@@ -1570,7 +1526,6 @@ require("lazy").setup({
             "--offset-encoding=utf-16",
           }
         end),
-        -- rust_analyzer is handled by rustaceanvim
         lua_ls = get_options(function(opts)
           opts.settings = {
             Lua = {
@@ -1687,7 +1642,8 @@ require("lazy").setup({
         json = { "prettierd" },
         jsonc = { "prettierd" },
         lua = { "stylua" },
-        markdown = { "prettierd" },
+        -- FIXME: file truncaction
+        -- markdown = { "prettierd" },
         rust = { "rustfmt" },
         toml = { "taplo" },
         typescript = { "eslint_d", "rustywind", "prettierd" },
@@ -2216,11 +2172,11 @@ require("lazy").setup({
           request = "launch",
           cwd = "${workspaceFolder}",
           args = function()
-            dap_args = vim.fn.input({ prompt = "Arguments: ", default = dap_args, completion = "file" })
-            if dap_args == "" then
+            DapArgs = vim.fn.input({ prompt = "Arguments: ", default = DapArgs, completion = "file" })
+            if DapArgs == "" then
               return nil
             end
-            return { dap_args }
+            return { DapArgs }
           end,
           program = function()
             local pickers = require("telescope.pickers")
@@ -2340,6 +2296,7 @@ require("lazy").setup({
     event = "VeryLazy",
     dependencies = {
       "mfussenegger/nvim-dap",
+      "nvim-neotest/nvim-nio",
     },
     keys = {
       {
