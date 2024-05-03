@@ -83,14 +83,24 @@ else
 end
 
 local codelldb_ext_path = vim.env.HOME .. "/.local/share/nvim/mason/packages/codelldb/extension"
+local codelldb_path = codelldb_ext_path .. "/adapter/codelldb"
+local liblldb_path = codelldb_ext_path .. "/lldb/lib/liblldb"
 local os = vim.loop.os_uname().sysname
-local dap_args
+-- The path is different on Windows
+if os:find("Windows") then
+  codelldb_path = codelldb_ext_path .. "/adapter/codelldb.exe"
+  liblldb_path = codelldb_ext_path .. "/lldb/bin/liblldb.dll"
+else
+  -- The liblldb extension is .so for Linux and .dylib for MacOS
+  liblldb_path = liblldb_path .. (os == "Linux" and ".so" or ".dylib")
+end
+
 local codellb_adaptor = function(cb)
   cb({
     executable = {
       args = {
         "--liblldb",
-        codelldb_ext_path .. "/lldb/lib/liblldb" .. (os == "Linux" and ".so" or ".dylib"),
+        liblldb_path,
         "--port",
         "${port}",
       },
@@ -99,29 +109,6 @@ local codellb_adaptor = function(cb)
     host = "127.0.0.1",
     port = "${port}",
     type = "server",
-  })
-end
-
-local function notify_output(command, opts)
-  local output = ""
-  local notification
-  local notify = function(msg, level)
-    local notify_opts =
-      vim.tbl_extend("keep", opts or {}, { title = table.concat(command, " "), replace = notification })
-    notification = vim.notify(msg, level, notify_opts)
-  end
-  local on_data = function(_, data)
-    output = output .. table.concat(data, "\n")
-    notify(output, "info")
-  end
-  return vim.fn.jobstart(command, {
-    on_stdout = on_data,
-    on_stderr = on_data,
-    on_exit = function(_, code)
-      if #output == 0 then
-        notify("No output of command, exit code: " .. code, "warn")
-      end
-    end,
   })
 end
 
@@ -181,6 +168,40 @@ end
 
 local function bool2str(bool)
   return bool and "on" or "off"
+end
+
+-- Use an on_attach function to only map the following keys
+-- after the language server attaches to the current buffer
+local lsp_on_attach = function(client, bufnr)
+  vim.fn.sign_define("DiagnosticSignError", { text = "", texthl = "LspDiagnosticsSignError" })
+  vim.fn.sign_define("DiagnosticSignWarn", { text = "", texthl = "LspDiagnosticsSignWarning" })
+  vim.fn.sign_define("DiagnosticSignHint", { text = "󰌵", texthl = "LspDiagnosticsSignHint" })
+  vim.fn.sign_define("DiagnosticSignInformation", { text = "", texthl = "LspDiagnosticsSignInformation" })
+
+  -- See `:help vim.lsp.*` for documentation on any of the below functions
+  map("gd", "m'<cmd>Telescope lsp_definitions<CR>", { desc = "Go To Definition", buffer = bufnr })
+  map("gD", "m'<cmd>Telescope lsp_type_definitions<CR>", { desc = "Go To Type Definition", buffer = bufnr })
+  map("gh", vim.lsp.buf.hover, { desc = "Symbol Information", buffer = bufnr })
+  map("gH", vim.lsp.buf.signature_help, { desc = "Signature Information", buffer = bufnr })
+  map("gi", "m'<cmd>Telescope lsp_implementations<CR>", { desc = "Go To Implementation", buffer = bufnr })
+  map("gr", "m'<cmd>Telescope lsp_references<CR>", { desc = "References", buffer = bufnr })
+  map("gR", vim.lsp.buf.rename, { desc = "Rename References", buffer = bufnr })
+  map("ga", vim.lsp.buf.code_action, { desc = "Code Action", buffer = bufnr })
+  map("ge", vim.diagnostic.open_float, { desc = "Diagnostics", buffer = bufnr })
+  map("<leader>S", "<cmd>Telescope lsp_document_symbols<CR>", { desc = "LSP Symbols", buffer = bufnr })
+
+  -- Filter out diagnostics that are not useful
+  local filtered_diagnostics = {
+    [80001] = true, -- File is a CommonJS module; it may be converted to an ES module.
+  }
+  vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(function(err, result, ctx, config)
+    for i, diagnostic in pairs(result.diagnostics) do
+      if filtered_diagnostics[diagnostic.code] ~= nil then
+        table.remove(result.diagnostics, i)
+      end
+    end
+    vim.lsp.diagnostic.on_publish_diagnostics(err, result, ctx, config)
+  end, { update_in_insert = true })
 end
 
 -- -----------------------------------------------------------------------------
@@ -1297,14 +1318,164 @@ require("lazy").setup({
     keys = {
       { "<leader>pm", "<cmd>MasonUpdate<CR>:Mason<CR>", desc = "Update LSP Servers" },
     },
+    opts = {
+      ui = {
+        check_outdated_servers_on_open = true,
+      },
+    },
   },
   {
     "WhoIsSethDaniel/mason-tool-installer.nvim",
-    lazy = true,
+    opts = {
+      ensure_installed = {
+        "bash-language-server",
+        "clang-format",
+        "clangd",
+        "cpplint",
+        "css-lsp",
+        "eslint_d",
+        "html-lsp",
+        "json-lsp",
+        "jsonlint",
+        "lua-language-server",
+        "markdownlint",
+        "prettierd",
+        "protolint",
+        "python-lsp-server",
+        "pyright",
+        -- "rust_analyzer", -- Prefer rustup component
+        "shellcheck",
+        "stylelint",
+        "stylelint-lsp",
+        "stylua",
+        "tailwindcss-language-server",
+        "taplo",
+        "typescript-language-server",
+        "vim-language-server",
+        "yamllint",
+        "yaml-language-server",
+      },
+    },
   },
   {
     "jay-babu/mason-nvim-dap.nvim",
     cmd = { "DapInstall" },
+    opts = {
+      ensure_installed = { "codelldb", "debugpy", "node-debug2-adapter" },
+    },
+  },
+  {
+    "mrcjkb/rustaceanvim",
+    version = "^4",
+    ft = { "rust" },
+    init = function()
+      vim.g.rustaceanvim = function()
+        local targets = {
+          "wasm32-unknown-unknown",
+        }
+        local machine = vim.loop.os_uname().machine
+        if os:find("Darwin") then
+          table.insert(targets, machine .. "-apple-darwin")
+        elseif os:find("Linux") then
+          table.insert(targets, machine .. "-unknown-linux-gnu")
+        elseif os:find("Windows") then
+          table.insert(targets, machine .. "-pc-windows-gnu")
+          table.insert(targets, machine .. "-pc-windows-msvc")
+        end
+
+        local cfg = require("rustaceanvim.config")
+        return {
+          -- LSP config
+          server = {
+            on_attach = function(client, bufnr)
+              lsp_on_attach(client, bufnr)
+              vim.lsp.inlay_hint.enable(bufnr)
+              vim.cmd("compiler cargo")
+              map("<leader>cr", "<cmd>Make run<CR>", { desc = "cargo run" })
+              map("<leader>cb", "<cmd>Make build<CR>", { desc = "cargo build" })
+              map("<leader>cc", "<cmd>Make clippy<CR>", { desc = "cargo clippy" })
+            end,
+            default_settings = {
+              ["rust-analyzer"] = {
+                assist = { emitMustUse = true },
+                cargo = {
+                  features = "all",
+                },
+                check = {
+                  command = "clippy",
+                  features = "all",
+                  targets = targets,
+                },
+                hover = {
+                  actions = {
+                    references = { enable = true },
+                  },
+                },
+                files = {
+                  excludeDirs = {
+                    vim.env.CARGO_TARGET_DIR,
+                    ".rustup",
+                    ".cargo",
+                    ".git",
+                    ".github",
+                    ".gitlab",
+                    ".gitlab-ci",
+                    "assets",
+                    "bin",
+                    "data",
+                    "dist",
+                    "docs",
+                    "images",
+                    "node_modules",
+                    "public",
+                    "static",
+                    "target",
+                    "tmp",
+                  },
+                },
+                imports = {
+                  group = { enable = false },
+                  granularity = { enforce = true },
+                  prefix = "crate",
+                },
+                inlayHints = {
+                  bindingModeHints = { enable = true },
+                  closingBraceHints = { minLines = 1 },
+                  closureCaptureHints = { enable = true },
+                  discriminantHints = { enable = true },
+                  expressionAdjustmentHints = { enable = true },
+                  lifetimeElisionHints = { enable = true },
+                },
+                interpret = { tests = true },
+                lens = {
+                  references = {
+                    adt = { enable = true },
+                    enumVariant = { enable = true },
+                    method = { enable = true },
+                    trait = { enable = true },
+                  },
+                },
+                lru = { capacity = 512 },
+                procMacro = {
+                  -- enable = false,
+                  ignored = {},
+                },
+                workspace = {
+                  symbol = {
+                    search = { limit = 512 },
+                  },
+                },
+                -- Uncomment for debugging
+                -- trace = {
+                --   server = "verbose",
+                -- },
+              },
+            },
+          },
+          dap = { adapter = cfg.get_codelldb_adapter(codelldb_path, liblldb_path) },
+        }
+      end
+    end,
   },
   {
     "neovim/nvim-lspconfig", -- language server
@@ -1349,45 +1520,11 @@ require("lazy").setup({
       { "<localleader>f", "gq", desc = "format buffer" },
     },
     config = function()
-      -- Use an on_attach function to only map the following keys
-      -- after the language server attaches to the current buffer
-      local on_attach = function(client, bufnr)
-        vim.fn.sign_define("DiagnosticSignError", { text = "", texthl = "LspDiagnosticsSignError" })
-        vim.fn.sign_define("DiagnosticSignWarn", { text = "", texthl = "LspDiagnosticsSignWarning" })
-        vim.fn.sign_define("DiagnosticSignHint", { text = "󰌵", texthl = "LspDiagnosticsSignHint" })
-        vim.fn.sign_define("DiagnosticSignInformation", { text = "", texthl = "LspDiagnosticsSignInformation" })
-
-        -- See `:help vim.lsp.*` for documentation on any of the below functions
-        map("gd", "m'<cmd>Telescope lsp_definitions<CR>", { desc = "Go To Definition", buffer = bufnr })
-        map("gD", "m'<cmd>Telescope lsp_type_definitions<CR>", { desc = "Go To Type Definition", buffer = bufnr })
-        map("gh", vim.lsp.buf.hover, { desc = "Symbol Information", buffer = bufnr })
-        map("gH", vim.lsp.buf.signature_help, { desc = "Signature Information", buffer = bufnr })
-        map("gi", "m'<cmd>Telescope lsp_implementations<CR>", { desc = "Go To Implementation", buffer = bufnr })
-        map("gr", "m'<cmd>Telescope lsp_references<CR>", { desc = "References", buffer = bufnr })
-        map("gR", vim.lsp.buf.rename, { desc = "Rename References", buffer = bufnr })
-        map("ga", vim.lsp.buf.code_action, { desc = "Code Action", buffer = bufnr })
-        map("ge", vim.diagnostic.open_float, { desc = "Diagnostics", buffer = bufnr })
-        map("<leader>S", "<cmd>Telescope lsp_document_symbols<CR>", { desc = "LSP Symbols", buffer = bufnr })
-
-        -- Filter out diagnostics that are not useful
-        local filtered_diagnostics = {
-          [80001] = true, -- File is a CommonJS module; it may be converted to an ES module.
-        }
-        vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(function(err, result, ctx, config)
-          for i, diagnostic in pairs(result.diagnostics) do
-            if filtered_diagnostics[diagnostic.code] ~= nil then
-              table.remove(result.diagnostics, i)
-            end
-          end
-          vim.lsp.diagnostic.on_publish_diagnostics(err, result, ctx, config)
-        end, { update_in_insert = true })
-      end
-
       local capabilities = vim.lsp.protocol.make_client_capabilities()
       capabilities = require("cmp_nvim_lsp").default_capabilities(capabilities)
       local get_options = function(enhance)
         local opts = {
-          on_attach = on_attach,
+          on_attach = lsp_on_attach,
           capabilities = capabilities,
           flags = {
             debounce_text_changes = 200,
@@ -1428,93 +1565,7 @@ require("lazy").setup({
             "--offset-encoding=utf-16",
           }
         end),
-        rust_analyzer = get_options(function(opts)
-          opts.on_attach = function(client, bufnr)
-            on_attach(client, bufnr)
-            vim.cmd("compiler cargo")
-            map("<leader>cr", "<cmd>Make run<CR>", { desc = "cargo run" })
-            map("<leader>cb", "<cmd>Make build<CR>", { desc = "cargo build" })
-            map("<leader>cc", "<cmd>Make clippy<CR>", { desc = "cargo clippy" })
-          end
-          opts.settings = {
-            ["rust-analyzer"] = {
-              assist = { emitMustUse = true },
-              cargo = {
-                features = "all",
-                -- target = "wasm32-unknown-unknown",
-              },
-              check = {
-                command = "clippy",
-                features = "all",
-              },
-              hover = {
-                actions = {
-                  references = { enable = true },
-                },
-              },
-              files = {
-                excludeDirs = {
-                  vim.env.CARGO_TARGET_DIR,
-                  ".rustup",
-                  ".cargo",
-                  ".git",
-                  ".github",
-                  ".gitlab",
-                  ".gitlab-ci",
-                  "assets",
-                  "bin",
-                  "data",
-                  "dist",
-                  "docs",
-                  "images",
-                  "node_modules",
-                  "public",
-                  "static",
-                  "target",
-                  "tmp",
-                  "roms",
-                  "test_roms",
-                },
-              },
-              imports = {
-                group = { enable = false },
-                granularity = { enforce = true },
-                prefix = "crate",
-              },
-              inlayHints = {
-                bindingModeHints = { enable = true },
-                closingBraceHints = { minLines = 1 },
-                closureCaptureHints = { enable = true },
-                discriminantHints = { enable = true },
-                expressionAdjustmentHints = { enable = true },
-                lifetimeElisionHints = { enable = true },
-              },
-              interpret = { tests = true },
-              lens = {
-                references = {
-                  adt = { enable = true },
-                  enumVariant = { enable = true },
-                  method = { enable = true },
-                  trait = { enable = true },
-                },
-              },
-              lru = { capacity = 512 },
-              procMacro = {
-                -- enable = false,
-                ignored = {},
-              },
-              workspace = {
-                symbol = {
-                  search = { limit = 512 },
-                },
-              },
-              -- Uncomment for debugging
-              -- trace = {
-              --   server = "verbose",
-              -- },
-            },
-          }
-        end),
+        -- rust_analyzer is handled by rustaceanvim
         lua_ls = get_options(function(opts)
           opts.settings = {
             Lua = {
@@ -1611,6 +1662,12 @@ require("lazy").setup({
     opts = {
       format_after_save = {
         lsp_fallback = true,
+      },
+      formatters = {
+        rustfmt = {
+          command = "rustfmt",
+          args = { "--edition", "2021", "--emit=stdout" },
+        },
       },
       formatters_by_ft = {
         c = { "clang_format" },
@@ -2046,7 +2103,13 @@ require("lazy").setup({
         end,
         desc = "Toggle breakpoint",
       },
-      { "<leader>dc", ":lua require('dap').toggle_breakpoint()<left>", desc = "Toggle conditional breakpoint" },
+      {
+        "<leader>dc",
+        function()
+          require("dap").set_breakpoint(vim.fn.input("Breakpoint condition: "))
+        end,
+        desc = "Set conditional breakpoint",
+      },
       {
         "<leader>dC",
         function()
@@ -2096,6 +2159,7 @@ require("lazy").setup({
       })
 
       local dap = require("dap")
+      dap.defaults.fallback.exception_breakpoints = { "uncaught" }
       dap.adapters.codelldb = codellb_adaptor
       dap.adapters.python = function(cb, config)
         if config.request == "attach" then
