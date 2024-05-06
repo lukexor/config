@@ -88,6 +88,9 @@ if macos
     fish_add_path --path -ga \
         /Applications/kitty.app/Contents/MacOS \
         (brew --prefix)/opt/llvm/bin
+    set -gx LDFLAGS -L(brew --prefix)/lib
+    set -gx CPPFLAGS -I(brew --prefix)/include
+    set -gx LIBRARY_PATH (brew --prefix)/lib
 else if linux
     fish_add_path --path -ga \
         /usr/games
@@ -100,10 +103,6 @@ fish_add_path --path -ga \
     /usr/bin \
     /usr/local/bin \
     /usr/local/go/bin
-
-set -gx LDFLAGS -L(brew --prefix)/lib
-set -gx CPPFLAGS -I(brew --prefix)/include
-set -gx LIBRARY_PATH (brew --prefix)/lib
 
 set -gx CLICOLOR 1
 set -gx TERMINAL kitty
