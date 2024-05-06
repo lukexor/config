@@ -1505,16 +1505,11 @@ require("lazy").setup({
         end),
         html = get_options(),
         jsonls = get_options(),
-        pyright = get_options(),
-        pylsp = get_options(function(opts)
+        pyright = get_options(function(opts)
           opts.settings = {
-            pylsp = {
-              plugins = {
-                autopep8 = { enabled = true },
-                pycodestyle = {
-                  maxLineLength = 140,
-                },
-              },
+            python = {
+              -- just in case
+              -- analysis = { typeCheckingMode = "off" },
             },
           }
         end),
@@ -2417,6 +2412,48 @@ vim.defer_fn(function()
           ["<leader>A"] = "@parameter.inner",
         },
       },
+    },
+  })
+  -- Disable treesitter indentexpr for Python since it's wonky atm
+  if vim.bo.filetype == "python" then
+    vim.cmd([[set indentexpr=]])
+  end
+
+  require("mason").setup({
+    ui = {
+      check_outdated_servers_on_open = true,
+    },
+  })
+  require("mason-nvim-dap").setup({
+    ensure_installed = { "codelldb", "debugpy", "node-debug2-adapter" },
+  })
+  require("mason-tool-installer").setup({
+    ensure_installed = {
+      "bash-language-server",
+      "clang-format",
+      "clangd",
+      "cpplint",
+      "css-lsp",
+      "eslint_d",
+      "html-lsp",
+      "json-lsp",
+      "jsonlint",
+      "lua-language-server",
+      "markdownlint",
+      "prettierd",
+      "protolint",
+      "pyright",
+      -- "rust_analyzer", -- Prefer rustup component
+      "shellcheck",
+      "stylelint",
+      "stylelint-lsp",
+      "stylua",
+      "tailwindcss-language-server",
+      "taplo",
+      "typescript-language-server",
+      "vim-language-server",
+      "yamllint",
+      "yaml-language-server",
     },
   })
 end, 0)
