@@ -176,12 +176,11 @@ end
 # =============================================================================
 
 abbr -a cat bat -P
-abbr -a cb cargo build
-abbr -a cbr cargo build --release
-abbr -a cca cargo clippy --all-targets
-abbr -a cc cargo clippy
-abbr -a cdoc cargo doc
-abbr -a cdoco cargo doc --open
+abbr -a cb cargo build --all-targets --keep-going
+abbr -a cbr cargo build --release --all-targets --keep-going
+abbr -a cc cargo clippy --all-targets --keep-going
+abbr -a cdoc cargo doc --keep-going
+abbr -a cdoco cargo doc --keep-going --open
 abbr -a cfg cd ~/config
 abbr -a cm cargo make
 abbr -a cp cp -ia
@@ -190,7 +189,7 @@ abbr -a cr cargo run
 abbr -a crd cargo run --profile dev-opt
 abbr -a cre cargo run --example
 abbr -a crr cargo run --release
-abbr -a ct cargo test --workspace --all-targets
+abbr -a ct cargo test --workspace --all-targets --no-fail-fast
 abbr -a curl xh
 abbr -a cw cargo watch
 abbr -a da "date +'%Y-%m-%d %H:%M:%S'"
