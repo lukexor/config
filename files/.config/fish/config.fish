@@ -119,7 +119,7 @@ set -gx FZF_DEFAULT_COMMAND "rg --files --hidden"
 # NOTE: To debug rust-analyzer
 # set -gx RA_LOG "info,salsa=off,chalk=off"
 set -gx CARGO_TARGET_DIR ~/.cargo-target
-set -gx BACKTRACE full
+set -gx RUST_BACKTRACE full
 set -g activity_log ~/.activity_log.txt
 
 # ssh-agent
