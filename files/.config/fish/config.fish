@@ -208,23 +208,34 @@ abbr -a gbm git branch -v --merged
 abbr -a gbnm git branch -v --no-merged
 abbr -a gcam git commit --amend
 abbr -a gcb git checkout -b
-abbr -a gc git commit
+abbr -a gc git commit -m
 abbr -a gco git checkout
 abbr -a gcp git cherry-pick
 abbr -a gdc git diff --cached
 abbr -a gd git diff
-abbr -a gdt git difftool
+abbr -a gdt git difftool -y
 abbr -a gf git fetch origin
+# %h - abbreviated commit hash
+# %p - abbreviated parent hashes
+# %ae - author email
+# %s - subject
+# %ar - author date, relative
+# %d - ref names
+# %b - body
+# %N - commit notes
+abbr -a gl git log --no-merges --pretty=format:\"%C\(yellow\)%h \(%p\) %Cblue[%ae]%Creset %s \(%ar\)%Cred%d%Creset. %b %N\"
+abbr -a glg git log --all --graph --decorate --oneline
 abbr -a gm git merge
-abbr -a gpl git pull
+abbr -a gpl git pull --rebase
 abbr -a gps git push
+abbr -a gpsf git push --force-with-lease
 abbr -a grep rg
 abbr -a gr git restore
 abbr -a grhh git reset HEAD --hard
 abbr -a grm git rm
 abbr -a gs git switch
 abbr -a gsl git stash list
-abbr -a gst git status
+abbr -a gst git status -sb
 abbr -a gt git tag
 abbr -a gun git reset HEAD --
 abbr -a h "history | head -"
