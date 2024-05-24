@@ -176,8 +176,8 @@ end
 # =============================================================================
 
 abbr -a cat bat -P
-abbr -a cb cargo build --all-targets --keep-going
-abbr -a cbr cargo build --release --all-targets --keep-going
+abbr -a cb cargo build --keep-going
+abbr -a cbr cargo build --release --keep-going
 abbr -a cc cargo clippy --all-targets --keep-going
 abbr -a cdoc cargo doc --keep-going
 abbr -a cdoco cargo doc --keep-going --open
@@ -208,7 +208,7 @@ abbr -a gbm git branch -v --merged
 abbr -a gbnm git branch -v --no-merged
 abbr -a gcam git commit --amend
 abbr -a gcb git checkout -b
-abbr -a gc git commit -m
+abbr -a gc git commit
 abbr -a gco git checkout
 abbr -a gcp git cherry-pick
 abbr -a gdc git diff --cached
