@@ -224,8 +224,8 @@ abbr -a gf git fetch origin
 # %b - body
 # %N - commit notes
 abbr -a gl git log --no-merges --pretty=format:\"%C\(yellow\)%h \(%p\) %Cblue[%ae]%Creset %s \(%ar\)%Cred%d%Creset. %b %N\"
-abbr -a glg git log --all --graph --decorate --oneline
-abbr -a gm git merge
+abbr -a glg git log --graph --decorate --oneline
+abbr -a gm git rebase
 abbr -a gpl git pull --rebase
 abbr -a gps git push
 abbr -a gpsf git push --force-with-lease
@@ -297,8 +297,8 @@ function path
     echo $PATH | string split " "
 end
 
-alias gmd="git pull && git merge origin/develop"
-alias gmm="git pull && git merge origin/main"
+alias gmd="git pull && git rebase origin/develop"
+alias gmm="git pull && git rebase origin/main"
 
 # =============================================================================
 # Init   {{{1
