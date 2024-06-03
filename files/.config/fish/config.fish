@@ -88,6 +88,9 @@ if macos
     fish_add_path --path -ga \
         /Applications/kitty.app/Contents/MacOS \
         (brew --prefix)/opt/llvm/bin
+    set -gx LDFLAGS -L(brew --prefix)/lib
+    set -gx CPPFLAGS -I(brew --prefix)/include
+    set -gx LIBRARY_PATH (brew --prefix)/lib
 else if linux
     fish_add_path --path -ga \
         /usr/games
@@ -100,10 +103,6 @@ fish_add_path --path -ga \
     /usr/bin \
     /usr/local/bin \
     /usr/local/go/bin
-
-set -gx LDFLAGS -L(brew --prefix)/lib
-set -gx CPPFLAGS -I(brew --prefix)/include
-set -gx LIBRARY_PATH (brew --prefix)/lib
 
 set -gx CLICOLOR 1
 set -gx TERMINAL kitty
@@ -120,7 +119,7 @@ set -gx FZF_DEFAULT_COMMAND "rg --files --hidden"
 # NOTE: To debug rust-analyzer
 # set -gx RA_LOG "info,salsa=off,chalk=off"
 set -gx CARGO_TARGET_DIR ~/.cargo-target
-set -gx RUST_BACKTRACE 1
+set -gx RUST_BACKTRACE full
 set -g activity_log ~/.activity_log.txt
 
 # ssh-agent
@@ -177,12 +176,13 @@ end
 # =============================================================================
 
 abbr -a cat bat -P
-abbr -a cb cargo build
-abbr -a cbr cargo build --release
-abbr -a cca cargo clippy --all-targets
-abbr -a cc cargo clippy
-abbr -a cdoc cargo doc
-abbr -a cdoco cargo doc --open
+abbr -a cb cargo build --keep-going
+abbr -a cbr cargo build --release --keep-going
+abbr -a cc cargo clippy --keep-going
+abbr -a ccw cargo clippy --keep-going --target wasm32-unknown-unknown
+abbr -a cca cargo clippy --all-targets --keep-going
+abbr -a cdoc cargo doc --keep-going
+abbr -a cdoco cargo doc --keep-going --open
 abbr -a cfg cd ~/config
 abbr -a cm cargo make
 abbr -a cp cp -ia
@@ -191,7 +191,7 @@ abbr -a cr cargo run
 abbr -a crd cargo run --profile dev-opt
 abbr -a cre cargo run --example
 abbr -a crr cargo run --release
-abbr -a ct cargo test --workspace --all-targets
+abbr -a ct cargo test --workspace --all-targets --no-fail-fast
 abbr -a curl xh
 abbr -a cw cargo watch
 abbr -a da "date +'%Y-%m-%d %H:%M:%S'"
@@ -215,18 +215,29 @@ abbr -a gco git checkout
 abbr -a gcp git cherry-pick
 abbr -a gdc git diff --cached
 abbr -a gd git diff
-abbr -a gdt git difftool
+abbr -a gdt git difftool -y
 abbr -a gf git fetch origin
-abbr -a gm git merge
+# %h - abbreviated commit hash
+# %p - abbreviated parent hashes
+# %ae - author email
+# %s - subject
+# %ar - author date, relative
+# %d - ref names
+# %b - body
+# %N - commit notes
+abbr -a gl git log --no-merges --pretty=format:\"%C\(yellow\)%h \(%p\) %Cblue[%ae]%Creset %s \(%ar\)%Cred%d%Creset. %b %N\"
+abbr -a glg git log --graph --decorate --oneline
+abbr -a gm git rebase
 abbr -a gpl git pull
 abbr -a gps git push
+abbr -a gpsf git push --force-with-lease
 abbr -a grep rg
 abbr -a gr git restore
 abbr -a grhh git reset HEAD --hard
 abbr -a grm git rm
 abbr -a gs git switch
 abbr -a gsl git stash list
-abbr -a gst git status
+abbr -a gst git status -sb
 abbr -a gt git tag
 abbr -a gun git reset HEAD --
 abbr -a h "history | head -"
@@ -288,8 +299,8 @@ function path
     echo $PATH | string split " "
 end
 
-alias gmd="git pull && git merge origin/develop"
-alias gmm="git pull && git merge origin/main"
+alias gmd="git pull && git rebase origin/develop"
+alias gmm="git pull && git rebase origin/main"
 
 # =============================================================================
 # Init   {{{1
