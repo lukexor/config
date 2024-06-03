@@ -178,7 +178,9 @@ end
 abbr -a cat bat -P
 abbr -a cb cargo build --keep-going
 abbr -a cbr cargo build --release --keep-going
-abbr -a cc cargo clippy --all-targets --keep-going
+abbr -a cc cargo clippy --keep-going
+abbr -a ccw cargo clippy --keep-going --target wasm32-unknown-unknown
+abbr -a cca cargo clippy --all-targets --keep-going
 abbr -a cdoc cargo doc --keep-going
 abbr -a cdoco cargo doc --keep-going --open
 abbr -a cfg cd ~/config
@@ -226,7 +228,7 @@ abbr -a gf git fetch origin
 abbr -a gl git log --no-merges --pretty=format:\"%C\(yellow\)%h \(%p\) %Cblue[%ae]%Creset %s \(%ar\)%Cred%d%Creset. %b %N\"
 abbr -a glg git log --graph --decorate --oneline
 abbr -a gm git rebase
-abbr -a gpl git pull --rebase
+abbr -a gpl git pull
 abbr -a gps git push
 abbr -a gpsf git push --force-with-lease
 abbr -a grep rg
