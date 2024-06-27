@@ -125,11 +125,17 @@ set -g activity_log ~/.activity_log.txt
 # ssh-agent
 set -g agent_info /tmp/ssh-agent-info
 set -g agent_file /tmp/ssh-agent
-set -l agents_running (ps -A | rg [s]sh-agent | wc -l | string trim)
-if test -e $agent_info
-    and test $agents_running -gt 0
-    set -gx SSH_AUTH_SOCK $agent_file
-    set -gx SSH_AGENT_PID (rg -o '=\d+' $agent_info | string replace '=' '')
+
+function sa
+    set -l agents_running (ps -A | rg [s]sh-agent | wc -l | string trim)
+    if test -e $agent_info
+        and test $agents_running -gt 0
+        set -gx SSH_AUTH_SOCK $agent_file
+        set -gx SSH_AGENT_PID (rg -o '=\d+' $agent_info | string replace '=' '')
+        echo "SSH_AGENT_PID: $SSH_AGENT_PID"
+    else
+        ra
+    end
 end
 
 function fish_title

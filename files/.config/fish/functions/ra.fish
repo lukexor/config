@@ -1,4 +1,6 @@
 function ra -d "Start or Restart ssh-agent and add ssh-keys"
+    echo "Restarting ssh-agent..."
+
     pkill ssh-agent
     rm -f $agent_info $agent_file
 

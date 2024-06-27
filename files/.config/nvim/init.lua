@@ -151,10 +151,37 @@ local function bool2str(bool)
   return bool and "on" or "off"
 end
 
+-- Only show inlay for the current line
+local methods = vim.lsp.protocol.Methods
+local inlay_hint_handler = vim.lsp.handlers[methods["textDocument_inlayHint"]]
+vim.lsp.handlers[methods["textDocument_inlayHint"]] = function(err, result, ctx, config)
+  local client = vim.lsp.get_client_by_id(ctx.client_id)
+  if client and result then
+    local row = unpack(vim.api.nvim_win_get_cursor(0))
+    result = vim
+      .iter(result)
+      :filter(function(hint)
+        return hint.position.line + 1 == row
+      end)
+      :totable()
+  end
+  inlay_hint_handler(err, result, ctx, config)
+end
+
 -- Use an on_attach function to only map the following keys
 -- after the language server attaches to the current buffer
 local lsp_on_attach = function(client, bufnr)
   require("lsp-status").on_attach(client, bufnr)
+
+  local inlay_hints_group = vim.api.nvim_create_augroup("LSP_inlayHints", { clear = false })
+  vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
+    group = inlay_hints_group,
+    desc = "Update inlay hints on line change",
+    buffer = bufnr,
+    callback = function()
+      vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
+    end,
+  })
 
   vim.fn.sign_define("DiagnosticSignError", { text = "", texthl = "LspDiagnosticsSignError" })
   vim.fn.sign_define("DiagnosticSignWarn", { text = "", texthl = "LspDiagnosticsSignWarning" })
@@ -966,9 +993,10 @@ require("lazy").setup({
   },
   {
     "brenoprata10/nvim-highlight-colors",
-    opts = {
-      enable_tailwind = true,
-    },
+    -- TODO: broken for now
+    -- opts = {
+    --   enable_tailwind = true,
+    -- },
   },
   -- -----------------------------------------------------------------------------
   -- System Integration
@@ -1078,11 +1106,11 @@ require("lazy").setup({
     end,
     config = function()
       vim.cmd([[
-        aug ImportCost
-          au!
-          au ColorScheme * hi! link ImportCostVirtualText VirtualTextInfo
-        aug END
-      ]])
+          aug ImportCost
+            au!
+            au ColorScheme * hi! link ImportCostVirtualText VirtualTextInfo
+          aug END
+        ]])
     end,
   },
   -- -----------------------------------------------------------------------------
@@ -1183,12 +1211,12 @@ require("lazy").setup({
         overrides = function(colors)
           local theme = colors.theme
           vim.cmd(([[
-            aug CursorLine
-              au!
-              au InsertEnter * hi! CursorLine guibg=%s
-              au InsertLeave * hi! CursorLine guibg=%s
-            aug END
-          ]]):format(theme.ui.bg_visual, theme.ui.bg_p2))
+              aug CursorLine
+                au!
+                au InsertEnter * hi! CursorLine guibg=%s
+                au InsertLeave * hi! CursorLine guibg=%s
+              aug END
+            ]]):format(theme.ui.bg_visual, theme.ui.bg_p2))
           return {
             NormalFloat = { bg = "none" },
             FloatBorder = { bg = "none" },
@@ -1345,7 +1373,6 @@ require("lazy").setup({
           server = {
             on_attach = function(client, bufnr)
               lsp_on_attach(client, bufnr)
-              vim.lsp.inlay_hint.enable(bufnr)
               vim.cmd("compiler cargo")
               map("<leader>cr", "<cmd>Make run<CR>", { desc = "cargo run" })
               map("<leader>cb", "<cmd>Make build<CR>", { desc = "cargo build" })
@@ -1357,7 +1384,7 @@ require("lazy").setup({
                 assist = { emitMustUse = true },
                 cargo = {
                   features = "all",
-                  -- target = "wasm32-unknown-unknown",
+                  targetDir = vim.env.CARGO_TARGET_DIR .. '/rust-analyzer', -- Avoid locking/trashing CARGO_TARGET_DIR
                 },
                 check = {
                   command = "clippy",
@@ -1564,6 +1591,7 @@ require("lazy").setup({
           }
         end),
         vimls = get_options(),
+        wgsl_analyzer = get_options(),
         yamlls = get_options(function(opts)
           opts.settings = {
             yaml = {
@@ -1650,17 +1678,12 @@ require("lazy").setup({
   },
   {
     "folke/trouble.nvim", -- quickfix LSP issues
-    cmd = { "TroubleToggle" },
+    cmd = "Trouble",
+    opts = {}, -- required empty opts to initialize
     keys = {
-      { "<leader>tt", "<cmd>TroubleToggle<CR>", desc = "toggle diagnostics" },
-      {
-        "<leader>tw",
-        "<cmd>TroubleToggle workspace_diagnostics<CR>",
-        desc = "toggle workspace diagnostics",
-      },
-      { "<leader>td", "<cmd>TroubleToggle document_diagnostics<CR>", desc = "toggle document diagnostics" },
-      { "<leader>tq", "<cmd>TroubleToggle quickfix<CR>", desc = "toggle quickfix list" },
-      { "<leader>tl", "<cmd>TroubleToggle loclist<CR>", desc = "toggle location list" },
+      { "<leader>tt", "<cmd>Trouble diagnostics toggle<CR>", desc = "toggle diagnostics" },
+      { "<leader>tq", "<cmd>Trouble qflist toggle<CR>", desc = "toggle quickfix list" },
+      { "<leader>tl", "<cmd>Trouble loclist toggle<CR>", desc = "toggle location list" },
     },
   },
   -- -----------------------------------------------------------------------------
@@ -2483,6 +2506,7 @@ vim.cmd([[
     au TermOpen * setlocal nospell nonu nornu
     au BufRead,BufNewFile *.nu set ft=nu
     au BufRead,BufNewFile *.mdx set ft=markdown
+    au BufRead,BufNewFile *.wgsl set ft=wgsl
     au BufRead,BufNewFile Vagrantfile set filetype=ruby
     au BufRead,BufNewFile *.vert,*.frag set ft=glsl
     au BufRead,BufNewFile Makefile.toml set ft=cargo-make
