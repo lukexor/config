@@ -4,9 +4,6 @@ command_timeout = 200
 format = """
 $directory\
 $git_branch\
-$nodejs\
-$python\
-$rust\
 $cmd_duration\
 $status
 $battery\
