@@ -153,19 +153,21 @@ end
 
 -- Only show inlay for the current line
 local methods = vim.lsp.protocol.Methods
-local inlay_hint_handler = vim.lsp.handlers[methods["textDocument_inlayHint"]]
-vim.lsp.handlers[methods["textDocument_inlayHint"]] = function(err, result, ctx, config)
-  local client = vim.lsp.get_client_by_id(ctx.client_id)
-  if client and result then
-    local row = unpack(vim.api.nvim_win_get_cursor(0))
-    result = vim
-      .iter(result)
-      :filter(function(hint)
-        return hint.position.line + 1 == row
-      end)
-      :totable()
+if methods ~= nil then
+  local inlay_hint_handler = vim.lsp.handlers[methods["textDocument_inlayHint"]]
+  vim.lsp.handlers[methods["textDocument_inlayHint"]] = function(err, result, ctx, config)
+    local client = vim.lsp.get_client_by_id(ctx.client_id)
+    if client and result then
+      local row = unpack(vim.api.nvim_win_get_cursor(0))
+      result = vim
+        .iter(result)
+        :filter(function(hint)
+          return hint.position.line + 1 == row
+        end)
+        :totable()
+    end
+    inlay_hint_handler(err, result, ctx, config)
   end
-  inlay_hint_handler(err, result, ctx, config)
 end
 
 -- Use an on_attach function to only map the following keys
@@ -173,15 +175,21 @@ end
 local lsp_on_attach = function(client, bufnr)
   require("lsp-status").on_attach(client, bufnr)
 
-  local inlay_hints_group = vim.api.nvim_create_augroup("LSP_inlayHints", { clear = false })
-  vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
-    group = inlay_hints_group,
-    desc = "Update inlay hints on line change",
-    buffer = bufnr,
-    callback = function()
-      vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
-    end,
-  })
+  if client.server_capabilities.inlayHintProvider then
+    local inlay_hints_group = vim.api.nvim_create_augroup("LSP_inlayHints", { clear = false })
+    vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
+      group = inlay_hints_group,
+      desc = "Update inlay hints on line change",
+      buffer = bufnr,
+      callback = function()
+        -- Check for backwards compatibility since inlay_hints are only
+        -- available in >= 0.10.0
+        if vim.lsp.inlay_hint ~= nil then
+          vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
+        end
+      end,
+    })
+  end
 
   vim.fn.sign_define("DiagnosticSignError", { text = "", texthl = "LspDiagnosticsSignError" })
   vim.fn.sign_define("DiagnosticSignWarn", { text = "", texthl = "LspDiagnosticsSignWarning" })
@@ -1384,7 +1392,7 @@ require("lazy").setup({
                 assist = { emitMustUse = true },
                 cargo = {
                   features = "all",
-                  targetDir = vim.env.CARGO_TARGET_DIR .. '/rust-analyzer', -- Avoid locking/trashing CARGO_TARGET_DIR
+                  targetDir = vim.env.CARGO_TARGET_DIR .. "/rust-analyzer", -- Avoid locking/trashing CARGO_TARGET_DIR
                 },
                 check = {
                   command = "clippy",

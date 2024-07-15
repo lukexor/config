@@ -44,6 +44,4 @@ alias la="ls -alh"
 alias vim="nvim"
 alias vimdiff="nvim -d"
 
-alias crd="cargo run --profile dev-opt"
-
 . "$HOME/.cargo/env"
