@@ -67,7 +67,7 @@ set fish_pager_color_prefix normal --bold
 # Prompt   {{{1
 # =============================================================================
 
-~/.cargo/bin/starship init fish | source
+starship init fish | source
 
 
 # =============================================================================
@@ -79,7 +79,6 @@ fish_add_path --path -gm \
     ~/snap/bin \
     ~/.npm-packages/bin \
     ~/.cargo/bin \
-    ~/.local/share/nvim/mason/bin/ \
     ~/.local/sbin \
     ~/.local/bin \
     ~/bin
@@ -147,7 +146,7 @@ if test -e ~/.local/config.fish
     source ~/.local/config.fish
 end
 
-rtx activate fish | source
+#rtx activate fish | source
 
 # =============================================================================
 # Keybindings   {{{1
@@ -298,7 +297,12 @@ alias cp="cp -i"
 alias mv="mv -i"
 alias rm="rm -i"
 
-alias start_kitty="kitty --start-as fullscreen"
+function start_kitty
+    set -gx LIBGL_ALWAYS_SOFTWARE 1
+    kitty &
+    disown
+    exit
+end
 
 alias dirsize="fd -t d | xargs du -sh"
 function path
@@ -333,7 +337,7 @@ function fish_greeting
     :,,,,,,,,,,,,,.
 
    "(uptime)"
-    " | lolcat
+    " | clolcat
 end
 
 

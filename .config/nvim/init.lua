@@ -22,13 +22,8 @@
 -- Don"t use nvim as a pager within itself
 vim.env.PAGER = "bat"
 -- Ensure a vim-compatible shell
-vim.env.SHELL = "/bin/bash"
+vim.env.SHELL = "bash"
 
--- Require latest binaries for neovim, even if individual projects might use
--- older/outdated versions.
--- https://neovim.io/doc/user/provider.html
-vim.g.python3_host_prog = vim.env.HOME .. "/.local/bin/python3"
-vim.g.node_host_prog = vim.env.HOME .. "/.local/bin/node"
 --- Highlight strings and numbers inside comments
 vim.g.c_comment_strings = 1
 
@@ -59,7 +54,7 @@ vim.o.shiftwidth = 2
 vim.o.showmatch = true
 vim.o.sidescrolloff = 8
 vim.o.signcolumn = "yes:2"
-vim.o.spellfile = vim.env.HOME .. "/.config/nvim/spell.utf-8.add"
+vim.o.spellfile = vim.env.HOME .. "/config/.config/nvim/spell.utf-8.add"
 vim.o.splitbelow = true
 vim.o.splitright = true
 vim.o.synmaxcol = 200
@@ -82,14 +77,15 @@ else
   vim.notify_once("rg is not installed", vim.log.levels.ERROR)
 end
 
-local codelldb_ext_path = vim.env.HOME .. "/.local/share/nvim/mason/packages/codelldb/extension"
+local codelldb_ext_path = "/etc/lldb"
 local codelldb_path = codelldb_ext_path .. "/adapter/codelldb"
-local liblldb_path = codelldb_ext_path .. "/lldb/lib/liblldb"
+local liblldb_path = codelldb_ext_path .. "/adapter/libcodelldb"
 local os = vim.loop.os_uname().sysname
 -- The path is different on Windows
 if os:find("Windows") then
-  codelldb_path = codelldb_ext_path .. "/adapter/codelldb.exe"
-  liblldb_path = codelldb_ext_path .. "/lldb/bin/liblldb.dll"
+  -- TODO: fix codelldb on windows
+  -- codelldb_path = codelldb_ext_path .. "/adapter/codelldb.exe"
+  -- liblldb_path = codelldb_ext_path .. "/lldb/bin/liblldb.dll"
 else
   -- The liblldb extension is .so for Linux and .dylib for MacOS
   liblldb_path = liblldb_path .. (os == "Linux" and ".so" or ".dylib")
@@ -153,19 +149,21 @@ end
 
 -- Only show inlay for the current line
 local methods = vim.lsp.protocol.Methods
-local inlay_hint_handler = vim.lsp.handlers[methods["textDocument_inlayHint"]]
-vim.lsp.handlers[methods["textDocument_inlayHint"]] = function(err, result, ctx, config)
-  local client = vim.lsp.get_client_by_id(ctx.client_id)
-  if client and result then
-    local row = unpack(vim.api.nvim_win_get_cursor(0))
-    result = vim
-      .iter(result)
-      :filter(function(hint)
-        return hint.position.line + 1 == row
-      end)
-      :totable()
+if methods ~= nil then
+  local inlay_hint_handler = vim.lsp.handlers[methods["textDocument_inlayHint"]]
+  vim.lsp.handlers[methods["textDocument_inlayHint"]] = function(err, result, ctx, config)
+    local client = vim.lsp.get_client_by_id(ctx.client_id)
+    if client and result then
+      local row = unpack(vim.api.nvim_win_get_cursor(0))
+      result = vim
+        .iter(result)
+        :filter(function(hint)
+          return hint.position.line + 1 == row
+        end)
+        :totable()
+    end
+    inlay_hint_handler(err, result, ctx, config)
   end
-  inlay_hint_handler(err, result, ctx, config)
 end
 
 -- Use an on_attach function to only map the following keys
@@ -993,10 +991,9 @@ require("lazy").setup({
   },
   {
     "brenoprata10/nvim-highlight-colors",
-    -- TODO: broken for now
-    -- opts = {
-    --   enable_tailwind = true,
-    -- },
+    opts = {
+      enable_tailwind = true,
+    },
   },
   -- -----------------------------------------------------------------------------
   -- System Integration
@@ -1090,29 +1087,6 @@ require("lazy").setup({
     end,
   },
   -- TODO: Create TODO list shortcuts
-  {
-    "yardnsm/vim-import-cost", -- Javascript import sizes
-    build = "npm install --production",
-    cond = function()
-      return vim.fn.executable("npm") == 1
-    end,
-    cmd = { "ImportCost" },
-    ft = { "javascript", "javascriptreact", "typescript", "typescriptreact" },
-    keys = {
-      { "<localleader>I", "<cmd>ImportCost<CR>", desc = "calculate import sizes" },
-    },
-    init = function()
-      vim.g.import_cost_virtualtext_prefix = " ▸ "
-    end,
-    config = function()
-      vim.cmd([[
-          aug ImportCost
-            au!
-            au ColorScheme * hi! link ImportCostVirtualText VirtualTextInfo
-          aug END
-        ]])
-    end,
-  },
   -- -----------------------------------------------------------------------------
   -- Windowing / Theme
   -- -----------------------------------------------------------------------------
@@ -1320,46 +1294,7 @@ require("lazy").setup({
       },
     },
   },
-  {
-    "WhoIsSethDaniel/mason-tool-installer.nvim",
-    opts = {
-      ensure_installed = {
-        "bash-language-server",
-        "clang-format",
-        "clangd",
-        "cpplint",
-        "css-lsp",
-        "eslint_d",
-        "html-lsp",
-        "json-lsp",
-        "jsonlint",
-        "lua-language-server",
-        "markdownlint",
-        "prettierd",
-        "protolint",
-        "python-lsp-server",
-        "pyright",
-        "rust_analyzer",
-        "shellcheck",
-        "stylelint",
-        "stylelint-lsp",
-        "stylua",
-        "tailwindcss-language-server",
-        "taplo",
-        "typescript-language-server",
-        "vim-language-server",
-        "yamllint",
-        "yaml-language-server",
-      },
-    },
-  },
-  {
-    "jay-babu/mason-nvim-dap.nvim",
-    cmd = { "DapInstall" },
-    opts = {
-      ensure_installed = { "codelldb", "debugpy", "node-debug2-adapter" },
-    },
-  },
+  "jay-babu/mason-nvim-dap.nvim",
   {
     "mrcjkb/rustaceanvim",
     version = "^4",
@@ -1384,7 +1319,7 @@ require("lazy").setup({
                 assist = { emitMustUse = true },
                 cargo = {
                   features = "all",
-                  targetDir = vim.env.CARGO_TARGET_DIR .. '/rust-analyzer', -- Avoid locking/trashing CARGO_TARGET_DIR
+                  targetDir = vim.env.CARGO_TARGET_DIR .. "/rust-analyzer", -- Avoid locking/trashing CARGO_TARGET_DIR
                 },
                 check = {
                   command = "clippy",
@@ -1988,12 +1923,29 @@ require("lazy").setup({
         cond = function()
           return vim.fn.executable("make") == 1
         end,
-        lazy = true,
+        config = function()
+          require("telescope").load_extension("fzf")
+        end,
       },
-      "benfowler/telescope-luasnip.nvim",
+      {
+        "benfowler/telescope-luasnip.nvim",
+        config = function()
+          require("telescope").load_extension("luasnip")
+        end,
+      },
       "nvim-telescope/telescope-symbols.nvim",
-      "nvim-telescope/telescope-dap.nvim",
-      "folke/noice.nvim",
+      {
+        "nvim-telescope/telescope-dap.nvim",
+        config = function()
+          require("telescope").load_extension("dap")
+        end,
+      },
+      {
+        "folke/noice.nvim",
+        config = function()
+          require("telescope").load_extension("noice")
+        end,
+      },
     },
     opts = {
       defaults = {
@@ -2031,12 +1983,7 @@ require("lazy").setup({
       { "<c-s>", "<cmd>Telescope symbols<CR>", mode = { "n", "i" }, desc = "Symbols" },
     },
     config = function()
-      local telescope = require("telescope")
-      telescope.load_extension("notify")
-      telescope.load_extension("luasnip")
-      telescope.load_extension("fzf")
-      telescope.load_extension("noice")
-      telescope.load_extension("dap")
+      require("telescope").load_extension("notify")
     end,
   },
   -- -----------------------------------------------------------------------------
@@ -2351,33 +2298,6 @@ vim.defer_fn(function()
         "xml",
       },
     },
-    ensure_installed = {
-      "bash",
-      "c",
-      "cpp",
-      "css",
-      "dockerfile",
-      "fish",
-      "glsl",
-      "graphql",
-      "html",
-      "javascript",
-      "json",
-      "lua",
-      "make",
-      "markdown",
-      "markdown_inline",
-      "proto",
-      "python",
-      "regex",
-      "rust",
-      "toml",
-      "tsx",
-      "typescript",
-      "vim",
-      "vimdoc",
-      "yaml",
-    },
     highlight = {
       enable = true,
       disable = { "rust" },
@@ -2445,38 +2365,6 @@ vim.defer_fn(function()
   require("mason").setup({
     ui = {
       check_outdated_servers_on_open = true,
-    },
-  })
-  require("mason-nvim-dap").setup({
-    ensure_installed = { "codelldb", "debugpy", "node-debug2-adapter" },
-  })
-  require("mason-tool-installer").setup({
-    ensure_installed = {
-      "bash-language-server",
-      "clang-format",
-      "clangd",
-      "cpplint",
-      "css-lsp",
-      "eslint_d",
-      "html-lsp",
-      "json-lsp",
-      "jsonlint",
-      "lua-language-server",
-      "markdownlint",
-      "prettierd",
-      "protolint",
-      "pyright",
-      -- "rust_analyzer", -- Prefer rustup component
-      "shellcheck",
-      "stylelint",
-      "stylelint-lsp",
-      "stylua",
-      "tailwindcss-language-server",
-      "taplo",
-      "typescript-language-server",
-      "vim-language-server",
-      "yamllint",
-      "yaml-language-server",
     },
   })
 end, 0)
