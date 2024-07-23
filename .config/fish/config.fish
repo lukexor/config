@@ -228,6 +228,7 @@ abbr -a da "date +'%Y-%m-%d %H:%M:%S'"
 abbr -a d docker
 abbr -a dc docker compose
 abbr -a dcr docker compose run
+abbr -a df df -h
 abbr -a dsp docker system prune
 abbr -a du dust
 abbr -a find fd

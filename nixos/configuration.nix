@@ -153,15 +153,15 @@ in {
 
   services = {
     displayManager = {
-      #autoLogin = {
-      #  enable = true;
-      #  inherit user;
-      #};
+      autoLogin = {
+        enable = true;
+        inherit user;
+      };
       sddm.enable = true;
       defaultSession = "plasmax11";
     };
     desktopManager.plasma6.enable = true;
-    #libinput.enable = true; # touchpad support
+    libinput.enable = true; # touchpad support
     pipewire = {
       enable = true;
       alsa.enable = true;
@@ -195,7 +195,7 @@ in {
         "ennpfpdlaclocpomkiablnmbppdnlhoh" # rust search extension
       ];
     };
-    #dconf.enable = true;
+    dconf.enable = true;
     gnupg.agent.enable = true;
     direnv.enable = true;
     firefox.enable = true;
@@ -208,6 +208,7 @@ in {
     };
     ssh.startAgent = true;
     starship.enable = true;
+    steam.enable = true;
   };
 
   nixpkgs.config.allowUnfree = true;
@@ -221,6 +222,8 @@ in {
       libreoffice
       kitty
       ncspot
+      steam
+      steam-run
     ];
     development = with pkgs; [
       cargo-asm
