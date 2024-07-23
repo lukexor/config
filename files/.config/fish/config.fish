@@ -248,11 +248,11 @@ abbr -a gt git tag
 abbr -a gun git reset HEAD --
 abbr -a h "history | head -"
 abbr -a ir irust
-abbr -a la exa --icons -a
-abbr -a lk exa --icons -lrs size
-abbr -a ll exa --icons -l
-abbr -a ls exa --icons
-abbr -a lt exa --icons --tree
+abbr -a la eza --icons -a
+abbr -a lk eza --icons -lrs size
+abbr -a ll eza --icons -l
+abbr -a ls eza --icons
+abbr -a lt eza --icons --tree
 abbr -a k kubectl
 abbr -a mkdir mkdir -p
 abbr -a myip curl -s api.ipify.org

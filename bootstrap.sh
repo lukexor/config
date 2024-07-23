@@ -60,7 +60,6 @@ install_core_packages() {
       diodon \
       direnv \
       docker \
-      exa \
       fish \
       fzf \
       git \
@@ -92,7 +91,6 @@ install_core_packages() {
       bat \
       direnv \
       docker \
-      exa \
       fish \
       fzf \
       git \
@@ -101,6 +99,11 @@ install_core_packages() {
       stow
 
     open ./assets/*.ttf
+
+    curl -LO -sSf --compressed https://github.com/neovim/neovim/releases/download/stable/nvim-macos.tar.gz \
+      && tar xzf nvim-macos.tar.gz \
+      && mv -f nvim-macos/bin/nvim ~/.local/bin/nvim \
+      && rm -rf nvim-macos*
   fi
 
   # https://github.com/jaseg/lolcat
@@ -122,7 +125,8 @@ link_configs() {
   echo "Setting up configs..."
 
   set +o pipefail
-  local conflicts=$(stow -nv files 2>&1 | rg "existing target" | sed 's/.*existing target .*: //')
+  local conflicts
+  conflicts=$(stow -nv files 2>&1 | rg "existing target" | sed 's/.*existing target .*: //')
   set -o pipefail
 
   for file in $conflicts; do
@@ -156,10 +160,6 @@ set_shell() {
   shell=$(command which $DEFAULT_SHELL)
   $sudo grep -qxF "$shell" /etc/shells | wc -l || echo "$shell" | $sudo tee -a /etc/shells
   [ "$SHELL" == "$shell" ] || chsh -s "$shell"
-  rm '/Users/lukepetherbridge/Library/Application Support/nushell/config.nu'
-  rm '/Users/lukepetherbridge/Library/Application Support/nushell/env.nu'
-  symlink ~/.config/nu/config.nu '/Users/lukepetherbridge/Library/Application Support/nushell/config.nu'
-  symlink ~/.config/nu/env.nu '/Users/lukepetherbridge/Library/Application Support/nushell/env.nu'
 
   echo "Successfully set default shell"
 
@@ -178,7 +178,7 @@ install_crates() {
 
   rustup component add \
     clippy \
-    llvm-tools-preview
+    llvm-tools
   rustup target add wasm32-unknown-unknown
 
   curl -L \
@@ -188,23 +188,22 @@ install_crates() {
   # TODO: Handle github rate-limiting
   cargo binstall \
     --no-confirm --no-symlinks \
-    bottom \
+    bottom \ # command: btm
     cargo-asm \
     cargo-audit \
     cargo-bloat \
     cargo-deny \
-    cargo-dist \
     cargo-expand \
     cargo-generate \
     cargo-info \
     cargo-leptos \
     cargo-outdated \
     cargo-release \
-    cargo-tarpaulin \
     cargo-tree \
     cargo-udeps \
     cargo-watch \
     du-dust \
+    eza \
     fd-find \
     flamegraph \
     git-cliff \
@@ -212,7 +211,6 @@ install_crates() {
     just \
     mprocs \
     ncspot \
-    nu \
     porsmo \
     procs \
     ripgrep \
@@ -248,7 +246,6 @@ install_npm() {
     @fsouza/prettierd \
     eslint \
     eslint_d \
-    lighthouse \
     jsonlint \
     neovim \
     markdownlint \
@@ -271,12 +268,10 @@ install_extra_packages() {
     # diodon is a GTK+ clipboard manager
     # gcc-multilib is used to cross-compile
     $sudo apt install -y \
-      bash \
       cmake \
       gcc-multilib \
       gnutls-bin \
       hexedit \
-      hyperfine \
       librust-alsa-sys-dev \
       libssl-dev \
       libx11-dev \
@@ -288,27 +283,18 @@ install_extra_packages() {
       python3 \
       python3-pip \
       python3.10-venv \
-      software-properties-common \
-      sqlite \
-      tree \
-      wget
+      software-properties-common
 
     curl -LO -sSf --compressed https://static.snyk.io/cli/latest/snyk-linux \
       && chmod u+x snyk-linux \
       && mv -f snyk-linux ~/.local/bin/snyk
   elif macos; then
     brew install \
-      bash \
       cmake \
       hexedit \
-      hyperfine \
       openssl \
-      pulseaudio \
       python \
       python3 \
-      sqlite \
-      tree \
-      wget
 
     curl -LO -sSf --compressed https://static.snyk.io/cli/latest/snyk-macos \
       && chmod u+x snyk-macos \

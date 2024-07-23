@@ -173,15 +173,9 @@ end
 local lsp_on_attach = function(client, bufnr)
   require("lsp-status").on_attach(client, bufnr)
 
-  local inlay_hints_group = vim.api.nvim_create_augroup("LSP_inlayHints", { clear = false })
-  vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
-    group = inlay_hints_group,
-    desc = "Update inlay hints on line change",
-    buffer = bufnr,
-    callback = function()
-      vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
-    end,
-  })
+  map("<leader>ui", function()
+    vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
+  end, { desc = "Toggle Inlay Hints" })
 
   vim.fn.sign_define("DiagnosticSignError", { text = "", texthl = "LspDiagnosticsSignError" })
   vim.fn.sign_define("DiagnosticSignWarn", { text = "", texthl = "LspDiagnosticsSignWarning" })
@@ -1384,7 +1378,8 @@ require("lazy").setup({
                 assist = { emitMustUse = true },
                 cargo = {
                   features = "all",
-                  targetDir = vim.env.CARGO_TARGET_DIR .. '/rust-analyzer', -- Avoid locking/trashing CARGO_TARGET_DIR
+                  targetDir = (vim.env.CARGO_TARGET_DIR or "target") .. "/rust-analyzer", -- Avoid locking/trashing CARGO_TARGET_DIR
+                  -- target = "wasm32-unknown-unknown",
                 },
                 check = {
                   command = "clippy",
@@ -1397,7 +1392,7 @@ require("lazy").setup({
                 },
                 files = {
                   excludeDirs = {
-                    vim.env.CARGO_TARGET_DIR,
+                    (vim.env.CARGO_TARGET_DIR or "target"),
                     "_",
                     "docs",
                     "dist",
