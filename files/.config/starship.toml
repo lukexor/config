@@ -1,11 +1,9 @@
-command_timeout = 2000
+# env STARSHIP_LOG=trace starship timings
+command_timeout = 200
 
 format = """
 $directory\
 $git_branch\
-$nodejs\
-$python\
-$rust\
 $cmd_duration\
 $status
 $battery\
@@ -37,47 +35,44 @@ discharging_symbol = "🔋 "
 threshold = 30
 style = "bold yellow"
 
-[aws]
-symbol = "  "
-
 [c]
 symbol = " "
+format = 'via [$symbol]($style)'
 
 [directory]
 truncate_to_repo = false
 truncation_symbol = "../"
 read_only = "  "
 
-[docker_context]
-symbol = " "
-
 [git_branch]
 symbol = " "
 
 [golang]
 symbol = " "
-
-[haskell]
-symbol = " "
+format = 'via [$symbol]($style)'
 
 [hostname]
 ssh_symbol = " "
 
-[java]
-symbol = " "
-
 [lua]
 symbol = " "
+format = 'via [$symbol]($style)'
 
 [memory_usage]
 symbol = "󰍛 "
 
+
+[nix_shell]
+symbol = " "
+
 [nodejs]
 symbol = " "
+format = 'via [$symbol]($style)'
 
 [os.symbols]
 Alpaquita = " "
 Alpine = " "
+AlmaLinux = " "
 Amazon = " "
 Android = " "
 Arch = " "
@@ -89,9 +84,11 @@ Emscripten = " "
 EndeavourOS = " "
 Fedora = " "
 FreeBSD = " "
-Garuda = " "
+Garuda = "󰛓 "
 Gentoo = " "
-HardenedBSD = " "
+HardenedBSD = "󰞌 "
+Illumos = "󰈸 "
+Kali = " "
 Linux = " "
 Mabox = " "
 Macos = " "
@@ -101,25 +98,33 @@ MidnightBSD = " "
 Mint = " "
 NetBSD = " "
 NixOS = " "
-OpenBSD = " "
+OpenBSD = "󰈺 "
 openSUSE = " "
+OracleLinux = "󰌷 "
 Pop = " "
 Raspbian = " "
 Redhat = " "
 RedHatEnterprise = " "
+RockyLinux = " "
+Redox = "󰀘 "
+Solus = "󰠳 "
 SUSE = " "
 Ubuntu = " "
 Unknown = " "
-Windows = " "
+Void = " "
+Windows = "󰍲 "
 
 [package]
-symbol = " "
+symbol = "󰏗 "
 
 [python]
 symbol = " "
-
-[ruby]
-symbol = " "
+format = 'via [$symbol]($style)'
 
 [rust]
 symbol = " "
+format = 'via [$symbol]($style)'
+
+[zig]
+symbol = " "
+format = 'via [$symbol]($style)'

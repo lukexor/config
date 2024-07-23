@@ -67,8 +67,35 @@ set fish_pager_color_prefix normal --bold
 # Prompt   {{{1
 # =============================================================================
 
-~/.cargo/bin/starship init fish | source
+# ~/.cargo/bin/starship init fish | source
 
+# Copied from above to cut out additional cruft, increasing shell startup time
+function fish_prompt
+    set STARSHIP_KEYMAP insert
+    set STARSHIP_CMD_PIPESTATUS $pipestatus
+    set STARSHIP_CMD_STATUS $status
+    # Account for changes in variable name between v2.7 and v3.0
+    set STARSHIP_DURATION "$CMD_DURATION$cmd_duration"
+    set STARSHIP_JOBS (count (jobs -p))
+    starship prompt --terminal-width="$COLUMNS" \
+        --status=$STARSHIP_CMD_STATUS \
+        --pipestatus="$STARSHIP_CMD_PIPESTATUS" \
+        --keymap=$STARSHIP_KEYMAP \
+        --cmd-duration=$STARSHIP_DURATION \
+        --jobs=$STARSHIP_JOBS
+end
+
+# Disable virtualenv prompt, it breaks starship
+set -g VIRTUAL_ENV_DISABLE_PROMPT 1
+
+# Remove default mode prompt
+builtin functions -e fish_mode_prompt
+
+set -gx STARSHIP_SHELL fish
+
+# Set up the session key that will be used to store logs
+# We don't use `random [min] [max]` because it is unavailable in older versions of fish shell
+set -gx STARSHIP_SESSION_KEY (string sub -s1 -l16 (random)(random)(random)(random)(random)0000000000000000)
 
 # =============================================================================
 # Environment   {{{1
@@ -146,8 +173,6 @@ end
 if test -e ~/.local/config.fish
     source ~/.local/config.fish
 end
-
-rtx activate fish | source
 
 # =============================================================================
 # Keybindings   {{{1
@@ -312,6 +337,7 @@ alias gmm="git pull && git rebase origin/main"
 # Init   {{{1
 # =============================================================================
 
+rtx activate fish | source
 direnv hook fish | source
 
 function fish_greeting
