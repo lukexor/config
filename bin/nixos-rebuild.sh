@@ -10,7 +10,7 @@
 
 set -euo pipefail
 
-$EDITOR ~/config/nix/"${HOSTNAME}".nix
+$EDITOR ~/config/nixos/configuration.nix
 
 pushd ~/config/
 
@@ -28,8 +28,9 @@ sudo nixos-rebuild switch | tee nixos-switch.log || (grep --color error nixos-sw
 
 current=$(nixos-rebuild list-generations | grep current)
 
-git commit -am "nixos $current"
+git add nixos
+git commit -m "nixos $current"
 
 popd
 
-notify-send -e "NixOS Rebuilt OK!" --icon=software-update-available
+echo "NixOS Rebuilt OK!"

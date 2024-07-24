@@ -323,13 +323,6 @@ alias cp="cp -i"
 alias mv="mv -i"
 alias rm="rm -i"
 
-function start_kitty
-    set -gx LIBGL_ALWAYS_SOFTWARE 1
-    kitty &
-    disown
-    exit
-end
-
 alias dirsize="fd -t d | xargs du -sh"
 function path
     echo $PATH | string split " "
@@ -337,6 +330,16 @@ end
 
 alias gmd="git pull && git rebase origin/develop"
 alias gmm="git pull && git rebase origin/main"
+
+alias nrs="nixos-rebuild.sh"
+
+# Starts kitty with software rendering
+function start_kitty
+    set -gx LIBGL_ALWAYS_SOFTWARE 1
+    kitty &
+    disown
+    exit
+end
 
 # =============================================================================
 # Init   {{{1
