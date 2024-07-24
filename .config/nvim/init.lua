@@ -1289,19 +1289,6 @@ require("lazy").setup({
   -- LSP
   -- -----------------------------------------------------------------------------
   {
-    "williamboman/mason.nvim",
-    cmd = { "Mason", "MasonUpdate" },
-    keys = {
-      { "<leader>pm", "<cmd>MasonUpdate<CR>:Mason<CR>", desc = "Update LSP Servers" },
-    },
-    opts = {
-      ui = {
-        check_outdated_servers_on_open = true,
-      },
-    },
-  },
-  "jay-babu/mason-nvim-dap.nvim",
-  {
     "mrcjkb/rustaceanvim",
     version = "^4",
     ft = { "rust" },
@@ -1397,7 +1384,6 @@ require("lazy").setup({
     event = { "BufReadPre", "BufNewFile" },
     dependencies = {
       "hrsh7th/cmp-nvim-lsp",
-      "williamboman/mason-lspconfig.nvim",
       {
         "kosayoda/nvim-lightbulb", -- Lightbulb next to code actions
         opts = {
@@ -2367,12 +2353,6 @@ vim.defer_fn(function()
   if vim.bo.filetype == "python" then
     vim.cmd([[set indentexpr=]])
   end
-
-  require("mason").setup({
-    ui = {
-      check_outdated_servers_on_open = true,
-    },
-  })
 end, 0)
 
 -- =============================================================================

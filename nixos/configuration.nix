@@ -46,6 +46,7 @@ in {
     (import rust-overlay)
   ];
 
+  boot.supportedFilesystems = ["ntfs"];
   networking = {
     hostName = hostname;
     wireless.enable = true;
@@ -59,80 +60,95 @@ in {
     extraGroups = ["wheel" "vboxsf"];
     shell = pkgs.fish;
   };
-  home-manager.users.luke = { config, pkgs, ...}: {
-    home = {
-      username = user;
-      homeDirectory = "/home/${user}";
-      stateVersion = "24.05";
-      file = with config.lib.file; let
-        config = "/home/${user}/config";
-      in {
-        ".config/direnv" = {
-          source = mkOutOfStoreSymlink "${config}/.config/direnv/";
-          recursive = true;
+  home-manager = {
+    backupFileExtension = "bak";
+    users.luke = { config, pkgs, ...}: {
+      gtk = with pkgs; {
+        enable = true;
+        font = {
+          name = "DejaVu Sans";
+          package = dejavu_fonts;
         };
-        ".config/fish" = {
-          source = mkOutOfStoreSymlink "${config}/.config/fish";
-          recursive = true;
-        };
-        ".config/kitty" = {
-          source = mkOutOfStoreSymlink "${config}/.config/kitty";
-          recursive = true;
-        };
-        ".config/nvim" = {
-          source = mkOutOfStoreSymlink "${config}/.config/nvim";
-          recursive = true;
-        };
-        ".config/starship.toml".source = mkOutOfStoreSymlink "${config}/.config/starship.toml";
-        ".local/kitty/keybinds.conf".source = mkOutOfStoreSymlink "${config}/.config/kitty/linux-keybinds.conf";
-        ".gitconfig".source = mkOutOfStoreSymlink "${config}/.gitconfig";
-        ".gitignore".source = mkOutOfStoreSymlink "${config}/.gitignore";
-        ".luarc.json".source = mkOutOfStoreSymlink "${config}/.luarc.json";
-        ".markdownlint.json".source = mkOutOfStoreSymlink "${config}/.markdownlint.json";
-        ".protolint.yaml".source = mkOutOfStoreSymlink "${config}/.protolint.yaml";
-        ".rgignore".source = mkOutOfStoreSymlink "${config}/.rgignore";
-        ".stylua.toml".source = mkOutOfStoreSymlink "${config}/.stylua.toml";
-        "bin" = {
-          source = mkOutOfStoreSymlink "${config}/bin";
-          recursive = true;
+        gtk2.configLocation = "${config.xdg.configHome}/gtk-2.0/gtkrc";
+        theme = {
+          name = "Breeze-Dark";
+          package = libsForQt5.breeze-gtk;
         };
       };
-    };
+      home = {
+        username = user;
+        homeDirectory = "/home/${user}";
+        stateVersion = "24.05";
+        file = with config.lib.file; let
+          config = "/home/${user}/config";
+        in {
+          ".config/direnv" = {
+            source = mkOutOfStoreSymlink "${config}/.config/direnv/";
+            recursive = true;
+          };
+          ".config/fish" = {
+            source = mkOutOfStoreSymlink "${config}/.config/fish";
+            recursive = true;
+          };
+          ".config/kitty" = {
+            source = mkOutOfStoreSymlink "${config}/.config/kitty";
+            recursive = true;
+          };
+          ".config/nvim" = {
+            source = mkOutOfStoreSymlink "${config}/.config/nvim";
+            recursive = true;
+          };
+          ".config/starship.toml".source = mkOutOfStoreSymlink "${config}/.config/starship.toml";
+          ".local/kitty/keybinds.conf".source = mkOutOfStoreSymlink "${config}/.config/kitty/linux-keybinds.conf";
+          ".gitconfig".source = mkOutOfStoreSymlink "${config}/.gitconfig";
+          ".gitignore".source = mkOutOfStoreSymlink "${config}/.gitignore";
+          ".luarc.json".source = mkOutOfStoreSymlink "${config}/.luarc.json";
+          ".markdownlint.json".source = mkOutOfStoreSymlink "${config}/.markdownlint.json";
+          ".protolint.yaml".source = mkOutOfStoreSymlink "${config}/.protolint.yaml";
+          ".rgignore".source = mkOutOfStoreSymlink "${config}/.rgignore";
+          ".stylua.toml".source = mkOutOfStoreSymlink "${config}/.stylua.toml";
+          "bin" = {
+            source = mkOutOfStoreSymlink "${config}/bin";
+            recursive = true;
+          };
+        };
+      };
 
-    programs = {
-      home-manager.enable = true;
-      gpg.enable = true;
-      neovim.plugins = with pkgs.vimPlugins; [
-        (nvim-treesitter.withPlugins (plugins: with plugins; [
-          bash
-          c
-          cpp
-          css
-          dockerfile
-          fish
-          glsl
-          graphql
-          html
-          javascript
-          json
-          lua
-          make
-          markdown
-          markdown_inline
-          proto
-          python
-          regex
-          rust
-          toml
-          tsx
-          typescript
-          vim
-          vimdoc
-          yaml
-        ]))
-      ];
+      programs = {
+        home-manager.enable = true;
+        gpg.enable = true;
+        neovim.plugins = with pkgs.vimPlugins; [
+          (nvim-treesitter.withPlugins (plugins: with plugins; [
+            bash
+            c
+            cpp
+            css
+            dockerfile
+            fish
+            glsl
+            graphql
+            html
+            javascript
+            json
+            lua
+            make
+            markdown
+            markdown_inline
+            proto
+            python
+            regex
+            rust
+            toml
+            tsx
+            typescript
+            vim
+            vimdoc
+            yaml
+          ]))
+        ];
+      };
+      services.gpg-agent.enable = true;
     };
-    services.gpg-agent.enable = true;
   };
 
   time.timeZone = "America/Los_Angeles";
@@ -189,11 +205,23 @@ in {
     appimage.enable = true;
     chromium = {
       enable = true;
+      enablePlasmaBrowserIntegration = true;
       extensions = [
         "eimadpbcbfnmbkopoojfekhnkhdbieeh" # dark reader
         "hdokiejnpimakedhajhdlcegeplioahd" # lastpass
         "ennpfpdlaclocpomkiablnmbppdnlhoh" # rust search extension
       ];
+      extraOpts = {
+       PasswordManagerEnabled = true;
+       ExtensionSettings = {
+        "eimadpbcbfnmbkopoojfekhnkhdbieeh" = {
+          toolbar_pin = "force_pinned";
+        };
+        "hdokiejnpimakedhajhdlcegeplioahd" = {
+          toolbar_pin = "force_pinned";
+        };
+       };
+      };
     };
     dconf.enable = true;
     gnupg.agent.enable = true;
@@ -240,7 +268,7 @@ in {
       gcc
       git
       gnumake
-      just
+      just # make replacement
       unstable.neovim
       nix-direnv
       nodejs_20
@@ -266,19 +294,19 @@ in {
       stylelint
       stylua
       tailwindcss-language-server
-      taplo
+      taplo # TOML language server
       vscode-extensions.vadimcn.vscode-lldb
       yamllint
       yaml-language-server
     ];
     utilities = with pkgs; [
       appimage-run
-      bat
-      bottom
+      bat # cat replacement
+      bottom # top replacement
       clolcat
-      dust
-      eza
-      fd
+      dust # du replacement
+      eza # ls replacement
+      fd # find replacement
       fish
       fzf
       glxinfo # To debug opengl issues
@@ -302,14 +330,16 @@ in {
           mainProgram = "irust";
         };
       })
-      mprocs
-      procs
+      mprocs # run multiple processes in parallel
+      procs # ps replacement
       ripgrep
-      sd
+      sd # sed replacement
       starship
-      tealdeer
-      tokei
-      xh
+      tealdeer # tldr in rust
+      tokei # code statistics
+      unzip
+      xclip # required for neovim clipboard support
+      xh # curl replacement
     ];
   in
     apps ++

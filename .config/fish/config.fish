@@ -342,7 +342,6 @@ alias gmm="git pull && git rebase origin/main"
 # Init   {{{1
 # =============================================================================
 
-rtx activate fish | source
 direnv hook fish | source
 
 function fish_greeting

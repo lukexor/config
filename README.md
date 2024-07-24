@@ -15,57 +15,49 @@
     :,,,,,,,,,,,,,.
 ```
 
-This is my system configuration for macOS and Linux machines, formerly known as
+This is my system configuration for unix based machines, formerly known as
 `dotfiles`.
 
 The file tree is pretty straight forward:
 
 ```text
-├── README.md
-├── files
-│   ├── .bash_profile
-│   ├── .bashrc
-│   ├── .config
-│   │   ├── nu
-│   │   │   ├── config.toml
-│   │   │   ├── envs
-│   │   │   ├── keybindings.yml
-│   │   │   └── startup.nu
-│   │   ├── nvim
-│   │   │   ├── UltiSnips
-│   │   │   ├── init.vim
-│   │   │   ├── lua
-│   │   │   ├── plugins
-│   ├── .gitconfig
-│   ├── .gitignore
-│   ├── .tmux.conf
-│   └── bin
-├── gruvbox-dark.itermcolors
-├── install.nu
-└── setup.sh
+├──  .config
+│  ├──  .gitignore
+│  ├──  direnv
+│  ├──  fish
+│  ├──  kitty
+│  ├──  nvim
+│  └──  starship.toml
+├──  .gitconfig
+├──  .gitignore
+├──  .hushlogin
+├──  .luarc.json
+├──  .markdownlint.json
+├──  .protolint.yaml
+├──  .rgignore
+├──  .stylua.toml
+├──  bin
+├──  nixos
+│  ├──  bootstrap.sh
+│  └──  configuration.nix
+└──  README.md
 ```
 
-Each file/directory in the `files` folder gets symlinked into the `$HOME`
-directory using [stow](https://www.gnu.org/software/stow/).
+Most files/directories get symlinked into `$HOME`
+using [home-manager](https://github.com/nix-community/home-manager).
 
 ## Setup
 
-The `setup.sh` is a bash script that installs the necessary dependencies based
-on operating system to get nushell installed. From there, `install.nu` is
-executed to finish installing the remaining packages I normally use on a daily
-basis.
+The `bootstrap.sh` script installs the necessary dependencies based
+on operating system, symlinks each dotfile, and sets up the system.
 
-`git` and `bash` must be installed and many of the features expect the latest
-versions. The setup attempts to update your package manager, but depending on
-the system, additional repositories may need to be added.
+`git`, `bash`, and `nix` must be installed.
 
 To get up and running on a new system:
 
 ```sh
 cd ~/
-git clone https://github.com/lukexor/config.git
+git clone https://github.com/lukexor/config
 cd config/
 ./bootstrap.sh
 ```
-
-Then follow any prompts for customizing the setup & installation.
