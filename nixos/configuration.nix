@@ -9,54 +9,30 @@
 # xrandr --addmode <monitor> "2560x1440_60.00"       # Add mode
 # xrandr --output <monitor> --mode 2560x1440_60.00   # Set mode
 #
-# boot.loader.systemd-boot.enable = true;
-# boot.loader.efi.canTouchEfiVariables = true;
-#
-# QEMU network bridge:
-# sudo quickemu --vm /home/luke/config/vms/windows-11.conf --display none
-# networking = {
-#   interfaces = {
-#     eno2.useDHCP = true;
-#     wlo1.useDHCP = true;
-#     br0.useDHCP = true;
-#   };
-#   bridges.br0.interfaces = ["eno2"];
-# };
-#
-# fileSystems."/mnt/<share>" = {
-#   device = "//<ip_address>/<folder>";
-#   fsType = "cifs";
-#   options = ["noauto" "user=<windows_user>" "uid=1000"];
-# };
-# $ sudo mount /mnt/<share>
-#
-# NVIDIA GPU:
-# hardware.opengl.enable = true;
-# services.xserver.videoDrivers = ["nvidia"];
-#
-# Switch channels:
+# Channels:
 # sudo nix-channel --add https://nixos.org/channels/nixos-unstable nixos
-# sudo nixos-rebuild switch --upgrade
 # sudo nix-channel --add http://nixos.org/channels/nixpkgs-unstable nixpkgs-unstable
+#
 # sudo nix-channel --update
+# sudo nixos-rebuild switch --upgrade
 { config, pkgs, lib, ... }: let
   user = "luke";
   hostname = "lukex";
   home-manager = (fetchTarball {
     url = "https://github.com/nix-community/home-manager/archive/master.tar.gz";
-    sha256 = "0c83di08nhkzq0cwc3v7aax3x8y5m7qahyzxppinzwxi3r8fnjq3";
+    sha256 = "16lvcaxhq38kdw3g71p6fyr8g8ml2n6kny5mg8x5189axbk0szr4";
   });
   rust-overlay = (fetchTarball {
     url = "https://github.com/oxalica/rust-overlay/archive/master.tar.gz";
   });
-  local-config = "/home/${user}/.local/configuration.nix";
+  host-config = "/home/${user}/config/nixos/${hostname}.nix";
 in {
   imports = [
     /etc/nixos/hardware-configuration.nix
     "${home-manager}/nixos"
   ] ++ (
-    if builtins.pathExists local-config then
-      [local-config]
+    if builtins.pathExists host-config then
+      [host-config]
     else
       []
   );
@@ -199,7 +175,10 @@ in {
         enable = true;
         inherit user;
       };
-      sddm.enable = true;
+      sddm = {
+        enable = true;
+        autoNumlock = true;
+      };
       defaultSession = "plasmax11";
     };
     desktopManager.plasma6.enable = true;
@@ -238,7 +217,7 @@ in {
         "cimiefiiaegbelhefglklhhakcgmhkai" # plasma integration
       ];
       extraOpts = {
-       PasswordManagerEnabled = true;
+       PasswordManagerEnabled = false;
        ExtensionSettings = {
         "eimadpbcbfnmbkopoojfekhnkhdbieeh" = {
           toolbar_pin = "force_pinned";
@@ -274,6 +253,8 @@ in {
     apps = with pkgs; [
       chromium
       discord
+      dropbox
+      dropbox-cli
       libreoffice
       kitty
       ncspot
