@@ -23,6 +23,14 @@
     options = ["noauto" "user=Quickemu" "uid=1000"];
   };
 
-  hardware.graphics.enable = true;
+  hardware = {
+    graphics.enable = true;
+    nvidia = {
+      powerManagement = {
+        enable = true; # Fixes black screen crashe when resuming from sleep
+      };
+      package = config.boot.kernelPackages.nvidiaPackages.production;
+    };
+  };
   services.xserver.videoDrivers = ["nvidia"];
 }
