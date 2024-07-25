@@ -3,20 +3,47 @@
 
 # Reference:
 #
-# gtf 2560 1440 60                             # Generate xrandr output for resolution 2560x1440 at 60hz
-# xrandr --newmode <output>                    # Create mode
-# xrandr --addmode <monitor> "2560x1440"       # Add mode
-# xrandr --output <monitor> --mode 2560x1440   # Set mode
-
+# Adding custom resolution:
+# gtf 2560 1440 60                                   # Generate xrandr output for resolution 2560x1440 at 60hz
+# xrandr --newmode <gtf output>                      # Create mode
+# xrandr --addmode <monitor> "2560x1440_60.00"       # Add mode
+# xrandr --output <monitor> --mode 2560x1440_60.00   # Set mode
+#
+# boot.loader.systemd-boot.enable = true;
+# boot.loader.efi.canTouchEfiVariables = true;
+#
+# QEMU network bridge:
+# sudo quickemu --vm /home/luke/config/vms/windows-11.conf --display none
+# networking = {
+#   interfaces = {
+#     eno2.useDHCP = true;
+#     wlo1.useDHCP = true;
+#     br0.useDHCP = true;
+#   };
+#   bridges.br0.interfaces = ["eno2"];
+# };
+#
+# fileSystems."/mnt/<share>" = {
+#   device = "//<ip_address>/<folder>";
+#   fsType = "cifs";
+#   options = ["noauto" "user=<windows_user>" "uid=1000"];
+# };
+# $ sudo mount /mnt/<share>
+#
+# NVIDIA GPU:
+# hardware.opengl.enable = true;
+# services.xserver.videoDrivers = ["nvidia"];
+#
+# Switch channels:
+# sudo nix-channel --add https://nixos.org/channels/nixos-unstable nixos
+# sudo nixos-rebuild switch --upgrade
+# sudo nix-channel --add http://nixos.org/channels/nixpkgs-unstable nixpkgs-unstable
+# sudo nix-channel --update
 { config, pkgs, lib, ... }: let
   user = "luke";
   hostname = "lukex";
-  # Import unstable channel.
-  # sudo nix-channel --add http://nixos.org/channels/nixpkgs-unstable nixpkgs-unstable
-  # sudo nix-channel --update
-  unstable = import <nixpkgs-unstable> {};
   home-manager = (fetchTarball {
-    url = "https://github.com/nix-community/home-manager/archive/release-24.05.tar.gz";
+    url = "https://github.com/nix-community/home-manager/archive/master.tar.gz";
     sha256 = "0c83di08nhkzq0cwc3v7aax3x8y5m7qahyzxppinzwxi3r8fnjq3";
   });
   rust-overlay = (fetchTarball {
@@ -49,8 +76,7 @@ in {
   boot.supportedFilesystems = ["ntfs"];
   networking = {
     hostName = hostname;
-    wireless.enable = true;
-    networkmanager.enable = false; # Must be false if wireless.enable = true
+    networkmanager.enable = true;
   };
 
   users.users.luke = {
@@ -78,7 +104,7 @@ in {
       home = {
         username = user;
         homeDirectory = "/home/${user}";
-        stateVersion = "24.05";
+        stateVersion = "24.11";
         file = with config.lib.file; let
           config = "/home/${user}/config";
         in {
@@ -198,7 +224,6 @@ in {
     bluetooth.enable = true;
     pulseaudio.enable = false; # Must be disabled to use pipewire
   };
-  sound.enable = true;
   security.rtkit.enable = true; # Used to prioritize pulse audio server
 
   programs = {
@@ -210,6 +235,7 @@ in {
         "eimadpbcbfnmbkopoojfekhnkhdbieeh" # dark reader
         "hdokiejnpimakedhajhdlcegeplioahd" # lastpass
         "ennpfpdlaclocpomkiablnmbppdnlhoh" # rust search extension
+        "cimiefiiaegbelhefglklhhakcgmhkai" # plasma integration
       ];
       extraOpts = {
        PasswordManagerEnabled = true;
@@ -247,9 +273,11 @@ in {
     };
     apps = with pkgs; [
       chromium
+      discord
       libreoffice
       kitty
       ncspot
+      quickemu
       steam
       steam-run
     ];
@@ -269,7 +297,7 @@ in {
       git
       gnumake
       just # make replacement
-      unstable.neovim
+      neovim
       nix-direnv
       nodejs_20
       python3
@@ -303,6 +331,8 @@ in {
       appimage-run
       bat # cat replacement
       bottom # top replacement
+      bridge-utils
+      cifs-utils
       clolcat
       dust # du replacement
       eza # ls replacement
@@ -333,6 +363,7 @@ in {
       mprocs # run multiple processes in parallel
       procs # ps replacement
       ripgrep
+      samba
       sd # sed replacement
       starship
       tealdeer # tldr in rust
@@ -374,5 +405,5 @@ in {
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "24.05"; # Did you read the comment?
+  system.stateVersion = "24.11"; # Did you read the comment?
 }
