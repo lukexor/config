@@ -341,6 +341,7 @@ in {
           mainProgram = "irust";
         };
       })
+      libsForQt5.kconfig # for kwriteconfig5
       mprocs # run multiple processes in parallel
       procs # ps replacement
       ripgrep

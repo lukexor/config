@@ -33,9 +33,11 @@ bootstrap_nixos() {
 
 set_preferences() {
   xdg-settings set default-web-browser chromium.desktop
+  plasma-apply-lookandfeel org.kde.breezedark.desktop
   plasma-apply-desktoptheme breeze-dark
   plasma-apply-wallpaperimage "$HOME"/config/wallpapers/nier-automata.png
   kwriteconfig5 --file kscreenlockerrc --group Greeter --group Wallpaper --group org.kde.image --group General --key Image "file:///$HOME/config/wallpapers/bladerunner.jpeg"
+  sudo cp avatar.jpg /var/lib/AccountsService/icons/"$USER"
 }
 
 # TODO: Add macOs/Linux support using home-manager
