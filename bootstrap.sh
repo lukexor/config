@@ -31,17 +31,13 @@ bootstrap_nixos() {
     sudo nixos-rebuild switch
 }
 
-set_preferences() {
+apply_preferences() {
   xdg-settings set default-web-browser chromium.desktop
-  plasma-apply-lookandfeel org.kde.breezedark.desktop
-  plasma-apply-desktoptheme breeze-dark
-  plasma-apply-wallpaperimage "$HOME"/config/wallpapers/nier-automata.png
-  kwriteconfig5 --file kscreenlockerrc --group Greeter --group Wallpaper --group org.kde.image --group General --key Image "file:///$HOME/config/wallpapers/bladerunner.jpeg"
-  sudo cp avatar.jpg /var/lib/AccountsService/icons/"$USER"
+  konsave -i kde-profile.knsv -f
+  konsave -a kde-profile
 }
 
 # TODO: Add macOs/Linux support using home-manager
 bootstrap_nixos
-set_preferences
 
 echo "Bootstrap Complete!"

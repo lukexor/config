@@ -341,7 +341,9 @@ in {
           mainProgram = "irust";
         };
       })
+      jumpapp
       libsForQt5.kconfig # for kwriteconfig5
+      konsave # to save/restore kde profile
       mprocs # run multiple processes in parallel
       procs # ps replacement
       ripgrep
