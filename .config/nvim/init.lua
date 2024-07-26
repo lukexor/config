@@ -1015,10 +1015,10 @@ require("lazy").setup({
   {
     "iamcco/markdown-preview.nvim", -- markdown browser viewer
     ft = { "markdown" },
-    build = function()
-      vim.fn["mkdp#util#install"]()
-    end,
+    cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
+    build = "cd app && yarn install",
     init = function()
+      vim.g.mkdp_filetypes = { "markdown" }
       vim.g.mkdp_echo_preview_url = 1
     end,
   },
