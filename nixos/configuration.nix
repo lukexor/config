@@ -20,7 +20,6 @@
   hostname = "lukex";
   home-manager = (fetchTarball {
     url = "https://github.com/nix-community/home-manager/archive/master.tar.gz";
-    sha256 = "16lvcaxhq38kdw3g71p6fyr8g8ml2n6kny5mg8x5189axbk0szr4";
   });
   rust-overlay = (fetchTarball {
     url = "https://github.com/oxalica/rust-overlay/archive/master.tar.gz";
