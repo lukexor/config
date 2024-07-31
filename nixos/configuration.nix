@@ -255,11 +255,15 @@ in {
       dropbox
       dropbox-cli
       libreoffice
+      # gaming compatibility
+      lutris
       kitty
       ncspot
       quickemu
+      scummvm
       steam
       steam-run
+      wine-staging
     ];
     development = with pkgs; [
       cargo-asm
