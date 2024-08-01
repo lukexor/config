@@ -33,4 +33,13 @@
     };
   };
   services.xserver.videoDrivers = ["nvidia"];
+
+  services = {
+    displayManager = {
+      autoLogin = {
+        enable = true;
+        inherit user;
+      };
+    };
+  };
 }

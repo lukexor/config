@@ -170,10 +170,6 @@ in {
 
   services = {
     displayManager = {
-      autoLogin = {
-        enable = true;
-        inherit user;
-      };
       sddm = {
         enable = true;
         autoNumlock = true;
@@ -191,6 +187,7 @@ in {
     printing.enable = true;
     xserver = {
       enable = true;
+      windowManager.dwm.enable = true;
       xkb = {
         layout = "us";
         variant = "";
