@@ -12,8 +12,8 @@
 # Channels:
 # sudo nix-channel --add https://nixos.org/channels/nixos-unstable nixos
 # sudo nix-channel --add http://nixos.org/channels/nixpkgs-unstable nixpkgs-unstable
-#
 # sudo nix-channel --update
+#
 # sudo nixos-rebuild switch --upgrade
 { config, pkgs, lib, ... }: let
   user = "luke";
@@ -254,6 +254,7 @@ in {
       discord
       dropbox
       dropbox-cli
+      dosbox
       libreoffice
       # gaming compatibility
       lutris

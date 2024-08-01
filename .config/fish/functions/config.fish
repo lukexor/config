@@ -9,6 +9,8 @@ function config -a config -d "edit a configuration file"
             nvim ~/config/.config/fish/config.fish
         case fishl
             nvim ~/.local/config.fish
+        case nix
+            nixos-rebuild.sh
         case starship
             nvim ~/config/.config/starship.toml
         case ""

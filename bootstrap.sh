@@ -25,10 +25,11 @@ bootstrap_nixos() {
 
     symlink "$HOME"/config/nixos/configuration.nix /etc/nixos/configuration.nix
 
+    sudo nix-channel --add https://nixos.org/channels/nixos-unstable nixos
     sudo nix-channel --add http://nixos.org/channels/nixpkgs-unstable nixpkgs-unstable
     sudo nix-channel --update
 
-    sudo nixos-rebuild switch
+    sudo nixos-rebuild switch --upgrade
 }
 
 apply_preferences() {
