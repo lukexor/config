@@ -25,4 +25,21 @@
       };
     };
   };
+
+  programs = {
+    steam.enable = true;
+  }
+
+  environment.systemPackages = with pkgs; [
+      discord
+      dropbox
+      dropbox-cli
+      dosbox
+      # gaming compatibility
+      lutris
+      scummvm
+      steam
+      steam-run
+      wine-staging
+  ];
 }

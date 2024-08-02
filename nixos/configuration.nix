@@ -20,11 +20,9 @@
   hostname = "lukex";
   home-manager = (fetchTarball {
     url = "https://github.com/nix-community/home-manager/archive/master.tar.gz";
-    sha256 = "1xfj2qicq9px95dbgsvpp38z1679zi3pzhhlj9dkzqwhqha7jmgp";
   });
   rust-overlay = (fetchTarball {
     url = "https://github.com/oxalica/rust-overlay/archive/master.tar.gz";
-    sha256 = "0klmh27b0sarmv441qqhp8qqrq80mw2mjxiaiqy8icaayvia9ryr";
   });
   host-config = "/etc/nixos/host-configuration.nix";
   default-host-config = "/home/${user}/config/nixos/${hostname}.nix";
@@ -58,14 +56,24 @@ in {
 
   boot.supportedFilesystems = ["ntfs"];
   networking = {
-    networkmanager.enable = true;
+    networkmanager = {
+      enable = true;
+      appendNameservers = ["4.2.2.2"];
+    };
+    enableIPv6 = false;
   };
 
   users.users.luke = {
     isNormalUser = true;
     home = "/home/${user}";
     description = "Luke";
-    extraGroups = ["wheel" "vboxsf"];
+    extraGroups = [
+      "kvm"
+      "libvirtd"
+      "qemu"
+      "vboxsf"
+      "wheel"
+    ];
     shell = pkgs.fish;
   };
   home-manager = {
@@ -184,7 +192,7 @@ in {
         enable = true;
         autoNumlock = true;
       };
-      defaultSession = "plasmax11";
+      defaultSession = "plasma";
     };
     desktopManager.plasma6.enable = true;
     libinput.enable = true; # touchpad support
@@ -247,7 +255,6 @@ in {
     };
     ssh.startAgent = true;
     starship.enable = true;
-    steam.enable = true;
   };
 
   nixpkgs.config.allowUnfree = true;
@@ -258,20 +265,9 @@ in {
     };
     apps = with pkgs; [
       chromium
-      discord
-      dropbox
-      dropbox-cli
-      dosbox
       libreoffice
-      # gaming compatibility
-      lutris
       kitty
       ncspot
-      quickemu
-      scummvm
-      steam
-      steam-run
-      wine-staging
     ];
     development = with pkgs; [
       cargo-asm
@@ -289,10 +285,12 @@ in {
       git
       gnumake
       just # make replacement
+      libvirt
       neovim
       nix-direnv
       nodejs_20
       python3
+      quickemu
       (rust-bin.selectLatestNightlyWith (toolchain: toolchain.default.override {
         extensions = ["rust-analyzer" "rust-src"];
         targets = ["wasm32-unknown-unknown"];
@@ -375,6 +373,20 @@ in {
   ;
   # Expose extension binaries so neovim can use it instead of just vscode
   environment.etc.lldb.source = "${pkgs.vscode-extensions.vadimcn.vscode-lldb}/share/vscode/extensions/vadimcn.vscode-lldb";
+
+  virtualisation.libvirtd = {
+    enable = true;
+    allowedBridges = ["br0" "virtbr0"];
+  };
+  security.wrappers = {
+    # Allow quickemu to mount network bridge
+    quickemu = {
+      owner = "root";
+      group = "root";
+      capabilities = "cap_net_admin+ep";
+      source = "${pkgs.quickemu}/bin/quickemu";
+    };
+  };
 
   fonts = {
     enableDefaultPackages = true;
