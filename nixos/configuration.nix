@@ -20,11 +20,14 @@
   hostname = "lukex";
   home-manager = (fetchTarball {
     url = "https://github.com/nix-community/home-manager/archive/master.tar.gz";
+    sha256 = "1xfj2qicq9px95dbgsvpp38z1679zi3pzhhlj9dkzqwhqha7jmgp";
   });
   rust-overlay = (fetchTarball {
     url = "https://github.com/oxalica/rust-overlay/archive/master.tar.gz";
+    sha256 = "0klmh27b0sarmv441qqhp8qqrq80mw2mjxiaiqy8icaayvia9ryr";
   });
-  host-config = "/home/${user}/config/nixos/${hostname}.nix";
+  host-config = "/etc/nixos/host-configuration.nix";
+  default-host-config = "/home/${user}/config/nixos/${hostname}.nix";
 in {
   imports = [
     /etc/nixos/hardware-configuration.nix
@@ -33,8 +36,13 @@ in {
     if builtins.pathExists host-config then
       [host-config]
     else
-      []
+      [default-host-config]
   );
+
+  boot.loader = {
+    systemd-boot.enable = true;
+    efi.canTouchEfiVariables = true;
+  };
 
   nix = {
     optimise.automatic = true;
@@ -50,7 +58,6 @@ in {
 
   boot.supportedFilesystems = ["ntfs"];
   networking = {
-    hostName = hostname;
     networkmanager.enable = true;
   };
 
@@ -170,6 +177,9 @@ in {
 
   services = {
     displayManager = {
+      autoLogin = {
+        inherit user;
+      };
       sddm = {
         enable = true;
         autoNumlock = true;

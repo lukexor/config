@@ -24,6 +24,8 @@ bootstrap_nixos() {
     echo "Bootstrapping NixOS..."
 
     symlink "$HOME"/config/nixos/configuration.nix /etc/nixos/configuration.nix
+     # TODO: prompt for optional hostname to link, falling back to lukex as the
+     # default
 
     sudo nix-channel --add https://nixos.org/channels/nixos-unstable nixos
     sudo nix-channel --add http://nixos.org/channels/nixpkgs-unstable nixpkgs-unstable
@@ -34,7 +36,7 @@ bootstrap_nixos() {
 
 apply_preferences() {
   xdg-settings set default-web-browser chromium.desktop
-  konsave -i kde-profile.knsv -f
+  konsave -f -i kde-profile.knsv
   konsave -a kde-profile
 }
 
