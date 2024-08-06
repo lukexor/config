@@ -311,6 +311,7 @@ in {
       nodejs_20
       python3
       quickemu
+      rust-analyzer
       rustup
       yarn
     ];

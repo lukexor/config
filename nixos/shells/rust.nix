@@ -15,5 +15,8 @@ in pkgs.mkShell {
   ] ++ (with pkgs; [
     # Include any other packages
   ]);
+  shellHook = ''
+    exec fish
+  '';
   RUST_BACKTRACE = 1;
 }

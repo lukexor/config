@@ -5,9 +5,13 @@ format = """
 $directory\
 $git_branch\
 $cmd_duration\
+$nix_shell\
+$rust\
+$python\
+$nodejs\
 $status
 $battery\
-$character
+$character\
 """
 
 [character]
@@ -63,7 +67,9 @@ symbol = "󰍛 "
 
 
 [nix_shell]
+impure_msg = ""
 symbol = " "
+format = "[$symbol$state]($style)"
 
 [nodejs]
 symbol = " "

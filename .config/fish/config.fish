@@ -348,6 +348,7 @@ end
 direnv hook fish | source
 
 function fish_greeting
+    echo -n -s "$nix_shell_info"
     if test $SHLVL -gt 1
         return
     end
