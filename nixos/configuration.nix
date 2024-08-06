@@ -215,6 +215,7 @@ in {
 
   hardware = {
     bluetooth.enable = true;
+    nvidia-container-toolkit.enable = true; # Nvidia GPU passthrough
     pulseaudio.enable = false; # Must be disabled to use pipewire
   };
   security.rtkit.enable = true; # Used to prioritize pulse audio server
@@ -244,12 +245,18 @@ in {
     };
     dconf.enable = true;
     gnupg.agent.enable = true;
-    direnv.enable = true;
+    direnv = {
+      enable = true;
+      nix-direnv.enable = true;
+    };
     firefox.enable = true;
     fish.enable = true;
     git.enable = true;
     neovim = {
+      enable = true;
       defaultEditor = true;
+      vimAlias = true;
+      viAlias = true;
       withNodeJs = true;
       withPython3 = true;
     };
@@ -282,12 +289,8 @@ in {
       cmake
       docker
       gcc
-      git
       gnumake
       just # make replacement
-      libvirt
-      neovim
-      nix-direnv
       nodejs_20
       python3
       quickemu
@@ -318,7 +321,6 @@ in {
       yaml-language-server
     ];
     utilities = with pkgs; [
-      appimage-run
       bat # cat replacement
       bottom # top replacement
       bridge-utils
@@ -327,7 +329,6 @@ in {
       dust # du replacement
       eza # ls replacement
       fd # find replacement
-      fish
       fzf
       glxinfo # To debug opengl issues
       hexedit
@@ -356,7 +357,6 @@ in {
       mprocs # run multiple processes in parallel
       procs # ps replacement
       ripgrep
-      samba
       sd # sed replacement
       starship
       tealdeer # tldr in rust
@@ -374,9 +374,12 @@ in {
   # Expose extension binaries so neovim can use it instead of just vscode
   environment.etc.lldb.source = "${pkgs.vscode-extensions.vadimcn.vscode-lldb}/share/vscode/extensions/vadimcn.vscode-lldb";
 
-  virtualisation.libvirtd = {
-    enable = true;
-    allowedBridges = ["br0" "virtbr0"];
+  virtualisation = {
+    docker.enable = true;
+    libvirtd = {
+      enable = true;
+      allowedBridges = ["br0" "virtbr0"];
+    };
   };
   security.wrappers = {
     # Allow quickemu to mount network bridge

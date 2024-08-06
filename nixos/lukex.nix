@@ -28,18 +28,16 @@
 
   programs = {
     steam.enable = true;
-  }
+  };
 
   environment.systemPackages = with pkgs; [
       discord
-      dropbox
-      dropbox-cli
       dosbox
       # gaming compatibility
       lutris
+      maestral # dropbox client
+      maestral-gui
       scummvm
-      steam
-      steam-run
       wine-staging
   ];
 }
