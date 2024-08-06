@@ -1,20 +1,7 @@
 { config, pkgs, lib, ... }: let
-  # Custom derivation for Motorcomm ethernet YT6801
-  yt6801 = config.boot.kernelPackages.callPackage ./modules/yt6801 {};
 in {
-  boot.extraModulePackages = [ yt6801 ];
-
   networking = {
     hostName = "lukestath";
-    interfaces = {
-      enp44s0.useDHCP = true;
-      wlo1.useDHCP = true;
-      br0.useDHCP = true;
-    };
-    bridges.br0.interfaces = ["enp44s0"];
-    networkmanager = {
-      unmanaged = ["enp44s0" "br0"];
-    };
   };
 
   # Install:
@@ -31,14 +18,4 @@ in {
     fsType = "cifs";
     options = ["noauto" "user=Quickemu" "uid=1000"];
   };
-
-  hardware = {
-    graphics.enable = true;
-    nvidia = {
-      powerManagement = {
-        enable = true; # Fixes black screen crashe when resuming from sleep
-      };
-    };
-  };
-  services.xserver.videoDrivers = ["nvidia"];
 }

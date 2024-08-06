@@ -11,35 +11,35 @@
 #
 # Channels:
 # sudo nix-channel --add https://nixos.org/channels/nixos-unstable nixos
-# sudo nix-channel --add http://nixos.org/channels/nixpkgs-unstable nixpkgs-unstable
 # sudo nix-channel --update
 #
 # sudo nixos-rebuild switch --upgrade
 { config, pkgs, lib, ... }: let
   user = "luke";
-  hostname = "lukex";
+  defaultHostname = "lukex";
   home-manager = (fetchTarball {
     url = "https://github.com/nix-community/home-manager/archive/master.tar.gz";
   });
-  rust-overlay = (fetchTarball {
-    url = "https://github.com/oxalica/rust-overlay/archive/master.tar.gz";
-  });
   host-config = "/etc/nixos/host-configuration.nix";
-  default-host-config = "/home/${user}/config/nixos/${hostname}.nix";
+  modules = builtins.map (file: import /home/${user}/config/nixos/modules/${file}) (
+    builtins.filter (path: builtins.match ".+\\.nix$" path != null)
+    (builtins.attrNames (builtins.readDir /home/${user}/config/nixos/modules))
+  );
 in {
   imports = [
     /etc/nixos/hardware-configuration.nix
     "${home-manager}/nixos"
-  ] ++ (
-    if builtins.pathExists host-config then
-      [host-config]
-    else
-      [default-host-config]
-  );
+  ]
+  ++ modules
+  ++ lib.optionals (builtins.pathExists host-config) [host-config];
 
-  boot.loader = {
-    systemd-boot.enable = true;
-    efi.canTouchEfiVariables = true;
+  boot = {
+    loader = {
+      systemd-boot.enable = true;
+      efi.canTouchEfiVariables = true;
+    };
+    supportedFilesystems = ["ntfs"];
+    yt6801Module.enable = (config.networking.hostName == "lukestath");
   };
 
   nix = {
@@ -50,17 +50,24 @@ in {
       options = "--delete-older-than 14d";
     };
   };
-  nixpkgs.overlays = [
-    (import rust-overlay)
-  ];
 
-  boot.supportedFilesystems = ["ntfs"];
   networking = {
+    hostName = lib.mkDefault defaultHostname;
     networkmanager = {
       enable = true;
       appendNameservers = ["4.2.2.2"];
     };
     enableIPv6 = false;
+    qemuBridge = with config.networking; {
+      enable = true;
+      interface =
+        if hostName == defaultHostname then
+          "en02"
+        else if hostName == "lukestath" then
+          "enp44s0"
+        else
+          throw "no qemuBridge interface defined for host ${hostName}";
+    };
   };
 
   users.users.luke = {
@@ -186,6 +193,7 @@ in {
   services = {
     displayManager = {
       autoLogin = {
+        enable = (config.networking.hostName == defaultHostname);
         inherit user;
       };
       sddm = {
@@ -195,6 +203,7 @@ in {
       defaultSession = "plasma";
     };
     desktopManager.plasma6.enable = true;
+    gaming.enable = (config.networking.hostName == defaultHostname);
     libinput.enable = true; # touchpad support
     pipewire = {
       enable = true;
@@ -206,6 +215,7 @@ in {
     xserver = {
       enable = true;
       windowManager.dwm.enable = true;
+      videoDrivers = ["nvidia"];
       xkb = {
         layout = "us";
         variant = "";
@@ -215,6 +225,12 @@ in {
 
   hardware = {
     bluetooth.enable = true;
+    graphics.enable = true; # enable opengl
+    nvidia = {
+      powerManagement = {
+        enable = true; # Fixes black screen crashe when resuming from sleep
+      };
+    };
     nvidia-container-toolkit.enable = true; # Nvidia GPU passthrough
     pulseaudio.enable = false; # Must be disabled to use pipewire
   };
@@ -264,16 +280,17 @@ in {
     starship.enable = true;
   };
 
-  nixpkgs.config.allowUnfree = true;
+  nixpkgs = {
+    config.allowUnfree = true;
+    overlays = [];
+  };
   environment.systemPackages = with pkgs; let
-    rustPlatform = makeRustPlatform {
-      cargo = rust-bin.selectLatestNightlyWith (toolchain: toolchain.default);
-      rustc = rust-bin.selectLatestNightlyWith (toolchain: toolchain.default);
-    };
     apps = with pkgs; [
       chromium
       libreoffice
       kitty
+      maestral # dropbox client
+      maestral-gui
       ncspot
     ];
     development = with pkgs; [
@@ -294,10 +311,6 @@ in {
       nodejs_20
       python3
       quickemu
-      (rust-bin.selectLatestNightlyWith (toolchain: toolchain.default.override {
-        extensions = ["rust-analyzer" "rust-src"];
-        targets = ["wasm32-unknown-unknown"];
-      }))
       rustup
       yarn
     ];
