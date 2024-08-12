@@ -55,7 +55,7 @@ in {
     hostName = lib.mkDefault defaultHostname;
     networkmanager = {
       enable = true;
-      appendNameservers = ["4.2.2.2"];
+      appendNameservers = ["1.1.1.1", "4.2.2.2"];
     };
     enableIPv6 = false;
     qemuBridge = with config.networking; {
@@ -199,6 +199,7 @@ in {
       sddm = {
         enable = true;
         autoNumlock = true;
+        wayland.enable = true;
       };
       defaultSession = "plasma";
     };
@@ -214,7 +215,6 @@ in {
     printing.enable = true;
     xserver = {
       enable = true;
-      windowManager.dwm.enable = true;
       videoDrivers = ["nvidia"];
       xkb = {
         layout = "us";
@@ -236,7 +236,10 @@ in {
     nvidia-container-toolkit.enable = true; # Nvidia GPU passthrough
     pulseaudio.enable = false; # Must be disabled to use pipewire
   };
-  security.rtkit.enable = true; # Used to prioritize pulse audio server
+  security = {
+    polkit.enable = true;
+    rtkit.enable = true; # Used to prioritize pulse audio server
+  };
 
   programs = {
     appimage.enable = true;

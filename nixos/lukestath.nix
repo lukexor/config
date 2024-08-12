@@ -18,4 +18,8 @@ in {
     fsType = "cifs";
     options = ["noauto" "user=Quickemu" "uid=1000"];
   };
+
+  environment.systemPackages = with pkgs; [
+    teams-for-linux
+  ];
 }
