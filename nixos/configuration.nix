@@ -101,7 +101,7 @@ in {
       home = {
         username = user;
         homeDirectory = "/home/${user}";
-        stateVersion = "24.11";
+        stateVersion = "24.05";
         file = with config.lib.file; let
           config = "/home/${user}/config";
         in {
@@ -222,6 +222,8 @@ in {
       };
     };
   };
+  # Don't wait for network on rebuild/boot
+  systemd.services.NetworkManager-wait-online.enable = false;
 
   hardware = {
     bluetooth.enable = true;
@@ -367,6 +369,36 @@ in {
       })
       jumpapp
       libsForQt5.kconfig # for kwriteconfig5
+      # Not fully moved to plasma6 yet: https://github.com/NixOS/nixpkgs/issues/324406
+      (libsForQt5.krohnkite.overrideAttrs (final: prev: rec {
+        version = "0.9.7";
+        src = fetchFromGitHub {
+          owner = "anametologin";
+          repo = "krohnkite";
+          rev = version;
+          hash = "sha256-8A3zW5tK8jK9fSxYx28b8uXGsvxEoUYybU0GaMD2LNw=";
+        };
+        # Previous atttempts to build manually for plasma6 - nodejs fails to
+        # install
+        # nativeBuildInputs = [
+        #   kdePackages.wrapQtAppsHook
+        #   nodejs_22
+        #   p7zip
+        #   kdePackages.kpackage
+        #   kdePackages.kwindowsystem
+        #   kdePackages.kwin
+        # ];
+
+        # buildPhase = ''
+        #   make package
+        # '';
+
+        # installPhase = ''
+        #   runHook preInstall
+        #   kpackagetool6 -t KWin/Script -i krohnkite-${version}.kwinscript -p $out/share/kwin/scripts
+        #   runHook postInstall
+        # '';
+      }))
       konsave # to save/restore kde profile
       mprocs # run multiple processes in parallel
       procs # ps replacement
@@ -429,5 +461,5 @@ in {
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "24.11"; # Did you read the comment?
+  system.stateVersion = "24.05"; # Did you read the comment?
 }
