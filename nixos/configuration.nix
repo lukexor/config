@@ -370,7 +370,9 @@ in {
       jumpapp
       libsForQt5.kconfig # for kwriteconfig5
       # Not fully moved to plasma6 yet: https://github.com/NixOS/nixpkgs/issues/324406
-      (libsForQt5.krohnkite.overrideAttrs (final: prev: rec {
+      (stdenv.mkDerivation rec {
+        name = "krohnkite";
+
         version = "0.9.7";
         src = fetchFromGitHub {
           owner = "anametologin";
@@ -378,27 +380,35 @@ in {
           rev = version;
           hash = "sha256-8A3zW5tK8jK9fSxYx28b8uXGsvxEoUYybU0GaMD2LNw=";
         };
-        # Previous atttempts to build manually for plasma6 - nodejs fails to
-        # install
-        # nativeBuildInputs = [
-        #   kdePackages.wrapQtAppsHook
-        #   nodejs_22
-        #   p7zip
-        #   kdePackages.kpackage
-        #   kdePackages.kwindowsystem
-        #   kdePackages.kwin
-        # ];
 
-        # buildPhase = ''
-        #   make package
-        # '';
+        dontWrapQtApps = true;
+        buildInputs = with kdePackages; [
+          kpackage
+          kwin
+          kwindowsystem
+          p7zip
+          typescript
+        ];
+        patches = [
+          ./patches/krohnkite-build.patch
+        ];
 
-        # installPhase = ''
-        #   runHook preInstall
-        #   kpackagetool6 -t KWin/Script -i krohnkite-${version}.kwinscript -p $out/share/kwin/scripts
-        #   runHook postInstall
-        # '';
-      }))
+        buildPhase = ''
+          make package
+        '';
+
+        installPhase = ''
+          kpackagetool6 -t KWin/Script -i krohnkite-${version}.kwinscript -p $out/share/kwin/scripts
+        '';
+
+        meta = with lib; {
+          description = "Dynamic tiling extension for KWin";
+          license = licenses.mit;
+          maintainers = [];
+          inherit (src.meta) homepage;
+          inherit (kwindowsystem.meta) platforms;
+        };
+      })
       konsave # to save/restore kde profile
       mprocs # run multiple processes in parallel
       procs # ps replacement
