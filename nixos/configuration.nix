@@ -412,7 +412,7 @@ in {
           license = licenses.mit;
           maintainers = [];
           inherit (src.meta) homepage;
-          inherit (kwindowsystem.meta) platforms;
+          inherit (kdePackages.kwindowsystem.meta) platforms;
         };
       })
       konsave # to save/restore kde profile
