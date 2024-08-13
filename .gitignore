@@ -42,11 +42,6 @@ tags
 ctags
 .project
 .settings
-.nu-env
 .jrc
 .env.local
 .lspconfig.lua
-
-# Misc
-*.patch
-!patches/*
