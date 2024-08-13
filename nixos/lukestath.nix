@@ -2,6 +2,7 @@
 in {
   networking = {
     hostName = "lukestath";
+    enableIPv6 = lib.mkForce true; # required by wgnord
   };
 
   # Install:
@@ -21,5 +22,12 @@ in {
 
   environment.systemPackages = with pkgs; [
     teams-for-linux
+    wgnord
   ];
+
+  # boot.kernelParams = ["module_blacklist=i915"];
+  hardware.nvidia.prime = {
+    intelBusId = "PCI:0:2:0";
+    nvidiaBusId = "PCI:1:0:0";
+  };
 }

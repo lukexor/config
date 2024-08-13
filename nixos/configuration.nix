@@ -55,7 +55,7 @@ in {
     hostName = lib.mkDefault defaultHostname;
     networkmanager = {
       enable = true;
-      appendNameservers = ["1.1.1.1", "4.2.2.2"];
+      appendNameservers = ["1.1.1.1" "4.2.2.2"];
     };
     enableIPv6 = false;
     qemuBridge = with config.networking; {
@@ -354,14 +354,17 @@ in {
       (rustPlatform.buildRustPackage rec {
         pname = "irust";
         version = "1.71.23";
+
         src = fetchFromGitHub {
           owner = "sigmaSd";
           repo = "IRust";
           rev = version;
           hash = "sha256-Rp1v690teNloA35eeQxZ2KOi00csGcKemcWIheeFCgY=";
         };
+
         cargoHash = "sha256-Dz1bYaRD5sl1Y6kBDHm0aP6FqOQrQWBHkHo/G4Cr+/Q=";
         doCheck = false; # Tests fail trying to import dependencies
+
         meta = with lib; {
           description = "Cross Platform Rust Repl";
           homepage = "https://github.com/sigmaSd/IRust";
