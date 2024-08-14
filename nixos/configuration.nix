@@ -438,10 +438,7 @@ in {
 
   virtualisation = {
     docker.enable = true;
-    libvirtd = {
-      enable = true;
-      allowedBridges = ["br0" "virtbr0"];
-    };
+    libvirtd.enable = true;
   };
   security.wrappers = {
     # Allow quickemu to mount network bridge
@@ -453,6 +450,11 @@ in {
     };
   };
 
+  console = with pkgs; {
+    packages = [terminus_font];
+    font = "${terminus_font}/share/consolefonts/ter-i12n.psf.gz";
+    useXkbConfig = true;
+  };
   fonts = {
     enableDefaultPackages = true;
     packages = with pkgs; [

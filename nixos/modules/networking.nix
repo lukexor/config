@@ -30,12 +30,17 @@ in {
     ''];
 
     networking = {
+      useDHCP = false;
       interfaces = {
         br0.useDHCP = true;
+        "${cfg.interface}".useDHCP = true;
+        wlo1.useDHCP = true;
       };
       bridges.br0.interfaces = [cfg.interface];
-      networkmanager = {
-        unmanaged = ["br0"];
+    };
+    virtualisation = {
+      libvirtd = {
+        allowedBridges = ["br0" "virbr0"];
       };
     };
   };
