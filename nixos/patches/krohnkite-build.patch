@@ -1,7 +1,15 @@
 diff --git a/Makefile b/Makefile
-index fa27440..afd5ce1 100644
+index fa27440..95ea1bf 100644
 --- a/Makefile
 +++ b/Makefile
+@@ -1,6 +1,6 @@
+ PROJECT_NAME = krohnkite
+ PROJECT_VER  = 0.9.7
+-PROJECT_REV  = $(shell git rev-parse HEAD | cut -b-7)
++PROJECT_REV  ?= $(shell git rev-parse HEAD | cut -b-7)
+ 
+ KWINPKG_FILE = $(PROJECT_NAME)-$(PROJECT_VER).kwinscript
+ KWINPKG_DIR  = pkg
 @@ -76,8 +76,7 @@ $(KWINPKG_DIR)/%:
  	@cp -v $< $@
  

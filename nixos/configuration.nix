@@ -400,7 +400,7 @@ in {
         ];
 
         buildPhase = ''
-          make package
+          PROJECT_REV=${version} make package
         '';
 
         installPhase = ''
