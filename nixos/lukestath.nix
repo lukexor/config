@@ -1,8 +1,13 @@
 { config, pkgs, lib, ... }: let
 in {
+  boot.yt6801Module.enable = true;
   networking = {
     hostName = "lukestath";
-    enableIPv6 = lib.mkForce true; # required by wgnord
+    enableIPv6 = true; # required by wgnord
+    qemuBridge = {
+      enable = true;
+      interface = "enp44s0";
+    };
   };
 
   # Install:
@@ -20,15 +25,19 @@ in {
     options = ["noauto" "user=Quickemu" "uid=1000"];
   };
 
+  hardware.nvidia.prime = {
+    sync.enable = true;
+    intelBusId = "PCI:0:2:0";
+    nvidiaBusId = "PCI:1:0:0";
+  };
+
   environment.systemPackages = with pkgs; [
     teams-for-linux
     wgnord
   ];
 
-  # boot.kernelParams = ["module_blacklist=i915"];
-  hardware.nvidia.prime = {
-    sync.enable = true;
-    intelBusId = "PCI:0:2:0";
-    nvidiaBusId = "PCI:1:0:0";
+  services = {
+    displayManager.autoLogin.enable = false; # For security
+    gaming.enable = false;
   };
 }

@@ -36,8 +36,6 @@ bootstrap_nixos() {
 
 apply_preferences() {
   xdg-settings set default-web-browser chromium.desktop
-  konsave -f -i kde-profile.knsv
-  konsave -a kde-profile
 }
 
 # TODO: Add macOs/Linux support using home-manager

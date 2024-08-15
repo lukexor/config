@@ -130,22 +130,6 @@ fish_add_path --path -ga \
     /usr/local/bin \
     /usr/local/go/bin
 
-set -gx CLICOLOR 1
-set -gx TERMINAL kitty
-set -gx VISUAL nvim
-set -gx EDITOR nvim
-set -gx PAGER "nvim +Man!"
-set -gx MANPAGER "nvim +Man!"
-set -gx LESS -RFX
-
-# Tools
-set -gx FZF_DEFAULT_OPTS "--height 50% --layout=reverse --border --inline-info"
-set -gx FZF_CTRL_T_COMMAND "rg --files --hidden"
-set -gx FZF_DEFAULT_COMMAND "rg --files --hidden"
-# NOTE: To debug rust-analyzer
-# set -gx RA_LOG "info,salsa=off,chalk=off"
-set -gx CARGO_TARGET_DIR ~/.cargo-target
-set -gx RUST_BACKTRACE full
 set -g activity_log ~/.activity_log.txt
 
 # ssh-agent
@@ -291,7 +275,8 @@ abbr -a sed sd
 abbr -a s fd --type f --exec sd
 abbr -a sshl ssh-add -L
 abbr -a _ sudo
-abbr -a vimdif nvim -d
+abbr -a vimdiff nvim -d
+abbr -a vd nvim -d
 abbr -a vim nvim
 abbr -a vi nvim
 abbr -a v nvim

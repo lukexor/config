@@ -16,7 +16,6 @@
 # sudo nixos-rebuild switch --upgrade
 { config, pkgs, lib, ... }: let
   user = "luke";
-  defaultHostname = "lukex";
   home-manager = (fetchTarball {
     url = "https://github.com/nix-community/home-manager/archive/master.tar.gz";
   });
@@ -39,7 +38,6 @@ in {
       efi.canTouchEfiVariables = true;
     };
     supportedFilesystems = ["ntfs"];
-    yt6801Module.enable = (config.networking.hostName == "lukestath");
   };
 
   nix = {
@@ -52,22 +50,12 @@ in {
   };
 
   networking = {
-    hostName = lib.mkDefault defaultHostname;
+    hostName = lib.mkDefault "luke";
     networkmanager = {
       enable = true;
       appendNameservers = ["1.1.1.1" "4.2.2.2"];
     };
-    enableIPv6 = false;
-    qemuBridge = with config.networking; {
-      enable = true;
-      interface =
-        if hostName == defaultHostname then
-          "en02"
-        else if hostName == "lukestath" then
-          "enp44s0"
-        else
-          throw "no qemuBridge interface defined for host ${hostName}";
-    };
+    enableIPv6 = lib.mkDefault false;
   };
 
   users.users.luke = {
@@ -81,11 +69,12 @@ in {
       "vboxsf"
       "wheel"
     ];
-    shell = pkgs.fish;
   };
   home-manager = {
     backupFileExtension = "bak";
     users.luke = { config, pkgs, ...}: {
+      dconf.enable = true;
+
       gtk = with pkgs; {
         enable = true;
         font = {
@@ -98,6 +87,7 @@ in {
           package = libsForQt5.breeze-gtk;
         };
       };
+
       home = {
         username = user;
         homeDirectory = "/home/${user}";
@@ -191,20 +181,25 @@ in {
   };
 
   services = {
+    clipmenu.enable = true;
     displayManager = {
-      autoLogin = {
-        enable = (config.networking.hostName == defaultHostname);
-        inherit user;
-      };
-      sddm = {
-        enable = true;
-        autoNumlock = true;
-        wayland.enable = true;
-      };
-      defaultSession = "plasma";
+      defaultSession = "none+dwm";
     };
-    desktopManager.plasma6.enable = true;
-    gaming.enable = (config.networking.hostName == defaultHostname);
+    dwm-status = {
+      enable = true;
+      order = ["cpu_load" "audio" "battery" "time"];
+      extraConfig = ''
+        [audio]
+        mute = "󰝟"
+        template = " {VOL}%"
+
+        [battery]
+        charging = ""
+        discharging = ""
+        no_battery = "󱉞"
+      '';
+    };
+    gaming.enable = lib.mkDefault true;
     libinput.enable = true; # touchpad support
     pipewire = {
       enable = true;
@@ -215,6 +210,24 @@ in {
     printing.enable = true;
     xserver = {
       enable = true;
+      windowManager.dwm = {
+        enable = true;
+        package = pkgs.dwm.override {
+          patches = [
+            ./patches/dwm.patch
+          ];
+        };
+      };
+      displayManager = {
+        lightdm = {
+          enable = true;
+          background = "/etc/wallpapers/nier-automata.png";
+          greeters.gtk.theme.name = "Adwaita-dark";
+        };
+        sessionCommands = ''
+          feh --bg-scale /home/${user}/config/wallpapers/nier-automata.png
+        '';
+      };
       videoDrivers = ["nvidia"];
       xkb = {
         layout = "us";
@@ -222,12 +235,25 @@ in {
       };
     };
   };
-  # Don't wait for network on rebuild/boot
-  systemd.services.NetworkManager-wait-online.enable = false;
+  systemd = {
+    services = {
+      # Don't wait for network on rebuild/boot
+      NetworkManager-wait-online.enable = false;
+    };
+    # In case it doesn't start
+    # systemctl --user start dwm-status
+    user.services.dwm-status = {
+      startLimitBurst = 3;
+      startLimitIntervalSec = 10;
+    };
+  };
 
   hardware = {
     bluetooth.enable = true;
-    graphics.enable = true; # enable opengl
+    graphics = {
+      enable = true; # enable opengl
+      enable32Bit = true; # for wine
+    };
     nvidia = {
       powerManagement = {
         enable = true; # Fixes black screen crashe when resuming from sleep
@@ -243,6 +269,16 @@ in {
 
   programs = {
     appimage.enable = true;
+    bash = {
+      # See https://nixos.wiki/wiki/Fish#Setting_fish_as_your_shell
+      interactiveShellInit = ''
+        if [[ $(${pkgs.procps}/bin/ps --no-header --pid=$PPID --format=comm) != "fish" && -z ''${BASH_EXECUTION_STRING} ]]
+        then
+          shopt -q login_shell && LOGIN_OPTION='--login' || LOGIN_OPTION=""
+          exec ${pkgs.fish}/bin/fish $LOGIN_OPTION
+        fi
+      '';
+    };
     chromium = {
       enable = true;
       enablePlasmaBrowserIntegration = true;
@@ -250,7 +286,6 @@ in {
         "eimadpbcbfnmbkopoojfekhnkhdbieeh" # dark reader
         "hdokiejnpimakedhajhdlcegeplioahd" # lastpass
         "ennpfpdlaclocpomkiablnmbppdnlhoh" # rust search extension
-        "cimiefiiaegbelhefglklhhakcgmhkai" # plasma integration
       ];
       extraOpts = {
        PasswordManagerEnabled = false;
@@ -287,154 +322,183 @@ in {
 
   nixpkgs = {
     config.allowUnfree = true;
-    overlays = [];
+    overlays = [
+      (import (fetchTarball "https://github.com/oxalica/rust-overlay/archive/master.tar.gz"))
+    ];
   };
-  environment.systemPackages = with pkgs; let
-    apps = with pkgs; [
-      chromium
-      libreoffice
-      kitty
-      maestral # dropbox client
-      maestral-gui
-      ncspot
-    ];
-    development = with pkgs; [
-      cargo-asm
-      cargo-audit
-      cargo-deny
-      cargo-expand
-      cargo-flamegraph
-      cargo-leptos
-      cargo-outdated
-      cargo-udeps
-      cargo-watch
-      cmake
-      docker
-      gcc
-      gnumake
-      just # make replacement
-      nodejs_20
-      python3
-      quickemu
-      rust-analyzer
-      rustup
-      yarn
-    ];
-    language-servers = with pkgs; [
-      eslint_d
-      lua-language-server
-      markdownlint-cli
-      nodePackages.bash-language-server
-      nodePackages.jsonlint
-      nodePackages.typescript-language-server
-      prettierd
-      protolint
-      pyright
-      shellcheck
-      stylelint
-      stylua
-      tailwindcss-language-server
-      taplo # TOML language server
-      vscode-extensions.vadimcn.vscode-lldb
-      yamllint
-      yaml-language-server
-    ];
-    utilities = with pkgs; [
-      bat # cat replacement
-      bottom # top replacement
-      bridge-utils
-      cifs-utils
-      clolcat
-      dust # du replacement
-      eza # ls replacement
-      fd # find replacement
-      fzf
-      glxinfo # To debug opengl issues
-      hexedit
-      (rustPlatform.buildRustPackage rec {
-        pname = "irust";
-        version = "1.71.23";
+  environment = {
+    # Expose extension binaries so neovim can use it instead of just vscode
+    etc.lldb.source = "${pkgs.vscode-extensions.vadimcn.vscode-lldb}/share/vscode/extensions/vadimcn.vscode-lldb";
+    systemPackages = with pkgs; let
+      apps = with pkgs; [
+        # DRM support
+        (chromium.override { enableWideVine = true; })
+        libreoffice
+        kitty
+        maestral # dropbox client
+        maestral-gui
+        ncspot
+        xfce.thunar
+        xfce.thunar-archive-plugin
+      ];
+      development = with pkgs; [
+        cargo-asm
+        cargo-audit
+        cargo-deny
+        cargo-expand
+        cargo-flamegraph
+        cargo-leptos
+        cargo-outdated
+        cargo-udeps
+        cargo-watch
+        cmake
+        # Currently failing to build
+        # cpplint
+        docker
+        gcc
+        gnumake
+        just # make replacement
+        nodejs_20
+        python3
+        quickemu
+        (rust-bin.stable.latest.default.override {
+          extensions = ["rust-analyzer" "rust-src"];
+          targets = ["wasm32-unknown-unknown" "wasm32-wasi"];
+        })
+        yarn
+      ];
+      language-servers = with pkgs; [
+        clang-tools
+        eslint_d
+        lua-language-server
+        markdownlint-cli
+        nodePackages.bash-language-server
+        nodePackages.jsonlint
+        nodePackages.typescript-language-server
+        prettierd
+        protolint
+        pyright
+        shellcheck
+        stylelint
+        stylua
+        tailwindcss-language-server
+        taplo # TOML language server
+        vscode-extensions.vadimcn.vscode-lldb
+        yamllint
+        yaml-language-server
+      ];
+      utilities = with pkgs; [
+        alsa-utils # required for dwm-status
+        bat # cat replacement
+        bottom # top replacement
+        bridge-utils
+        cifs-utils
+        clipmenu
+        clolcat
+        dmenu
+        dust # du replacement
+        dwm-status
+        eza # ls replacement
+        feh
+        fd # find replacement
+        fzf
+        glxinfo # To debug opengl issues
+        hexedit
+        (rustPlatform.buildRustPackage rec {
+          pname = "irust";
+          version = "1.71.23";
 
-        src = fetchFromGitHub {
-          owner = "sigmaSd";
-          repo = "IRust";
-          rev = version;
-          hash = "sha256-Rp1v690teNloA35eeQxZ2KOi00csGcKemcWIheeFCgY=";
-        };
+          src = fetchFromGitHub {
+            owner = "sigmaSd";
+            repo = "IRust";
+            rev = version;
+            hash = "sha256-Rp1v690teNloA35eeQxZ2KOi00csGcKemcWIheeFCgY=";
+          };
 
-        cargoHash = "sha256-Dz1bYaRD5sl1Y6kBDHm0aP6FqOQrQWBHkHo/G4Cr+/Q=";
-        doCheck = false; # Tests fail trying to import dependencies
+          cargoHash = "sha256-Dz1bYaRD5sl1Y6kBDHm0aP6FqOQrQWBHkHo/G4Cr+/Q=";
+          doCheck = false; # Tests fail trying to import dependencies
 
-        meta = with lib; {
-          description = "Cross Platform Rust Repl";
-          homepage = "https://github.com/sigmaSd/IRust";
-          license = licenses.mit;
-          maintainers = ["sigmaSd"];
-          mainProgram = "irust";
-        };
-      })
-      jumpapp
-      libsForQt5.kconfig # for kwriteconfig5
-      # Not fully moved to plasma6 yet: https://github.com/NixOS/nixpkgs/issues/324406
-      (stdenv.mkDerivation rec {
-        name = "krohnkite";
+          meta = with lib; {
+            description = "Cross Platform Rust Repl";
+            homepage = "https://github.com/sigmaSd/IRust";
+            license = licenses.mit;
+            maintainers = ["sigmaSd"];
+            mainProgram = "irust";
+          };
+        })
+        jumpapp
+        # libsForQt5.kconfig # for kwriteconfig5
+        # # Not fully moved to plasma6 yet: https://github.com/NixOS/nixpkgs/issues/324406
+        # (stdenv.mkDerivation rec {
+        #   name = "krohnkite";
 
-        version = "0.9.7";
-        src = fetchFromGitHub {
-          owner = "anametologin";
-          repo = "krohnkite";
-          rev = version;
-          hash = "sha256-8A3zW5tK8jK9fSxYx28b8uXGsvxEoUYybU0GaMD2LNw=";
-        };
+        #   version = "0.9.7";
+        #   src = fetchFromGitHub {
+        #     owner = "anametologin";
+        #     repo = "krohnkite";
+        #     rev = version;
+        #     hash = "sha256-8A3zW5tK8jK9fSxYx28b8uXGsvxEoUYybU0GaMD2LNw=";
+        #   };
 
-        dontWrapQtApps = true;
-        buildInputs = with kdePackages; [
-          kpackage
-          kwin
-          kwindowsystem
-          p7zip
-          typescript
-        ];
-        patches = [
-          ./patches/krohnkite-build.patch
-        ];
+        #   dontWrapQtApps = true;
+        #   buildInputs = with kdePackages; [
+        #     kpackage
+        #     kwin
+        #     kwindowsystem
+        #     p7zip
+        #     typescript
+        #   ];
+        #   patches = [
+        #     ./patches/krohnkite-build.patch
+        #   ];
 
-        buildPhase = ''
-          PROJECT_REV=${version} make package
-        '';
+        #   buildPhase = ''
+        #     PROJECT_REV=${version} make package
+        #   '';
 
-        installPhase = ''
-          kpackagetool6 -t KWin/Script -i krohnkite-${version}.kwinscript -p $out/share/kwin/scripts
-        '';
+        #   installPhase = ''
+        #     kpackagetool6 -t KWin/Script -i krohnkite-${version}.kwinscript -p $out/share/kwin/scripts
+        #   '';
 
-        meta = with lib; {
-          description = "Dynamic tiling extension for KWin";
-          license = licenses.mit;
-          maintainers = [];
-          inherit (src.meta) homepage;
-          inherit (kdePackages.kwindowsystem.meta) platforms;
-        };
-      })
-      konsave # to save/restore kde profile
-      mprocs # run multiple processes in parallel
-      procs # ps replacement
-      ripgrep
-      sd # sed replacement
-      starship
-      tealdeer # tldr in rust
-      tokei # code statistics
-      unzip
-      xclip # required for neovim clipboard support
-      xh # curl replacement
-    ];
-  in
-    apps ++
-    development ++
-    language-servers ++
-    utilities
-  ;
-  # Expose extension binaries so neovim can use it instead of just vscode
-  environment.etc.lldb.source = "${pkgs.vscode-extensions.vadimcn.vscode-lldb}/share/vscode/extensions/vadimcn.vscode-lldb";
+        #   meta = with lib; {
+        #     description = "Dynamic tiling extension for KWin";
+        #     license = licenses.mit;
+        #     maintainers = [];
+        #     inherit (src.meta) homepage;
+        #     inherit (kdePackages.kwindowsystem.meta) platforms;
+        #   };
+        # })
+        mprocs # run multiple processes in parallel
+        procs # ps replacement
+        ripgrep
+        sd # sed replacement
+        starship
+        tealdeer # tldr in rust
+        tokei # code statistics
+        unzip
+        upower # required by dwm-status
+        xclip # required for neovim clipboard support
+        xh # curl replacement
+      ];
+    in
+      apps ++
+      development ++
+      language-servers ++
+      utilities;
+    variables = {
+      CARGO_TARGET_DIR = "/home/${user}/.cargo-target";
+      EDITOR = "nvim";
+      FZF_CTRL_T_COMMAND = "rg --files --hidden";
+      FZF_DEFAULT_COMMAND = "rg --files --hidden";
+      FZF_DEFAULT_OPTS = "--height 50% --layout=reverse --border --inline-info";
+      LESS = "-RFX";
+      MANPAGER = "nvim +Man!";
+      PAGER = "nvim +Man!";
+      RUST_BACKTRACE = "full";
+      TERMINAL = "kitty";
+      VISUAL = "nvim";
+    };
+  };
 
   virtualisation = {
     docker.enable = true;
@@ -452,7 +516,7 @@ in {
 
   console = with pkgs; {
     packages = [terminus_font];
-    font = "${terminus_font}/share/consolefonts/ter-i12n.psf.gz";
+    font = "${terminus_font}/share/consolefonts/ter-i14b.psf.gz";
     useXkbConfig = true;
   };
   fonts = {

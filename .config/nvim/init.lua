@@ -833,7 +833,8 @@ require("lazy").setup({
       lint.linters_by_ft = {
         bash = { "shellcheck" },
         css = { "stylelint" },
-        cpp = { "cpplint" },
+        -- TODO: re-enable when build succeeds on nixos
+        -- cpp = { "cpplint" },
         glslc = { "glslc" },
         html = { "tidy_xml" },
         xml = { "tidy_xml" },
