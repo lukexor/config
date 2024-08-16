@@ -1,9 +1,9 @@
 { config, pkgs, lib, ... }: let
-  cfg = config.networking.qemuBridge;
+  cfg = config.networking.qemu;
 in {
   options = {
     networking = {
-      qemuBridge = {
+      qemu = {
         enable = lib.mkOption {
           default = false;
           type = with lib.types; bool;
@@ -26,7 +26,7 @@ in {
 
   config = lib.mkIf cfg.enable {
     warnings = lib.optionals (cfg.interface == null || cfg.interface == "") [''
-      You have enabled the qemuBridge networking option but not specified an interface.
+      You have enabled the qemu networking option but not specified an interface.
     ''];
 
     networking = {
@@ -37,11 +37,8 @@ in {
         wlo1.useDHCP = true;
       };
       bridges.br0.interfaces = [cfg.interface];
+      networkmanager.unmanaged = ["br0" cfg.interface];
     };
-    virtualisation = {
-      libvirtd = {
-        allowedBridges = ["br0" "virbr0"];
-      };
-    };
+    virtualisation.libvirtd.allowedBridges = ["br0" "virbr0"];
   };
 }
