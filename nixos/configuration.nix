@@ -11,6 +11,7 @@
 #
 # Channels:
 # sudo nix-channel --add https://nixos.org/channels/nixos-unstable nixos
+# sudo nix-channel --add https://channels.nixos.org/nixpkgs-unstable
 # sudo nix-channel --update
 #
 # sudo nixos-rebuild switch --upgrade
@@ -183,7 +184,11 @@ in {
   services = {
     clipmenu.enable = true;
     displayManager = {
+      autoLogin.user = user;
       defaultSession = "none+dwm";
+      sddm = {
+        enable = true;
+      };
     };
     dwm-status = {
       enable = true;
@@ -219,16 +224,22 @@ in {
         };
       };
       displayManager = {
-        lightdm = {
-          enable = true;
-          background = "/etc/wallpapers/nier-automata.png";
-          greeters.gtk.theme.name = "Adwaita-dark";
-        };
         sessionCommands = ''
           feh --bg-scale /home/${user}/config/wallpapers/nier-automata.png
         '';
       };
       videoDrivers = ["nvidia"];
+      xautolock = {
+        enable = true;
+        time = 5;
+        extraOptions = [
+          "-detectsleep"
+          "-lockaftersleep"
+        ];
+        nowlocker = "/run/wrappers/bin/slock";
+        locker = "/run/wrappers/bin/slock";
+        killer = "/run/current-system/systemd/bin/systemctl suspend";
+      };
       xkb = {
         layout = "us";
         variant = "";
@@ -242,10 +253,7 @@ in {
     };
     # In case it doesn't start
     # systemctl --user start dwm-status
-    user.services.dwm-status = {
-      startLimitBurst = 3;
-      startLimitIntervalSec = 10;
-    };
+    user.services.dwm-status.serviceConfig.Restart = "always";
   };
 
   hardware = {
@@ -316,6 +324,7 @@ in {
       withNodeJs = true;
       withPython3 = true;
     };
+    slock.enable = true;
     ssh.startAgent = true;
     starship.enable = true;
   };
@@ -395,12 +404,13 @@ in {
         cifs-utils
         clipmenu
         clolcat
-        dmenu
+        dmenu # dynamic menu
         dust # du replacement
         dwm-status
         eza # ls replacement
         feh
         fd # find replacement
+        flameshot # screenshot util
         fzf
         glxinfo # To debug opengl issues
         hexedit
@@ -427,56 +437,17 @@ in {
           };
         })
         jumpapp
-        # libsForQt5.kconfig # for kwriteconfig5
-        # # Not fully moved to plasma6 yet: https://github.com/NixOS/nixpkgs/issues/324406
-        # (stdenv.mkDerivation rec {
-        #   name = "krohnkite";
-
-        #   version = "0.9.7";
-        #   src = fetchFromGitHub {
-        #     owner = "anametologin";
-        #     repo = "krohnkite";
-        #     rev = version;
-        #     hash = "sha256-8A3zW5tK8jK9fSxYx28b8uXGsvxEoUYybU0GaMD2LNw=";
-        #   };
-
-        #   dontWrapQtApps = true;
-        #   buildInputs = with kdePackages; [
-        #     kpackage
-        #     kwin
-        #     kwindowsystem
-        #     p7zip
-        #     typescript
-        #   ];
-        #   patches = [
-        #     ./patches/krohnkite-build.patch
-        #   ];
-
-        #   buildPhase = ''
-        #     PROJECT_REV=${version} make package
-        #   '';
-
-        #   installPhase = ''
-        #     kpackagetool6 -t KWin/Script -i krohnkite-${version}.kwinscript -p $out/share/kwin/scripts
-        #   '';
-
-        #   meta = with lib; {
-        #     description = "Dynamic tiling extension for KWin";
-        #     license = licenses.mit;
-        #     maintainers = [];
-        #     inherit (src.meta) homepage;
-        #     inherit (kdePackages.kwindowsystem.meta) platforms;
-        #   };
-        # })
         mprocs # run multiple processes in parallel
         procs # ps replacement
         ripgrep
         sd # sed replacement
+        slock # screen locker
         starship
         tealdeer # tldr in rust
         tokei # code statistics
         unzip
         upower # required by dwm-status
+        xautolock # auto lock
         xclip # required for neovim clipboard support
         xh # curl replacement
       ];

@@ -1,5 +1,5 @@
 diff --git a/config.def.h b/config.def.h
-index 9efa774..aac6ab3 100644
+index 9efa774..6cd6c20 100644
 --- a/config.def.h
 +++ b/config.def.h
 @@ -1,12 +1,14 @@
@@ -49,20 +49,22 @@ index 9efa774..aac6ab3 100644
  	/* class      instance    title       tags mask     isfloating   monitor */
 -	{ "Gimp",     NULL,       NULL,       0,            1,           -1 },
 -	{ "Firefox",  NULL,       NULL,       1 << 8,       0,           -1 },
-+	{ "",  NULL,       NULL,       1 << 8,       0,           -1 },
++	{ NULL,       NULL,       NULL,       0,            0,           -1 },
  };
  
  /* layout(s) */
-@@ -58,43 +73,53 @@ static const Layout layouts[] = {
+@@ -58,43 +73,56 @@ static const Layout layouts[] = {
  /* commands */
  static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
  static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
 -static const char *termcmd[]  = { "st", NULL };
 +static const char *termcmd[]  = { "kitty", NULL };
-+static const char *clipmenu[]  = { "clipmenu", NULL };
++static const char *chromiumcmd[]  = { "chromium", NULL };
++static const char *clipmenucmd[]  = { "clipmenu", NULL };
 +static const char *mutecmd[] = { "amixer", "-q", "set", "Master", "toggle", NULL };
 +static const char *volupcmd[] = { "amixer", "-q", "set", "Master", "5%+", "unmute", NULL };
 +static const char *voldowncmd[] = { "amixer", "-q", "set", "Master", "5%-", "unmute", NULL };
++static const char *flameshotcmd[] = { "flameshot", "gui", NULL };
  
  static const Key keys[] = {
 -	/* modifier                     key        function        argument */
@@ -102,6 +104,7 @@ index 9efa774..aac6ab3 100644
 +	/* modifier                     key                        function        argument */
 +	{ MODKEY,                       XK_space,                  spawn,          {.v = dmenucmd } },
 +	{ MODKEY|ShiftMask,             XK_Return,                 spawn,          {.v = termcmd } },
++	{ MODKEY|ShiftMask,             XK_c,                      spawn,          {.v = chromiumcmd } },
 +	{ MODKEY,                       XK_b,                      togglebar,      {0} },
 +	{ MODKEY,                       XK_j,                      focusstack,     {.i = +1 } },
 +	{ MODKEY,                       XK_k,                      focusstack,     {.i = -1 } },
@@ -111,11 +114,10 @@ index 9efa774..aac6ab3 100644
 +	{ MODKEY,                       XK_l,                      setmfact,       {.f = +0.05} },
 +	{ MODKEY,                       XK_Return,                 zoom,           {0} },
 +	{ MODKEY,                       XK_Tab,                    view,           {0} },
-+	{ MODKEY|ShiftMask,             XK_c,                      killclient,     {0} },
++	{ MODKEY|ShiftMask,             XK_w,                      killclient,     {0} },
 +	{ MODKEY,                       XK_t,                      setlayout,      {.v = &layouts[0]} },
 +	{ MODKEY,                       XK_f,                      setlayout,      {.v = &layouts[1]} },
 +	{ MODKEY,                       XK_m,                      setlayout,      {.v = &layouts[2]} },
-+	{ MODKEY,                       XK_space,                  setlayout,      {0} },
 +	{ MODKEY|ShiftMask,             XK_space,                  togglefloating, {0} },
 +	{ MODKEY,                       XK_0,                      view,           {.ui = ~0 } },
 +	{ MODKEY|ShiftMask,             XK_0,                      tag,            {.ui = ~0 } },
@@ -124,7 +126,8 @@ index 9efa774..aac6ab3 100644
 +	{ MODKEY|ShiftMask,             XK_comma,                  tagmon,         {.i = -1 } },
 +	{ MODKEY|ShiftMask,             XK_period,                 tagmon,         {.i = +1 } },
 +	{ MODKEY,                       XK_n,                      togglealttag,   {0} },
-+	{ Mod4Mask|ShiftMask,           XK_v,                      spawn,          {.v = clipmenu } },
++	{ Mod4Mask|ShiftMask,           XK_v,                      spawn,          {.v = clipmenucmd } },
++	{ Mod4Mask|ShiftMask,           XK_p,                      spawn,          {.v = flameshotcmd } },
 +	TAGKEYS(                        XK_1,                                      0)
 +	TAGKEYS(                        XK_2,                                      1)
 +	TAGKEYS(                        XK_3,                                      2)
@@ -143,7 +146,7 @@ index 9efa774..aac6ab3 100644
  
  /* button definitions */
 diff --git a/dwm.c b/dwm.c
-index 67c6b2b..eb86210 100644
+index 67c6b2b..b506cf2 100644
 --- a/dwm.c
 +++ b/dwm.c
 @@ -130,6 +130,7 @@ struct Monitor {
@@ -246,7 +249,7 @@ index 67c6b2b..eb86210 100644
  	int boxs = drw->fonts->h / 9;
  	int boxw = drw->fonts->h / 6 + 2;
  	unsigned int i, occ = 0, urg = 0;
-@@ -722,8 +757,9 @@ drawbar(Monitor *m)
+@@ -722,10 +757,11 @@ drawbar(Monitor *m)
  	x = 0;
  	for (i = 0; i < LENGTH(tags); i++) {
  		w = TEXTW(tags[i]);
@@ -256,8 +259,11 @@ index 67c6b2b..eb86210 100644
 +		drw_setscheme(drw, (m->tagset[m->seltags] & 1 << i ? tagscheme[i] : scheme[SchemeNorm]));
 +		drw_text(drw, x, 0, w, bh, wdelta + lrpad / 2, (selmon->alttag ? tagsalt[i] : tags[i]), urg & 1 << i);
  		if (occ & 1 << i)
- 			drw_rect(drw, x + boxs, boxs, boxw, boxw,
+-			drw_rect(drw, x + boxs, boxs, boxw, boxw,
++			drw_rect(drw, x + boxw, 0, w - ( 2 * boxw + 1), 2,
  				m == selmon && selmon->sel && selmon->sel->tags & 1 << i,
+ 				urg & 1 << i);
+ 		x += w;
 @@ -1012,6 +1048,25 @@ keypress(XEvent *e)
  			keys[i].func(&(keys[i].arg));
  }
