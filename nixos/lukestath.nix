@@ -4,7 +4,7 @@ in {
   networking = {
     hostName = "lukestath";
     enableIPv6 = true; # required by wgnord
-    qemuBridge = {
+    qemu = {
       enable = true;
       interface = "enp44s0";
     };
@@ -25,6 +25,10 @@ in {
     options = ["noauto" "user=Quickemu" "uid=1000"];
   };
 
+  systemd.sleep.extraConfig = ''
+    AllowHibernation=no
+    AllowSuspendThenHibernate=no
+  '';
   hardware.nvidia.prime = {
     sync.enable = true;
     intelBusId = "PCI:0:2:0";

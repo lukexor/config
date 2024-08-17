@@ -54,7 +54,7 @@ in {
     hostName = lib.mkDefault "luke";
     networkmanager = {
       enable = true;
-      appendNameservers = ["1.1.1.1" "4.2.2.2"];
+      insertNameservers = ["1.1.1.1" "4.2.2.2"];
     };
     enableIPv6 = lib.mkDefault false;
   };
@@ -264,7 +264,7 @@ in {
     };
     nvidia = {
       powerManagement = {
-        enable = true; # Fixes black screen crashe when resuming from sleep
+        enable = lib.mkDefault true; # Fixes black screen crashe when resuming from sleep
       };
     };
     nvidia-container-toolkit.enable = true; # Nvidia GPU passthrough
