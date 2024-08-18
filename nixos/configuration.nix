@@ -52,10 +52,7 @@ in {
 
   networking = {
     hostName = lib.mkDefault "luke";
-    networkmanager = {
-      enable = true;
-      insertNameservers = ["1.1.1.1" "4.2.2.2"];
-    };
+    networkmanager.enable = true;
     enableIPv6 = lib.mkDefault false;
   };
 
@@ -188,7 +185,7 @@ in {
       ly = {
         enable = true;
         settings = {
-          animation = "matrix";
+          animation = "doom";
           clear_password = "true";
           clock = "%Y-%m-%d %X";
           numlock = "true";
