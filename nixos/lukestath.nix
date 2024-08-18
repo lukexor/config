@@ -25,10 +25,11 @@ in {
     options = ["noauto" "user=Quickemu" "uid=1000"];
   };
 
-  systemd.sleep.extraConfig = ''
-    AllowHibernation=no
-    AllowSuspendThenHibernate=no
-  '';
+  services.xserver.dpi = 150;
+  environment.variables = {
+    GDK_SCALE = "2.0";
+    GDK_DPI_SCALE = ".5";
+  };
   hardware.nvidia.prime = {
     sync.enable = true;
     intelBusId = "PCI:0:2:0";

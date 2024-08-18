@@ -180,18 +180,7 @@ in {
 
   services = {
     clipmenu.enable = true;
-    displayManager = {
-      defaultSession = "none+dwm";
-      ly = {
-        enable = true;
-        settings = {
-          animation = "doom";
-          clear_password = "true";
-          clock = "%Y-%m-%d %X";
-          numlock = "true";
-        };
-      };
-    };
+    displayManager.defaultSession = "none+dwm";
     dwm-status = {
       enable = true;
       order = ["cpu_load" "audio" "battery" "time"];
@@ -226,8 +215,13 @@ in {
         };
       };
       displayManager = {
+        lightdm = {
+          enable = true;
+          background = "/etc/wallpapers/nier-automata.png";
+          greeters.gtk.theme.name = "Adwaita-dark";
+        };
         sessionCommands = ''
-          feh --bg-scale /home/${user}/config/wallpapers/nier-automata.png
+          feh --bg-scale /etc/wallpapers/nier-automata.png
         '';
       };
       videoDrivers = ["nvidia"];
@@ -253,6 +247,10 @@ in {
       # Don't wait for network on rebuild/boot
       NetworkManager-wait-online.enable = false;
     };
+    sleep.extraConfig = ''
+      AllowHibernation=no
+      AllowSuspendThenHibernate=no
+    '';
     # In case it doesn't start
     # systemctl --user start dwm-status
     user.services.dwm-status.serviceConfig.Restart = "always";
@@ -440,6 +438,7 @@ in {
         })
         jumpapp
         mprocs # run multiple processes in parallel
+        networkmanager_dmenu
         procs # ps replacement
         ripgrep
         sd # sed replacement
