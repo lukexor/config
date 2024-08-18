@@ -184,10 +184,15 @@ in {
   services = {
     clipmenu.enable = true;
     displayManager = {
-      autoLogin.user = user;
       defaultSession = "none+dwm";
-      sddm = {
+      ly = {
         enable = true;
+        settings = {
+          animation = "matrix";
+          clear_password = "true";
+          clock = "%Y-%m-%d %X";
+          numlock = "true";
+        };
       };
     };
     dwm-status = {
