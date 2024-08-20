@@ -180,7 +180,10 @@ in {
 
   services = {
     clipmenu.enable = true;
-    displayManager.defaultSession = "none+dwm";
+    displayManager = {
+      autoLogin.user = user;
+      defaultSession = "none+dwm";
+    };
     dwm-status = {
       enable = true;
       order = ["cpu_load" "audio" "battery" "time"];
@@ -216,20 +219,20 @@ in {
       '';
       windowManager.dwm = {
         enable = true;
-        package = pkgs.dwm.override {
-          patches = [
+        package = pkgs.dwm.overrideAttrs (prev: {
+          patches = prev.patches or [] ++ [
             ./patches/dwm.patch
           ];
-        };
+        });
       };
       displayManager = {
         lightdm = {
           enable = true;
-          background = "/etc/wallpapers/nier-automata.png";
+          background = "/etc/wallpapers/login.png";
           greeters.gtk.theme.name = "Adwaita-dark";
         };
         sessionCommands = ''
-          feh --bg-scale /etc/wallpapers/nier-automata.png
+          feh --bg-scale /etc/wallpapers/desktop.png
         '';
       };
       videoDrivers = ["nvidia"];
@@ -319,6 +322,7 @@ in {
     gnupg.agent.enable = true;
     direnv = {
       enable = true;
+      enableFishIntegration = true;
       nix-direnv.enable = true;
     };
     firefox.enable = true;
@@ -332,7 +336,16 @@ in {
       withNodeJs = true;
       withPython3 = true;
     };
-    slock.enable = true;
+    # screen locker
+    slock = {
+      enable = true;
+      package = pkgs.slock.overrideAttrs (prev: {
+        buildInputs = prev.buildInputs or [] ++ [pkgs.imlib2];
+        patches = prev.patches or [] ++ [
+          ./patches/slock.patch
+        ];
+      });
+    };
     ssh.startAgent = true;
     starship.enable = true;
     thunar = {
@@ -352,11 +365,25 @@ in {
   };
   environment = {
     # Expose extension binaries so neovim can use it instead of just vscode
-    etc.lldb.source = "${pkgs.vscode-extensions.vadimcn.vscode-lldb}/share/vscode/extensions/vadimcn.vscode-lldb";
+    etc = {
+      lldb.source = "${pkgs.vscode-extensions.vadimcn.vscode-lldb}/share/vscode/extensions/vadimcn.vscode-lldb";
+      "wallpapers/login.png" = {
+        user = "nobody";
+        group = "nobody";
+        mode = "0644";
+        source = "/home/${user}/config/wallpapers/nier-automata.png";
+      };
+      "wallpapers/desktop.png" = {
+        user = "nobody";
+        group = "nobody";
+        mode = "0644";
+        source = "/home/${user}/config/wallpapers/nier-automata.png";
+      };
+    };
     systemPackages = with pkgs; let
       apps = with pkgs; [
         # DRM support
-        (chromium.override { enableWideVine = true; })
+        (chromium.overrideAttrs { enableWideVine = true; })
         libreoffice
         kitty
         maestral # dropbox client
@@ -457,7 +484,6 @@ in {
         procs # ps replacement
         ripgrep
         sd # sed replacement
-        slock # screen locker
         starship
         tealdeer # tldr in rust
         tokei # code statistics
