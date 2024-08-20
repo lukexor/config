@@ -206,6 +206,14 @@ in {
     printing.enable = true;
     xserver = {
       enable = true;
+      extraConfig = ''
+        Section "InputClass"
+          Identifier "game mouse speed"
+          MatchDriver "libinput"
+          MatchProduct "SINOWEALTH Game Mouse"
+          Option "AccelSpeed" "-0.75"
+        EndSection
+      '';
       windowManager.dwm = {
         enable = true;
         package = pkgs.dwm.override {
@@ -243,16 +251,16 @@ in {
     };
   };
   systemd = {
-    services = {
-      # Don't wait for network on rebuild/boot
-      NetworkManager-wait-online.enable = false;
+    # Fixes suspend/resume freezing
+    services = let serviceConfig = {
+      Environment = "SYSTEMD_SLEEP_FREEZE_USER_SESSIONS=false";
+    }; in {
+      systemd-suspend = { inherit serviceConfig; };
+      systemd-hibernate = { inherit serviceConfig; };
+      systemd-hybrid-sleep = { inherit serviceConfig; };
+      systemd-suspend-then-hibernate = { inherit serviceConfig; };
     };
-    sleep.extraConfig = ''
-      AllowHibernation=no
-      AllowSuspendThenHibernate=no
-    '';
-    # In case it doesn't start
-    # systemctl --user start dwm-status
+    # alsa "Master" is not always available immediately at boot
     user.services.dwm-status.serviceConfig.Restart = "always";
   };
 
@@ -327,6 +335,13 @@ in {
     slock.enable = true;
     ssh.startAgent = true;
     starship.enable = true;
+    thunar = {
+      enable = true;
+      plugins = with pkgs.xfce; [
+        thunar-archive-plugin
+        thunar-volman
+      ];
+    };
   };
 
   nixpkgs = {
@@ -348,7 +363,6 @@ in {
         maestral-gui
         ncspot
         xfce.thunar
-        xfce.thunar-archive-plugin
       ];
       development = with pkgs; [
         cargo-asm
@@ -439,6 +453,7 @@ in {
         jumpapp
         mprocs # run multiple processes in parallel
         networkmanager_dmenu
+        pciutils
         procs # ps replacement
         ripgrep
         sd # sed replacement
@@ -473,7 +488,11 @@ in {
   };
 
   virtualisation = {
-    docker.enable = true;
+    docker = {
+      enable = true;
+      enableOnBoot = false;
+      autoPrune.enable = true;
+    };
     libvirtd.enable = true;
   };
   security.wrappers = {

@@ -1,6 +1,9 @@
 { config, pkgs, lib, ... }: let
 in {
-  boot.yt6801Module.enable = true;
+  boot = {
+    initrd.kernelModules = ["intel_lpss_pci"];
+    yt6801Module.enable = true;
+  };
   networking = {
     hostName = "lukestath";
     enableIPv6 = true; # required by wgnord
