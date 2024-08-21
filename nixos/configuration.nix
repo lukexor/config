@@ -356,6 +356,10 @@ in {
       ];
     };
   };
+  xdg.mime.defaultApplications = {
+    "application/pdf" = "chromium-browser.desktop";
+    "inode/directory" = "thunar.desktop";
+  };
 
   nixpkgs = {
     config.allowUnfree = true;
@@ -438,7 +442,7 @@ in {
         yaml-language-server
       ];
       utilities = with pkgs; [
-        alsa-utils # required for dwm-status
+        alsa-utils # for volume control
         bat # cat replacement
         bottom # top replacement
         bridge-utils
@@ -488,7 +492,7 @@ in {
         tealdeer # tldr in rust
         tokei # code statistics
         unzip
-        upower # required by dwm-status
+        upower # for battery status
         xautolock # auto lock
         xclip # required for neovim clipboard support
         xh # curl replacement
