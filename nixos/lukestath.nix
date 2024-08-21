@@ -37,15 +37,15 @@ in {
       teams-for-linux
       wgnord
     ];
-    variables = {
-      GDK_SCALE = "2.0";
-      GDK_DPI_SCALE = ".5";
-    };
   };
 
   services = {
-    displayManager.autoLogin.enable = false; # For security
-    xserver.dpi = 150;
+    displayManager.autoLogin.enable = lib.mkForce false; # For security
+    xserver.displayManager.sessionCommands = ''
+      ${pkgs.xorg.xrdb}/bin/xrdb -merge <<EOF
+      Xft.dpi: 144
+      EOF
+    '';
     gaming.enable = false;
   };
 }
