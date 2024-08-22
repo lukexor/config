@@ -51,7 +51,7 @@ in {
   };
 
   networking = {
-    hostName = lib.mkDefault "luke";
+    hostName = lib.mkDefault "lukex";
     networkmanager.enable = true;
     enableIPv6 = lib.mkDefault false;
   };
@@ -64,6 +64,7 @@ in {
       "kvm"
       "libvirtd"
       "qemu"
+      "video"
       "vboxsf"
       "wheel"
     ];
@@ -179,10 +180,37 @@ in {
   };
 
   services = {
+    blueman.enable = true;
     clipmenu.enable = true;
+    gaming.enable = lib.mkDefault true;
+    gnome.gnome-keyring.enable = true;
+    logind.killUserProcesses = true;
+    libinput.enable = true; # touchpad support
+    pipewire = {
+      enable = true;
+      alsa = {
+        enable = true;
+        support32Bit = true;
+      };
+      pulse.enable = true;
+      jack.enable = true;
+    };
+    printing.enable = true;
+  };
+
+  services = {
     displayManager = {
-      autoLogin.user = user;
+      # autoLogin.user = user;
       defaultSession = "none+dwm";
+      ly = {
+        enable = true;
+        settings = {
+          animation = "doom";
+          clear_password = true;
+          clock = "%Y-%m-%d %X";
+          numlock = true;
+        };
+      };
     };
     dwm-status = {
       enable = true;
@@ -198,16 +226,17 @@ in {
         no_battery = "󱉞"
       '';
     };
-    gaming.enable = lib.mkDefault true;
-    libinput.enable = true; # touchpad support
-    pipewire = {
-      enable = true;
-      alsa.enable = true;
-      pulse.enable = true;
-      jack.enable = false;
-    };
-    printing.enable = true;
     xserver = {
+      displayManager = {
+        # lightdm = {
+        #   enable = true;
+        #   background = "/etc/wallpapers/login.png";
+        #   greeters.gtk.theme.name = "Adwaita-dark";
+        # };
+        sessionCommands = ''
+          feh --bg-scale /etc/wallpapers/desktop.png
+        '';
+      };
       enable = true;
       extraConfig = ''
         Section "InputClass"
@@ -217,6 +246,40 @@ in {
           Option "AccelSpeed" "-0.75"
         EndSection
       '';
+      videoDrivers = ["nvidia"];
+      # Alt+Space           demenu
+      # Alt+Shift+Return    terminal
+      # Alt+Shift+C         chormium
+      # Alt+B               toggle dwm bar
+      # Alt+J               next stack focus
+      # Alt+K               prev stack focus
+      # Alt+I               increment master count
+      # Alt+D               decrement master count
+      # Alt+H               shrink master size
+      # Alt+L               grow master size
+      # Alt+Super+0         toggle gaps
+      # Alt+Return          toggle zoom
+      # Alt+Tab             alternate tag view
+      # Alt+Shift+W         kill application
+      # Alt+T               tile layout
+      # Alt+F               floating layout
+      # Alt+M               monocle layout
+      # Alt+Shift+Space     toggle floating
+      # Alt+0               view all tags
+      # Alt+Shift+0         apply all tags
+      # Alt+.               prev monitor focus
+      # Alt+,               next monitor focus
+      # Alt+Shift+.         prev monitor tag
+      # Alt+Shift+,         next monitor tag
+      # Alt+N               show tag numbers
+      # Super+Shift+V       clipmenu
+      # Super+Shift+P       screenshot
+      # Alt+#               view tag # (optional combo)
+      # Alt+Ctrl+#          toggle view tag #
+      # Alt+Shift+#         apply tag # (optional combo)
+      # Alt+Ctrl+Shift+#    toggle apply tag #
+      # Alt+Shift+R         restart dwm
+      # Alt+Shift+Q         kill dwm
       windowManager.dwm = {
         enable = true;
         package = pkgs.dwm.overrideAttrs (prev: {
@@ -225,17 +288,6 @@ in {
           ];
         });
       };
-      displayManager = {
-        lightdm = {
-          enable = true;
-          background = "/etc/wallpapers/login.png";
-          greeters.gtk.theme.name = "Adwaita-dark";
-        };
-        sessionCommands = ''
-          feh --bg-scale /etc/wallpapers/desktop.png
-        '';
-      };
-      videoDrivers = ["nvidia"];
       xautolock = {
         enable = true;
         time = 5;
@@ -250,9 +302,11 @@ in {
       xkb = {
         layout = "us";
         variant = "";
+        options = "caps:escape";
       };
     };
   };
+
   systemd = {
     # Fixes suspend/resume freezing
     services = let serviceConfig = {
@@ -268,7 +322,10 @@ in {
   };
 
   hardware = {
-    bluetooth.enable = true;
+    bluetooth = {
+      enable = true;
+      powerOnBoot = true;
+    };
     graphics = {
       enable = true; # enable opengl
       enable32Bit = true; # for wine
@@ -482,6 +539,7 @@ in {
           };
         })
         jumpapp
+        lsof
         mprocs # run multiple processes in parallel
         networkmanager_dmenu
         pciutils
@@ -493,6 +551,7 @@ in {
         tokei # code statistics
         unzip
         upower # for battery status
+        usbutils
         xautolock # auto lock
         xclip # required for neovim clipboard support
         xh # curl replacement
@@ -536,6 +595,7 @@ in {
   };
 
   console = with pkgs; {
+    earlySetup = true;
     packages = [terminus_font];
     font = "${terminus_font}/share/consolefonts/ter-i14b.psf.gz";
     useXkbConfig = true;
