@@ -1,9 +1,9 @@
 { config, pkgs, lib, ... }: let
 in {
   boot = {
-    initrd.kernelModules = ["intel_lpss_pci"];
     yt6801Module.enable = true;
   };
+
   networking = {
     hostName = "lukestath";
     enableIPv6 = true; # required by wgnord
@@ -14,7 +14,8 @@ in {
   };
 
   hardware.nvidia.prime = {
-    sync.enable = true;
+    reverseSync.enable = true;
+    allowExternalGpu = false;
     intelBusId = "PCI:0:2:0";
     nvidiaBusId = "PCI:1:0:0";
   };
@@ -44,8 +45,11 @@ in {
     xserver.displayManager.sessionCommands = ''
       ${pkgs.xorg.xrdb}/bin/xrdb -merge <<EOF
       Xft.dpi: 144
+      Xcursor.size: 32
       EOF
     '';
     gaming.enable = false;
+    theme.background.terminal = "eve-online.png";
+    theme.background.desktop = "rain-cyber-city.png";
   };
 }

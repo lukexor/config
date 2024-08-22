@@ -265,9 +265,7 @@ abbr -a k kubectl
 abbr -a mkdir mkdir -p
 abbr -a myip curl -s api.ipify.org
 abbr -a nci npm ci
-abbr -a ni npm i
-abbr -a nr npm run
-abbr -a ns npm start
+abbr -a ns nix-shell --command \"exec fish\"
 abbr -a ps procs
 abbr -a py python3
 abbr -a rd rmdir

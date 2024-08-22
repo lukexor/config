@@ -32,7 +32,6 @@ in {
   ]
   ++ modules
   ++ lib.optionals (builtins.pathExists host-config) [host-config];
-
   boot = {
     loader = {
       systemd-boot.enable = true;
@@ -65,8 +64,8 @@ in {
       "kvm"
       "libvirtd"
       "qemu"
-      "video"
       "vboxsf"
+      "video"
       "wheel"
     ];
   };
@@ -82,10 +81,10 @@ in {
           package = dejavu_fonts;
         };
         gtk2.configLocation = "${config.xdg.configHome}/gtk-2.0/gtkrc";
-        theme = {
-          name = "Breeze-Dark";
-          package = libsForQt5.breeze-gtk;
-        };
+        # theme = {
+        #   name = "Breeze-Dark";
+        #   package = libsForQt5.breeze-gtk;
+        # };
       };
 
       home = {
@@ -228,16 +227,11 @@ in {
       '';
     };
     xserver = {
-      displayManager = {
-        # lightdm = {
-        #   enable = true;
-        #   background = "/etc/wallpapers/login.png";
-        #   greeters.gtk.theme.name = "Adwaita-dark";
-        # };
-        sessionCommands = ''
-          feh --bg-scale /etc/wallpapers/desktop.png
-        '';
-      };
+      # displayManager = {
+      #   sessionCommands = ''
+      #     feh --bg-scale /etc/wallpapers/desktop.png
+      #   '';
+      # };
       enable = true;
       extraConfig = ''
         Section "InputClass"
@@ -427,25 +421,11 @@ in {
   };
   environment = {
     # Expose extension binaries so neovim can use it instead of just vscode
-    etc = {
-      lldb.source = "${pkgs.vscode-extensions.vadimcn.vscode-lldb}/share/vscode/extensions/vadimcn.vscode-lldb";
-      "wallpapers/login.png" = {
-        user = "nobody";
-        group = "nobody";
-        mode = "0644";
-        source = "/home/${user}/config/wallpapers/nier-automata.png";
-      };
-      "wallpapers/desktop.png" = {
-        user = "nobody";
-        group = "nobody";
-        mode = "0644";
-        source = "/home/${user}/config/wallpapers/nier-automata.png";
-      };
-    };
+    etc.lldb.source = "${pkgs.vscode-extensions.vadimcn.vscode-lldb}/share/vscode/extensions/vadimcn.vscode-lldb";
     systemPackages = with pkgs; let
       apps = with pkgs; [
         # DRM support
-        (chromium.overrideAttrs { enableWideVine = true; })
+        (chromium.override { enableWideVine = true; })
         libreoffice
         kitty
         maestral # dropbox client
@@ -467,10 +447,13 @@ in {
         # Currently failing to build
         # cpplint
         docker
+        docker-client
         gcc
         gnumake
         just # make replacement
         nodejs_20
+        nvidia-docker
+        nvidia-container-toolkit
         python3
         quickemu
         (rust-bin.stable.latest.default.override {
