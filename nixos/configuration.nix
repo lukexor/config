@@ -61,6 +61,7 @@ in {
     home = "/home/${user}";
     description = "Luke";
     extraGroups = [
+      "docker"
       "kvm"
       "libvirtd"
       "qemu"
