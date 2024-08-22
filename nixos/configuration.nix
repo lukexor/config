@@ -64,6 +64,7 @@ in {
       "kvm"
       "libvirtd"
       "qemu"
+      "video"
       "vboxsf"
       "wheel"
     ];
@@ -121,14 +122,6 @@ in {
           "bin" = {
             source = mkOutOfStoreSymlink "${config}/bin";
             recursive = true;
-          };
-          ".xinitrc" = {
-            text = ''
-              #!/usr/bin/env sh
-              feh --bg-scale /etc/wallpapers/desktop.png
-              exec dwm
-            '';
-            executable = true;
           };
         };
       };
@@ -189,6 +182,36 @@ in {
   services = {
     blueman.enable = true;
     clipmenu.enable = true;
+    gaming.enable = lib.mkDefault true;
+    gnome.gnome-keyring.enable = true;
+    logind.killUserProcesses = true;
+    libinput.enable = true; # touchpad support
+    pipewire = {
+      enable = true;
+      alsa = {
+        enable = true;
+        support32Bit = true;
+      };
+      pulse.enable = true;
+      jack.enable = true;
+    };
+    printing.enable = true;
+  };
+
+  services = {
+    displayManager = {
+      # autoLogin.user = user;
+      defaultSession = "none+dwm";
+      ly = {
+        enable = true;
+        settings = {
+          animation = "doom";
+          clear_password = true;
+          clock = "%Y-%m-%d %X";
+          numlock = true;
+        };
+      };
+    };
     dwm-status = {
       enable = true;
       order = ["cpu_load" "audio" "battery" "time"];
@@ -203,35 +226,17 @@ in {
         no_battery = "󱉞"
       '';
     };
-    gaming.enable = lib.mkDefault true;
-    greetd = {
-      enable = true;
-      settings = rec {
-        initial_session.command = ''
-          ${pkgs.greetd.tuigreet}/bin/tuigreet \
-            --remember \
-            --remember-session \
-            --time \
-            --asterisks \
-            --theme border='white;text=cyan;prompt=green;time=red;action=blue;button=yellow;container=black;input=red' \
-            --cmd dwm
-        '';
-        default_session = initial_session;
-      };
-    };
-    logind.killUserProcesses = true;
-    libinput.enable = true; # touchpad support
-    pipewire = {
-      enable = true;
-      alsa = {
-        enable = true;
-        support32Bit = true;
-      };
-      pulse.enable = true;
-      jack.enable = true;
-    };
-    printing.enable = true;
     xserver = {
+      displayManager = {
+        # lightdm = {
+        #   enable = true;
+        #   background = "/etc/wallpapers/login.png";
+        #   greeters.gtk.theme.name = "Adwaita-dark";
+        # };
+        sessionCommands = ''
+          feh --bg-scale /etc/wallpapers/desktop.png
+        '';
+      };
       enable = true;
       extraConfig = ''
         Section "InputClass"
@@ -241,6 +246,7 @@ in {
           Option "AccelSpeed" "-0.75"
         EndSection
       '';
+      videoDrivers = ["nvidia"];
       # Alt+Space           demenu
       # Alt+Shift+Return    terminal
       # Alt+Shift+C         chormium
@@ -282,8 +288,6 @@ in {
           ];
         });
       };
-      displayManager.startx.enable = true; # required for tuigreet
-      videoDrivers = ["nvidia"];
       xautolock = {
         enable = true;
         time = 5;
@@ -298,9 +302,11 @@ in {
       xkb = {
         layout = "us";
         variant = "";
+        options = "caps:escape";
       };
     };
   };
+
   systemd = {
     # Fixes suspend/resume freezing
     services = let serviceConfig = {
@@ -509,7 +515,6 @@ in {
         flameshot # screenshot util
         fzf
         glxinfo # To debug opengl issues
-        greetd.tuigreet
         hexedit
         (rustPlatform.buildRustPackage rec {
           pname = "irust";
