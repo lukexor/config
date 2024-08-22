@@ -51,7 +51,7 @@ in {
   };
 
   networking = {
-    hostName = lib.mkDefault "luke";
+    hostName = lib.mkDefault "lukex";
     networkmanager.enable = true;
     enableIPv6 = lib.mkDefault false;
   };
@@ -122,6 +122,14 @@ in {
             source = mkOutOfStoreSymlink "${config}/bin";
             recursive = true;
           };
+          ".xinitrc" = {
+            text = ''
+              #!/usr/bin/env sh
+              feh --bg-scale /etc/wallpapers/desktop.png
+              exec dwm
+            '';
+            executable = true;
+          };
         };
       };
 
@@ -179,11 +187,8 @@ in {
   };
 
   services = {
+    blueman.enable = true;
     clipmenu.enable = true;
-    displayManager = {
-      autoLogin.user = user;
-      defaultSession = "none+dwm";
-    };
     dwm-status = {
       enable = true;
       order = ["cpu_load" "audio" "battery" "time"];
@@ -199,12 +204,31 @@ in {
       '';
     };
     gaming.enable = lib.mkDefault true;
+    greetd = {
+      enable = true;
+      settings = rec {
+        initial_session.command = ''
+          ${pkgs.greetd.tuigreet}/bin/tuigreet \
+            --remember \
+            --remember-session \
+            --time \
+            --asterisks \
+            --theme border='white;text=cyan;prompt=green;time=red;action=blue;button=yellow;container=black;input=red' \
+            --cmd dwm
+        '';
+        default_session = initial_session;
+      };
+    };
+    logind.killUserProcesses = true;
     libinput.enable = true; # touchpad support
     pipewire = {
       enable = true;
-      alsa.enable = true;
+      alsa = {
+        enable = true;
+        support32Bit = true;
+      };
       pulse.enable = true;
-      jack.enable = false;
+      jack.enable = true;
     };
     printing.enable = true;
     xserver = {
@@ -217,6 +241,39 @@ in {
           Option "AccelSpeed" "-0.75"
         EndSection
       '';
+      # Alt+Space           demenu
+      # Alt+Shift+Return    terminal
+      # Alt+Shift+C         chormium
+      # Alt+B               toggle dwm bar
+      # Alt+J               next stack focus
+      # Alt+K               prev stack focus
+      # Alt+I               increment master count
+      # Alt+D               decrement master count
+      # Alt+H               shrink master size
+      # Alt+L               grow master size
+      # Alt+Super+0         toggle gaps
+      # Alt+Return          toggle zoom
+      # Alt+Tab             alternate tag view
+      # Alt+Shift+W         kill application
+      # Alt+T               tile layout
+      # Alt+F               floating layout
+      # Alt+M               monocle layout
+      # Alt+Shift+Space     toggle floating
+      # Alt+0               view all tags
+      # Alt+Shift+0         apply all tags
+      # Alt+.               prev monitor focus
+      # Alt+,               next monitor focus
+      # Alt+Shift+.         prev monitor tag
+      # Alt+Shift+,         next monitor tag
+      # Alt+N               show tag numbers
+      # Super+Shift+V       clipmenu
+      # Super+Shift+P       screenshot
+      # Alt+#               view tag # (optional combo)
+      # Alt+Ctrl+#          toggle view tag #
+      # Alt+Shift+#         apply tag # (optional combo)
+      # Alt+Ctrl+Shift+#    toggle apply tag #
+      # Alt+Shift+R         restart dwm
+      # Alt+Shift+Q         kill dwm
       windowManager.dwm = {
         enable = true;
         package = pkgs.dwm.overrideAttrs (prev: {
@@ -225,16 +282,7 @@ in {
           ];
         });
       };
-      displayManager = {
-        lightdm = {
-          enable = true;
-          background = "/etc/wallpapers/login.png";
-          greeters.gtk.theme.name = "Adwaita-dark";
-        };
-        sessionCommands = ''
-          feh --bg-scale /etc/wallpapers/desktop.png
-        '';
-      };
+      displayManager.startx.enable = true; # required for tuigreet
       videoDrivers = ["nvidia"];
       xautolock = {
         enable = true;
@@ -268,7 +316,10 @@ in {
   };
 
   hardware = {
-    bluetooth.enable = true;
+    bluetooth = {
+      enable = true;
+      powerOnBoot = true;
+    };
     graphics = {
       enable = true; # enable opengl
       enable32Bit = true; # for wine
@@ -458,6 +509,7 @@ in {
         flameshot # screenshot util
         fzf
         glxinfo # To debug opengl issues
+        greetd.tuigreet
         hexedit
         (rustPlatform.buildRustPackage rec {
           pname = "irust";
@@ -482,6 +534,7 @@ in {
           };
         })
         jumpapp
+        lsof
         mprocs # run multiple processes in parallel
         networkmanager_dmenu
         pciutils
@@ -493,6 +546,7 @@ in {
         tokei # code statistics
         unzip
         upower # for battery status
+        usbutils
         xautolock # auto lock
         xclip # required for neovim clipboard support
         xh # curl replacement
@@ -536,6 +590,7 @@ in {
   };
 
   console = with pkgs; {
+    earlySetup = true;
     packages = [terminus_font];
     font = "${terminus_font}/share/consolefonts/ter-i14b.psf.gz";
     useXkbConfig = true;
