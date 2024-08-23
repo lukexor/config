@@ -81,10 +81,6 @@ in {
           package = dejavu_fonts;
         };
         gtk2.configLocation = "${config.xdg.configHome}/gtk-2.0/gtkrc";
-        # theme = {
-        #   name = "Breeze-Dark";
-        #   package = libsForQt5.breeze-gtk;
-        # };
       };
 
       home = {
@@ -180,6 +176,8 @@ in {
   };
 
   services = {
+    autorandr.enable = true;
+    spice-autorandr.enable = true;
     blueman.enable = true;
     clipmenu.enable = true;
     gaming.enable = lib.mkDefault true;
@@ -200,7 +198,6 @@ in {
 
   services = {
     displayManager = {
-      # autoLogin.user = user;
       defaultSession = "none+dwm";
       ly = {
         enable = true;
@@ -227,11 +224,6 @@ in {
       '';
     };
     xserver = {
-      # displayManager = {
-      #   sessionCommands = ''
-      #     feh --bg-scale /etc/wallpapers/desktop.png
-      #   '';
-      # };
       enable = true;
       extraConfig = ''
         Section "InputClass"
@@ -422,6 +414,9 @@ in {
   environment = {
     # Expose extension binaries so neovim can use it instead of just vscode
     etc.lldb.source = "${pkgs.vscode-extensions.vadimcn.vscode-lldb}/share/vscode/extensions/vadimcn.vscode-lldb";
+    pathsToLink = [
+      "/home/${user}/.cargo/bin"
+    ];
     systemPackages = with pkgs; let
       apps = with pkgs; [
         # DRM support
@@ -524,6 +519,7 @@ in {
         })
         jumpapp
         lsof
+        lshw
         mprocs # run multiple processes in parallel
         networkmanager_dmenu
         pciutils

@@ -19,7 +19,7 @@ index 9855e21..67c496f 100644
 +static const int timetocancel = 5;
 +
 +/* Background image path, should be available to the user above */
-+static const char* background_image = "/etc/wallpapers/login.png";
++static const char* background_image = "/etc/wallpapers/desktop.png";
 diff --git a/config.mk b/config.mk
 index 514c236..db0641c 100644
 --- a/config.mk

@@ -33,6 +33,7 @@ in {
       # $ sudo mount /mnt/preveil
       "mntph" = "sudo mount -t cifs //192.168.0.67/PreVeil /mnt/preveil -o username=Quickemu,uid=1000";
       "mntpw" = "sudo mount -t cifs //10.133.220.213/PreVeil /mnt/preveil -o username=Quickemu,uid=1000";
+      "umntp" = "sudo umount -l /mnt/previl";
     };
     systemPackages = with pkgs; [
       teams-for-linux
@@ -41,6 +42,53 @@ in {
   };
 
   services = {
+    autorandr.profiles = let
+      primary = {
+        enable = true;
+        primary = true;
+        position = "0x0";
+        mode = "2560x1600";
+        rate = "60.00";
+        crtc = 0;
+      };
+    in {
+      single = {
+        fingerprint.eDP1 = "*";
+        config.eDP-1 = primary;
+      };
+      home = {
+        fingerprint = {
+          eDP1 = "*";
+          HDMI-1-0 = "*";
+        };
+        config = {
+          eDP-1 = primary;
+          HDMI-1-0 = {
+            enable = true;
+            position = "2560x0";
+            mode = "2560x1440";
+            rate = "60.00";
+            crtc = 4;
+          };
+        };
+      };
+      work = {
+        fingerprint = {
+          eDP1 = "*";
+          DP-1-0 = "*";
+        };
+        config = {
+          eDP-1 = primary;
+          DP-1-0 = {
+            enable = true;
+            position = "2560x0";
+            mode = "3840x2160";
+            rate = "60.00";
+            crtc = 4;
+          };
+        };
+      };
+    };
     displayManager.autoLogin.enable = lib.mkForce false; # For security
     xserver.displayManager.sessionCommands = ''
       ${pkgs.xorg.xrdb}/bin/xrdb -merge <<EOF
