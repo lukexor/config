@@ -14,8 +14,8 @@ in {
   };
 
   hardware.nvidia.prime = {
-    reverseSync.enable = true;
-    allowExternalGpu = false;
+    offload.enable = true;
+    offload.enableOffloadCmd = true;
     intelBusId = "PCI:0:2:0";
     nvidiaBusId = "PCI:1:0:0";
   };
@@ -48,6 +48,7 @@ in {
         primary = true;
         position = "0x0";
         mode = "2560x1600";
+        dpi = 120; # split the difference between 96 and 144
         rate = "60.00";
         crtc = 0;
       };
@@ -58,7 +59,7 @@ in {
       };
       home = {
         fingerprint = {
-          eDP1 = "*";
+          eDP-1 = "*";
           HDMI-1-0 = "*";
         };
         config = {
@@ -74,7 +75,7 @@ in {
       };
       work = {
         fingerprint = {
-          eDP1 = "*";
+          eDP-1 = "*";
           DP-1-0 = "*";
         };
         config = {
@@ -89,10 +90,9 @@ in {
         };
       };
     };
-    displayManager.autoLogin.enable = lib.mkForce false; # For security
     xserver.displayManager.sessionCommands = ''
       ${pkgs.xorg.xrdb}/bin/xrdb -merge <<EOF
-      Xft.dpi: 144
+      Xft.dpi: 120
       Xcursor.size: 32
       EOF
     '';

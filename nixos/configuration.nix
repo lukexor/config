@@ -33,6 +33,13 @@ in {
   ++ modules
   ++ lib.optionals (builtins.pathExists host-config) [host-config];
   boot = {
+    kernelPatches = [
+      {
+        name = "rust support";
+        patch = null;
+        features = { rust = true; };
+      }
+    ];
     loader = {
       systemd-boot.enable = true;
       efi.canTouchEfiVariables = true;
@@ -61,10 +68,9 @@ in {
     description = "Luke";
     extraGroups = [
       "docker"
-      "kvm"
       "libvirtd"
-      "qemu"
-      "vboxsf"
+      "networkmanager"
+      "qemu-libvirtd"
       "video"
       "wheel"
     ];
@@ -183,7 +189,14 @@ in {
     gaming.enable = lib.mkDefault true;
     gnome.gnome-keyring.enable = true;
     logind.killUserProcesses = true;
-    libinput.enable = true; # touchpad support
+    libinput = {
+      enable = true; # touchpad support
+      touchpad = {
+        tapping = false;
+        disableWhileTyping = true;
+      };
+      mouse.accelSpeed = "-0.75";
+    };
     pipewire = {
       enable = true;
       alsa = {
@@ -225,14 +238,6 @@ in {
     };
     xserver = {
       enable = true;
-      extraConfig = ''
-        Section "InputClass"
-          Identifier "game mouse speed"
-          MatchDriver "libinput"
-          MatchProduct "SINOWEALTH Game Mouse"
-          Option "AccelSpeed" "-0.75"
-        EndSection
-      '';
       videoDrivers = ["nvidia"];
       # Alt+Space           demenu
       # Alt+Shift+Return    terminal
@@ -269,8 +274,8 @@ in {
       # Alt+Shift+Q         kill dwm
       windowManager.dwm = {
         enable = true;
-        package = pkgs.dwm.overrideAttrs (prev: {
-          patches = prev.patches or [] ++ [
+        package = (pkgs.dwm.override {
+          patches = [
             ./patches/dwm.patch
           ];
         });
@@ -296,9 +301,11 @@ in {
 
   systemd = {
     # Fixes suspend/resume freezing
-    services = let serviceConfig = {
-      Environment = "SYSTEMD_SLEEP_FREEZE_USER_SESSIONS=false";
-    }; in {
+    services = let
+      serviceConfig = {
+        Environment = "SYSTEMD_SLEEP_FREEZE_USER_SESSIONS=false";
+      };
+    in {
       systemd-suspend = { inherit serviceConfig; };
       systemd-hibernate = { inherit serviceConfig; };
       systemd-hybrid-sleep = { inherit serviceConfig; };
@@ -317,11 +324,7 @@ in {
       enable = true; # enable opengl
       enable32Bit = true; # for wine
     };
-    nvidia = {
-      powerManagement = {
-        enable = lib.mkDefault true; # Fixes black screen crashe when resuming from sleep
-      };
-    };
+    nvidia.powerManagement.enable = lib.mkDefault true; # Fixes black screen crashe when resuming from sleep
     nvidia-container-toolkit.enable = true; # Nvidia GPU passthrough
     pulseaudio.enable = false; # Must be disabled to use pipewire
   };
@@ -331,17 +334,6 @@ in {
   };
 
   programs = {
-    appimage.enable = true;
-    bash = {
-      # See https://nixos.wiki/wiki/Fish#Setting_fish_as_your_shell
-      interactiveShellInit = ''
-        if [[ $(${pkgs.procps}/bin/ps --no-header --pid=$PPID --format=comm) != "fish" && -z ''${BASH_EXECUTION_STRING} ]]
-        then
-          shopt -q login_shell && LOGIN_OPTION='--login' || LOGIN_OPTION=""
-          exec ${pkgs.fish}/bin/fish $LOGIN_OPTION
-        fi
-      '';
-    };
     chromium = {
       enable = true;
       enablePlasmaBrowserIntegration = true;
@@ -363,7 +355,10 @@ in {
       };
     };
     dconf.enable = true;
-    gnupg.agent.enable = true;
+    gnupg.agent = {
+      enable = true;
+      enableSSHSupport = true;
+    };
     direnv = {
       enable = true;
       enableFishIntegration = true;
@@ -372,6 +367,7 @@ in {
     firefox.enable = true;
     fish.enable = true;
     git.enable = true;
+    light.enable = true; # brightness controls
     neovim = {
       enable = true;
       defaultEditor = true;
@@ -385,12 +381,11 @@ in {
       enable = true;
       package = pkgs.slock.overrideAttrs (prev: {
         buildInputs = prev.buildInputs or [] ++ [pkgs.imlib2];
-        patches = prev.patches or [] ++ [
+        patches = [
           ./patches/slock.patch
         ];
       });
     };
-    ssh.startAgent = true;
     starship.enable = true;
     thunar = {
       enable = true;
@@ -400,9 +395,21 @@ in {
       ];
     };
   };
-  xdg.mime.defaultApplications = {
-    "application/pdf" = "chromium-browser.desktop";
-    "inode/directory" = "thunar.desktop";
+
+  xdg = {
+    mime.defaultApplications = {
+      "application/pdf" = "chromium-browser.desktop";
+      "inode/directory" = "thunar.desktop";
+    };
+    portal = {
+      enable = true;
+      wlr.enable = true; # required for screensharing on Wayland
+      config.common = {
+        default = [
+          "gtk"
+        ];
+      };
+    };
   };
 
   nixpkgs = {
@@ -462,6 +469,8 @@ in {
         eslint_d
         lua-language-server
         markdownlint-cli
+        nil # Nix
+        nixpkgs-fmt
         nodePackages.bash-language-server
         nodePackages.jsonlint
         nodePackages.typescript-language-server
@@ -489,7 +498,7 @@ in {
         dust # du replacement
         dwm-status
         eza # ls replacement
-        feh
+        feh # image viewer/wallpaper manager
         fd # find replacement
         flameshot # screenshot util
         fzf
@@ -517,9 +526,8 @@ in {
             mainProgram = "irust";
           };
         })
-        jumpapp
-        lsof
-        lshw
+        lsof # list open files
+        lshw # list hardware configuration
         mprocs # run multiple processes in parallel
         networkmanager_dmenu
         pciutils
@@ -583,10 +591,12 @@ in {
   fonts = {
     enableDefaultPackages = true;
     packages = with pkgs; [
-      (nerdfonts.override { fonts = [
-        "DejaVuSansMono"
-        "RobotoMono"
-      ]; })
+      (nerdfonts.override {
+        fonts = [
+          "DejaVuSansMono"
+          "RobotoMono"
+        ];
+      })
     ];
     fontDir.enable = true;
     fontconfig = {

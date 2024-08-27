@@ -40,7 +40,7 @@ index 9efa774..c4adfd6 100644
 +};
 +
 +static const char *const autostart[] = {
-+	"kitty -1", NULL,
++	"/run/current-system/sw/bin/kitty -1", NULL,
 +	NULL /* terminate */
 +};
  
@@ -74,13 +74,13 @@ index 9efa774..c4adfd6 100644
  static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
  static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
 -static const char *termcmd[]  = { "st", NULL };
-+static const char *termcmd[]  = { "kitty", NULL };
-+static const char *chromiumcmd[]  = { "chromium", NULL };
-+static const char *clipmenucmd[]  = { "clipmenu", NULL };
-+static const char *mutecmd[] = { "amixer", "-q", "set", "Master", "toggle", NULL };
-+static const char *volupcmd[] = { "amixer", "-q", "set", "Master", "5%+", "unmute", NULL };
-+static const char *voldowncmd[] = { "amixer", "-q", "set", "Master", "5%-", "unmute", NULL };
-+static const char *flameshotcmd[] = { "flameshot", "gui", NULL };
++static const char *termcmd[]  = { "/run/current-system/sw/bin/kitty", NULL };
++static const char *chromiumcmd[]  = { "/run/current-system/sw/bin/chromium", NULL };
++static const char *clipmenucmd[]  = { "/run/current-system/sw/bin/clipmenu", NULL };
++static const char *mutecmd[] = { "/run/current-system/sw/bin/amixer", "-q", "set", "Master", "toggle", NULL };
++static const char *volupcmd[] = { "/run/current-system/sw/bin/amixer", "-q", "set", "Master", "5%+", "unmute", NULL };
++static const char *voldowncmd[] = { "/run/current-system/sw/bin/amixer", "-q", "set", "Master", "5%-", "unmute", NULL };
++static const char *flameshotcmd[] = { "/run/current-system/sw/bin/flameshot", "gui", NULL };
  
  static const Key keys[] = {
 -	/* modifier                     key        function        argument */
