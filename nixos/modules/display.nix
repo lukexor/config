@@ -10,13 +10,13 @@
         order = ["cpu_load" "audio" "battery" "time"];
         extraConfig = ''
           [audio]
-          mute = "<U+F075F>"
-          template = "<U+F028> {VOL}%"
+          mute = "󰝟"
+          template = " {VOL}%"
 
           [battery]
-          charging = "<U+F102>"
-          discharging = "<U+F103>"
-          no_battery = "<U+F125E>"
+          charging = "󰄿"
+          discharging = "󰄼"
+          no_battery = "󱉝"
         '';
       };
       xserver = {
