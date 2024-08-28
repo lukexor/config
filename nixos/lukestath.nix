@@ -1,8 +1,6 @@
 { config, pkgs, lib, ... }: let
 in {
-  boot = {
-    yt6801Module.enable = true;
-  };
+  boot.yt6801.enable = true;
 
   networking = {
     hostName = "lukestath";
@@ -20,25 +18,30 @@ in {
     nvidiaBusId = "PCI:1:0:0";
   };
 
+  display.protocol = "x11";
   environment = {
     shellAliases = {
       # Install:
       # $ cd ~/vms && quickget windows 11
       # $ quickemu --vm /home/luke/config/vms/windows-11.conf
-      # Install PreVeil and share it on the network as `PreVeil`
+      # $ sudo mkdir -p /mnt/windows
       # $ sudo mkdir -p /mnt/preveil
+      # $ sudo ln -s /mnt/windows/Users/Quickemu/PreVeil-luke.petherbridge@statheros.tech /mnt/preveil
+      # $ sudo modprobe nbd max_part=1
+      # $ sudo qemu-nbd --connect=/dev/nbd0 ~/vms/windows-11/disk.qcow2
+      # $ sudo fdisk /dev/nbd0 -l
+      # $ sudo mount /dev/nbd0p4 /mnt/windows
       #
-      # Restart headless and mount (pw: quickemu):
-      # $ quickemu --vm /home/luke/config/vms/windows-11.conf --display none
-      # $ sudo mount /mnt/preveil
-      "mntph" = "sudo mount -t cifs //192.168.0.67/PreVeil /mnt/preveil -o username=Quickemu,uid=1000";
-      "mntpw" = "sudo mount -t cifs //10.133.220.213/PreVeil /mnt/preveil -o username=Quickemu,uid=1000";
-      "umntp" = "sudo umount -l /mnt/previl";
+      "mntp" = "sudo mount -t cifs //192.168.0.67/PreVeil /mnt/preveil -o username=Quickemu,uid=1000";
     };
     systemPackages = with pkgs; [
       teams-for-linux
       wgnord
     ];
+    theme.background = {
+      terminal = "eve-online.png";
+      desktop = "rain-cyber-city.png";
+    };
   };
 
   services = {
@@ -90,14 +93,12 @@ in {
         };
       };
     };
+    gaming.enable = false;
     xserver.displayManager.sessionCommands = ''
       ${pkgs.xorg.xrdb}/bin/xrdb -merge <<EOF
       Xft.dpi: 120
       Xcursor.size: 32
       EOF
     '';
-    gaming.enable = false;
-    theme.background.terminal = "eve-online.png";
-    theme.background.desktop = "rain-cyber-city.png";
   };
 }

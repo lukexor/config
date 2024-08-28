@@ -1,9 +1,9 @@
 { config, pkgs, lib, ... }: let
-  cfg = config.boot.yt6801Module;
+  cfg = config.boot.yt6801;
   yt6801 = config.boot.kernelPackages.callPackage ../derivations/yt6801 {};
 in {
   options = {
-    boot.yt6801Module = {
+    boot.yt6801= {
       enable = lib.mkOption {
         default = false;
         type = with lib.types; bool;

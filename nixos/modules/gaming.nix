@@ -4,7 +4,7 @@ in {
   options = {
     services.gaming = {
       enable = lib.mkOption {
-        default = false;
+        default = true;
         type = with lib.types; bool;
         description = ''
           Set up gaming dependencies (Steam, lutris, etc).

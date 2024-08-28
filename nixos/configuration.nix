@@ -15,6 +15,39 @@
 # sudo nix-channel --update
 #
 # sudo nixos-rebuild switch --upgrade
+#
+# Alt+Space           wmenu
+# Alt+Shift+Return    terminal
+# Alt+Shift+C         chormium
+# Alt+J               next stack focus
+# Alt+K               prev stack focus
+# Alt+I               increment master count
+# Alt+D               decrement master count
+# Alt+H               shrink master size
+# Alt+L               grow master size
+# Alt+Super+0         toggle gaps
+# Alt+Return          toggle zoom
+# Alt+Tab             alternate tag view
+# Alt+Shift+W         kill application
+# Alt+T               tile layout
+# Alt+F               floating layout
+# Alt+M               monocle layout
+# Alt+Shift+Space     toggle floating
+# Alt+0               view all tags
+# Alt+Shift+0         apply all tags
+# Alt+.               prev monitor focus
+# Alt+,               next monitor focus
+# Alt+Shift+.         prev monitor tag
+# Alt+Shift+,         next monitor tag
+# Alt+N               show tag numbers
+# Super+Shift+V       clipmenu
+# Super+Shift+P       screenshot
+# Alt+#               view tag # (optional combo)
+# Alt+Ctrl+#          toggle view tag #
+# Alt+Shift+#         apply tag # (optional combo)
+# Alt+Ctrl+Shift+#    toggle apply tag #
+# Alt+Shift+R         restart dwm
+# Alt+Shift+Q         kill dwm
 { config, pkgs, lib, ... }: let
   user = "luke";
   home-manager = (fetchTarball {
@@ -186,7 +219,6 @@ in {
     spice-autorandr.enable = true;
     blueman.enable = true;
     clipmenu.enable = true;
-    gaming.enable = lib.mkDefault true;
     gnome.gnome-keyring.enable = true;
     logind.killUserProcesses = true;
     libinput = {
@@ -209,96 +241,6 @@ in {
     printing.enable = true;
   };
 
-  services = {
-    displayManager = {
-      defaultSession = "none+dwm";
-      ly = {
-        enable = true;
-        settings = {
-          animation = "doom";
-          clear_password = true;
-          clock = "%Y-%m-%d %X";
-          numlock = true;
-        };
-      };
-    };
-    dwm-status = {
-      enable = true;
-      order = ["cpu_load" "audio" "battery" "time"];
-      extraConfig = ''
-        [audio]
-        mute = "󰝟"
-        template = " {VOL}%"
-
-        [battery]
-        charging = ""
-        discharging = ""
-        no_battery = "󱉞"
-      '';
-    };
-    xserver = {
-      enable = true;
-      videoDrivers = ["nvidia"];
-      # Alt+Space           demenu
-      # Alt+Shift+Return    terminal
-      # Alt+Shift+C         chormium
-      # Alt+B               toggle dwm bar
-      # Alt+J               next stack focus
-      # Alt+K               prev stack focus
-      # Alt+I               increment master count
-      # Alt+D               decrement master count
-      # Alt+H               shrink master size
-      # Alt+L               grow master size
-      # Alt+Super+0         toggle gaps
-      # Alt+Return          toggle zoom
-      # Alt+Tab             alternate tag view
-      # Alt+Shift+W         kill application
-      # Alt+T               tile layout
-      # Alt+F               floating layout
-      # Alt+M               monocle layout
-      # Alt+Shift+Space     toggle floating
-      # Alt+0               view all tags
-      # Alt+Shift+0         apply all tags
-      # Alt+.               prev monitor focus
-      # Alt+,               next monitor focus
-      # Alt+Shift+.         prev monitor tag
-      # Alt+Shift+,         next monitor tag
-      # Alt+N               show tag numbers
-      # Super+Shift+V       clipmenu
-      # Super+Shift+P       screenshot
-      # Alt+#               view tag # (optional combo)
-      # Alt+Ctrl+#          toggle view tag #
-      # Alt+Shift+#         apply tag # (optional combo)
-      # Alt+Ctrl+Shift+#    toggle apply tag #
-      # Alt+Shift+R         restart dwm
-      # Alt+Shift+Q         kill dwm
-      windowManager.dwm = {
-        enable = true;
-        package = (pkgs.dwm.override {
-          patches = [
-            ./patches/dwm.patch
-          ];
-        });
-      };
-      xautolock = {
-        enable = true;
-        time = 5;
-        extraOptions = [
-          "-detectsleep"
-          "-lockaftersleep"
-        ];
-        nowlocker = "/run/wrappers/bin/slock";
-        locker = "/run/wrappers/bin/slock";
-        killer = "/run/current-system/systemd/bin/systemctl suspend";
-      };
-      xkb = {
-        layout = "us";
-        variant = "";
-        options = "caps:escape";
-      };
-    };
-  };
-
   systemd = {
     # Fixes suspend/resume freezing
     services = let
@@ -311,8 +253,6 @@ in {
       systemd-hybrid-sleep = { inherit serviceConfig; };
       systemd-suspend-then-hibernate = { inherit serviceConfig; };
     };
-    # alsa "Master" is not always available immediately at boot
-    user.services.dwm-status.serviceConfig.Restart = "always";
   };
 
   hardware = {
@@ -334,6 +274,16 @@ in {
   };
 
   programs = {
+    bash = {
+      # See https://nixos.wiki/wiki/Fish#Setting_fish_as_your_shell
+      interactiveShellInit = ''
+        if [[ $(${pkgs.procps}/bin/ps --no-header --pid=$PPID --format=comm) != "fish" && -z ''${BASH_EXECUTION_STRING} ]]
+        then
+          shopt -q login_shell && LOGIN_OPTION='--login' || LOGIN_OPTION=""
+          exec ${pkgs.fish}/bin/fish $LOGIN_OPTION
+        fi
+      '';
+    };
     chromium = {
       enable = true;
       enablePlasmaBrowserIntegration = true;
@@ -376,40 +326,11 @@ in {
       withNodeJs = true;
       withPython3 = true;
     };
-    # screen locker
-    slock = {
-      enable = true;
-      package = pkgs.slock.overrideAttrs (prev: {
-        buildInputs = prev.buildInputs or [] ++ [pkgs.imlib2];
-        patches = [
-          ./patches/slock.patch
-        ];
-      });
-    };
     starship.enable = true;
-    thunar = {
-      enable = true;
-      plugins = with pkgs.xfce; [
-        thunar-archive-plugin
-        thunar-volman
-      ];
-    };
   };
 
-  xdg = {
-    mime.defaultApplications = {
-      "application/pdf" = "chromium-browser.desktop";
-      "inode/directory" = "thunar.desktop";
-    };
-    portal = {
-      enable = true;
-      wlr.enable = true; # required for screensharing on Wayland
-      config.common = {
-        default = [
-          "gtk"
-        ];
-      };
-    };
+  xdg.mime.defaultApplications = {
+    "application/pdf" = "chromium-browser.desktop";
   };
 
   nixpkgs = {
@@ -431,9 +352,7 @@ in {
         libreoffice
         kitty
         maestral # dropbox client
-        maestral-gui
         ncspot
-        xfce.thunar
       ];
       development = with pkgs; [
         cargo-asm
@@ -490,13 +409,15 @@ in {
         alsa-utils # for volume control
         bat # cat replacement
         bottom # top replacement
-        bridge-utils
-        cifs-utils
-        clipmenu
+        cifs-utils # manage cifs filesystems
         clolcat
-        dmenu # dynamic menu
         dust # du replacement
-        dwm-status
+        (dwl.overrideAttrs (prev: {
+          enableXWayland = true;
+          patches = [
+            ./patches/dwl.patch
+          ];
+        }))
         eza # ls replacement
         feh # image viewer/wallpaper manager
         fd # find replacement
@@ -529,8 +450,8 @@ in {
         lsof # list open files
         lshw # list hardware configuration
         mprocs # run multiple processes in parallel
-        networkmanager_dmenu
-        pciutils
+        networkmanagerapplet # GNOME applet
+        pciutils # utils to inspect pcidevices
         procs # ps replacement
         ripgrep
         sd # sed replacement
@@ -539,9 +460,10 @@ in {
         tokei # code statistics
         unzip
         upower # for battery status
-        usbutils
-        xautolock # auto lock
-        xclip # required for neovim clipboard support
+        usbutils # e.g. lsusub
+        wl-clipboard # CLI clipboard for Wayland
+        wlr-randr # xrandr for wlroots
+        wmenu # dmenu for wlroots
         xh # curl replacement
       ];
     in

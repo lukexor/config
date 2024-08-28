@@ -1,9 +1,9 @@
 { config, pkgs, lib, ... }: let
-  cfg = config.services.theme;
+  cfg = config.environment.theme;
   valid_bgs = builtins.attrNames (builtins.readDir cfg.background.path);
 in {
   options = {
-    services.theme = {
+    environment.theme = {
       background = {
         path = lib.mkOption {
           default = /home/luke/config/wallpapers;

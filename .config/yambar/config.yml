@@ -1,0 +1,77 @@
+---
+bar:
+  height: 26
+  location: top
+  spacing: 15
+  margin: 7
+  # TODO: should 12 or 14 be enough? DPI issue?
+  font: DejaVuSansM Nerd Font Mono:pixelsize=18
+  foreground: bbbbbbff
+  background: 222222ff
+  border:
+    width: 0
+    color: 444444ff
+    margin: 0
+    top-margin: 0
+  left:
+    - dwl:
+        number-of-tags: 4
+        anchors:
+          - occupied: &occupied { foreground: 57bbf4ff } # #57bbf4
+          - focused: &focused { foreground: fc65b0ff } # #fc65b0
+          - default: &default { foreground: d2ccd6ff } # #d2ccd6
+        dwl-info-filename: "/tmp/dwltags"
+        name-of-tags: [, 󰍪, , 󰍹]
+        content:
+          list:
+            items:
+              - map:
+                  margin: 12
+                  conditions:
+                    # default tag
+                    ~empty:
+                      map:
+                        conditions:
+                          selected: { string: { text: "{name}", <<: *focused } }
+                          ~selected:
+                            { string: { text: "{name}", <<: *occupied } }
+                    empty:
+                      map:
+                        conditions:
+                          selected: { string: { text: "{name}", <<: *focused } }
+                          ~selected:
+                            { string: { text: "{name}", <<: *default } }
+              - map:
+                  margin: 100
+                  conditions:
+                    # default tag
+                    id == 0: { string: { text: "{title}" } }
+  right:
+    # TODO: load averages instead?
+    - cpu:
+        content:
+          map:
+            conditions:
+              id < 0: { string: { text: "CPU: {cpu:3}%" } }
+    - pipewire:
+        anchors:
+          volume: &volume
+            conditions:
+              muted:
+                { string: { text: "{cubic_volume}%", foreground: ff0000ff } }
+              ~muted: { string: { text: "{cubic_volume}%" } }
+        content:
+          list:
+            items:
+              - map:
+                  conditions:
+                    type == "sink":
+                      map:
+                        <<: *volume
+    # TODO: battery
+    - clock:
+        time-format: "%H:%M"
+        date-format: "%Y-%m-%d"
+        content:
+          - string: { text: "{date}", margin: 10 }
+          - string: { text: "{time}" }
