@@ -54,7 +54,7 @@
     url = "https://github.com/nix-community/home-manager/archive/master.tar.gz";
   });
   host-config = "/etc/nixos/host-configuration.nix";
-  modules = builtins.map (file: import /home/${user}/config/nixos/modules/${file}) (
+  modules = builtins.map (file: (import /home/${user}/config/nixos/modules/${file} { inherit config pkgs lib user; })) (
     builtins.filter (path: builtins.match ".+\\.nix$" path != null)
     (builtins.attrNames (builtins.readDir /home/${user}/config/nixos/modules))
   );
@@ -64,7 +64,9 @@ in {
     "${home-manager}/nixos"
   ]
   ++ modules
-  ++ lib.optionals (builtins.pathExists host-config) [host-config];
+  ++ lib.optionals (builtins.pathExists host-config) [
+    (import host-config { inherit config pkgs lib user; })
+  ];
   boot = {
     kernelPatches = [
       {
@@ -95,12 +97,13 @@ in {
     enableIPv6 = lib.mkDefault false;
   };
 
-  users.users.luke = {
+  users.users."${user}" = {
     isNormalUser = true;
     home = "/home/${user}";
     description = "Luke";
     extraGroups = [
       "docker"
+      "gamemode" # For gamemoded
       "libvirtd"
       "networkmanager"
       "qemu-libvirtd"
@@ -110,7 +113,7 @@ in {
   };
   home-manager = {
     backupFileExtension = "bak";
-    users.luke = { config, pkgs, ...}: {
+    users."${user}" = { config, pkgs, ...}: {
       dconf.enable = true;
 
       gtk = with pkgs; {
@@ -218,8 +221,6 @@ in {
     autorandr.enable = true;
     spice-autorandr.enable = true;
     blueman.enable = true;
-    clipmenu.enable = true;
-    gnome.gnome-keyring.enable = true;
     logind.killUserProcesses = true;
     libinput = {
       enable = true; # touchpad support
@@ -286,7 +287,6 @@ in {
     };
     chromium = {
       enable = true;
-      enablePlasmaBrowserIntegration = true;
       extensions = [
         "eimadpbcbfnmbkopoojfekhnkhdbieeh" # dark reader
         "hdokiejnpimakedhajhdlcegeplioahd" # lastpass
@@ -351,7 +351,7 @@ in {
         (chromium.override { enableWideVine = true; })
         libreoffice
         kitty
-        maestral # dropbox client
+        # maestral # dropbox client
         ncspot
       ];
       development = with pkgs; [
@@ -410,16 +410,9 @@ in {
         bat # cat replacement
         bottom # top replacement
         cifs-utils # manage cifs filesystems
-        clolcat
+        clolcat # rainbow text
         dust # du replacement
-        (dwl.overrideAttrs (prev: {
-          enableXWayland = true;
-          patches = [
-            ./patches/dwl.patch
-          ];
-        }))
         eza # ls replacement
-        feh # image viewer/wallpaper manager
         fd # find replacement
         flameshot # screenshot util
         fzf
@@ -459,11 +452,7 @@ in {
         tealdeer # tldr in rust
         tokei # code statistics
         unzip
-        upower # for battery status
         usbutils # e.g. lsusub
-        wl-clipboard # CLI clipboard for Wayland
-        wlr-randr # xrandr for wlroots
-        wmenu # dmenu for wlroots
         xh # curl replacement
       ];
     in

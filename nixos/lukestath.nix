@@ -36,6 +36,7 @@ in {
     };
     systemPackages = with pkgs; [
       teams-for-linux
+      upower # for battery status
       wgnord
     ];
     theme.background = {
