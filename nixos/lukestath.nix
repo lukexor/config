@@ -5,10 +5,6 @@ in {
   networking = {
     hostName = "lukestath";
     enableIPv6 = true; # required by wgnord
-    qemu = {
-      enable = true;
-      interface = "enp44s0";
-    };
   };
 
   hardware.nvidia.prime = {
@@ -21,17 +17,25 @@ in {
   environment = {
     shellAliases = {
       # Install:
+      #
       # $ cd ~/vms && quickget windows 11
-      # $ quickemu --vm /home/luke/config/vms/windows-11.conf
+      # $ quickemu --vm ~vms/windows-11.conf
       # $ sudo mkdir -p /mnt/windows
       # $ sudo mkdir -p /mnt/preveil
       # $ sudo ln -s /mnt/windows/Users/Quickemu/PreVeil-luke.petherbridge@statheros.tech /mnt/preveil
+      #
       # $ sudo modprobe nbd max_part=1
-      # $ sudo qemu-nbd --connect=/dev/nbd0 ~/vms/windows-11/disk.qcow2
+      # $ sudo qemu-nbd --connect /dev/nbd0 ~/vms/windows-11/disk.qcow2
       # $ sudo fdisk /dev/nbd0 -l
       # $ sudo mount /dev/nbd0p4 /mnt/windows
       #
-      "mntp" = "sudo mount -t cifs //192.168.0.67/PreVeil /mnt/preveil -o username=Quickemu,uid=1000";
+      # Teardown to sync files/run QEMU
+      #
+      # $ sudo umount /mnt/windows
+      # $ sudo qemu-nbd --disconnect /dev/nbd0
+      #
+      # "mntp" = "sudo mount -t cifs //192.168.0.67/PreVeil /mnt/preveil -o username=Quickemu,uid=1000";
+      "mntp" = "sudo sh -c 'modprobe nbd max_part=1 && qemu-nbd --connect /dev/nbd0 ~/vms/windows-11/disk.qcow2 && mount /dev/nbd0p4 /mnt/windows'";
     };
     systemPackages = with pkgs; [
       teams-for-linux
