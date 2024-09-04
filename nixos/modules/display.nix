@@ -57,6 +57,7 @@ in {
       };
 
       services.displayManager.sessionPackages = [pkgs.dwl];
+      services.xserver.videoDrivers = ["nvidia"];
 
       systemd.user.services = {
         yambar = {
@@ -100,6 +101,8 @@ in {
           extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
         };
       };
+
+      programs.xwayland.enable = true;
 
       security.pam.services.swaylock = {}; # required for swaylock to authenticate
       environment = {

@@ -25,7 +25,12 @@ in {
         # gaming compatibility
         lutris
         scummvm
-        wine-staging
+        winetricks
+        (wineWowPackages.full.override {
+          wineRelease = "staging";
+          mingwSupport = true;
+        })
+        wineWowPackages.waylandFull
     ];
   };
 }
