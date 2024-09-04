@@ -116,11 +116,11 @@ in {
     users."${user}" = { config, pkgs, ...}: {
       dconf.enable = true;
 
-      gtk = with pkgs; {
+      gtk = {
         enable = true;
         font = {
           name = "DejaVu Sans";
-          package = dejavu_fonts;
+          package = pkgs.dejavu_fonts;
         };
         gtk2.configLocation = "${config.xdg.configHome}/gtk-2.0/gtkrc";
       };
@@ -293,7 +293,6 @@ in {
         "ennpfpdlaclocpomkiablnmbppdnlhoh" # rust search extension
       ];
       extraOpts = {
-       PasswordManagerEnabled = false;
        ExtensionSettings = {
         "eimadpbcbfnmbkopoojfekhnkhdbieeh" = {
           toolbar_pin = "force_pinned";
@@ -302,6 +301,9 @@ in {
           toolbar_pin = "force_pinned";
         };
        };
+       PasswordManagerEnabled = false;
+       SpellcheckEnabled = true;
+       SpellcheckLanguage = ["en-US"];
       };
     };
     dconf.enable = true;
@@ -346,15 +348,16 @@ in {
       "/home/${user}/.cargo/bin"
     ];
     systemPackages = with pkgs; let
-      apps = with pkgs; [
+      apps = [
         # DRM support
         (chromium.override { enableWideVine = true; })
+        google-chrome
         libreoffice
         kitty
         # maestral # dropbox client
         ncspot
       ];
-      development = with pkgs; [
+      development = [
         cargo-asm
         cargo-audit
         cargo-deny
@@ -383,7 +386,7 @@ in {
         })
         yarn
       ];
-      language-servers = with pkgs; [
+      language-servers = [
         clang-tools
         eslint_d
         lua-language-server
@@ -405,7 +408,7 @@ in {
         yamllint
         yaml-language-server
       ];
-      utilities = with pkgs; [
+      utilities = [
         alsa-utils # for volume control
         bat # cat replacement
         bottom # top replacement
@@ -474,6 +477,11 @@ in {
       VISUAL = "nvim";
     };
   };
+  specialisation = {
+    wayland.configuration = {
+      services.displayManager.protocol = "wayland";
+    };
+  };
 
   virtualisation = {
     docker = {
@@ -501,8 +509,8 @@ in {
   };
   fonts = {
     enableDefaultPackages = true;
-    packages = with pkgs; [
-      (nerdfonts.override {
+    packages = [
+      (pkgs.nerdfonts.override {
         fonts = [
           "DejaVuSansMono"
           "RobotoMono"

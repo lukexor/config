@@ -155,6 +155,25 @@ index 22d2171..677c32d 100644
  
  	/* Ctrl-Alt-Backspace and Ctrl-Alt-Fx used to be handled by X server */
  	{ WLR_MODIFIER_CTRL|WLR_MODIFIER_ALT,XKB_KEY_Terminate_Server, quit, {0} },
+diff --git a/config.mk b/config.mk
+index 6fb4fb3..8fad314 100644
+--- a/config.mk
++++ b/config.mk
+@@ -8,10 +8,10 @@ PREFIX = /usr/local
+ MANDIR = $(PREFIX)/share/man
+ DATADIR = $(PREFIX)/share
+ 
+-XWAYLAND =
+-XLIBS =
++# XWAYLAND =
++# XLIBS =
+ # Uncomment to build XWayland support
+-#XWAYLAND = -DXWAYLAND
+-#XLIBS = xcb xcb-icccm
++XWAYLAND = -DXWAYLAND
++XLIBS = xcb xcb-icccm
+ 
+ CC = gcc
 diff --git a/dwl.c b/dwl.c
 index 145fd01..781351d 100644
 --- a/dwl.c
