@@ -95,9 +95,7 @@ in {
         portal = {
           enable = true;
           wlr.enable = true; # required for screensharing on Wayland
-          config.common.default = [
-            "gtk"
-          ];
+          config.common.default = ["gtk"];
           extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
         };
       };

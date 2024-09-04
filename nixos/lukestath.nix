@@ -56,7 +56,6 @@ in {
         position = "0x0";
         mode = "2560x1600";
         dpi = 120; # split the difference between 96 and 144
-        rate = "60.00";
         crtc = 0;
       };
     in {
@@ -75,7 +74,6 @@ in {
             enable = true;
             position = "2560x0";
             mode = "2560x1440";
-            rate = "60.00";
             crtc = 4;
           };
         };
@@ -91,7 +89,6 @@ in {
             enable = true;
             position = "2560x0";
             mode = "3840x2160";
-            rate = "60.00";
             crtc = 4;
           };
         };
