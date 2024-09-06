@@ -158,9 +158,6 @@ in {
         clipmenu.enable = true;
         xserver = {
           enable = true;
-          displayManager.sessionCommands = with config.environment.theme; ''
-            feh --bg-scale ${lib.path.append background.path background.desktop}
-          '';
           videoDrivers = ["nvidia"];
           windowManager.dwm.enable = true;
           xautolock = {

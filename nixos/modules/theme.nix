@@ -1,5 +1,6 @@
 { config, pkgs, lib, user, ... }: let
   cfg = config.environment.theme;
+  dcfg = config.services.displayManager;
   valid_bgs = builtins.attrNames (builtins.readDir cfg.background.path);
 in {
   options = {
@@ -29,14 +30,14 @@ in {
       };
     };
   };
-  config = with cfg; {
-    home-manager.users.${user}.gtk.theme = {
-      name = "Breeze-Dark";
-      package = pkgs.libsForQt5.breeze-gtk;
-    };
+  config = with cfg; lib.mkMerge [
+    {
+      home-manager.users.${user}.gtk.theme = {
+        name = "Breeze-Dark";
+        package = pkgs.libsForQt5.breeze-gtk;
+      };
 
-    environment = {
-      etc = let
+      environment.etc = let
         bgCfg = {
           user = "nobody";
           group = "nobody";
@@ -52,24 +53,37 @@ in {
           source = lib.path.append background.path background.desktop;
         };
       };
-      systemPackages = with pkgs; [
+    }
+    (lib.mkIf (dcfg.protocol == "wayland") {
+      environment.systemPackages = with pkgs; [
         swww
       ];
-    };
 
-    systemd.user.services = {
-      swww = {
-        description = "swww service";
-        wantedBy = ["graphical-session.target"];
-        after = ["graphical-session.target"];
-        partOf = ["graphical-session.target"];
-        startLimitIntervalSec = 0;
-        serviceConfig = {
-          ExecStart = "/bin/sh -c '${pkgs.swww}/bin/swww-daemon & ${pkgs.swww}/bin/swww img ${lib.path.append background.path background.desktop}'";
-          Restart = "always";
-          RestartSec = "1s";
+      systemd.user.services = {
+        swww = {
+          description = "swww service";
+          wantedBy = ["graphical-session.target"];
+          after = ["graphical-session.target"];
+          partOf = ["graphical-session.target"];
+          startLimitIntervalSec = 0;
+          serviceConfig = {
+            Environment="WAYLAND_DISPLAY=wayland-0"; # FIXME: better way than hardcoding this?
+            ExecStart = "${pkgs.swww}/bin/swww-daemon";
+            # TODO: fix setting background on startup
+            # ${pkgs.swww}/bin/swww img ${lib.path.append background.path background.desktop}"
+            Restart = "always";
+            RestartSec = "1s";
+          };
         };
       };
-    };
-  };
+    })
+    (lib.mkIf (dcfg.protocol == "x11") {
+      services.xserver.displayManager.sessionCommands = with config.environment.theme; ''
+        feh --bg-scale ${lib.path.append background.path background.desktop}
+      '';
+      environment.systemPackages = with pkgs; [
+        feh
+      ];
+    })
+  ];
 }

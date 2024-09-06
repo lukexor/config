@@ -1,9 +1,9 @@
-{ config, pkgs, lib, ... }: let
+{ config, pkgs, lib, user, ... }: let
 in {
   boot.yt6801.enable = true;
 
   networking = {
-    hostName = "lukestath";
+    hostName = "charlie-echo";
     enableIPv6 = true; # required by wgnord
   };
 
@@ -33,9 +33,8 @@ in {
       #
       # $ sudo umount /mnt/windows
       # $ sudo qemu-nbd --disconnect /dev/nbd0
-      #
-      # "mntp" = "sudo mount -t cifs //192.168.0.67/PreVeil /mnt/preveil -o username=Quickemu,uid=1000";
-      "mntp" = "sudo sh -c 'modprobe nbd max_part=1 && qemu-nbd --connect /dev/nbd0 ~/vms/windows-11/disk.qcow2 && mount /dev/nbd0p4 /mnt/windows'";
+      "mntp" = "sudo sh -c 'modprobe nbd max_part=1; qemu-nbd --connect /dev/nbd0 /home/${user}/vms/windows-11/disk.qcow2; mount /dev/nbd0p4 /mnt/windows'";
+      "umntp" = "sudo sh -c 'qemu-nbd --disconnect /dev/nbd0; umount /dev/nbd0p4 /mnt/windows'";
     };
     systemPackages = with pkgs; [
       teams-for-linux

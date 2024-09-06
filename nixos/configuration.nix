@@ -92,7 +92,7 @@ in {
   };
 
   networking = {
-    hostName = lib.mkDefault "lukex";
+    hostName = lib.mkDefault "ares";
     networkmanager.enable = true;
     enableIPv6 = lib.mkDefault false;
   };
@@ -495,6 +495,7 @@ in {
         lshw # list hardware configuration
         mprocs # run multiple processes in parallel
         networkmanagerapplet # GNOME applet
+        parted # disk partition tool
         pciutils # utils to inspect pcidevices
         procs # ps replacement
         ripgrep
