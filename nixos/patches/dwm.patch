@@ -1,5 +1,5 @@
 diff --git a/config.def.h b/config.def.h
-index 9efa774..c4adfd6 100644
+index 9efa774..9f0f481 100644
 --- a/config.def.h
 +++ b/config.def.h
 @@ -1,25 +1,53 @@
@@ -19,8 +19,8 @@ index 9efa774..c4adfd6 100644
  static const int topbar             = 1;        /* 0 means bottom bar */
 -static const char *fonts[]          = { "monospace:size=10" };
 -static const char dmenufont[]       = "monospace:size=10";
-+static const char *fonts[]          = { "DejaVuSansM Nerd Font Mono:size=12" };
-+static const char dmenufont[]       = "DejaVuSansM Nerd Font Mono:size=12";
++static const char *fonts[]          = { "DejaVuSansM Nerd Font Mono:size=14" };
++static const char bemenufont[]       = "DejaVuSansM Nerd Font Mono:size=14";
  static const char col_gray1[]       = "#222222";
  static const char col_gray2[]       = "#444444";
  static const char col_gray3[]       = "#bbbbbb";
@@ -34,13 +34,13 @@ index 9efa774..c4adfd6 100644
  	[SchemeSel]  = { col_gray4, col_cyan,  col_cyan  },
  };
 +static const unsigned int alphas[][3]      = {
-+    /*               fg      bg        border*/
-+    [SchemeNorm] = { OPAQUE, baralpha, borderalpha },
++	/*               fg      bg        border*/
++	[SchemeNorm] = { OPAQUE, baralpha, borderalpha },
 +	[SchemeSel]  = { OPAQUE, baralpha, borderalpha },
 +};
 +
 +static const char *const autostart[] = {
-+	"/run/current-system/sw/bin/kitty -1", NULL,
++	"kitty -1", NULL,
 +	NULL /* terminate */
 +};
  
@@ -53,8 +53,8 @@ index 9efa774..c4adfd6 100644
 +static const char *tagsel[][2] = {
 +	{ "#bb0000", col_gray1 },
 +	{ "#00bbff", col_gray1 },
-+	{ "#ff9900", col_gray1},
-+	{ "#00bb00", col_gray1},
++	{ "#ff9900", col_gray1 },
++	{ "#00bb00", col_gray1 },
 +};
  
  static const Rule rules[] = {
@@ -69,18 +69,26 @@ index 9efa774..c4adfd6 100644
  };
  
  /* layout(s) */
-@@ -58,43 +85,57 @@ static const Layout layouts[] = {
+@@ -56,45 +83,67 @@ static const Layout layouts[] = {
+ #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
+ 
  /* commands */
- static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
- static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
+-static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
+-static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
 -static const char *termcmd[]  = { "st", NULL };
-+static const char *termcmd[]  = { "/run/current-system/sw/bin/kitty", NULL };
-+static const char *chromiumcmd[]  = { "/run/current-system/sw/bin/chromium", NULL };
-+static const char *clipmenucmd[]  = { "/run/current-system/sw/bin/clipmenu", NULL };
-+static const char *mutecmd[] = { "/run/current-system/sw/bin/amixer", "-q", "set", "Master", "toggle", NULL };
-+static const char *volupcmd[] = { "/run/current-system/sw/bin/amixer", "-q", "set", "Master", "5%+", "unmute", NULL };
-+static const char *voldowncmd[] = { "/run/current-system/sw/bin/amixer", "-q", "set", "Master", "5%-", "unmute", NULL };
-+static const char *flameshotcmd[] = { "/run/current-system/sw/bin/flameshot", "gui", NULL };
++static char bemenumon[2] = "0"; /* component of bemenucmd, manipulated in spawn() */
++static const char *bemenucmd[] = { "bemenu-run", "-W", "0.5", "-l", "5", "-c", "--fixed-height", "-m", bemenumon, NULL };
++static const char *termcmd[]  = { "kitty", NULL };
++static const char *chromiumcmd[]  = { "chromium", NULL };
++static const char *firefoxcmd[]  = { "firefox", NULL };
++static const char *clipmenucmd[]  = { "clipmenu", "-W", "0.5", "-l", "5", "-c", "--fixed-height", "-m", bemenumon, NULL };
++static const char *flameshotcmd[] = { "flameshot", "gui", NULL };
++static const char *mutecmd[] = { "amixer", "-q", "set", "Master", "toggle", NULL };
++static const char *volupcmd[] = { "amixer", "-q", "set", "Master", "5%+", "unmute", NULL };
++static const char *voldowncmd[] = { "amixer", "-q", "set", "Master", "5%-", "unmute", NULL };
++static const char *medplaypausecmd[] = { "playerctl", "play-pause", NULL };
++static const char *mednextcmd[] = { "playerctl", "next", NULL };
++static const char *medprevcmd[] = { "playerctl", "previous", NULL };
  
  static const Key keys[] = {
 -	/* modifier                     key        function        argument */
@@ -118,9 +126,18 @@ index 9efa774..c4adfd6 100644
 -	TAGKEYS(                        XK_9,                      8)
 -	{ MODKEY|ShiftMask,             XK_q,      quit,           {0} },
 +	/* modifier                     key                        function        argument */
-+	{ MODKEY,                       XK_space,                  spawn,          {.v = dmenucmd } },
++	{ MODKEY,                       XK_space,                  spawn,          {.v = bemenucmd } },
 +	{ MODKEY|ShiftMask,             XK_Return,                 spawn,          {.v = termcmd } },
 +	{ MODKEY|ShiftMask,             XK_c,                      spawn,          {.v = chromiumcmd } },
++	{ MODKEY|ShiftMask,             XK_f,                      spawn,          {.v = firefoxcmd } },
++	{ MODKEY|ShiftMask,             XK_v,                      spawn,          {.v = clipmenucmd } },
++	{ MODKEY|ShiftMask,             XK_p,                      spawn,          {.v = flameshotcmd } },
++	{ 0,                            XF86XK_AudioMute,          spawn,          {.v = mutecmd } },
++	{ 0,                            XF86XK_AudioLowerVolume,   spawn,          {.v = voldowncmd } },
++	{ 0,                            XF86XK_AudioRaiseVolume,   spawn,          {.v = volupcmd } },
++	{ 0,                            XF86XK_AudioPlay,          spawn,          {.v = medplaypausecmd } },
++	{ 0,                            XF86XK_AudioNext,          spawn,          {.v = mednextcmd } },
++	{ 0,                            XF86XK_AudioPrev,          spawn,          {.v = medprevcmd } },
 +	{ MODKEY,                       XK_b,                      togglebar,      {0} },
 +	{ MODKEY,                       XK_j,                      focusstack,     {.i = +1 } },
 +	{ MODKEY,                       XK_k,                      focusstack,     {.i = -1 } },
@@ -143,8 +160,6 @@ index 9efa774..c4adfd6 100644
 +	{ MODKEY|ShiftMask,             XK_comma,                  tagmon,         {.i = -1 } },
 +	{ MODKEY|ShiftMask,             XK_period,                 tagmon,         {.i = +1 } },
 +	{ MODKEY,                       XK_n,                      togglealttag,   {0} },
-+	{ Mod4Mask|ShiftMask,           XK_v,                      spawn,          {.v = clipmenucmd } },
-+	{ Mod4Mask|ShiftMask,           XK_p,                      spawn,          {.v = flameshotcmd } },
 +	TAGKEYS(                        XK_1,                                      0)
 +	TAGKEYS(                        XK_2,                                      1)
 +	TAGKEYS(                        XK_3,                                      2)
@@ -156,9 +171,6 @@ index 9efa774..c4adfd6 100644
 +	TAGKEYS(                        XK_9,                                      8)
 +	{ MODKEY|ShiftMask,             XK_r,                      restart,        {0} },
 +	{ MODKEY|ShiftMask,             XK_q,                      quit,           {0} },
-+	{ 0,                            XF86XK_AudioMute,          spawn,          {.v = mutecmd } },
-+	{ 0,                            XF86XK_AudioLowerVolume,   spawn,          {.v = voldowncmd } },
-+	{ 0,                            XF86XK_AudioRaiseVolume,   spawn,          {.v = volupcmd } },
  };
  
  /* button definitions */
@@ -293,7 +305,7 @@ index 6471431..94b8bbd 100644
  /* Cursor abstraction */
  Cur *drw_cur_create(Drw *drw, int shape);
 diff --git a/dwm.c b/dwm.c
-index 67c6b2b..34fbc02 100644
+index 67c6b2b..cb377d3 100644
 --- a/dwm.c
 +++ b/dwm.c
 @@ -56,6 +56,7 @@
@@ -709,7 +721,16 @@ index 67c6b2b..34fbc02 100644
  	/* init bars */
  	updatebars();
  	updatestatus();
-@@ -1687,35 +1868,57 @@ tagmon(const Arg *arg)
+@@ -1649,8 +1830,6 @@ spawn(const Arg *arg)
+ {
+ 	struct sigaction sa;
+ 
+-	if (arg->v == dmenucmd)
+-		dmenumon[0] = '0' + selmon->num;
+ 	if (fork() == 0) {
+ 		if (dpy)
+ 			close(ConnectionNumber(dpy));
+@@ -1687,35 +1866,57 @@ tagmon(const Arg *arg)
  void
  tile(Monitor *m)
  {
@@ -779,7 +800,7 @@ index 67c6b2b..34fbc02 100644
  	updatebarpos(selmon);
  	XMoveResizeWindow(dpy, selmon->barwin, selmon->wx, selmon->by, selmon->ww, bh);
  	arrange(selmon);
-@@ -1754,9 +1957,33 @@ void
+@@ -1754,9 +1955,33 @@ void
  toggleview(const Arg *arg)
  {
  	unsigned int newtagset = selmon->tagset[selmon->seltags] ^ (arg->ui & TAGMASK);
@@ -813,7 +834,7 @@ index 67c6b2b..34fbc02 100644
  		focus(NULL);
  		arrange(selmon);
  	}
-@@ -1822,15 +2049,18 @@ updatebars(void)
+@@ -1822,15 +2047,18 @@ updatebars(void)
  	XSetWindowAttributes wa = {
  		.override_redirect = True,
  		.background_pixmap = ParentRelative,
@@ -835,7 +856,7 @@ index 67c6b2b..34fbc02 100644
  		XDefineCursor(dpy, m->barwin, cursor[CurNormal]->cursor);
  		XMapRaised(dpy, m->barwin);
  		XSetClassHint(dpy, m->barwin, &ch);
-@@ -2053,11 +2283,37 @@ updatewmhints(Client *c)
+@@ -2053,11 +2281,37 @@ updatewmhints(Client *c)
  void
  view(const Arg *arg)
  {
@@ -874,7 +895,7 @@ index 67c6b2b..34fbc02 100644
  	focus(NULL);
  	arrange(selmon);
  }
-@@ -2128,6 +2384,43 @@ xerrorstart(Display *dpy, XErrorEvent *ee)
+@@ -2128,6 +2382,43 @@ xerrorstart(Display *dpy, XErrorEvent *ee)
  	return -1;
  }
  
@@ -918,7 +939,7 @@ index 67c6b2b..34fbc02 100644
  void
  zoom(const Arg *arg)
  {
-@@ -2152,6 +2445,7 @@ main(int argc, char *argv[])
+@@ -2152,6 +2443,7 @@ main(int argc, char *argv[])
  	if (!(dpy = XOpenDisplay(NULL)))
  		die("dwm: cannot open display");
  	checkotherwm();

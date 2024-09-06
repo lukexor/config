@@ -25,6 +25,9 @@ in {
           waylandsessions = "${pkgs.dwl}/share/wayland-sessions";
         };
       };
+      environment.systemPackages = with pkgs; [
+        bemenu # dynamic menu
+      ];
     }
     (lib.mkIf (cfg.protocol == "wayland") {
       nixpkgs.overlays = [
@@ -106,7 +109,6 @@ in {
       environment = {
         sessionVariables.NIXOS_OZONE_WL = "1"; # wayland support in chromium and electron
         systemPackages = with pkgs; [
-          bemenu # dmenu for wlroots
           brightnessctl # monitor brightness
           cliphist # clipboard manager for Wayland
           dwl # dynamic window manager for Wayland
@@ -153,6 +155,7 @@ in {
             no_battery = "󱉝"
           '';
         };
+        clipmenu.enable = true;
         xserver = {
           enable = true;
           displayManager.sessionCommands = with config.environment.theme; ''
@@ -196,15 +199,19 @@ in {
 
       xdg.mime.defaultApplications."inode/directory" = "thunar.desktop";
 
-      environment.systemPackages = with pkgs; [
-        clipmenu
-        dmenu # dynamic menu
-        dwm-status
-        feh # image viewer/wallpaper manager
-        xautolock # auto lock
-        xclip # required for neovim clipboard support
-        xfce.thunar
-      ];
+      environment = {
+        systemPackages = with pkgs; [
+          clipmenu
+          dwm-status
+          feh # image viewer/wallpaper manager
+          xautolock # auto lock
+          xclip # required for neovim clipboard support
+          xfce.thunar
+        ];
+        variables = {
+          CM_LAUNCHER = "bemenu";
+        };
+      };
     })
   ];
 }

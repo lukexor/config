@@ -221,6 +221,7 @@ in {
     autorandr.enable = true;
     spice-autorandr.enable = true;
     blueman.enable = true;
+    gnome.gnome-keyring.enable = true;
     logind.killUserProcesses = true;
     libinput = {
       enable = true; # touchpad support
@@ -307,18 +308,62 @@ in {
       };
     };
     dconf.enable = true;
-    gnupg.agent = {
-      enable = true;
-      enableSSHSupport = true;
-    };
     direnv = {
       enable = true;
       enableFishIntegration = true;
       nix-direnv.enable = true;
     };
-    firefox.enable = true;
+    firefox = {
+      enable = true;
+      policies = {
+        Bookmarks = [
+          {
+            Title = "nixpkgs";
+            Url = "https://search.nixos.org/packages?channel=unstable";
+            Favicon = "https://search.nixos.org/favicon.png";
+            Placement = "toolbar";
+          }
+        ];
+        DisplayBookmarksToolbar = "always";
+        ExtensionSettings = let
+          defaultSettings = {
+            installation_mode = "normal_installed";
+          };
+        in {
+          "matte-black-sky-blue" = {
+            inherit defaultSettings;
+            install_url = "https://addons.mozilla.org/firefox/downloads/latest/matte-black-sky-blue/latest.xpi";
+          };
+          "adguard-adblocker" = {
+            inherit defaultSettings;
+            install_url = "https://addons.mozilla.org/firefox/downloads/latest/adguard-adblocker/latest.xpi";
+          };
+          "darkreader" = {
+            inherit defaultSettings;
+            install_url = "https://addons.mozilla.org/firefox/downloads/latest/darkreader/latest.xpi";
+          };
+          "rust-search-extension" = {
+            inherit defaultSettings;
+            install_url = "https://addons.mozilla.org/firefox/downloads/latest/rust-search-extension/latest.xpi";
+          };
+          "lastpass-password" = {
+            inherit defaultSettings;
+            install_url = "https://addons.mozilla.org/firefox/downloads/latest/lastpass-password-manager/latest.xpi";
+          };
+          "tranquility-reader" = {
+            inherit defaultSettings;
+            install_url = "https://addons.mozilla.org/firefox/downloads/latest/tranquility-1/latest.xpi";
+          };
+        };
+        OfferToSaveLoginsDefault = false;
+      };
+    };
     fish.enable = true;
     git.enable = true;
+    gnupg.agent = {
+      enable = true;
+      enableSSHSupport = true;
+    };
     light.enable = true; # brightness controls
     neovim = {
       enable = true;
@@ -354,8 +399,10 @@ in {
         google-chrome
         libreoffice
         kitty
-        # maestral # dropbox client
-        ncspot
+        maestral # dropbox client
+        maestral-gui
+        ncspot # spotify
+        xarchiver # archive manager
       ];
       development = [
         cargo-asm
@@ -396,6 +443,7 @@ in {
         nodePackages.bash-language-server
         nodePackages.jsonlint
         nodePackages.typescript-language-server
+        playerctl # multi-media control
         prettierd
         protolint
         pyright
