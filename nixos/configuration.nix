@@ -94,6 +94,7 @@ in {
   networking = {
     hostName = lib.mkDefault "ares";
     networkmanager.enable = true;
+    wireless.enable = lib.mkForce false; # conflicts with network manager
     enableIPv6 = lib.mkDefault false;
   };
 
@@ -146,6 +147,10 @@ in {
           };
           ".config/nvim" = {
             source = mkOutOfStoreSymlink "${config}/.config/nvim";
+            recursive = true;
+          };
+          ".icons" = {
+            source = mkOutOfStoreSymlink "${config}/.icons";
             recursive = true;
           };
           ".config/starship.toml".source = mkOutOfStoreSymlink "${config}/.config/starship.toml";
@@ -497,6 +502,7 @@ in {
         networkmanagerapplet # GNOME applet
         parted # disk partition tool
         pciutils # utils to inspect pcidevices
+        polkit_gnome # gui for polkit
         procs # ps replacement
         ripgrep
         sd # sed replacement

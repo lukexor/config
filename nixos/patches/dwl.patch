@@ -1,5 +1,5 @@
 diff --git a/config.def.h b/config.def.h
-index 22d2171..677c32d 100644
+index 22d2171..012cc77 100644
 --- a/config.def.h
 +++ b/config.def.h
 @@ -6,7 +6,13 @@
@@ -150,8 +150,8 @@ index 22d2171..677c32d 100644
 +	{ 0,                         XKB_KEY_XF86AudioMute,         spawn,          {.v = mutecmd } },
 +	{ 0,                         XKB_KEY_XF86AudioLowerVolume,  spawn,          {.v = voldowncmd } },
 +	{ 0,                         XKB_KEY_XF86AudioRaiseVolume,  spawn,          {.v = volupcmd } },
-+	{ 0,                         XKB_KEY_XF86MonBrightnessUp,   spawn,          {.v = bridowncmd } },
-+	{ 0,                         XKB_KEY_XF86MonBrightnessDown, spawn,          {.v = briupcmd } },
++	{ 0,                         XKB_KEY_XF86MonBrightnessUp,   spawn,          {.v = briupcmd } },
++	{ 0,                         XKB_KEY_XF86MonBrightnessDown, spawn,          {.v = bridowncmd } },
  
  	/* Ctrl-Alt-Backspace and Ctrl-Alt-Fx used to be handled by X server */
  	{ WLR_MODIFIER_CTRL|WLR_MODIFIER_ALT,XKB_KEY_Terminate_Server, quit, {0} },

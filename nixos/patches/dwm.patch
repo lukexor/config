@@ -1,5 +1,5 @@
 diff --git a/config.def.h b/config.def.h
-index 9efa774..9f0f481 100644
+index 9efa774..975461e 100644
 --- a/config.def.h
 +++ b/config.def.h
 @@ -1,25 +1,53 @@
@@ -14,13 +14,13 @@ index 9efa774..9f0f481 100644
 +static const unsigned int gappiv    = 5;        /* vert inner gap between windows */
 +static const unsigned int gappoh    = 5;        /* horiz outer gap between windows and screen edge */
 +static const unsigned int gappov    = 5;        /* vert outer gap between windows and screen edge */
-+static const int smartgaps          = 0;        /* 1 means no outer gap when there is only one window */
++static const int smartgaps          = 1;        /* 1 means no outer gap when there is only one window */
  static const int showbar            = 1;        /* 0 means no bar */
  static const int topbar             = 1;        /* 0 means bottom bar */
 -static const char *fonts[]          = { "monospace:size=10" };
 -static const char dmenufont[]       = "monospace:size=10";
-+static const char *fonts[]          = { "DejaVuSansM Nerd Font Mono:size=14" };
-+static const char bemenufont[]       = "DejaVuSansM Nerd Font Mono:size=14";
++static const char *fonts[]          = { "DejaVuSansM Nerd Font Mono:size=12" };
++static const char bemenufont[]       = "DejaVuSansM Nerd Font Mono:size=12";
  static const char col_gray1[]       = "#222222";
  static const char col_gray2[]       = "#444444";
  static const char col_gray3[]       = "#bbbbbb";
@@ -69,7 +69,7 @@ index 9efa774..9f0f481 100644
  };
  
  /* layout(s) */
-@@ -56,45 +83,67 @@ static const Layout layouts[] = {
+@@ -56,45 +83,71 @@ static const Layout layouts[] = {
  #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
  
  /* commands */
@@ -89,6 +89,8 @@ index 9efa774..9f0f481 100644
 +static const char *medplaypausecmd[] = { "playerctl", "play-pause", NULL };
 +static const char *mednextcmd[] = { "playerctl", "next", NULL };
 +static const char *medprevcmd[] = { "playerctl", "previous", NULL };
++static const char *bridowncmd[] = { "brightnessctl", "-q", "set", "5%-", NULL };
++static const char *briupcmd[] = { "brightnessctl", "-q", "set", "5%+", NULL };
  
  static const Key keys[] = {
 -	/* modifier                     key        function        argument */
@@ -138,6 +140,8 @@ index 9efa774..9f0f481 100644
 +	{ 0,                            XF86XK_AudioPlay,          spawn,          {.v = medplaypausecmd } },
 +	{ 0,                            XF86XK_AudioNext,          spawn,          {.v = mednextcmd } },
 +	{ 0,                            XF86XK_AudioPrev,          spawn,          {.v = medprevcmd } },
++	{ 0,                            XF86XK_MonBrightnessDown,  spawn,          {.v = bridowncmd } },
++	{ 0,                            XF86XK_MonBrightnessUp,    spawn,          {.v = briupcmd } },
 +	{ MODKEY,                       XK_b,                      togglebar,      {0} },
 +	{ MODKEY,                       XK_j,                      focusstack,     {.i = +1 } },
 +	{ MODKEY,                       XK_k,                      focusstack,     {.i = -1 } },
@@ -305,7 +309,7 @@ index 6471431..94b8bbd 100644
  /* Cursor abstraction */
  Cur *drw_cur_create(Drw *drw, int shape);
 diff --git a/dwm.c b/dwm.c
-index 67c6b2b..cb377d3 100644
+index f1d86b2..cb377d3 100644
 --- a/dwm.c
 +++ b/dwm.c
 @@ -56,6 +56,7 @@
@@ -856,6 +860,15 @@ index 67c6b2b..cb377d3 100644
  		XDefineCursor(dpy, m->barwin, cursor[CurNormal]->cursor);
  		XMapRaised(dpy, m->barwin);
  		XSetClassHint(dpy, m->barwin, &ch);
+@@ -1851,7 +2079,7 @@ updatebarpos(Monitor *m)
+ }
+ 
+ void
+-updateclientlist()
++updateclientlist(void)
+ {
+ 	Client *c;
+ 	Monitor *m;
 @@ -2053,11 +2281,37 @@ updatewmhints(Client *c)
  void
  view(const Arg *arg)

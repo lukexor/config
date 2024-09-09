@@ -27,6 +27,7 @@ in {
       };
       environment.systemPackages = with pkgs; [
         bemenu # dynamic menu
+        brightnessctl # monitor brightness
       ];
     }
     (lib.mkIf (cfg.protocol == "wayland") {
@@ -109,7 +110,6 @@ in {
       environment = {
         sessionVariables.NIXOS_OZONE_WL = "1"; # wayland support in chromium and electron
         systemPackages = with pkgs; [
-          brightnessctl # monitor brightness
           cliphist # clipboard manager for Wayland
           dwl # dynamic window manager for Wayland
           mako # notification daemon
@@ -156,6 +156,7 @@ in {
           '';
         };
         clipmenu.enable = true;
+        gvfs.enable = true;
         xserver = {
           enable = true;
           videoDrivers = ["nvidia"];
@@ -201,6 +202,7 @@ in {
           clipmenu
           dwm-status
           feh # image viewer/wallpaper manager
+          gvfs # required for thunar
           xautolock # auto lock
           xclip # required for neovim clipboard support
           xfce.thunar
