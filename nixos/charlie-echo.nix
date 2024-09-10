@@ -1,6 +1,13 @@
 { config, pkgs, lib, user, ... }: let
 in {
-  boot.yt6801.enable = true;
+  boot = {
+    initrd.luks.devices.crypted = {
+      device = "/dev/disk/by-uuid/ad1cca17-62dc-4978-a5ce-665fd1615b32";
+      preLVM = true;
+    };
+    consoleLogLevel = 3; # Only print errors during boot
+    yt6801.enable = true;
+  };
 
   networking = {
     hostName = "charlie-echo";
@@ -13,6 +20,29 @@ in {
     intelBusId = "PCI:0:2:0";
     nvidiaBusId = "PCI:1:0:0";
   };
+
+  # rke2
+  networking.firewall.enable = lib.mkForce false;
+  virtualisation.docker.enable = lib.mkForce false; # docker can't run alongside rke2
+  virtualisation.podman.enable = lib.mkForce false; # podman can't run alongside rke2
+  services.rke2 = {
+    enable = true;
+    extraFlags = [
+      "--write-kubeconfig-mode=0644"
+    ];
+  };
+  nixpkgs.overlays = [
+    (final: prev: {
+      rke2 = prev.rke2.overrideAttrs (old: {
+        ldflags = old.ldflags ++ [
+          "-X github.com/rancher/rke2/pkg/images.DefaultEtcdImage=rancher/hardened-etcd:v3.5.13-k3s1-build20240531"
+        ];
+      });
+    })
+  ];
+  systemd.services.rke2-server.path = ["/var/lib/rancher/rke2"];
+  environment.sessionVariables.PATH = ["/var/lib/rancher/rke2/bin"];
+  # TODO: Add custom rke2 group, chown paths and add user to group
 
   environment = {
     shellAliases = {

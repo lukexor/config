@@ -76,8 +76,13 @@ in {
       }
     ];
     loader = {
-      systemd-boot.enable = true;
       efi.canTouchEfiVariables = true;
+      grub = {
+        enable = true;
+        efiSupport = true;
+        enableCryptodisk = true;
+        device = "nodev";
+      };
     };
     supportedFilesystems = ["ntfs"];
   };
@@ -423,8 +428,7 @@ in {
         gnumake
         just # make replacement
         nodejs_20
-        nvidia-docker
-        nvidia-container-toolkit
+        podman
         python3
         quickemu
         (rust-bin.stable.latest.default.override {
@@ -469,6 +473,7 @@ in {
         fzf
         glxinfo # To debug opengl issues
         hexedit
+        htop
         (rustPlatform.buildRustPackage rec {
           pname = "irust";
           version = "1.71.23";
@@ -533,10 +538,11 @@ in {
   };
 
   virtualisation = {
-    docker = {
-      enable = true;
-      enableOnBoot = false;
+    docker.autoPrune.enable = true;
+    podman = {
       autoPrune.enable = true;
+      dockerSocket.enable = true;
+      dockerCompat = true;
     };
     libvirtd.enable = true;
   };
