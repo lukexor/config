@@ -207,7 +207,6 @@ in {
           ]))
         ];
       };
-      services.gpg-agent.enable = true;
     };
   };
 
@@ -370,11 +369,6 @@ in {
     };
     fish.enable = true;
     git.enable = true;
-    gnupg.agent = {
-      enable = true;
-      enableSSHSupport = true;
-    };
-    light.enable = true; # brightness controls
     neovim = {
       enable = true;
       defaultEditor = true;
@@ -383,6 +377,7 @@ in {
       withNodeJs = true;
       withPython3 = true;
     };
+    ssh.startAgent = true;
     starship.enable = true;
   };
 
@@ -511,6 +506,7 @@ in {
         procs # ps replacement
         ripgrep
         sd # sed replacement
+        seahorse # keyring manager
         starship
         tealdeer # tldr in rust
         tokei # code statistics

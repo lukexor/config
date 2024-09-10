@@ -15,14 +15,21 @@ in {
 
   config = lib.mkMerge [
     {
-      services.displayManager.ly = {
-        enable = true;
-        settings = {
-          animation = "doom";
-          clear_password = true;
-          clock = "%Y-%m-%d %X";
-          numlock = true;
-          waylandsessions = "${pkgs.dwl}/share/wayland-sessions";
+      services = {
+        displayManager.autoLogin.user = user;
+        xserver = {
+          enable = true;
+          # display manager considerations:
+          # - start x11/wayland session correctly
+          # - autologin
+          # - unlock gnome-keyring
+          displayManager.lightdm = {
+            enable = true;
+            background = with config.environment.theme; lib.path.append background.path background.desktop;
+            greeters.gtk.theme = {
+              inherit (config.environment.theme) name package;
+            };
+          };
         };
       };
       environment.systemPackages = with pkgs; [
@@ -60,7 +67,10 @@ in {
         };
       };
 
-      services.displayManager.sessionPackages = [pkgs.dwl];
+      services.displayManager = {
+        sessionPackages = [pkgs.dwl];
+        ly.settings.waylandsessions = "${pkgs.dwl}/share/wayland-sessions";
+      };
       services.xserver.videoDrivers = ["nvidia"];
 
       systemd.user.services = {
@@ -111,7 +121,6 @@ in {
         sessionVariables.NIXOS_OZONE_WL = "1"; # wayland support in chromium and electron
         systemPackages = with pkgs; [
           cliphist # clipboard manager for Wayland
-          dwl # dynamic window manager for Wayland
           mako # notification daemon
           swayidle # idle management
           swaylock # screen locker for Wayland

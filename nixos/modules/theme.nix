@@ -5,6 +5,21 @@
 in {
   options = {
     environment.theme = {
+      name = lib.mkOption {
+        type = lib.types.str;
+        default = "Breeze-Dark";
+        description = ''
+          Name of the theme to use.
+        '';
+      };
+      package = lib.mkOption {
+        type = lib.types.package;
+        default = pkgs.libsForQt5.breeze-gtk;
+        defaultText = lib.literalExpression "pkgs.gnome-themes-extra";
+        description = ''
+          The package path that contains the theme given in the name option.
+        '';
+      };
       background = {
         path = lib.mkOption {
           default = /home/${user}/config/wallpapers;
@@ -33,8 +48,7 @@ in {
   config = with cfg; lib.mkMerge [
     {
       home-manager.users.${user}.gtk.theme = {
-        name = "Breeze-Dark";
-        package = pkgs.libsForQt5.breeze-gtk;
+        inherit (cfg) name;
       };
 
       environment.etc = let
@@ -78,11 +92,16 @@ in {
       };
     })
     (lib.mkIf (dcfg.protocol == "x11") {
-      services.xserver.displayManager.sessionCommands = with config.environment.theme; ''
-        feh --bg-scale ${lib.path.append background.path background.desktop}
-      '';
+      home-manager = {
+        users."${user}" = { config, pkgs, ...}: {
+          home.file = with cfg; {
+            ".background-image".source = (lib.path.append background.path background.desktop);
+          };
+        };
+      };
+      services.xserver.desktopManager.wallpaper.mode = "fill";
       environment.systemPackages = with pkgs; [
-        feh
+        feh # image/wallpaper utility
       ];
     })
   ];
