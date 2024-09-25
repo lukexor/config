@@ -276,7 +276,7 @@ in {
       enable32Bit = true; # for wine
     };
     nvidia.powerManagement.enable = lib.mkDefault true; # Fixes black screen crashe when resuming from sleep
-    nvidia-container-toolkit.enable = true; # Nvidia GPU passthrough
+    nvidia-container-toolkit.enable = true; # NVIDIA GPU passthrough
     pulseaudio.enable = false; # Must be disabled to use pipewire
   };
   security = {
@@ -369,6 +369,7 @@ in {
     };
     fish.enable = true;
     git.enable = true;
+    gnupg.agent.enable = true;
     neovim = {
       enable = true;
       defaultEditor = true;
@@ -382,7 +383,7 @@ in {
   };
 
   xdg.mime.defaultApplications = {
-    "application/pdf" = "chromium-browser.desktop";
+    "application/pdf" = "firefox.desktop";
   };
 
   nixpkgs = {
@@ -407,6 +408,7 @@ in {
         maestral # dropbox client
         maestral-gui
         ncspot # spotify
+        tui-journal
         xarchiver # archive manager
       ];
       development = [
@@ -428,7 +430,6 @@ in {
         gnumake
         just # make replacement
         nodejs_20
-        podman
         python3
         quickemu
         (rust-bin.stable.latest.default.override {
@@ -540,11 +541,9 @@ in {
   };
 
   virtualisation = {
-    docker.autoPrune.enable = true;
-    podman = {
+    docker = {
+      enable = true;
       autoPrune.enable = true;
-      dockerSocket.enable = true;
-      dockerCompat = true;
     };
     libvirtd.enable = true;
   };
