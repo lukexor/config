@@ -14,17 +14,23 @@ in {
     enableIPv6 = true; # required by wgnord
   };
 
-  hardware.nvidia.prime = {
-    offload.enable = true;
-    offload.enableOffloadCmd = true;
-    intelBusId = "PCI:0:2:0";
-    nvidiaBusId = "PCI:1:0:0";
+  # Disable nvidia GPU for now unless really needed
+  hardware.nvidia = {
+    powerManagement = {
+      enable = true;
+      finegrained = true;
+    };
+    prime = {
+      offload.enable = true;
+      offload.enableOffloadCmd = true;
+      reverseSync.enable = true; # Use only integrated GPU
+      intelBusId = "PCI:0:2:0";
+      nvidiaBusId = "PCI:1:0:0";
+    };
   };
 
   # rke2
   networking.firewall.enable = lib.mkForce false;
-  virtualisation.docker.enable = lib.mkForce false; # docker can't run alongside rke2
-  virtualisation.podman.enable = lib.mkForce false; # podman can't run alongside rke2
   services.rke2 = {
     enable = true;
     extraFlags = [
@@ -48,23 +54,19 @@ in {
     shellAliases = {
       # Install:
       #
-      # $ cd ~/vms && quickget windows 11
-      # $ quickemu --vm ~vms/windows-11.conf
-      # $ sudo mkdir -p /mnt/windows
-      # $ sudo mkdir -p /mnt/preveil
-      # $ sudo ln -s /mnt/windows/Users/Quickemu/PreVeil-luke.petherbridge@statheros.tech /mnt/preveil
+      # 1. cd ~/vms && quickget windows 11
+      # 2. Add line `windows-11.conf`
+      #     ```
+      #     port_forwards=("8445:445") # Bind SMB port to 8445 on host
+      #     ```
       #
-      # $ sudo modprobe nbd max_part=1
-      # $ sudo qemu-nbd --connect /dev/nbd0 ~/vms/windows-11/disk.qcow2
-      # $ sudo fdisk /dev/nbd0 -l
-      # $ sudo mount /dev/nbd0p4 /mnt/windows
-      #
-      # Teardown to sync files/run QEMU
-      #
-      # $ sudo umount /mnt/windows
-      # $ sudo qemu-nbd --disconnect /dev/nbd0
-      "mntp" = "sudo sh -c 'modprobe nbd max_part=1; qemu-nbd --connect /dev/nbd0 /home/${user}/vms/windows-11/disk.qcow2; mount /dev/nbd0p4 /mnt/windows'";
-      "umntp" = "sudo sh -c 'qemu-nbd --disconnect /dev/nbd0; umount /dev/nbd0p4 /mnt/windows'";
+      # 3. quickemu --vm ~/vms/windows-11.conf
+      # 4. sudo mkdir -p /mnt/preveil /mnt/windows
+      # 5. Mount/Unmount
+      "mntp" = "sudo mount -t cifs //127.0.0.1/PreVeil /mnt/preveil/ -o user=QuickEmu,password=quickemu,port=8445,uid=1000,gid=100";
+      # Offline mounting
+      "mntpo" = "sudo sh -c 'modprobe nbd max_part=1; qemu-nbd --connect /dev/nbd0 /home/${user}/vms/windows-11/disk.qcow2; mount /dev/nbd0p4 /mnt/windows'";
+      "umntp" = "sudo umount /mnt/preveil";
     };
     systemPackages = with pkgs; [
       teams-for-linux
@@ -124,6 +126,7 @@ in {
       };
     };
     gaming.enable = false;
+    displayManager.autoLogin.enable = lib.mkForce false; # For security
     xserver.displayManager.sessionCommands = ''
       ${pkgs.xorg.xrdb}/bin/xrdb -merge <<EOF
       Xft.dpi: 120

@@ -205,7 +205,8 @@ abbr -a cr cargo run
 abbr -a crd cargo run --profile dev-opt
 abbr -a cre cargo run --example
 abbr -a crr cargo run --release
-abbr -a ct cargo test --workspace --all-targets --no-fail-fast
+abbr -a ct cargo test --workspace --no-fail-fast
+abbr -a cta cargo test --workspace --all-targets --no-fail-fast
 abbr -a curl xh
 abbr -a cw cargo watch
 abbr -a da "date +'%Y-%m-%d %H:%M:%S'"
