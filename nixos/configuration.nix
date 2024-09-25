@@ -82,6 +82,7 @@ in {
         efiSupport = true;
         enableCryptodisk = true;
         device = "nodev";
+        useOSProber = true;
       };
     };
     supportedFilesystems = ["ntfs"];
@@ -207,6 +208,8 @@ in {
           ]))
         ];
       };
+
+      services.gpg-agent.enable = true;
     };
   };
 
@@ -275,9 +278,9 @@ in {
       enable = true; # enable opengl
       enable32Bit = true; # for wine
     };
-    nvidia.powerManagement.enable = lib.mkDefault true; # Fixes black screen crashe when resuming from sleep
     nvidia-container-toolkit.enable = true; # Nvidia GPU passthrough
     pulseaudio.enable = false; # Must be disabled to use pipewire
+    keyboard.qmk.enable = true;
   };
   security = {
     polkit.enable = true;
@@ -369,6 +372,7 @@ in {
     };
     fish.enable = true;
     git.enable = true;
+    gnupg.agent.enable = true;
     neovim = {
       enable = true;
       defaultEditor = true;
@@ -504,6 +508,7 @@ in {
         pciutils # utils to inspect pcidevices
         polkit_gnome # gui for polkit
         procs # ps replacement
+        qmk
         ripgrep
         sd # sed replacement
         seahorse # keyring manager

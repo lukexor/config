@@ -7,7 +7,7 @@ in {
     environment.theme = {
       name = lib.mkOption {
         type = lib.types.str;
-        default = "Breeze-Dark";
+        default = "Breeze";
         description = ''
           Name of the theme to use.
         '';
@@ -45,10 +45,21 @@ in {
       };
     };
   };
-  config = with cfg; lib.mkMerge [
+  config = with cfg; let
+    bgDesktop = lib.path.append background.path background.desktop;
+    bgTerminal = lib.path.append background.path background.terminal;
+  in lib.mkMerge [
     {
       home-manager.users.${user}.gtk.theme = {
-        inherit (cfg) name;
+        inherit (cfg) name package;
+      };
+
+      qt.style = "breeze";
+      services.xserver.displayManager.lightdm = {
+        background = bgDesktop;
+        greeters.gtk.theme = {
+          inherit (cfg) name package;
+        };
       };
 
       environment.etc = let
@@ -60,11 +71,11 @@ in {
       in {
         "wallpapers/terminal.png" = {
           inherit (bgCfg) user group mode;
-          source = lib.path.append background.path background.terminal;
+          source = bgTerminal;
         };
         "wallpapers/desktop.png" = {
           inherit (bgCfg) user group mode;
-          source = lib.path.append background.path background.desktop;
+          source = bgDesktop;
         };
       };
     }
@@ -95,7 +106,7 @@ in {
       home-manager = {
         users."${user}" = { config, pkgs, ...}: {
           home.file = with cfg; {
-            ".background-image".source = (lib.path.append background.path background.desktop);
+            ".background-image".source = bgDesktop;
           };
         };
       };
