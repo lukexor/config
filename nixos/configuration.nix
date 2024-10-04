@@ -113,6 +113,7 @@ in {
       "gamemode" # For gamemoded
       "libvirtd"
       "networkmanager"
+      "podman"
       "qemu-libvirtd"
       "video"
       "wheel"
@@ -422,8 +423,6 @@ in {
         cmake
         # Currently failing to build
         # cpplint
-        docker
-        docker-client
         gcc
         gnumake
         just # make replacement
@@ -539,9 +538,13 @@ in {
   };
 
   virtualisation = {
-    docker = {
+    containers.enable = true;
+    podman = {
       enable = true;
       autoPrune.enable = true;
+      dockerCompat = true;
+      dockerSocket.enable = true;
+      defaultNetwork.settings.dns_enabled = true;
     };
     libvirtd.enable = true;
   };

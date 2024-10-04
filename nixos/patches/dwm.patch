@@ -1,8 +1,8 @@
 diff --git a/config.def.h b/config.def.h
-index 9efa774..28b9853 100644
+index 9efa774..c48bd5d 100644
 --- a/config.def.h
 +++ b/config.def.h
-@@ -1,25 +1,53 @@
+@@ -1,25 +1,54 @@
  /* See LICENSE file for copyright and license details. */
  
 +#include <X11/XF86keysym.h>
@@ -20,7 +20,7 @@ index 9efa774..28b9853 100644
 -static const char *fonts[]          = { "monospace:size=10" };
 -static const char dmenufont[]       = "monospace:size=10";
 +static const char *fonts[]          = { "DejaVuSansM Nerd Font Mono:size=12" };
-+static const char bemenufont[]      = "DejaVuSansM Nerd Font Mono:size=12";
++static const char bemenufont[]      = "DejaVuSansM Nerd Font Mono 12";
  static const char col_gray1[]       = "#222222";
  static const char col_gray2[]       = "#444444";
  static const char col_gray3[]       = "#bbbbbb";
@@ -46,7 +46,7 @@ index 9efa774..28b9853 100644
  
  /* tagging */
 -static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
-+static const char *tags[] = {"", "󰍪", "󰖟", "", "󰍹"};
++static const char *tags[]    = {"", "󰍪", "󰖟", "", "󰍹"};
 +static const char *tagsalt[] = {"1", "2", "3", "4", "5"};
 +static const int momentaryalttags = 1; /* 1 means alttags will show only when key is held down*/
 +
@@ -55,11 +55,12 @@ index 9efa774..28b9853 100644
 +	{ "#00bbff", col_gray1 },
 +	{ "#ff9900", col_gray1 },
 +	{ "#00bb00", col_gray1 },
++	{ "#990099", col_gray1 },
 +};
  
  static const Rule rules[] = {
  	/* xprop(1):
-@@ -27,8 +55,7 @@ static const Rule rules[] = {
+@@ -27,8 +56,7 @@ static const Rule rules[] = {
  	 *	WM_NAME(STRING) = title
  	 */
  	/* class      instance    title       tags mask     isfloating   monitor */
@@ -69,7 +70,7 @@ index 9efa774..28b9853 100644
  };
  
  /* layout(s) */
-@@ -56,45 +83,71 @@ static const Layout layouts[] = {
+@@ -56,45 +84,71 @@ static const Layout layouts[] = {
  #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
  
  /* commands */
@@ -77,7 +78,7 @@ index 9efa774..28b9853 100644
 -static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
 -static const char *termcmd[]  = { "st", NULL };
 +static char bemenumon[2] = "0"; /* component of bemenucmd, manipulated in spawn() */
-+static const char *bemenucmd[] = { "bemenu-run", "-W", "0.5", "-l", "5", "-c", "--fixed-height", "-m", bemenumon, NULL };
++static const char *bemenucmd[] = { "bemenu-run", "-W", "0.5", "-l", "5", "-c", "--fixed-height", "-m", bemenumon, "--fn", bemenufont, NULL };
 +static const char *termcmd[]  = { "kitty", NULL };
 +static const char *chromiumcmd[]  = { "chromium", NULL };
 +static const char *firefoxcmd[]  = { "firefox", NULL };
@@ -309,7 +310,7 @@ index 6471431..94b8bbd 100644
  /* Cursor abstraction */
  Cur *drw_cur_create(Drw *drw, int shape);
 diff --git a/dwm.c b/dwm.c
-index 67c6b2b..cb377d3 100644
+index 67c6b2b..678ea50 100644
 --- a/dwm.c
 +++ b/dwm.c
 @@ -56,6 +56,7 @@
@@ -725,16 +726,18 @@ index 67c6b2b..cb377d3 100644
  	/* init bars */
  	updatebars();
  	updatestatus();
-@@ -1649,8 +1830,6 @@ spawn(const Arg *arg)
+@@ -1649,8 +1830,8 @@ spawn(const Arg *arg)
  {
  	struct sigaction sa;
  
 -	if (arg->v == dmenucmd)
 -		dmenumon[0] = '0' + selmon->num;
++	if (arg->v == bemenucmd)
++		bemenumon[0] = '0' + selmon->num;
  	if (fork() == 0) {
  		if (dpy)
  			close(ConnectionNumber(dpy));
-@@ -1687,35 +1866,57 @@ tagmon(const Arg *arg)
+@@ -1687,35 +1868,57 @@ tagmon(const Arg *arg)
  void
  tile(Monitor *m)
  {
@@ -804,7 +807,7 @@ index 67c6b2b..cb377d3 100644
  	updatebarpos(selmon);
  	XMoveResizeWindow(dpy, selmon->barwin, selmon->wx, selmon->by, selmon->ww, bh);
  	arrange(selmon);
-@@ -1754,9 +1955,33 @@ void
+@@ -1754,9 +1957,33 @@ void
  toggleview(const Arg *arg)
  {
  	unsigned int newtagset = selmon->tagset[selmon->seltags] ^ (arg->ui & TAGMASK);
@@ -838,7 +841,7 @@ index 67c6b2b..cb377d3 100644
  		focus(NULL);
  		arrange(selmon);
  	}
-@@ -1822,15 +2047,18 @@ updatebars(void)
+@@ -1822,15 +2049,18 @@ updatebars(void)
  	XSetWindowAttributes wa = {
  		.override_redirect = True,
  		.background_pixmap = ParentRelative,
@@ -860,7 +863,7 @@ index 67c6b2b..cb377d3 100644
  		XDefineCursor(dpy, m->barwin, cursor[CurNormal]->cursor);
  		XMapRaised(dpy, m->barwin);
  		XSetClassHint(dpy, m->barwin, &ch);
-@@ -2053,11 +2281,37 @@ updatewmhints(Client *c)
+@@ -2053,11 +2283,37 @@ updatewmhints(Client *c)
  void
  view(const Arg *arg)
  {
@@ -899,7 +902,7 @@ index 67c6b2b..cb377d3 100644
  	focus(NULL);
  	arrange(selmon);
  }
-@@ -2128,6 +2382,43 @@ xerrorstart(Display *dpy, XErrorEvent *ee)
+@@ -2128,6 +2384,43 @@ xerrorstart(Display *dpy, XErrorEvent *ee)
  	return -1;
  }
  
@@ -943,7 +946,7 @@ index 67c6b2b..cb377d3 100644
  void
  zoom(const Arg *arg)
  {
-@@ -2152,6 +2443,7 @@ main(int argc, char *argv[])
+@@ -2152,6 +2445,7 @@ main(int argc, char *argv[])
  	if (!(dpy = XOpenDisplay(NULL)))
  		die("dwm: cannot open display");
  	checkotherwm();
