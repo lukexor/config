@@ -147,6 +147,17 @@ in {
         })
       ];
 
+      hardware = {
+        graphics = {
+          enable = true; # enable opengl
+          enable32Bit = true; # for wine
+        };
+        nvidia = {
+          open = true;
+          powerManagement.enable = true;
+        };
+      };
+
       services = {
         displayManager.defaultSession = "none+dwm";
         dwm-status = {

@@ -274,11 +274,6 @@ in {
       enable = true;
       powerOnBoot = true;
     };
-    graphics = {
-      enable = true; # enable opengl
-      enable32Bit = true; # for wine
-    };
-    nvidia.open = true;
     nvidia-container-toolkit.enable = true; # NVIDIA GPU passthrough
     pulseaudio.enable = false; # Must be disabled to use pipewire
     keyboard.qmk.enable = true;
