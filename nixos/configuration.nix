@@ -137,7 +137,7 @@ in {
         homeDirectory = "/home/${user}";
         stateVersion = "24.05";
         file = with config.lib.file; let
-          config = "/home/${user}/config";
+          config = "/home/${user}/config/dotfiles";
         in {
           ".config/direnv" = {
             source = mkOutOfStoreSymlink "${config}/.config/direnv/";

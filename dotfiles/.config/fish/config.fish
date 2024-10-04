@@ -1,4 +1,4 @@
-#
+# -r
 #                                    i  t
 #                                   LE  ED.
 #                                  L#E  E#K:
@@ -130,7 +130,7 @@ fish_add_path --path -ga \
     /usr/local/bin \
     /usr/local/go/bin
 
-set -g activity_log ~/.activity_log.txt
+set -g activity_log ~/.activity_log
 
 # ssh-agent
 set -g agent_info /tmp/ssh-agent-info
@@ -300,7 +300,7 @@ end
 # =============================================================================
 
 alias cal="echo -n "" > $activity_log"
-alias lal="cat $activity_log | head"
+alias lal="[ -r $activity_log ] && cat $activity_log | head || echo 'nothing logged'"
 
 alias cp="cp -i"
 alias mv="mv -i"

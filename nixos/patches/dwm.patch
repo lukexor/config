@@ -1,5 +1,5 @@
 diff --git a/config.def.h b/config.def.h
-index 9efa774..975461e 100644
+index 9efa774..fe906f5 100644
 --- a/config.def.h
 +++ b/config.def.h
 @@ -1,25 +1,53 @@
@@ -46,8 +46,8 @@ index 9efa774..975461e 100644
  
  /* tagging */
 -static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
-+static const char *tags[] = {"", "󰍪", "", "󰍹"};
-+static const char *tagsalt[] = {"1", "2", "3", "4"};
++static const char *tags[] = {"", "󰍪", "󰖟", "", "󰍹"};
++static const char *tagsalt[] = {"1", "2", "3", "4", "5"};
 +static const int momentaryalttags = 1; /* 1 means alttags will show only when key is held down*/
 +
 +static const char *tagsel[][2] = {
@@ -309,7 +309,7 @@ index 6471431..94b8bbd 100644
  /* Cursor abstraction */
  Cur *drw_cur_create(Drw *drw, int shape);
 diff --git a/dwm.c b/dwm.c
-index f1d86b2..cb377d3 100644
+index 67c6b2b..cb377d3 100644
 --- a/dwm.c
 +++ b/dwm.c
 @@ -56,6 +56,7 @@
@@ -860,15 +860,6 @@ index f1d86b2..cb377d3 100644
  		XDefineCursor(dpy, m->barwin, cursor[CurNormal]->cursor);
  		XMapRaised(dpy, m->barwin);
  		XSetClassHint(dpy, m->barwin, &ch);
-@@ -1851,7 +2079,7 @@ updatebarpos(Monitor *m)
- }
- 
- void
--updateclientlist()
-+updateclientlist(void)
- {
- 	Client *c;
- 	Monitor *m;
 @@ -2053,11 +2281,37 @@ updatewmhints(Client *c)
  void
  view(const Arg *arg)

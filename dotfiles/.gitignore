@@ -1,0 +1,47 @@
+# Binaries
+*.exe*
+*.o
+*.so
+*.pyc
+build
+dist
+target
+node_modules
+virtualenv
+venv
+*.spv
+_*
+
+# Temporary files
+*.cache
+*.tmp
+*.swn
+*.swo
+*.swp
+*.local
+*~
+~*
+*.bak
+*.orig
+.todo.md
+Session.vim
+.DS_Store*
+*.db
+Icon\?
+._*
+Desktop.ini
+.Spotlight-V100
+.Trashes
+
+# Logs
+*.log
+logs
+
+# Project
+tags
+ctags
+.project
+.settings
+.jrc
+.env.local
+.lspconfig.lua
