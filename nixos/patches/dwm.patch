@@ -1,5 +1,5 @@
 diff --git a/config.def.h b/config.def.h
-index 9efa774..fe906f5 100644
+index 9efa774..28b9853 100644
 --- a/config.def.h
 +++ b/config.def.h
 @@ -1,25 +1,53 @@
@@ -20,7 +20,7 @@ index 9efa774..fe906f5 100644
 -static const char *fonts[]          = { "monospace:size=10" };
 -static const char dmenufont[]       = "monospace:size=10";
 +static const char *fonts[]          = { "DejaVuSansM Nerd Font Mono:size=12" };
-+static const char bemenufont[]       = "DejaVuSansM Nerd Font Mono:size=12";
++static const char bemenufont[]      = "DejaVuSansM Nerd Font Mono:size=12";
  static const char col_gray1[]       = "#222222";
  static const char col_gray2[]       = "#444444";
  static const char col_gray3[]       = "#bbbbbb";
@@ -40,7 +40,7 @@ index 9efa774..fe906f5 100644
 +};
 +
 +static const char *const autostart[] = {
-+	"kitty -1", NULL,
++	"kitty", "-1", NULL,
 +	NULL /* terminate */
 +};
  
