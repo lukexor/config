@@ -278,6 +278,7 @@ in {
       enable = true; # enable opengl
       enable32Bit = true; # for wine
     };
+    nvidia.open = true;
     nvidia-container-toolkit.enable = true; # NVIDIA GPU passthrough
     pulseaudio.enable = false; # Must be disabled to use pipewire
     keyboard.qmk.enable = true;
@@ -411,7 +412,6 @@ in {
         maestral # dropbox client
         maestral-gui
         ncspot # spotify
-        tui-journal
         xarchiver # archive manager
       ];
       development = [
@@ -533,7 +533,6 @@ in {
       LESS = "-RFX";
       MANPAGER = "nvim +Man!";
       PAGER = "nvim +Man!";
-      RUST_BACKTRACE = "full";
       TERMINAL = "kitty";
       VISUAL = "nvim";
     };

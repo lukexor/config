@@ -7,7 +7,7 @@ in {
     environment.theme = {
       name = lib.mkOption {
         type = lib.types.str;
-        default = "Breeze";
+        default = "Breeze-Dark";
         description = ''
           Name of the theme to use.
         '';

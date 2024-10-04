@@ -1532,9 +1532,6 @@ require("lazy").setup({
         desc = "Format buffer",
       },
     },
-    init = function()
-      vim.o.formatexpr = "v:lua.require'conform'.formatexpr()"
-    end,
     opts = {
       format_after_save = {
         lsp_fallback = true,

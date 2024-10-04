@@ -14,18 +14,21 @@ in {
     enableIPv6 = true; # required by wgnord
   };
 
-  # Disable nvidia GPU for now unless really needed
-  hardware.nvidia = {
-    powerManagement = {
-      enable = true;
-      finegrained = true;
-    };
-    prime = {
-      offload.enable = true;
-      offload.enableOffloadCmd = true;
-      reverseSync.enable = true; # Use only integrated GPU
-      intelBusId = "PCI:0:2:0";
-      nvidiaBusId = "PCI:1:0:0";
+  hardware.nvidia.powerManagement.enable = true;
+  services.openssh = {
+    enable = true;
+    settings = {
+      # FIPS compatible key exchange algorithms
+      # See: https://www.stigviewer.com/stig/red_hat_enterprise_linux_8/2022-12-06/finding/V-255924
+      KexAlgorithms = [
+        "ecdh-sha2-nistp256"
+        "ecdh-sha2-nistp384"
+        "ecdh-sha2-nistp521"
+        "diffie-hellman-group-exchange-sha256"
+        "diffie-hellman-group14-sha256"
+        "diffie-hellman-group16-sha512"
+        "diffie-hellman-group18-sha512"
+      ];
     };
   };
 
