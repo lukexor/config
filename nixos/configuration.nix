@@ -529,7 +529,7 @@ in {
       LESS = "-RFX";
       MANPAGER = "nvim +Man!";
       PAGER = "nvim +Man!";
-      RUSTC_WRAPPER = "sccache";
+      RUSTC_WRAPPER = "/run/current-system/sw/bin/sccache";
       TERMINAL = "kitty";
       VISUAL = "nvim";
     };

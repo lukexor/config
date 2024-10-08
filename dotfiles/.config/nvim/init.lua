@@ -251,8 +251,11 @@ map("<leader>Q", "<cmd>confirm qall<CR>", { desc = "Quit All" })
 map("<leader>O", "<cmd>%bd|e#|bd#<CR>", { desc = "Quit all but current" })
 map("<leader>n", "<cmd>new<CR>", { desc = "New Buffer" })
 
+-- TODO: phase out hjkl bindings
 map("<leader>h", "<cmd>bp<CR>", { silent = true, desc = "Go to Previous Buffer" })
 map("<leader>l", "<cmd>bn<CR>", { silent = true, desc = "Go to Next Buffer" })
+map("<leader>n", "<cmd>bp<CR>", { silent = true, desc = "Go to Previous Buffer" })
+map("<leader>o", "<cmd>bn<CR>", { silent = true, desc = "Go to Next Buffer" })
 map("<leader><leader>", "<C-^>", { desc = "Alternate Buffer" })
 
 -- Skip split macros in temporary files like editing fish command line in
@@ -279,10 +282,15 @@ map("<S-Up>", "<cmd>resize +5<CR>", { desc = "Increase Height" })
 map("<S-Left>", "<cmd>vertical resize +5<CR>", { desc = "Reduce Width" })
 map("<S-Right>", "<cmd>vertical resize -5<CR>", { desc = "Increase Width" })
 
+-- TODO: phase out hjkl bindings
 map("<C-h>", "<C-w>h", { desc = "Go to Nth left window" })
 map("<C-j>", "<C-w>j", { desc = "Go to Nth below window" })
 map("<C-k>", "<C-w>k", { desc = "Go to Nth above window" })
 map("<C-l>", "<C-w>l", { desc = "Go to Nth right window" })
+map("<C-n>", "<C-w>h", { desc = "Go to Nth left window" })
+map("<C-e>", "<C-w>j", { desc = "Go to Nth below window" })
+map("<C-i>", "<C-w>k", { desc = "Go to Nth above window" })
+map("<C-o>", "<C-w>l", { desc = "Go to Nth right window" })
 
 map("gt", "<C-]>", { desc = "Go to Tag" })
 
@@ -1932,7 +1940,7 @@ require("lazy").setup({
       { "<leader>gs", "<cmd>Telescope grep_string<CR>", desc = "Grep String" },
       { "<leader>s", "<cmd>Telescope current_buffer_fuzzy_find<CR>", desc = "Buffer Search" },
       { "<leader>dD", "<cmd>Telescope diagnostics<CR>", desc = "Diagnostics" },
-      { "<leader>T", "<cmd>Telescope help_tags<CR>", desc = "Help" },
+      { "<leader>Th", "<cmd>Telescope help_tags<CR>", desc = "Help" },
       { "<leader>N", "<cmd>Telescope luasnip<CR>", desc = "Snippets" },
       { "<c-u>", "<cmd>Telescope luasnip<CR>", mode = "i", desc = "Snippets" },
       { "<c-s>", "<cmd>Telescope symbols<CR>", mode = { "n", "i" }, desc = "Symbols" },
@@ -1999,7 +2007,7 @@ require("lazy").setup({
         desc = "Clear breakpoints",
       },
       {
-        "<leader>lp",
+        "<leader>dlp",
         function()
           require("dap").set_breakpoint(nil, nil, vim.fn.input("Log point message: "))
         end,
