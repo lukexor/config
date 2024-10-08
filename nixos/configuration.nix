@@ -83,6 +83,7 @@ in {
         enableCryptodisk = true;
         device = "nodev";
         useOSProber = true;
+        backgroundColor = "#7EBAE4";
       };
     };
     supportedFilesystems = ["ntfs"];
@@ -433,6 +434,7 @@ in {
           extensions = ["rust-analyzer" "rust-src"];
           targets = ["wasm32-unknown-unknown" "wasm32-wasi"];
         })
+        sccache
         yarn
       ];
       language-servers = [
@@ -527,6 +529,7 @@ in {
       LESS = "-RFX";
       MANPAGER = "nvim +Man!";
       PAGER = "nvim +Man!";
+      RUSTC_WRAPPER = "sccache";
       TERMINAL = "kitty";
       VISUAL = "nvim";
     };

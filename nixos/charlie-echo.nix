@@ -137,4 +137,12 @@ in {
       EOF
     '';
   };
+  console = with pkgs; {
+    font = lib.mkForce "${terminus_font}/share/consolefonts/ter-i28b.psf.gz";
+  };
+  boot.loader.grub = {
+    gfxmodeEfi = "2560x1600";
+    fontSize = 28;
+    font = "${pkgs.dejavu_fonts}/share/fonts/truetype/DejaVuSansMono.ttf";
+  };
 }
