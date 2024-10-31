@@ -450,6 +450,7 @@ in {
         nodePackages.bash-language-server
         nodePackages.jsonlint
         nodePackages.typescript-language-server
+        nodePackages.vscode-json-languageserver
         playerctl # multi-media control
         prettierd
         protolint
