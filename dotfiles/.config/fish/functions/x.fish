@@ -1,46 +1,46 @@
-function x -a "filename" -d "extract compressed file"
+function x -a filename -d "extract compressed file"
     set -l filename $argv[1]
     switch $filename
         case "*.tar.bz2"
-            tar xvjf $filename
+            tar xvjf $argv
         case "*.tar.gz"
-            tar xvzf $filename
+            tar xvzf $argv
         case "*.tar.xz"
-            tar --xz -xvf $filename
+            tar --xz -xvf $argv
         case "*.tar.zma"
-            tar --lzma -xvf $filename
+            tar --lzma -xvf $argv
         case "*.tar.zst"
-            tar xvf $filename
+            tar xvf $argv
         case "*.7z"
-            7za x $filename
+            7za x $argv
         case "*.Z"
-            uncompress $filename
+            uncompress $argv
         case "*.bz2"
-            bunzip2 $filename
+            bunzip2 $argv
         case "*.deb"
-            ar vx $filename
+            ar vx $argv
         case "*.gz"
-            gunzip $filename
+            gunzip $argv
         case "*.lzma"
-            unlzma $filename
+            unlzma $argv
         case "*.rar"
-            unrar e -ad $filename
+            unrar e -ad $argv
         case "*.tar"
-            tar xvf $filename
+            tar xvf $argv
         case "*.tbz"
-            tar xvjf $filename
+            tar xvjf $argv
         case "*.tbz2"
-            tar xvjf $filename
+            tar xvjf $argv
         case "*.tgz"
-            tar xvzf $filename
+            tar xvzf $argv
         case "*.tlz"
-            tar --lzma -xvf $filename
+            tar --lzma -xvf $argv
         case "*.txz"
-            tar --xz -xvf $filename
+            tar --xz -xvf $argv
         case "*.xz"
-            unxz $filename
+            unxz $argv
         case "*.zip"
-            unzip $filename
+            unzip $argv
         case ""
             echo "Error! Must pass a file to extract"
             return 1

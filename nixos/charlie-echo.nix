@@ -14,7 +14,10 @@ in {
     enableIPv6 = true; # required by wgnord
   };
 
-  hardware.nvidia.powerManagement.enable = true;
+  hardware = {
+    nvidia.powerManagement.enable = true;
+    rtl-sdr.enable = true; # Properly sets up udev rules and blacklists kernel modules
+  };
   services.openssh = {
     enable = true;
     settings = {
@@ -51,7 +54,6 @@ in {
   ];
   systemd.services.rke2-server.path = ["/var/lib/rancher/rke2"];
   environment.sessionVariables.PATH = ["/var/lib/rancher/rke2/bin"];
-  # TODO: Add custom rke2 group, chown paths and add user to group
 
   environment = {
     shellAliases = {
@@ -72,9 +74,13 @@ in {
       "umntp" = "sudo umount /mnt/preveil";
     };
     systemPackages = with pkgs; [
+      k9s
+      rtl-sdr # RTL-SDR USB drivers
+      sdrpp # SDR++ proram
       teams-for-linux
       upower # for battery status
       wgnord
+      zoom-us
     ];
     theme.background = {
       terminal = "eve-online.png";
@@ -143,6 +149,5 @@ in {
   boot.loader.grub = {
     gfxmodeEfi = "2560x1600";
     fontSize = 28;
-    font = "${pkgs.dejavu_fonts}/share/fonts/truetype/DejaVuSansMono.ttf";
   };
 }

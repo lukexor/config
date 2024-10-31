@@ -83,7 +83,9 @@ in {
         enableCryptodisk = true;
         device = "nodev";
         useOSProber = true;
-        backgroundColor = "#7EBAE4";
+        font = "${pkgs.dejavu_fonts}/share/fonts/truetype/DejaVuSansMono.ttf";
+        backgroundColor = "#333333";
+        splashImage = null;
       };
     };
     supportedFilesystems = ["ntfs"];
@@ -114,6 +116,7 @@ in {
       "gamemode" # For gamemoded
       "libvirtd"
       "networkmanager"
+      "plugdev" # For USB devices
       "podman"
       "qemu-libvirtd"
       "video"
@@ -542,13 +545,17 @@ in {
 
   virtualisation = {
     containers.enable = true;
-    podman = {
+    docker = {
       enable = true;
       autoPrune.enable = true;
-      dockerCompat = true;
-      dockerSocket.enable = true;
-      defaultNetwork.settings.dns_enabled = true;
     };
+    # podman = {
+    #   enable = true;
+    #   autoPrune.enable = true;
+    #   dockerCompat = true;
+    #   dockerSocket.enable = true;
+    #   defaultNetwork.settings.dns_enabled = true;
+    # };
     libvirtd.enable = true;
   };
   security.wrappers = {

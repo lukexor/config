@@ -287,10 +287,10 @@ map("<C-h>", "<C-w>h", { desc = "Go to Nth left window" })
 map("<C-j>", "<C-w>j", { desc = "Go to Nth below window" })
 map("<C-k>", "<C-w>k", { desc = "Go to Nth above window" })
 map("<C-l>", "<C-w>l", { desc = "Go to Nth right window" })
-map("<C-n>", "<C-w>h", { desc = "Go to Nth left window" })
-map("<C-e>", "<C-w>j", { desc = "Go to Nth below window" })
-map("<C-i>", "<C-w>k", { desc = "Go to Nth above window" })
-map("<C-o>", "<C-w>l", { desc = "Go to Nth right window" })
+-- map("<C-n>", "<C-w>h", { desc = "Go to Nth left window" })
+-- map("<C-e>", "<C-w>j", { desc = "Go to Nth below window" })
+-- map("<C-i>", "<C-w>k", { desc = "Go to Nth above window" })
+-- map("<C-o>", "<C-w>l", { desc = "Go to Nth right window" })
 
 map("gt", "<C-]>", { desc = "Go to Tag" })
 
@@ -810,7 +810,7 @@ require("lazy").setup({
         -- cpp = { "cpplint" },
         glslc = { "glslc" },
         html = { "tidy_xml" },
-        xml = { "tidy_xml" },
+        -- xml = { "tidy_xml" },
         javascript = { "eslint_d" },
         javascriptreact = { "eslint_d" },
         json = { "jsonlint" },
