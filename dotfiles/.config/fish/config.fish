@@ -165,6 +165,7 @@ function fish_user_key_bindings
     fish_default_key_bindings -M insert
     fish_vi_key_bindings --no-erase insert
 
+    bind -M insert \cH backward-kill-word # ctrl-backspace
     bind -M insert \eb prevd-or-backward-word
     bind -M insert \ef nextd-or-forward-word
     bind -M insert \cr fzf_history

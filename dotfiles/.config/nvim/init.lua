@@ -304,6 +304,8 @@ map("<C-p>", "<Up>", { mode = "c", desc = "Recall previous command-line" })
 map("<M-b>", "<S-Left>", { mode = "c", desc = "Go back one word" })
 map("<M-f>", "<S-Right>", { mode = "c", desc = "Go forward one word" })
 
+map("<C-bs>", "<C-w>", { mode = "i", desc = "delete previous word" })
+
 map("cd", function()
   local pathname = vim.fs.dirname(vim.api.nvim_buf_get_name(0))
   vim.cmd(("lcd %s"):format(pathname))
