@@ -1288,11 +1288,17 @@ require("lazy").setup({
                 assist = { emitMustUse = true },
                 cargo = {
                   features = "all",
-                  targetDir = vim.env.CARGO_TARGET_DIR .. "/rust-analyzer", -- Avoid locking/trashing CARGO_TARGET_DIR
+                  targetDir = vim.env.HOME .. "/.rust-analyzer", -- Avoid locking/trashing CARGO_TARGET_DIR
                 },
                 check = {
                   command = "clippy",
                   features = "all",
+                },
+                checkOnSave = {
+                  extraArgs = {
+                    "--target-dir",
+                    vim.env.HOME .. "/.rust-analyzer", -- Avoid locking/trashing CARGO_TARGET_DIR
+                  },
                 },
                 hover = {
                   actions = {
