@@ -420,7 +420,7 @@ in {
         cargo-deny
         cargo-expand
         cargo-flamegraph
-        cargo-leptos
+        cargo-generate
         cargo-outdated
         cargo-udeps
         cargo-watch
