@@ -1603,6 +1603,7 @@ require("lazy").setup({
         toml = { "taplo" },
         typescript = { "eslint_d", "rustywind", "prettierd" },
         typescriptreact = { "eslint_d", "rustywind", "prettierd" },
+        xml = { "xmlformat" },
         yaml = { "prettierd" },
         ["*"] = { "trim_whitespace" },
       },

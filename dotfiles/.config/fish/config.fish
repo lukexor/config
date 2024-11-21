@@ -120,6 +120,7 @@ if macos
 else if linux
     fish_add_path --path -ga \
         /usr/games
+    set -gx LD_LIBRARY_PATH "$LD_LIBRARY_PATH:/usr/local/lib:/usr/lib"
 end
 
 fish_add_path --path -ga \
@@ -156,6 +157,8 @@ end
 if test -e ~/.local/config.fish
     source ~/.local/config.fish
 end
+
+set CARGO_TARGET_DIR ~/.cargo-target
 
 # =============================================================================
 # Keybindings   {{{1
@@ -270,6 +273,7 @@ abbr -a nci npm ci
 abbr -a ns nix-shell --command \"exec fish\"
 abbr -a ps procs
 abbr -a py python3
+abbr -a python python3
 abbr -a rd rmdir
 abbr -a sed sd
 abbr -a s fd --type f --exec sd
@@ -356,3 +360,6 @@ end
 
 
 # vim: foldmethod=marker foldlevel=0
+
+set -x N_PREFIX "$HOME/n"
+contains "$N_PREFIX/bin" $PATH; or set -a PATH "$N_PREFIX/bin" # Added by n-install (see http://git.io/n-install-repo).

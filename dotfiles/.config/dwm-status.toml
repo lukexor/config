@@ -1,0 +1,10 @@
+order = ["cpu_load", "audio", "battery", "time"]
+
+[audio]
+mute = "󰝟"
+template = "  {VOL}%"
+
+[battery]
+charging = "󰄿"
+discharging = "󰄼"
+no_battery = "󱉝"
