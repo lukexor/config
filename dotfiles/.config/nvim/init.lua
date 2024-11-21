@@ -1281,12 +1281,16 @@ require("lazy").setup({
       "hrsh7th/nvim-cmp",
     },
     config = function()
-      require("codeium").setup({
-        toops = {
-          language_server = "/run/current-system/sw/bin/codeium_language_server",
-        },
-        wrapper = "steam-run",
-      })
+      local opts = {}
+      local handle = io.popen("grep -c ID=nixos /etc/os-release")
+      if handle ~= nil then
+        local is_nix = handle:read("*a")
+        handle:close()
+        if is_nix:match("1") == "1" then
+          opts.wrapper = "steam-run"
+        end
+      end
+      require("codeium").setup(opts)
     end,
   },
   {
