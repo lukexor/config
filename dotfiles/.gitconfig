@@ -13,7 +13,7 @@
   editor = nvim -i NONE
   pager = less -F -X -x1,5
   autocrlf = input
-  fsmonitor = true
+  fsmonitor = false
 [rerere]
   enabled = true
 [pager]

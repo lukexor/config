@@ -38,7 +38,7 @@ vim.opt.diffopt:append({ "iwhite", "algorithm:patience", "indent-heuristic" })
 vim.o.expandtab = true
 vim.o.incsearch = true
 vim.o.jumpoptions = "stack,view"
-vim.o.laststatus = 2
+vim.o.laststatus = 3
 vim.o.list = true
 vim.o.listchars = "tab:│ ,trail:+,extends:,precedes:,nbsp:‗"
 vim.opt.matchpairs:append({ "<:>" })
@@ -181,6 +181,16 @@ local lsp_on_attach = function(client, bufnr)
     end
     vim.lsp.diagnostic.on_publish_diagnostics(err, result, ctx, config)
   end, { update_in_insert = true })
+  -- See: https://github.com/neovim/neovim/issues/30985
+  for _, method in ipairs({ "textDocument/diagnostic", "workspace/diagnostic" }) do
+    local default_diagnostic_handler = vim.lsp.handlers[method]
+    vim.lsp.handlers[method] = function(err, result, context, config)
+      if err ~= nil and err.code == -32802 then
+        return
+      end
+      return default_diagnostic_handler(err, result, context, config)
+    end
+  end
 end
 
 local lsp_capabilities = function()
@@ -1265,6 +1275,21 @@ require("lazy").setup({
   -- LSP
   -- -----------------------------------------------------------------------------
   {
+    "Exafunction/codeium.nvim",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "hrsh7th/nvim-cmp",
+    },
+    config = function()
+      require("codeium").setup({
+        toops = {
+          language_server = "/run/current-system/sw/bin/codeium_language_server",
+        },
+        wrapper = "steam-run",
+      })
+    end,
+  },
+  {
     "mrcjkb/rustaceanvim",
     version = "^4",
     ft = { "rust" },
@@ -1289,6 +1314,7 @@ require("lazy").setup({
                 cargo = {
                   features = "all",
                   targetDir = vim.env.HOME .. "/.rust-analyzer", -- Avoid locking/trashing CARGO_TARGET_DIR
+                  -- target = "wasm32-unknown-unknown",
                 },
                 check = {
                   command = "clippy",
@@ -1596,32 +1622,6 @@ require("lazy").setup({
   -- Auto-Completion
   -- -----------------------------------------------------------------------------
   {
-    "zbirenbaum/copilot-cmp", -- Copilot auto-complete. Must load after nvim-cmp
-    event = "InsertEnter",
-    dependencies = {
-      "hrsh7th/nvim-cmp",
-      {
-        "zbirenbaum/copilot.lua", -- AI auto-complete
-        build = ":Copilot auth",
-        cond = function()
-          return vim.fn.executable("node") == 1
-        end,
-        cmd = "Copilot",
-        opts = {
-          suggestion = { enabled = false, auto_trigger = false },
-          panel = { enabled = false },
-          copilot_node_command = vim.g.node_host_prog,
-        },
-      },
-    },
-    config = function(_, opts)
-      local copilot_cmp = require("copilot_cmp")
-      copilot_cmp.setup(opts)
-      -- Fixes lazy loading on attach
-      copilot_cmp._on_insert_enter()
-    end,
-  },
-  {
     "hrsh7th/nvim-cmp", -- Auto-completion library
     cmd = "CmpStatus",
     event = "InsertEnter",
@@ -1789,6 +1789,7 @@ require("lazy").setup({
               Class = "",
               Color = "",
               Copilot = "",
+              Codeium = "",
               Constant = "π",
               Constructor = "",
               Enum = "",
@@ -1818,7 +1819,7 @@ require("lazy").setup({
         sources = cmp.config.sources({
           { name = "luasnip" },
           { name = "nvim_lsp", keyword_length = 3 },
-          { name = "copilot" }, -- keyword_length doesn't seem to work with copilot
+          { name = "codeium", keyword_length = 4 },
           { name = "buffer", keyword_length = 4 },
           { name = "spell", keyword_length = 3, keyword_pattern = [[\w\+]] },
           { name = "dictionary", keyword_length = 3, keyword_pattern = [[\w\+]] },

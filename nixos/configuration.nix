@@ -425,6 +425,7 @@ in {
         cargo-udeps
         cargo-watch
         cmake
+        codeium
         # Currently failing to build
         # cpplint
         gcc
