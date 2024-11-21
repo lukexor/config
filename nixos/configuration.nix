@@ -142,37 +142,38 @@ in {
         homeDirectory = "/home/${user}";
         stateVersion = "24.05";
         file = with config.lib.file; let
-          config = "/home/${user}/config/dotfiles";
+          config = "/home/${user}/config";
+          dotfiles = "/home/${user}/config/dotfiles";
         in {
           ".config/direnv" = {
-            source = mkOutOfStoreSymlink "${config}/.config/direnv/";
+            source = mkOutOfStoreSymlink "${dotfiles}/.config/direnv/";
             recursive = true;
           };
           ".config/fish" = {
-            source = mkOutOfStoreSymlink "${config}/.config/fish";
+            source = mkOutOfStoreSymlink "${dotfiles}/.config/fish";
             recursive = true;
           };
           ".config/kitty" = {
-            source = mkOutOfStoreSymlink "${config}/.config/kitty";
+            source = mkOutOfStoreSymlink "${dotfiles}/.config/kitty";
             recursive = true;
           };
           ".config/nvim" = {
-            source = mkOutOfStoreSymlink "${config}/.config/nvim";
+            source = mkOutOfStoreSymlink "${dotfiles}/.config/nvim";
             recursive = true;
           };
           ".icons" = {
-            source = mkOutOfStoreSymlink "${config}/.icons";
+            source = mkOutOfStoreSymlink "${dotfiles}/.icons";
             recursive = true;
           };
-          ".config/starship.toml".source = mkOutOfStoreSymlink "${config}/.config/starship.toml";
-          ".local/kitty/keybinds.conf".source = mkOutOfStoreSymlink "${config}/.config/kitty/linux-keybinds.conf";
-          ".gitconfig".source = mkOutOfStoreSymlink "${config}/.gitconfig";
-          ".gitignore".source = mkOutOfStoreSymlink "${config}/.gitignore";
-          ".luarc.json".source = mkOutOfStoreSymlink "${config}/.luarc.json";
-          ".markdownlint.json".source = mkOutOfStoreSymlink "${config}/.markdownlint.json";
-          ".protolint.yaml".source = mkOutOfStoreSymlink "${config}/.protolint.yaml";
-          ".rgignore".source = mkOutOfStoreSymlink "${config}/.rgignore";
-          ".stylua.toml".source = mkOutOfStoreSymlink "${config}/.stylua.toml";
+          ".config/starship.toml".source = mkOutOfStoreSymlink "${dotfiles}/.config/starship.toml";
+          ".local/kitty/keybinds.conf".source = mkOutOfStoreSymlink "${dotfiles}/.config/kitty/linux-keybinds.conf";
+          ".gitconfig".source = mkOutOfStoreSymlink "${dotfiles}/.gitconfig";
+          ".gitignore".source = mkOutOfStoreSymlink "${dotfiles}/.gitignore";
+          ".luarc.json".source = mkOutOfStoreSymlink "${dotfiles}/.luarc.json";
+          ".markdownlint.json".source = mkOutOfStoreSymlink "${dotfiles}/.markdownlint.json";
+          ".protolint.yaml".source = mkOutOfStoreSymlink "${dotfiles}/.protolint.yaml";
+          ".rgignore".source = mkOutOfStoreSymlink "${dotfiles}/.rgignore";
+          ".stylua.toml".source = mkOutOfStoreSymlink "${dotfiles}/.stylua.toml";
           "bin" = {
             source = mkOutOfStoreSymlink "${config}/bin";
             recursive = true;
@@ -420,7 +421,7 @@ in {
         cargo-deny
         cargo-expand
         cargo-flamegraph
-        cargo-leptos
+        cargo-generate
         cargo-outdated
         cargo-udeps
         cargo-watch
