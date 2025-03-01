@@ -158,7 +158,18 @@ if test -e ~/.local/config.fish
     source ~/.local/config.fish
 end
 
-set CARGO_TARGET_DIR ~/.cargo-target
+set -gx CARGO_TARGET_DIR ~/.cargo-target
+set -gx EDITOR nvim
+set -gx SYSTEMD_EDITOR nvim
+set -gx FZF_CTRL_T_COMMAND "rg --files --hidden"
+set -gx FZF_DEFAULT_COMMAND "rg --files --hidden"
+set -gx FZF_DEFAULT_OPTS "--height 50% --layout=reverse --border --inline-info"
+set -gx LESS -RFX
+set -gx MANPAGER "nvim +Man!"
+set -gx PAGER "nvim +Man!"
+set -gx TERMINAL kitty
+set -gx VISUAL nvim
+set -gx CM_LAUNCHER bemenu
 
 # =============================================================================
 # Keybindings   {{{1
@@ -209,7 +220,8 @@ abbr -a cr cargo run
 abbr -a crd cargo run --profile dev-opt
 abbr -a cre cargo run --example
 abbr -a crr cargo run --release
-abbr -a ct cargo test --workspace --no-fail-fast
+abbr -a ct cargo test --tests --no-fail-fast
+abbr -a ctw cargo test --workspace --no-fail-fast
 abbr -a cta cargo test --workspace --all-targets --no-fail-fast
 abbr -a curl xh
 abbr -a cw cargo watch
@@ -266,7 +278,6 @@ abbr -a lk eza -lrs size
 abbr -a ll eza -l
 abbr -a ls eza
 abbr -a lt eza --tree
-abbr -a k kubectl
 abbr -a mkdir mkdir -p
 abbr -a myip curl -s api.ipify.org
 abbr -a nci npm ci
@@ -356,10 +367,11 @@ function fish_greeting
 
    "(uptime)"
     " | clolcat
+    sa
 end
 
 
 # vim: foldmethod=marker foldlevel=0
 
 set -x N_PREFIX "$HOME/n"
-contains "$N_PREFIX/bin" $PATH; or set -a PATH "$N_PREFIX/bin" # Added by n-install (see http://git.io/n-install-repo).
+contains "$N_PREFIX/bin" $PATH; or set -p PATH "$N_PREFIX/bin" # Added by n-install (see http://git.io/n-install-repo).

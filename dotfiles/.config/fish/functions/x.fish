@@ -12,7 +12,7 @@ function x -a filename -d "extract compressed file"
         case "*.tar.zst"
             tar xvf $argv
         case "*.7z"
-            7za x $argv
+            7z x $argv
         case "*.Z"
             uncompress $argv
         case "*.bz2"

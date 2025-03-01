@@ -10,7 +10,7 @@ function ra -d "Start or Restart ssh-agent and add ssh-keys"
     set -gx SSH_AUTH_SOCK $agent_file
     set -gx SSH_AGENT_PID (rg -o '=\d+' $agent_info | string replace = '' | string trim)
 
-    for file in id_rsa id_ed25519
+    for file in localhost_rsa id_rsa id_ed25519
         if test -f ~/.ssh/$file
             ssh-add ~/.ssh/$file
         end

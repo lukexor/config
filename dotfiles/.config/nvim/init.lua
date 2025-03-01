@@ -27,6 +27,9 @@ vim.env.SHELL = "bash"
 --- Highlight strings and numbers inside comments
 vim.g.c_comment_strings = 1
 
+-- Disable <C-c> completions in sql
+vim.g.omni_sql_no_default_maps = 1
+
 vim.o.breakindent = true
 vim.o.cmdheight = 1
 vim.o.completeopt = "menu,menuone,noselect"
@@ -34,17 +37,17 @@ vim.o.confirm = true
 vim.o.cursorline = true
 vim.o.dictionary = "/usr/share/dict/words"
 -- Make diffing better: https://vimways.org/2018/the-power-of-diff/
-vim.opt.diffopt:append({ "iwhite", "algorithm:patience", "indent-heuristic" })
+vim.opt.diffopt:append("iwhite,algorithm:patience,indent-heuristic")
 vim.o.expandtab = true
 vim.o.incsearch = true
 vim.o.jumpoptions = "stack,view"
 vim.o.laststatus = 3
 vim.o.list = true
 vim.o.listchars = "tab:│ ,trail:+,extends:,precedes:,nbsp:‗"
-vim.opt.matchpairs:append({ "<:>" })
+vim.opt.matchpairs:append("<:>")
 vim.o.mouse = ""
 vim.o.number = true
-vim.opt.path:append({ "**" })
+vim.opt.path:append("**")
 vim.o.redrawtime = 10000 -- Allow more time for loading syntax on large files
 vim.o.relativenumber = true
 vim.o.scrolloff = 8
@@ -77,9 +80,9 @@ else
   vim.notify_once("rg is not installed", vim.log.levels.ERROR)
 end
 
-local codelldb_ext_path = "/etc/lldb"
+local codelldb_ext_path = vim.env.HOME .. "/.local/share/nvim/mason/packages/codelldb/extension"
 local codelldb_path = codelldb_ext_path .. "/adapter/codelldb"
-local liblldb_path = codelldb_ext_path .. "/adapter/libcodelldb"
+local liblldb_path = codelldb_ext_path .. "/lldb/lib/liblldb"
 local os = vim.loop.os_uname().sysname
 -- The path is different on Windows
 if os:find("Windows") then
@@ -261,11 +264,6 @@ map("<leader>Q", "<cmd>confirm qall<CR>", { desc = "Quit All" })
 map("<leader>O", "<cmd>%bd|e#|bd#<CR>", { desc = "Quit all but current" })
 map("<leader>n", "<cmd>new<CR>", { desc = "New Buffer" })
 
--- TODO: phase out hjkl bindings
-map("<leader>h", "<cmd>bp<CR>", { silent = true, desc = "Go to Previous Buffer" })
-map("<leader>l", "<cmd>bn<CR>", { silent = true, desc = "Go to Next Buffer" })
-map("<leader>n", "<cmd>bp<CR>", { silent = true, desc = "Go to Previous Buffer" })
-map("<leader>o", "<cmd>bn<CR>", { silent = true, desc = "Go to Next Buffer" })
 map("<leader><leader>", "<C-^>", { desc = "Alternate Buffer" })
 
 -- Skip split macros in temporary files like editing fish command line in
@@ -297,10 +295,6 @@ map("<C-h>", "<C-w>h", { desc = "Go to Nth left window" })
 map("<C-j>", "<C-w>j", { desc = "Go to Nth below window" })
 map("<C-k>", "<C-w>k", { desc = "Go to Nth above window" })
 map("<C-l>", "<C-w>l", { desc = "Go to Nth right window" })
--- map("<C-n>", "<C-w>h", { desc = "Go to Nth left window" })
--- map("<C-e>", "<C-w>j", { desc = "Go to Nth below window" })
--- map("<C-i>", "<C-w>k", { desc = "Go to Nth above window" })
--- map("<C-o>", "<C-w>l", { desc = "Go to Nth right window" })
 
 map("gt", "<C-]>", { desc = "Go to Tag" })
 
@@ -799,11 +793,10 @@ require("lazy").setup({
     "mfussenegger/nvim-lint",
     config = function()
       local lint = require("lint")
-      -- TODO: test protolint
       lint.linters.protolint = {
         cmd = "protolint",
       }
-      lint.linters.tidy_xml = {
+      lint.linters.tidy = {
         cmd = "tidy",
         stdin = true,
         stream = "stderr",
@@ -818,11 +811,10 @@ require("lazy").setup({
       lint.linters_by_ft = {
         bash = { "shellcheck" },
         css = { "stylelint" },
-        -- TODO: re-enable when build succeeds on nixos
-        -- cpp = { "cpplint" },
+        cpp = { "cpplint" },
         glslc = { "glslc" },
-        html = { "tidy_xml" },
-        -- xml = { "tidy_xml" },
+        html = { "tidy" },
+        xml = { "tidy" },
         javascript = { "eslint_d" },
         javascriptreact = { "eslint_d" },
         json = { "jsonlint" },
@@ -1294,6 +1286,58 @@ require("lazy").setup({
     end,
   },
   {
+    "williamboman/mason.nvim",
+    cmd = { "Mason", "MasonUpdate" },
+    keys = {
+      { "<leader>pm", "<cmd>MasonUpdate<CR>:Mason<CR>", desc = "Update LSP Servers" },
+    },
+    opts = {
+      ui = {
+        check_outdated_servers_on_open = true,
+      },
+    },
+  },
+  {
+    "WhoIsSethDaniel/mason-tool-installer.nvim",
+    opts = {
+      ensure_installed = {
+        "bash-language-server",
+        "clang-format",
+        "clangd",
+        "cpplint",
+        "css-lsp",
+        "eslint_d",
+        "html-lsp",
+        "json-lsp",
+        "jsonlint",
+        "lua-language-server",
+        "markdownlint",
+        "prettierd",
+        "protolint",
+        "python-lsp-server",
+        "pyright",
+        "rust_analyzer",
+        "shellcheck",
+        "stylelint",
+        "stylelint-lsp",
+        "stylua",
+        "tailwindcss-language-server",
+        "taplo",
+        "typescript-language-server",
+        "vim-language-server",
+        "yamllint",
+        "yaml-language-server",
+      },
+    },
+  },
+  {
+    "jay-babu/mason-nvim-dap.nvim",
+    cmd = { "DapInstall" },
+    opts = {
+      ensure_installed = { "codelldb", "debugpy", "node-debug2-adapter" },
+    },
+  },
+  {
     "mrcjkb/rustaceanvim",
     version = "^4",
     ft = { "rust" },
@@ -1396,6 +1440,7 @@ require("lazy").setup({
     event = { "BufReadPre", "BufNewFile" },
     dependencies = {
       "hrsh7th/cmp-nvim-lsp",
+      "williamboman/mason-lspconfig.nvim",
       {
         "kosayoda/nvim-lightbulb", -- Lightbulb next to code actions
         opts = {
@@ -1470,7 +1515,9 @@ require("lazy").setup({
           }
         end),
         html = get_options(),
-        jsonls = get_options(),
+        jsonls = get_options(function(opts)
+          opts.cmd = { "vscode-json-languageserver", "--stdio" }
+        end),
         pyright = get_options(function(opts)
           opts.settings = {
             python = {
@@ -1585,7 +1632,7 @@ require("lazy").setup({
       formatters = {
         rustfmt = {
           command = "rustfmt",
-          args = { "--edition", "2021", "--emit=stdout" },
+          args = { "--edition", "2024", "--emit=stdout" },
         },
       },
       formatters_by_ft = {
@@ -2275,6 +2322,33 @@ vim.defer_fn(function()
         "xml",
       },
     },
+    ensure_installed = {
+      "bash",
+      "c",
+      "cpp",
+      "css",
+      "dockerfile",
+      "fish",
+      "glsl",
+      "graphql",
+      "html",
+      "javascript",
+      "json",
+      "lua",
+      "make",
+      "markdown",
+      "markdown_inline",
+      "proto",
+      "python",
+      "regex",
+      "rust",
+      "toml",
+      "tsx",
+      "typescript",
+      "vim",
+      "vimdoc",
+      "yaml",
+    },
     highlight = {
       enable = true,
       disable = { "rust" },
@@ -2338,6 +2412,44 @@ vim.defer_fn(function()
   if vim.bo.filetype == "python" then
     vim.cmd([[set indentexpr=]])
   end
+
+  require("mason").setup({
+    ui = {
+      check_outdated_servers_on_open = true,
+    },
+  })
+  require("mason-nvim-dap").setup({
+    ensure_installed = { "codelldb", "debugpy", "node-debug2-adapter" },
+  })
+  require("mason-tool-installer").setup({
+    ensure_installed = {
+      "bash-language-server",
+      "clang-format",
+      "clangd",
+      "cpplint",
+      "css-lsp",
+      "eslint_d",
+      "html-lsp",
+      "json-lsp",
+      "jsonlint",
+      "lua-language-server",
+      "markdownlint",
+      "prettierd",
+      "protolint",
+      "pyright",
+      "rust_analyzer",
+      "shellcheck",
+      "stylelint",
+      "stylelint-lsp",
+      "stylua",
+      "tailwindcss-language-server",
+      "taplo",
+      "typescript-language-server",
+      "vim-language-server",
+      "yamllint",
+      "yaml-language-server",
+    },
+  })
 end, 0)
 
 -- =============================================================================

@@ -2,11 +2,11 @@
 *.o
 *.so
 *.pyc
-build
-dist
-target
-node_modules
-venv
+/build
+/dist
+/target
+/node_modules
+/venv
 
 *.cache
 *.swn
