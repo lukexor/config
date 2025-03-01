@@ -1,5 +1,5 @@
 diff --git a/config.def.h b/config.def.h
-index 9efa774..c48bd5d 100644
+index 9efa774..d23fd51 100644
 --- a/config.def.h
 +++ b/config.def.h
 @@ -1,25 +1,54 @@
@@ -70,7 +70,7 @@ index 9efa774..c48bd5d 100644
  };
  
  /* layout(s) */
-@@ -56,45 +84,71 @@ static const Layout layouts[] = {
+@@ -56,45 +84,77 @@ static const Layout layouts[] = {
  #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
  
  /* commands */
@@ -79,7 +79,7 @@ index 9efa774..c48bd5d 100644
 -static const char *termcmd[]  = { "st", NULL };
 +static char bemenumon[2] = "0"; /* component of bemenucmd, manipulated in spawn() */
 +static const char *bemenucmd[] = { "bemenu-run", "-W", "0.5", "-l", "5", "-c", "--fixed-height", "-m", bemenumon, "--fn", bemenufont, NULL };
-+static const char *termcmd[]  = { "kitty", NULL };
++static const char *termcmd[]  = { "kitty", "-1", NULL };
 +static const char *chromiumcmd[]  = { "chromium", NULL };
 +static const char *firefoxcmd[]  = { "firefox", NULL };
 +static const char *clipmenucmd[]  = { "clipmenu", "-W", "0.5", "-l", "5", "-c", "--fixed-height", "-m", bemenumon, NULL };
@@ -92,6 +92,9 @@ index 9efa774..c48bd5d 100644
 +static const char *medprevcmd[] = { "playerctl", "previous", NULL };
 +static const char *bridowncmd[] = { "brightnessctl", "-q", "set", "5%-", NULL };
 +static const char *briupcmd[] = { "brightnessctl", "-q", "set", "5%+", NULL };
++static const char *suspendcmd[] = { "systemctl", "suspend", NULL };
++static const char *shutdowncmd[] = { "systemctl", "poweroff", NULL };
++static const char *rebootcmd[] = { "systemctl", "reboot", NULL };
  
  static const Key keys[] = {
 -	/* modifier                     key        function        argument */
@@ -175,7 +178,10 @@ index 9efa774..c48bd5d 100644
 +	TAGKEYS(                        XK_8,                                      7)
 +	TAGKEYS(                        XK_9,                                      8)
 +	{ MODKEY|ShiftMask,             XK_r,                      restart,        {0} },
-+	{ MODKEY|ShiftMask,             XK_q,                      quit,           {0} },
++	// { MODKEY|ShiftMask,             XK_q,                      quit,           {0} },
++	{ MODKEY|ShiftMask,             XK_s,                      spawn,          {.v = suspendcmd } },
++	{ MODKEY|ShiftMask,             XK_o,                      spawn,          {.v = shutdowncmd } },
++	{ MODKEY|ShiftMask,             XK_b,                      spawn,          {.v = rebootcmd } },
  };
  
  /* button definitions */
