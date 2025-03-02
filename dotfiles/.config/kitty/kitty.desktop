@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Kitty Terminal
+Comment=Fast, feature-rich terminal emulator
+Exec=/home/luke/.local/bin/kitty
+Icon=/home/luke/.config/kitty/kitty.app.png
+Terminal=false
+Type=Application
+Categories=Utility;TerminalEmulator;

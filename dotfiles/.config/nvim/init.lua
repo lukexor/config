@@ -1266,25 +1266,26 @@ require("lazy").setup({
   -- -----------------------------------------------------------------------------
   -- LSP
   -- -----------------------------------------------------------------------------
-  {
-    "Exafunction/codeium.nvim",
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-      "hrsh7th/nvim-cmp",
-    },
-    config = function()
-      local opts = {}
-      local handle = io.popen("grep -c ID=nixos /etc/os-release")
-      if handle ~= nil then
-        local is_nix = handle:read("*a")
-        handle:close()
-        if is_nix:match("1") == "1" then
-          opts.wrapper = "steam-run"
-        end
-      end
-      require("codeium").setup(opts)
-    end,
-  },
+  -- Disabled for now, trying to rely less on AI
+  -- {
+  --   "Exafunction/codeium.nvim",
+  --   dependencies = {
+  --     "nvim-lua/plenary.nvim",
+  --     "hrsh7th/nvim-cmp",
+  --   },
+  --   config = function()
+  --     local opts = {}
+  --     local handle = io.popen("grep -c ID=nixos /etc/os-release")
+  --     if handle ~= nil then
+  --       local is_nix = handle:read("*a")
+  --       handle:close()
+  --       if is_nix:match("1") == "1" then
+  --         opts.wrapper = "steam-run"
+  --       end
+  --     end
+  --     require("codeium").setup(opts)
+  --   end,
+  -- },
   {
     "williamboman/mason.nvim",
     cmd = { "Mason", "MasonUpdate" },

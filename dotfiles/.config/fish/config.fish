@@ -205,6 +205,7 @@ end
 # =============================================================================
 
 abbr -a cat bat -P
+abbr -a bat bat -P
 abbr -a cb cargo build --keep-going
 abbr -a cbr cargo build --release --keep-going
 abbr -a cc cargo clippy --keep-going
@@ -345,6 +346,7 @@ end
 # =============================================================================
 
 direnv hook fish | source
+rtx activate fish | source
 
 function fish_greeting
     echo -n -s "$nix_shell_info"
@@ -366,12 +368,8 @@ function fish_greeting
     :,,,,,,,,,,,,,.
 
    "(uptime)"
-    " | clolcat
+    " | dotacat
     sa
 end
 
-
 # vim: foldmethod=marker foldlevel=0
-
-set -x N_PREFIX "$HOME/n"
-contains "$N_PREFIX/bin" $PATH; or set -p PATH "$N_PREFIX/bin" # Added by n-install (see http://git.io/n-install-repo).
