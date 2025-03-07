@@ -241,6 +241,7 @@ bootstrap() {
   apply_preferences
   cleanup
 
+# Set up ~/.gitconfig.local
 # Sign into Chrome to sync extensions
 # TODO: Remove default keyboard shortcuts:
 # - Super+Return

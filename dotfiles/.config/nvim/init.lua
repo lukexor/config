@@ -176,6 +176,7 @@ local lsp_on_attach = function(client, bufnr)
   local filtered_diagnostics = {
     [80001] = true, -- File is a CommonJS module; it may be converted to an ES module.
   }
+  client.server_capabilities.semanticTokensProvider = false -- don't need treesitter semantic higlighting
   vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(function(err, result, ctx, config)
     for i, diagnostic in pairs(result.diagnostics) do
       if filtered_diagnostics[diagnostic.code] ~= nil then
@@ -1180,6 +1181,10 @@ require("lazy").setup({
             FloatBorder = { bg = "none" },
             FloatTitle = { bg = "none" },
 
+            -- Make comments stand out, they're important!
+            SpecialComment = { fg = "#DCA561" },
+            Comment = { fg = "#A3D4D5" },
+
             -- Save an hlgroup with dark background and dimmed foreground
             -- so that you can use it where your still want darker windows.
             -- E.g.: autocmd TermOpen * setlocal winhighlight=Normal:NormalDark
@@ -1369,12 +1374,12 @@ require("lazy").setup({
                   command = "clippy",
                   features = "all",
                 },
-                checkOnSave = {
-                  extraArgs = {
-                    "--target-dir",
-                    vim.env.HOME .. "/.rust-analyzer", -- Avoid locking/trashing CARGO_TARGET_DIR
-                  },
-                },
+                -- checkOnSave = {
+                --   extraArgs = {
+                --     "--target-dir",
+                --     vim.env.HOME .. "/.rust-analyzer", -- Avoid locking/trashing CARGO_TARGET_DIR
+                --   },
+                -- },
                 hover = {
                   actions = {
                     references = { enable = true },
