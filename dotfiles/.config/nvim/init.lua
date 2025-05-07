@@ -176,7 +176,7 @@ local lsp_on_attach = function(client, bufnr)
   local filtered_diagnostics = {
     [80001] = true, -- File is a CommonJS module; it may be converted to an ES module.
   }
-  client.server_capabilities.semanticTokensProvider = false -- don't need treesitter semantic higlighting
+  client.server_capabilities.semanticTokensProvider = nil -- don't need treesitter semantic higlighting
   vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(function(err, result, ctx, config)
     for i, diagnostic in pairs(result.diagnostics) do
       if filtered_diagnostics[diagnostic.code] ~= nil then
@@ -286,10 +286,10 @@ map("k", [[ v:count > 0 ? "m'" . v:count . 'k' : "gk" ]], { mode = { "n", "v" },
 map("<leader>-", "<C-w>_<C-w>|", { desc = "Maximize window" })
 map("<leader>=", "<C-w>=", { desc = "Equal Window Sizes" })
 
-map("<S-Down>", "<cmd>resize -5<CR>", { desc = "Reduce Height" })
-map("<S-Up>", "<cmd>resize +5<CR>", { desc = "Increase Height" })
-map("<S-Left>", "<cmd>vertical resize +5<CR>", { desc = "Reduce Width" })
-map("<S-Right>", "<cmd>vertical resize -5<CR>", { desc = "Increase Width" })
+map("<A-S-Down>", "<cmd>resize -5<CR>", { desc = "Reduce Height" })
+map("<A-S-Up>", "<cmd>resize +5<CR>", { desc = "Increase Height" })
+map("<A-S-Left>", "<cmd>vertical resize +5<CR>", { desc = "Reduce Width" })
+map("<A-S-Right>", "<cmd>vertical resize -5<CR>", { desc = "Increase Width" })
 
 -- TODO: phase out hjkl bindings
 map("<C-h>", "<C-w>h", { desc = "Go to Nth left window" })
@@ -812,7 +812,8 @@ require("lazy").setup({
       lint.linters_by_ft = {
         bash = { "shellcheck" },
         css = { "stylelint" },
-        cpp = { "cpplint" },
+        -- So pedantic...
+        -- cpp = { "cpplint" },
         glslc = { "glslc" },
         html = { "tidy" },
         xml = { "tidy" },
@@ -995,7 +996,7 @@ require("lazy").setup({
     "iamcco/markdown-preview.nvim", -- markdown browser viewer
     ft = { "markdown" },
     cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
-    build = "cd app && yarn install",
+    build = "cd app && npm install && git restore .",
     init = function()
       vim.g.mkdp_filetypes = { "markdown" }
       vim.g.mkdp_echo_preview_url = 1
@@ -1030,6 +1031,7 @@ require("lazy").setup({
         follow_current_file = true,
       },
       window = {
+        width = 30,
         mappings = {
           ["<space>"] = "none",
         },
@@ -1069,6 +1071,7 @@ require("lazy").setup({
     init = function()
       vim.g.rooter_cd_cmd = "lcd"
       vim.g.rooter_resolve_links = 1
+      vim.g.rooter_patterns = { ".git" }
     end,
   },
   -- TODO: Create TODO list shortcuts
@@ -1305,36 +1308,6 @@ require("lazy").setup({
   },
   {
     "WhoIsSethDaniel/mason-tool-installer.nvim",
-    opts = {
-      ensure_installed = {
-        "bash-language-server",
-        "clang-format",
-        "clangd",
-        "cpplint",
-        "css-lsp",
-        "eslint_d",
-        "html-lsp",
-        "json-lsp",
-        "jsonlint",
-        "lua-language-server",
-        "markdownlint",
-        "prettierd",
-        "protolint",
-        "python-lsp-server",
-        "pyright",
-        "rust_analyzer",
-        "shellcheck",
-        "stylelint",
-        "stylelint-lsp",
-        "stylua",
-        "tailwindcss-language-server",
-        "taplo",
-        "typescript-language-server",
-        "vim-language-server",
-        "yamllint",
-        "yaml-language-server",
-      },
-    },
   },
   {
     "jay-babu/mason-nvim-dap.nvim",
@@ -1374,6 +1347,7 @@ require("lazy").setup({
                   command = "clippy",
                   features = "all",
                 },
+                -- FIXME: Why is this broken?
                 -- checkOnSave = {
                 --   extraArgs = {
                 --     "--target-dir",
@@ -1420,9 +1394,13 @@ require("lazy").setup({
                 lru = { capacity = 512 },
                 procMacro = {
                   ignored = {
-                    "Error",
-                    "Serialize",
-                    "Deserialize",
+                    thiserror = {
+                      "Error",
+                    },
+                    serde = {
+                      "Serialize",
+                      "Deserialize",
+                    },
                   },
                 },
                 workspace = {
@@ -1533,11 +1511,9 @@ require("lazy").setup({
           }
         end),
         clangd = get_options(function(opts)
-          opts.filetypes = { "c", "cpp" }
-          opts.offsetEncoding = { "utf-16" }
-          opts.cmd = {
-            "clangd",
-            "--offset-encoding=utf-16",
+          opts.cmd = { "clangd", "--background-index", "--clang-tidy" }
+          opts.init_options = {
+            fallbackFlags = { "-std=c++17" },
           }
         end),
         lua_ls = get_options(function(opts)
@@ -1636,6 +1612,10 @@ require("lazy").setup({
         lsp_fallback = true,
       },
       formatters = {
+        leptosfmt = {
+          command = "leptosfmt",
+          args = { "--stdin", "-e" },
+        },
         rustfmt = {
           command = "rustfmt",
           args = { "--edition", "2024", "--emit=stdout" },
@@ -1656,7 +1636,7 @@ require("lazy").setup({
         lua = { "stylua" },
         -- FIXME: file truncaction
         -- markdown = { "prettierd" },
-        rust = { "rustfmt" },
+        rust = { "leptosfmt", "rustfmt" },
         toml = { "taplo" },
         typescript = { "eslint_d", "rustywind", "prettierd" },
         typescriptreact = { "eslint_d", "rustywind", "prettierd" },
