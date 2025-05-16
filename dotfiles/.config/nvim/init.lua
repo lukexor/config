@@ -60,7 +60,7 @@ vim.o.signcolumn = "yes:2"
 vim.o.spellfile = vim.env.HOME .. "/config/.config/nvim/spell.utf-8.add"
 vim.o.splitbelow = true
 vim.o.splitright = true
-vim.o.synmaxcol = 200
+vim.o.synmaxcol = 500
 vim.o.tabstop = 4
 vim.o.termguicolors = true
 vim.o.textwidth = 80
@@ -288,8 +288,8 @@ map("<leader>=", "<C-w>=", { desc = "Equal Window Sizes" })
 
 map("<A-S-Down>", "<cmd>resize -5<CR>", { desc = "Reduce Height" })
 map("<A-S-Up>", "<cmd>resize +5<CR>", { desc = "Increase Height" })
-map("<A-S-Left>", "<cmd>vertical resize +5<CR>", { desc = "Reduce Width" })
-map("<A-S-Right>", "<cmd>vertical resize -5<CR>", { desc = "Increase Width" })
+map("<A-S-Right>", "<cmd>vertical resize +5<CR>", { desc = "Reduce Width" })
+map("<A-S-Left>", "<cmd>vertical resize -5<CR>", { desc = "Increase Width" })
 
 -- TODO: phase out hjkl bindings
 map("<C-h>", "<C-w>h", { desc = "Go to Nth left window" })
@@ -616,7 +616,6 @@ require("lazy").setup({
     "dag/vim-fish", -- fish shell support
     ft = "fish",
   },
-  "mustache/vim-mustache-handlebars", -- Template parsing
   {
     "dcharbon/vim-flatbuffers", -- Flatbuffer file support
     ft = "fbs",
@@ -777,7 +776,7 @@ require("lazy").setup({
     },
     opts = {
       layout = {
-        min_width = 40,
+        min_width = 35,
         default_direction = "prefer_right",
       },
     },
@@ -839,19 +838,13 @@ require("lazy").setup({
   },
   {
     "windwp/nvim-ts-autotag", -- Auto-close HTML/JSX tags
-    ft = {
-      "html",
-      "javascript",
-      "javascriptreact",
-      "rust",
-      "typescript",
-      "typescriptreact",
-      "xml",
-    },
+    event = "InsertEnter",
+    -- opts required otherwise it doesn't load correctly
+    opts = {},
   },
   {
+    -- Can't be lazy or it won't load correctly
     "tpope/vim-endwise", -- Auto-add endings for control structures: if, for, etc
-    event = "InsertEnter",
   },
   {
     "tpope/vim-commentary", -- Commenting motion commands gc*
@@ -935,9 +928,13 @@ require("lazy").setup({
     keys = {
       { "gA", "<Plug>(EasyAlign)", desc = "align text" },
       { "=", "<Plug>(EasyAlign)", mode = "v", desc = "align selection" },
-      { "<leader>=/", "gAii/", remap = true, desc = "align indent level to /" },
-      { "<leader>=:", "gAii:", remap = true, desc = "align indent level to :" },
-      { "<leader>==", "gAii=", remap = true, desc = "align indent level to =" },
+      -- e.g. Comments
+      { "<leader>#", "gAii#", remap = true, desc = "align indent level to #" },
+      { "<leader>/", "gAii/", remap = true, desc = "align indent level to /" },
+      -- e.g. JSON or YAML
+      { "<leader>:", "gAii:", remap = true, desc = "align indent level to :" },
+      -- e.g. assignments, ==, !=, +=, etc
+      { "<leader>+", "gAii=", remap = true, desc = "align indent level to =" },
     },
     init = function()
       vim.g.easy_align_delimiters = {
@@ -956,25 +953,26 @@ require("lazy").setup({
       "glts/vim-magnum",
     },
     lazy = true,
+    cmd = { "RadicalView", "RadicalCoerceToDecimal", "RadicalCoerceToHex", "RadicalCoerceToBinary" },
     keys = {
       { "gC", "<Plug>RadicalView", desc = "show number conversions under cursor" },
       { "gC", "<Plug>RadicalView", mode = "v", desc = "show number conversions under selection" },
       { "crd", "<Plug>RadicalCoerceToDecimal", desc = "convert number to decimal" },
       { "crx", "<Plug>RadicalCoerceToHex", desc = "convert number to hex" },
-      { "cro", "<Plug>RadicalCoerceToOctal", desc = "convert number to octal" },
       { "crb", "<Plug>RadicalCoerceToBinary", desc = "convert number to binary" },
     },
   },
-  {
-    "zirrostig/vim-schlepp", -- visually move blocks
-    lazy = true,
-    keys = {
-      { "<S-Up>", "<Plug>SchleppUp", mode = "v", desc = "move selection up" },
-      { "<S-Down>", "<Plug>SchleppDown", mode = "v", desc = "move selection down" },
-      { "<S-Left>", "<Plug>SchleppLeft", mode = "v", desc = "move selection left" },
-      { "<S-Right>", "<Plug>SchleppRight", mode = "v", desc = "move selection right" },
-    },
-  },
+  -- Maybe trim, rarely use it
+  -- {
+  --   "zirrostig/vim-schlepp", -- visually move blocks
+  --   lazy = true,
+  --   keys = {
+  --     { "<S-Up>", "<Plug>SchleppUp", mode = "v", desc = "move selection up" },
+  --     { "<S-Down>", "<Plug>SchleppDown", mode = "v", desc = "move selection down" },
+  --     { "<S-Left>", "<Plug>SchleppLeft", mode = "v", desc = "move selection left" },
+  --     { "<S-Right>", "<Plug>SchleppRight", mode = "v", desc = "move selection right" },
+  --   },
+  -- },
   {
     "brenoprata10/nvim-highlight-colors",
     opts = {
@@ -984,14 +982,16 @@ require("lazy").setup({
   -- -----------------------------------------------------------------------------
   -- System Integration
   -- -----------------------------------------------------------------------------
-  {
-    "tpope/vim-eunuch", -- unix commands
-    cmd = { "Remove", "Delete", "Move", "Rename", "Copy", "Mkdir", "Wall", "SudoWrite", "SudoEdit" },
-  },
-  {
-    "tpope/vim-fugitive", -- git integration
-    cmd = { "Git", "Gdiffsplit", "Gvdiffsplit", "GMove", "GBrowse", "GDelete" },
-  },
+  -- Maybe trim, rarely use it
+  -- {
+  --   "tpope/vim-eunuch", -- unix commands
+  --   cmd = { "Remove", "Delete", "Move", "Rename", "Copy", "Mkdir", "Wall", "SudoWrite", "SudoEdit" },
+  -- },
+  -- Maybe trim, rarely use it
+  -- {
+  --   "tpope/vim-fugitive", -- git integration
+  --   cmd = { "Git", "Gdiffsplit", "Gvdiffsplit", "GMove", "GBrowse", "GDelete" },
+  -- },
   {
     "iamcco/markdown-preview.nvim", -- markdown browser viewer
     ft = { "markdown" },
@@ -1156,6 +1156,7 @@ require("lazy").setup({
   },
   {
     "rebelot/kanagawa.nvim",
+    priority = 1000, -- make sure to load this before all the other start plugins
     config = function()
       require("kanagawa").setup({
         colors = {
@@ -1295,19 +1296,49 @@ require("lazy").setup({
   --   end,
   -- },
   {
-    "williamboman/mason.nvim",
-    cmd = { "Mason", "MasonUpdate" },
-    keys = {
-      { "<leader>pm", "<cmd>MasonUpdate<CR>:Mason<CR>", desc = "Update LSP Servers" },
-    },
-    opts = {
-      ui = {
-        check_outdated_servers_on_open = true,
+    "WhoIsSethDaniel/mason-tool-installer.nvim",
+    dependencies = {
+      {
+        "williamboman/mason.nvim",
+        cmd = { "Mason", "MasonUpdate" },
+        build = ":MasonUpdate",
+        keys = {
+          { "<leader>pm", "<cmd>MasonUpdate<CR>:Mason<CR>", desc = "Update LSP Servers" },
+        },
+        opts = {
+          ui = {
+            check_outdated_servers_on_open = true,
+          },
+          ensure_installed = {
+            "bash-language-server",
+            "clang-format",
+            "clangd",
+            "cpplint",
+            "css-lsp",
+            "eslint_d",
+            "html-lsp",
+            "json-lsp",
+            "jsonlint",
+            "lua-language-server",
+            "markdownlint",
+            "prettierd",
+            "protolint",
+            "pyright",
+            "rust_analyzer",
+            "shellcheck",
+            "stylelint",
+            "stylelint-lsp",
+            "stylua",
+            "tailwindcss-language-server",
+            "taplo",
+            "typescript-language-server",
+            "vim-language-server",
+            "yamllint",
+            "yaml-language-server",
+          },
+        },
       },
     },
-  },
-  {
-    "WhoIsSethDaniel/mason-tool-installer.nvim",
   },
   {
     "jay-babu/mason-nvim-dap.nvim",
@@ -1318,7 +1349,6 @@ require("lazy").setup({
   },
   {
     "mrcjkb/rustaceanvim",
-    version = "^4",
     ft = { "rust" },
     init = function()
       vim.g.rustaceanvim = function()
@@ -1338,6 +1368,7 @@ require("lazy").setup({
             default_settings = {
               ["rust-analyzer"] = {
                 assist = { emitMustUse = true },
+                numThreads = 8,
                 cargo = {
                   features = "all",
                   targetDir = vim.env.HOME .. "/.rust-analyzer", -- Avoid locking/trashing CARGO_TARGET_DIR
@@ -1347,13 +1378,6 @@ require("lazy").setup({
                   command = "clippy",
                   features = "all",
                 },
-                -- FIXME: Why is this broken?
-                -- checkOnSave = {
-                --   extraArgs = {
-                --     "--target-dir",
-                --     vim.env.HOME .. "/.rust-analyzer", -- Avoid locking/trashing CARGO_TARGET_DIR
-                --   },
-                -- },
                 hover = {
                   actions = {
                     references = { enable = true },
@@ -1905,14 +1929,141 @@ require("lazy").setup({
   },
   {
     "nvim-treesitter/nvim-treesitter", -- AST Parser and highlighter
-    version = false,
     build = ":TSUpdate",
-    event = { "BufReadPost", "BufNewFile" },
+    event = { "VeryLazy" },
+    cmd = { "TSUpdateSync", "TSUpdate", "TSInstall" },
     dependencies = {
-      "nvim-treesitter/nvim-treesitter-context",
+      {
+        "nvim-treesitter/nvim-treesitter-context",
+        opts = {
+          max_lines = 5,
+          multiline_threshold = 2,
+          trim_scope = "inner",
+          min_window_height = 30,
+        },
+      },
       "nvim-treesitter/nvim-treesitter-textobjects",
     },
-    -- setup is deferred until later
+    init = function(plugin)
+      -- PERF: add nvim-treesitter queries to the rtp and it's custom query predicates early
+      -- This is needed because a bunch of plugins no longer `require("nvim-treesitter")`, which
+      -- no longer trigger the **nvim-treesitter** module to be loaded in time.
+      -- Luckily, the only things that those plugins need are the custom queries, which we make available
+      -- during startup.
+      require("lazy.core.loader").add_to_rtp(plugin)
+      require("nvim-treesitter.query_predicates")
+    end,
+    keys = {
+      { "<c-space>", desc = "Increment Selection" },
+      { "<c-m-space>", desc = "Decrement Selection", mode = "x" },
+    },
+    opts = {
+      ensure_installed = {
+        "bash",
+        "c",
+        "cpp",
+        "css",
+        "dockerfile",
+        "fish",
+        "glsl",
+        "graphql",
+        "html",
+        "javascript",
+        "json",
+        "lua",
+        "make",
+        "markdown",
+        "markdown_inline",
+        "proto",
+        "python",
+        "query",
+        "regex",
+        "rust",
+        "toml",
+        "tsx",
+        "typescript",
+        "vim",
+        "vimdoc",
+        "yaml",
+      },
+      highlight = {
+        enable = true,
+        -- disable = { "rust" },
+      },
+      indent = { enable = true },
+      incremental_selection = {
+        enable = true,
+        keymaps = {
+          init_selection = "<c-space>",
+          node_incremental = "<c-space>",
+          scope_incremental = "<c-s>",
+          node_decremental = "<c-m-space>",
+        },
+      },
+      textobjects = {
+        select = {
+          enable = true,
+          lookahead = true, -- Automatically jump forward to textobj, similar to targets.vim
+          keymaps = {
+            -- You can use the capture groups defined in textobjects.scm
+            ["aa"] = "@parameter.outer",
+            ["ia"] = "@parameter.inner",
+            ["af"] = "@function.outer",
+            ["if"] = "@function.inner",
+            ["ac"] = "@class.outer",
+            ["ic"] = "@class.inner",
+          },
+        },
+        move = {
+          enable = true,
+          set_jumps = true, -- whether to set jumps in the jumplist
+          goto_next_start = {
+            ["]m"] = "@function.outer",
+            ["]]"] = "@class.outer",
+          },
+          goto_next_end = {
+            ["]M"] = "@function.outer",
+            ["]["] = "@class.outer",
+          },
+          goto_previous_start = {
+            ["[m"] = "@function.outer",
+            ["[["] = "@class.outer",
+          },
+          goto_previous_end = {
+            ["[M"] = "@function.outer",
+            ["[]"] = "@class.outer",
+          },
+        },
+        swap = {
+          enable = true,
+          swap_next = {
+            ["<leader>a"] = "@parameter.inner",
+          },
+          swap_previous = {
+            ["<leader>A"] = "@parameter.inner",
+          },
+        },
+      },
+    },
+    config = function(_, opts)
+      -- Defer configs setup to improve initial startup time
+      vim.defer_fn(function()
+        require("nvim-treesitter.configs").setup(opts)
+
+        -- Disable treesitter indentexpr for Python since it's wonky atm
+        if vim.bo.filetype == "python" then
+          vim.cmd([[set indentexpr=]])
+        end
+      end, 10)
+    end,
+  },
+  {
+    "rayliwell/tree-sitter-rstml",
+    dependencies = { "nvim-treesitter/nvim-treesitter" },
+    build = ":TSInstall rust_with_rstml",
+    config = function()
+      require("tree-sitter-rstml").setup()
+    end,
   },
   {
     "nvim-lua/plenary.nvim", -- Async library
@@ -1925,10 +2076,10 @@ require("lazy").setup({
   {
     "nvim-telescope/telescope.nvim", -- Fuzzy finder
     cmd = "Telescope",
-    version = false,
     dependencies = {
       {
         "nvim-telescope/telescope-fzf-native.nvim", -- Search dependency of telescope
+        lazy = true,
         build = "make",
         cond = function()
           return vim.fn.executable("make") == 1
@@ -1939,6 +2090,7 @@ require("lazy").setup({
       },
       {
         "benfowler/telescope-luasnip.nvim",
+        lazy = true,
         config = function()
           require("telescope").load_extension("luasnip")
         end,
@@ -1946,12 +2098,14 @@ require("lazy").setup({
       "nvim-telescope/telescope-symbols.nvim",
       {
         "nvim-telescope/telescope-dap.nvim",
+        lazy = true,
         config = function()
           require("telescope").load_extension("dap")
         end,
       },
       {
         "folke/noice.nvim",
+        lazy = true,
         config = function()
           require("telescope").load_extension("noice")
         end,
@@ -2011,26 +2165,27 @@ require("lazy").setup({
       { "<leader>gQ", "<cmd>cexpr []<CR>", desc = "clears quickfix list" },
     },
   },
-  {
-    "vim-test/vim-test", -- run unit tests
-    cmd = { "TestNearest", "TestFile", "TestSuite", "TestLast", "TestVisit" },
-    keys = {
-      { "<leader>Tn", "<cmd>TestNearest<CR>", desc = "run nearest test" },
-      { "<leader>Tf", "<cmd>TestFile<CR>", desc = "run test file" },
-      { "<leader>Ts", "<cmd>TestSuite<CR>", desc = "run test suite" },
-      { "<leader>Tl", "<cmd>TestLast<CR>", desc = "run last test" },
-      { "<leader>Tv", "<cmd>TestVisit<CR>", desc = "open last test file" },
-    },
-  },
-  {
-    "tpope/vim-dispatch", -- background build and test dispatcher
-  },
-  {
-    "radenling/vim-dispatch-neovim", -- Adds neovim terminal support to vim-dispatch
-  },
+  -- maybe trim - never use it
+  -- {
+  --   "vim-test/vim-test", -- run unit tests
+  --   cmd = { "TestNearest", "TestFile", "TestSuite", "TestLast", "TestVisit" },
+  --   keys = {
+  --     { "<leader>Tn", "<cmd>TestNearest<CR>", desc = "run nearest test" },
+  --     { "<leader>Tf", "<cmd>TestFile<CR>", desc = "run test file" },
+  --     { "<leader>Ts", "<cmd>TestSuite<CR>", desc = "run test suite" },
+  --     { "<leader>Tl", "<cmd>TestLast<CR>", desc = "run last test" },
+  --     { "<leader>Tv", "<cmd>TestVisit<CR>", desc = "open last test file" },
+  --   },
+  -- },
+  -- Maybe trim out or lazy load on calling methods
+  -- {
+  --   "tpope/vim-dispatch", -- background build and test dispatcher
+  -- },
+  -- {
+  --   "radenling/vim-dispatch-neovim", -- Adds neovim terminal support to vim-dispatch
+  -- },
   {
     "mfussenegger/nvim-dap",
-    event = "VeryLazy",
     keys = {
       {
         "<leader>db",
@@ -2261,14 +2416,14 @@ require("lazy").setup({
   },
   {
     "theHamsta/nvim-dap-virtual-text",
-    event = "VeryLazy",
+    lazy = true,
     dependencies = {
       "mfussenegger/nvim-dap",
     },
   },
   {
     "rcarriga/nvim-dap-ui",
-    event = "VeryLazy",
+    lazy = true,
     dependencies = {
       "mfussenegger/nvim-dap",
       "nvim-neotest/nvim-nio",
@@ -2282,7 +2437,6 @@ require("lazy").setup({
         desc = "Dap UI",
       },
     },
-    opts = {},
   },
 }, {
   checker = {
@@ -2290,153 +2444,6 @@ require("lazy").setup({
     notify = false,
   },
 })
-
--- Defer treesitter setup to improve initial startup time
-vim.defer_fn(function()
-  require("nvim-treesitter.configs").setup({
-    autotag = {
-      enable = true,
-      enable_rename = true,
-      enable_close_on_slash = false,
-      filetypes = {
-        "html",
-        "javascript",
-        "javascriptreact",
-        "rust",
-        "typescript",
-        "typescriptreact",
-        "xml",
-      },
-    },
-    ensure_installed = {
-      "bash",
-      "c",
-      "cpp",
-      "css",
-      "dockerfile",
-      "fish",
-      "glsl",
-      "graphql",
-      "html",
-      "javascript",
-      "json",
-      "lua",
-      "make",
-      "markdown",
-      "markdown_inline",
-      "proto",
-      "python",
-      "regex",
-      "rust",
-      "toml",
-      "tsx",
-      "typescript",
-      "vim",
-      "vimdoc",
-      "yaml",
-    },
-    highlight = {
-      enable = true,
-      disable = { "rust" },
-    },
-    indent = { enable = true },
-    incremental_selection = {
-      enable = true,
-      keymaps = {
-        init_selection = "<c-space>",
-        node_incremental = "<c-space>",
-        scope_incremental = "<c-s>",
-        node_decremental = "<c-m-space>",
-      },
-    },
-    textobjects = {
-      select = {
-        enable = true,
-        lookahead = true, -- Automatically jump forward to textobj, similar to targets.vim
-        keymaps = {
-          -- You can use the capture groups defined in textobjects.scm
-          ["aa"] = "@parameter.outer",
-          ["ia"] = "@parameter.inner",
-          ["af"] = "@function.outer",
-          ["if"] = "@function.inner",
-          ["ac"] = "@class.outer",
-          ["ic"] = "@class.inner",
-        },
-      },
-      move = {
-        enable = true,
-        set_jumps = true, -- whether to set jumps in the jumplist
-        goto_next_start = {
-          ["]m"] = "@function.outer",
-          ["]]"] = "@class.outer",
-        },
-        goto_next_end = {
-          ["]M"] = "@function.outer",
-          ["]["] = "@class.outer",
-        },
-        goto_previous_start = {
-          ["[m"] = "@function.outer",
-          ["[["] = "@class.outer",
-        },
-        goto_previous_end = {
-          ["[M"] = "@function.outer",
-          ["[]"] = "@class.outer",
-        },
-      },
-      swap = {
-        enable = true,
-        swap_next = {
-          ["<leader>a"] = "@parameter.inner",
-        },
-        swap_previous = {
-          ["<leader>A"] = "@parameter.inner",
-        },
-      },
-    },
-  })
-  -- Disable treesitter indentexpr for Python since it's wonky atm
-  if vim.bo.filetype == "python" then
-    vim.cmd([[set indentexpr=]])
-  end
-
-  require("mason").setup({
-    ui = {
-      check_outdated_servers_on_open = true,
-    },
-  })
-  require("mason-nvim-dap").setup({
-    ensure_installed = { "codelldb", "debugpy", "node-debug2-adapter" },
-  })
-  require("mason-tool-installer").setup({
-    ensure_installed = {
-      "bash-language-server",
-      "clang-format",
-      "clangd",
-      "cpplint",
-      "css-lsp",
-      "eslint_d",
-      "html-lsp",
-      "json-lsp",
-      "jsonlint",
-      "lua-language-server",
-      "markdownlint",
-      "prettierd",
-      "protolint",
-      "pyright",
-      "rust_analyzer",
-      "shellcheck",
-      "stylelint",
-      "stylelint-lsp",
-      "stylua",
-      "tailwindcss-language-server",
-      "taplo",
-      "typescript-language-server",
-      "vim-language-server",
-      "yamllint",
-      "yaml-language-server",
-    },
-  })
-end, 0)
 
 -- =============================================================================
 -- Abbreviations

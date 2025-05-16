@@ -108,6 +108,7 @@ fish_add_path --path -gm \
     ~/.cargo/bin \
     ~/.local/sbin \
     ~/.local/bin \
+    /opt/docker-desktop/bin \
     ~/bin
 
 if macos
