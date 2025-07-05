@@ -205,6 +205,7 @@ end
 # Abbreviations   {{{1
 # =============================================================================
 
+abbr -a ! sudo
 abbr -a cat bat -P
 abbr -a bat bat -P
 abbr -a cb cargo build --keep-going
