@@ -1,2 +1,3 @@
 /.gitconfig
-.config/fish/fish_variables
+dotfiles/.config/fish/fish_variables
+dotfiles/.config/fish/completions

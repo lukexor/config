@@ -209,20 +209,20 @@ abbr -a cat bat -P
 abbr -a bat bat -P
 abbr -a cb cargo build --keep-going
 abbr -a cbr cargo build --release --keep-going
-abbr -a cc cargo clippy --keep-going
-abbr -a ccw cargo clippy --keep-going --target wasm32-unknown-unknown
-abbr -a cca cargo clippy --all-targets --keep-going
+abbr -a cc cargo clippy --all-features --keep-going
+abbr -a ccw cargo clippy --keep-going --all-features --target wasm32-unknown-unknown
+abbr -a cca cargo clippy --all-targets --all-features --keep-going
 abbr -a cdoc cargo doc --keep-going
 abbr -a cdoco cargo doc --keep-going --open
 abbr -a cfg cd ~/config
+abbr -a cgc fd . -t d --change-older-than 1week $CARGO_TARGET_DIR -x rm -rf {}
 abbr -a cm cargo make
-abbr -a cp cp -ia
 abbr -a cr cargo run
 abbr -a cr cargo run
 abbr -a crd cargo run --profile dev-opt
 abbr -a cre cargo run --example
 abbr -a crr cargo run --release
-abbr -a ct cargo test --tests --no-fail-fast
+abbr -a ct cargo test --no-fail-fast
 abbr -a ctw cargo test --workspace --no-fail-fast
 abbr -a cta cargo test --workspace --all-targets --no-fail-fast
 abbr -a curl xh
@@ -320,7 +320,7 @@ end
 alias cal="echo -n "" > $activity_log"
 alias lal="[ -r $activity_log ] && cat $activity_log | head || echo 'nothing logged'"
 
-alias cp="cp -i"
+alias cp="cp -ia"
 alias mv="mv -i"
 alias rm="rm -i"
 

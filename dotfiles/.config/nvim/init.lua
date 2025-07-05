@@ -111,6 +111,21 @@ local codellb_adaptor = function(cb)
   })
 end
 
+-- Dynamic mapping to go to a given buffer by its ordinal index
+local function create_buffer_keymap(index)
+  return {
+    "<leader>" .. index,
+    function()
+      local buffers = vim.fn.getbufinfo({ buflisted = 1 })
+      local buf = buffers[index]
+      if buf then
+        vim.api.nvim_set_current_buf(buf.bufnr)
+      end
+    end,
+    desc = "Go to buffer " .. index,
+  }
+end
+
 -- =============================================================================
 -- Key Maps
 -- =============================================================================
@@ -172,29 +187,18 @@ local lsp_on_attach = function(client, bufnr)
   map("ge", vim.diagnostic.open_float, { desc = "Diagnostics", buffer = bufnr })
   map("<leader>S", "<cmd>Telescope lsp_document_symbols<CR>", { desc = "LSP Symbols", buffer = bufnr })
 
-  -- Filter out diagnostics that are not useful
-  local filtered_diagnostics = {
-    [80001] = true, -- File is a CommonJS module; it may be converted to an ES module.
-  }
   client.server_capabilities.semanticTokensProvider = nil -- don't need treesitter semantic higlighting
-  vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(function(err, result, ctx, config)
-    for i, diagnostic in pairs(result.diagnostics) do
-      if filtered_diagnostics[diagnostic.code] ~= nil then
-        table.remove(result.diagnostics, i)
-      end
-    end
-    vim.lsp.diagnostic.on_publish_diagnostics(err, result, ctx, config)
-  end, { update_in_insert = true })
   -- See: https://github.com/neovim/neovim/issues/30985
-  for _, method in ipairs({ "textDocument/diagnostic", "workspace/diagnostic" }) do
-    local default_diagnostic_handler = vim.lsp.handlers[method]
-    vim.lsp.handlers[method] = function(err, result, context, config)
-      if err ~= nil and err.code == -32802 then
-        return
-      end
-      return default_diagnostic_handler(err, result, context, config)
-    end
-  end
+  -- TODO: Test if still an issue
+  -- for _, method in ipairs({ "textDocument/diagnostic", "workspace/diagnostic" }) do
+  --   local default_diagnostic_handler = vim.lsp.handlers[method]
+  --   vim.lsp.handlers[method] = function(err, result, context, config)
+  --     if err ~= nil and err.code == -32802 then
+  --       return
+  --     end
+  --     return default_diagnostic_handler(err, result, context, config)
+  --   end
+  -- end
 end
 
 local lsp_capabilities = function()
@@ -627,25 +631,6 @@ require("lazy").setup({
     },
   },
   {
-    "ap/vim-buftabline", -- Better buffer management
-    event = "BufAdd",
-    keys = {
-      { "<leader>1", "<Plug>BufTabLine.Go(1)", desc = "go to buffer tab 1" },
-      { "<leader>2", "<Plug>BufTabLine.Go(2)", desc = "go to buffer tab 2" },
-      { "<leader>3", "<Plug>BufTabLine.Go(3)", desc = "go to buffer tab 3" },
-      { "<leader>4", "<Plug>BufTabLine.Go(4)", desc = "go to buffer tab 4" },
-      { "<leader>5", "<Plug>BufTabLine.Go(5)", desc = "go to buffer tab 5" },
-      { "<leader>6", "<Plug>BufTabLine.Go(6)", desc = "go to buffer tab 6" },
-      { "<leader>7", "<Plug>BufTabLine.Go(7)", desc = "go to buffer tab 7" },
-      { "<leader>8", "<Plug>BufTabLine.Go(8)", desc = "go to buffer tab 8" },
-      { "<leader>9", "<Plug>BufTabLine.Go(9)", desc = "go to buffer tab 9" },
-      { "<leader>0", "<Plug>BufTabLine.Go(-1)", desc = "go to last buffer tab" },
-    },
-    init = function()
-      vim.g.buftabline_show = 0 -- never
-    end,
-  },
-  {
     "tpope/vim-repeat", -- Repeat with "."
     event = "VeryLazy",
   },
@@ -785,6 +770,24 @@ require("lazy").setup({
     "folke/which-key.nvim", -- Show mappings as you type
     event = "VeryLazy",
     opts = {},
+    keys = {
+      {
+        "<leader>?",
+        function()
+          require("which-key").show({ global = false })
+        end,
+        desc = "Buffer Local Keymaps (which-key)",
+      },
+      create_buffer_keymap(1),
+      create_buffer_keymap(2),
+      create_buffer_keymap(3),
+      create_buffer_keymap(4),
+      create_buffer_keymap(5),
+      create_buffer_keymap(6),
+      create_buffer_keymap(7),
+      create_buffer_keymap(8),
+      create_buffer_keymap(9),
+    },
   },
   -- -----------------------------------------------------------------------------
   -- Code Assists
@@ -1367,55 +1370,93 @@ require("lazy").setup({
             capabilities = capabilities,
             default_settings = {
               ["rust-analyzer"] = {
-                assist = { emitMustUse = true },
-                numThreads = 8,
+                assist = {
+                  -- insert #[must_use] when generating as_ methods for enum variants.
+                  emitMustUse = true,
+                },
+                cachePriming = {
+                  -- Don't prime on start up, esp for quick edits
+                  enable = false,
+                  -- How many worker threads to handle priming caches.
+                  numThreads = 8,
+                },
                 cargo = {
+                  -- pass --all-features to cargo
                   features = "all",
-                  targetDir = vim.env.HOME .. "/.rust-analyzer", -- Avoid locking/trashing CARGO_TARGET_DIR
+                  -- Avoid locking CARGO_TARGET_DIR by using a sub-directory
+                  targetDir = true,
+                  -- target triple override
                   -- target = "wasm32-unknown-unknown",
                 },
                 check = {
+                  -- Run `cargo clippy` instead of `cargo check`
                   command = "clippy",
-                  features = "all",
                 },
-                hover = {
-                  actions = {
-                    references = { enable = true },
-                  },
+                completion = {
+                  -- Limit completions returned
+                  limit = 25,
+                },
+                diagnostics = {
+                  -- Additional style lints
+                  styleLints = { enable = true },
                 },
                 files = {
-                  excludeDirs = {
+                  exclude = {
                     (vim.env.CARGO_TARGET_DIR or "target"),
                     "_",
+                    "data",
                     "docs",
                     "dist",
                     "node_modules",
                     ".git",
                   },
                 },
-                imports = {
-                  group = { enable = false },
-                  granularity = { enforce = true },
-                  prefix = "crate",
-                },
-                inlayHints = {
-                  bindingModeHints = { enable = true },
-                  closingBraceHints = { minLines = 1 },
-                  closureCaptureHints = { enable = true },
-                  discriminantHints = { enable = true },
-                  expressionAdjustmentHints = { enable = true },
-                  lifetimeElisionHints = { enable = true },
-                },
-                interpret = { tests = true },
-                lens = {
-                  references = {
-                    adt = { enable = true },
-                    enumVariant = { enable = true },
-                    method = { enable = true },
-                    trait = { enable = true },
+                hover = {
+                  actions = {
+                    -- Whether to show References action.
+                    references = { enable = true },
+                  },
+                  show = {
+                    -- How many variants of an enum to display when hovering on.
+                    enumVariants = 10,
+                    -- How many fields of a struct, variant or union to display
+                    -- when hovering on.
+                    fields = 10,
                   },
                 },
-                lru = { capacity = 512 },
+                imports = {
+                  -- Whether to enforce the import granularity setting for all files.
+                  granularity = { enforce = true },
+                  -- Don't group imports
+                  group = { enable = false },
+                },
+                -- Disable inlay hints
+                inlayHints = {
+                  bindingModeHints = { enable = false },
+                  chainingHints = { enable = false },
+                  closingBraceHints = { enable = false },
+                  closureCaptureHints = { enable = false },
+                  closureReturnTypeHints = { enable = false },
+                  discriminantHints = { enable = false },
+                  expressionAdjustmentHints = { enable = false },
+                  genericParameterHints = {
+                    const = { enable = false },
+                    lifetime = { enable = false },
+                    type = { enable = false },
+                  },
+                  implicitDrops = { enable = false },
+                  lifetimeElisionHints = { enable = false },
+                  parameterHints = { enable = false },
+                  rangeExclusiveHints = { enable = false },
+                  reborrowHints = { enable = false },
+                  typeHints = { enable = false },
+                },
+                -- Intepret tests
+                interpret = { tests = true },
+                -- Increased syntax tree LRU
+                lru = { capacity = 256 },
+                -- How many worker threads in the main loop.
+                numThreads = 8,
                 procMacro = {
                   ignored = {
                     thiserror = {
@@ -1429,6 +1470,7 @@ require("lazy").setup({
                 },
                 workspace = {
                   symbol = {
+                    -- Limits the number of items returned from a workspace symbol search
                     search = { limit = 512 },
                   },
                 },
@@ -1490,8 +1532,20 @@ require("lazy").setup({
       { "gR", NoLspClient, desc = "rename all references to symbol" },
       { "ga", NoLspClient, desc = "select code action" },
       { "ge", vim.diagnostic.open_float, desc = "show diagnostics" },
-      { "gp", vim.diagnostic.goto_prev, desc = "go to previous diagnostic" },
-      { "gn", vim.diagnostic.goto_next, desc = "go to next diagnostic" },
+      {
+        "gp",
+        function()
+          vim.diagnostic.jump({ count = -1, float = true })
+        end,
+        desc = "go to previous diagnostic",
+      },
+      {
+        "gn",
+        function()
+          vim.diagnostic.jump({ count = 1, float = true })
+        end,
+        desc = "go to next diagnostic",
+      },
       { "<leader>S", NoLspClient, desc = "LSP Symbols" },
       { "<localleader>f", "gq", desc = "format buffer" },
     },
@@ -1595,13 +1649,6 @@ require("lazy").setup({
 
       local lspconfig = require("lspconfig")
       for server, opts in pairs(servers) do
-        -- Custom config overrides per-project
-        -- e.g.
-        -- return {
-        --   rust_analyzer = function(opts)
-        --     -- customize opts
-        --   end
-        -- }
         local load_config = loadfile(vim.fn.getcwd() .. "/.lspconfig.lua")
         if load_config ~= nil then
           local enhance_opts = load_config()
@@ -1727,6 +1774,13 @@ require("lazy").setup({
       local luasnip = require("luasnip")
       local lspkind = require("lspkind")
       local cmp = require("cmp")
+
+      local has_words_before = function()
+        unpack = unpack or table.unpack
+        local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+        return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
+      end
+
       cmp.setup({
         enabled = function()
           if vim.api.nvim_get_option_value("buftype", { buf = 0 }) == "prompt" then
@@ -1742,95 +1796,54 @@ require("lazy").setup({
           end,
         },
         mapping = cmp.mapping.preset.insert({
-          ["<Tab>"] = cmp.mapping({
-            i = function(fallback)
-              if cmp.visible() then
-                cmp.confirm({ behavior = cmp.ConfirmBehavior.Insert, select = true })
-              else
-                fallback()
-              end
-            end,
-            s = function(fallback)
-              if luasnip.expand_or_jumpable() then
-                luasnip.expand_or_jump()
-              else
-                fallback()
-              end
-            end,
-          }),
-          ["<S-Tab>"] = cmp.mapping({
-            s = function(fallback)
-              if luasnip.jumpable(-1) then
-                luasnip.jump(-1)
-              else
-                fallback()
-              end
-            end,
-          }),
-          ["<C-n>"] = cmp.mapping({
-            i = function(fallback)
-              if cmp.visible() then
-                cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
-              else
-                fallback()
-              end
-            end,
-            s = function(fallback)
-              if luasnip.expand_or_jumpable() then
-                luasnip.expand_or_jump()
-              else
-                fallback()
-              end
-            end,
-          }),
-          ["<C-p>"] = cmp.mapping({
-            i = function(fallback)
-              if cmp.visible() then
-                cmp.select_prev_item({ behavior = cmp.SelectBehavior.Select })
-              else
-                fallback()
-              end
-            end,
-            s = function(fallback)
-              if luasnip.jumpable(-1) then
-                luasnip.jump(-1)
-              else
-                fallback()
-              end
-            end,
-          }),
-          ["<C-j>"] = cmp.mapping({
-            i = function(fallback)
-              if luasnip.expand_or_jumpable() then
-                luasnip.expand_or_jump()
-              else
-                fallback()
-              end
-            end,
-            s = function(fallback)
-              if luasnip.expand_or_jumpable() then
-                luasnip.expand_or_jump()
-              else
-                fallback()
-              end
-            end,
-          }),
-          ["<C-k>"] = cmp.mapping({
-            i = function(fallback)
-              if luasnip.jumpable(-1) then
-                luasnip.jump(-1)
-              else
-                fallback()
-              end
-            end,
-            s = function(fallback)
-              if luasnip.jumpable(-1) then
-                luasnip.jump(-1)
-              else
-                fallback()
-              end
-            end,
-          }),
+          ["<Tab>"] = cmp.mapping(function(fallback)
+            if cmp.visible() then
+              cmp.confirm({ behavior = cmp.ConfirmBehavior.Insert, select = true })
+            elseif luasnip.expand_or_jumpable() then
+              luasnip.expand_or_jump()
+            elseif has_words_before() then
+              cmp.complete()
+            else
+              fallback()
+            end
+          end, { "i", "s" }),
+          ["<S-Tab>"] = cmp.mapping(function()
+            if luasnip.jumpable(-1) then
+              luasnip.jump(-1)
+            end
+          end, { "i", "s" }),
+          ["<C-n>"] = cmp.mapping(function(fallback)
+            if cmp.visible() then
+              cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
+            elseif luasnip.expand_or_jumpable() then
+              luasnip.expand_or_jump()
+            else
+              fallback()
+            end
+          end, { "i", "s" }),
+          ["<C-p>"] = cmp.mapping(function(fallback)
+            if cmp.visible() then
+              cmp.select_prev_item({ behavior = cmp.SelectBehavior.Select })
+            elseif luasnip.jumpable(-1) then
+              luasnip.jump(-1)
+            else
+              fallback()
+            end
+          end, { "i", "s" }),
+          ["<C-j>"] = cmp.mapping(function(fallback)
+            if luasnip.expand_or_jumpable() then
+              luasnip.expand_or_jump()
+            else
+              fallback()
+            end
+          end, { "i", "s" }),
+          ["<C-k>"] = cmp.mapping(function(fallback)
+            if luasnip.jumpable(-1) then
+              luasnip.jump(-1)
+            else
+              fallback()
+            end
+          end, { "i", "s" }),
           ["<C-b>"] = cmp.mapping(cmp.mapping.scroll_docs(-4), { "i", "c" }),
           ["<C-f>"] = cmp.mapping(cmp.mapping.scroll_docs(4), { "i", "c" }),
           ["<C-e>"] = cmp.mapping({ i = cmp.mapping.close(), c = cmp.mapping.close() }),
@@ -1893,10 +1906,14 @@ require("lazy").setup({
         sorting = {
           priority_weight = 1.0,
           comparators = {
+            cmp.config.compare.exact,
             cmp.config.compare.locality,
             cmp.config.compare.recently_used,
             cmp.config.compare.score, -- based on :  score = score + ((#sources - (source_index - 1)) * sorting.priority_weight)
             cmp.config.compare.offset,
+            cmp.config.compare.kind,
+            cmp.config.compare.sort_text,
+            cmp.config.compare.length,
             cmp.config.compare.order,
           },
         },
@@ -1987,8 +2004,7 @@ require("lazy").setup({
         "yaml",
       },
       highlight = {
-        enable = true,
-        -- disable = { "rust" },
+        enable = false,
       },
       indent = { enable = true },
       incremental_selection = {
@@ -2074,20 +2090,9 @@ require("lazy").setup({
     lazy = true,
   },
   {
-    "nvim-telescope/telescope.nvim", -- Fuzzy finder
     cmd = "Telescope",
+    "nvim-telescope/telescope.nvim", -- Fuzzy finder
     dependencies = {
-      {
-        "nvim-telescope/telescope-fzf-native.nvim", -- Search dependency of telescope
-        lazy = true,
-        build = "make",
-        cond = function()
-          return vim.fn.executable("make") == 1
-        end,
-        config = function()
-          require("telescope").load_extension("fzf")
-        end,
-      },
       {
         "benfowler/telescope-luasnip.nvim",
         lazy = true,
@@ -2120,12 +2125,7 @@ require("lazy").setup({
       },
     },
     keys = {
-      { "<leader>f", "<cmd>Telescope fd<CR>", desc = "Find File" },
-      {
-        "<leader>H",
-        "<cmd>Telescope fd find_command=rg,--files,--hidden,--no-ignore,--glob,!.git<CR>",
-        desc = "Find Hidden File",
-      },
+      { "<leader>f", "<cmd>Telescope fd find_command=fd,-tfile,-H,-L,-E.git,-X,grep,-lI,.<CR>", desc = "Find File" },
       { "<leader>b", "<cmd>Telescope buffers<CR>", desc = "Buffers" },
       { "<leader>C", "<cmd>Telescope commands<CR>", desc = "Commands" },
       { "<leader>gb", "<cmd>Telescope git_branches<CR>", desc = "Git Branches" },
@@ -2165,25 +2165,6 @@ require("lazy").setup({
       { "<leader>gQ", "<cmd>cexpr []<CR>", desc = "clears quickfix list" },
     },
   },
-  -- maybe trim - never use it
-  -- {
-  --   "vim-test/vim-test", -- run unit tests
-  --   cmd = { "TestNearest", "TestFile", "TestSuite", "TestLast", "TestVisit" },
-  --   keys = {
-  --     { "<leader>Tn", "<cmd>TestNearest<CR>", desc = "run nearest test" },
-  --     { "<leader>Tf", "<cmd>TestFile<CR>", desc = "run test file" },
-  --     { "<leader>Ts", "<cmd>TestSuite<CR>", desc = "run test suite" },
-  --     { "<leader>Tl", "<cmd>TestLast<CR>", desc = "run last test" },
-  --     { "<leader>Tv", "<cmd>TestVisit<CR>", desc = "open last test file" },
-  --   },
-  -- },
-  -- Maybe trim out or lazy load on calling methods
-  -- {
-  --   "tpope/vim-dispatch", -- background build and test dispatcher
-  -- },
-  -- {
-  --   "radenling/vim-dispatch-neovim", -- Adds neovim terminal support to vim-dispatch
-  -- },
   {
     "mfussenegger/nvim-dap",
     keys = {
@@ -2478,6 +2459,9 @@ vim.cmd([[
     au Filetype * set formatoptions=croqnjp
     au Filetype markdown set comments=
     au FileType c,cpp setlocal commentstring=//\ %s
+    " Don't use rustfmt for formatting, it's already handled on file save
+    " I just want the default gq behavior for line wrapping comments
+    au Filetype rust setlocal formatprg=
   aug END
 ]])
 

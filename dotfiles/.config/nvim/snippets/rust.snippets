@@ -55,6 +55,30 @@ snippet prln "println!" b
 snippet fmt "format!"
     format!("$1"$0);
 
+snippet lg "logging::log!" b
+    leptos::logging::log!("$1"$0);
+
+snippet lgi "logging::info!" b
+    leptos::logging::info!("$1"$0);
+
+snippet lgw "logging::warn!" b
+    leptos::logging::warn!("$1"$0);
+
+snippet lge "logging::error!" b
+    leptos::logging::error!("$1"$0);
+
+snippet tr "tracing::debug!" b
+    tracing::debug!("$1"$0);
+
+snippet tri "tracing::info!" b
+    tracing::info!("$1"$0);
+
+snippet trw "tracing::warn!" b
+    tracing::warn!("$1"$0);
+
+snippet tre "tracing::error!" b
+    tracing::error!("$1"$0);
+
 snippet st "struct"
     #[derive(Debug)]
     #[must_use]
@@ -358,4 +382,16 @@ snippet stat "static" b
     static $1: $2 = $0;
 snippet stats "static str" b
     static $1: &'static str = "$0";
+
+snippet derive "Signal::derive" b
+    Signal::new(move || ${0:${VISUAL}});
+
+snippet memo "Memo::new" b
+    Memo::new(move |_| ${0:${VISUAL}});
+
+snippet comp "#[component]" b
+    #[component]
+    pub fn $1($2) -> impl IntoView {
+        view!{ ${0} }
+    }
 
