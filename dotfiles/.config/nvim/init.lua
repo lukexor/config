@@ -965,17 +965,6 @@ require("lazy").setup({
       { "crb", "<Plug>RadicalCoerceToBinary", desc = "convert number to binary" },
     },
   },
-  -- Maybe trim, rarely use it
-  -- {
-  --   "zirrostig/vim-schlepp", -- visually move blocks
-  --   lazy = true,
-  --   keys = {
-  --     { "<S-Up>", "<Plug>SchleppUp", mode = "v", desc = "move selection up" },
-  --     { "<S-Down>", "<Plug>SchleppDown", mode = "v", desc = "move selection down" },
-  --     { "<S-Left>", "<Plug>SchleppLeft", mode = "v", desc = "move selection left" },
-  --     { "<S-Right>", "<Plug>SchleppRight", mode = "v", desc = "move selection right" },
-  --   },
-  -- },
   {
     "brenoprata10/nvim-highlight-colors",
     opts = {
@@ -985,16 +974,6 @@ require("lazy").setup({
   -- -----------------------------------------------------------------------------
   -- System Integration
   -- -----------------------------------------------------------------------------
-  -- Maybe trim, rarely use it
-  -- {
-  --   "tpope/vim-eunuch", -- unix commands
-  --   cmd = { "Remove", "Delete", "Move", "Rename", "Copy", "Mkdir", "Wall", "SudoWrite", "SudoEdit" },
-  -- },
-  -- Maybe trim, rarely use it
-  -- {
-  --   "tpope/vim-fugitive", -- git integration
-  --   cmd = { "Git", "Gdiffsplit", "Gvdiffsplit", "GMove", "GBrowse", "GDelete" },
-  -- },
   {
     "iamcco/markdown-preview.nvim", -- markdown browser viewer
     ft = { "markdown" },

@@ -43,6 +43,4 @@ alias ll="ls -lh"
 alias la="ls -alh"
 alias vim="nvim"
 alias vimdiff="nvim -d"
-
-alias crd="cargo run --profile dev-opt"
-source <(rtx activate bash)
+. "$HOME/.cargo/env"

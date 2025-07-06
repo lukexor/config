@@ -4,13 +4,12 @@ command_timeout = 200
 format = """
 $directory\
 $git_branch\
-$cmd_duration\
-$nix_shell\
 $rust\
 $python\
 $nodejs\
 $status
 $battery\
+$time\
 $character\
 """
 

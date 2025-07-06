@@ -1,7 +1,18 @@
 [init]
   defaultBranch = main
+[user]
+  name = "Luke Petherbridge"
+  email = ""
+[commit]
+  gpgsign = false
+[tag]
+  gpgsign = false
 [include]
   path = ~/.gitconfig.local
+[credential]
+  helper = store
+[gpg]
+  program = /usr/bin/gpg
 [fetch]
   prune = true
 [merge]

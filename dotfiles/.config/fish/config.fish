@@ -15,6 +15,11 @@
 #
 #    Personal nushell env configuration of Luke Petherbridge <me@lukeworks.tech>
 
+# Boot into hyprland, if available
+if type -q Hyprland; and test -z "$DISPLAY"; and test (tty) = /dev/tty1
+    exec Hyprland
+end
+
 # Bail out if not interactive
 status is-interactive; or exit $status
 
@@ -61,7 +66,6 @@ set -U fish_pager_color_prefix normal --bold --underline
 set -U fish_pager_color_progress brwhite --background=cyan
 set fish_color_valid_path
 set fish_pager_color_prefix normal --bold
-
 
 # =============================================================================
 # Prompt   {{{1
@@ -188,7 +192,6 @@ function fish_user_key_bindings
     bind -M insert \cy fzf_dir
 end
 
-
 # =============================================================================
 # Completions   {{{1
 # =============================================================================
@@ -199,7 +202,6 @@ end
 # npm
 # yarn
 # tldr
-
 
 # =============================================================================
 # Abbreviations   {{{1
@@ -313,7 +315,6 @@ else if linux
     abbr -a o xdg-open
 end
 
-
 # =============================================================================
 # Aliases   {{{1
 # =============================================================================
@@ -348,7 +349,20 @@ end
 # =============================================================================
 
 direnv hook fish | source
-rtx activate fish | source
+
+if type -q mise
+    mise activate fish | source
+end
+
+if type -q zoxide
+    zoxide init fish | source
+end
+
+if type -q fzf
+    if test -f /usr/share/fish/completions/fzf.fish
+        source /usr/share/fish/completions/fzf.fish
+    end
+end
 
 function fish_greeting
     echo -n -s "$nix_shell_info"
