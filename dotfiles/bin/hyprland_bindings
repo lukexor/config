@@ -1,0 +1,53 @@
+#!/bin/bash
+
+# Get current bindings from hyprctl as JSON and format them
+hyprctl binds -j | jq -r '
+def modmask_to_names(modmask):
+  ([
+    (if (modmask | tonumber) >= 64 then "Super" else empty end),
+    (if ((modmask | tonumber) % 64) >= 8 then "Alt" else empty end),
+    (if ((modmask | tonumber) % 8) >= 4 then "Ctrl" else empty end),
+    (if ((modmask | tonumber) % 4) >= 1 then "Shift" else empty end)
+  ] | join(" + "));
+
+def format_key(key; keycode):
+  if key == "" then
+    if (keycode | tonumber) >= 10 and (keycode | tonumber) <= 19 then
+      (keycode | tonumber - 9 | tostring)
+    else keycode
+    end
+  else
+    if key == "mouse:272" then "Left Click"
+    elif key == "mouse:273" then "Right Click"
+    elif key == "mouse_up" then "Scroll Up"
+    elif key == "mouse_down" then "Scroll Down"
+    else key
+    end
+  end;
+
+.[] |
+  # Build key combination
+  (if .modmask != 0 then
+    modmask_to_names(.modmask) + " + " + format_key(.key; .keycode)
+  else
+    format_key(.key; .keycode)
+  end) as $key_combo |
+
+  # Build action
+  (if .arg != "" and .arg != "none" then
+    .dispatcher + " " + .arg
+  else
+    .dispatcher
+  end) as $action |
+
+  # Add submap prefix if present
+  (if .submap != "" and .submap != "none" then
+    "[" + .submap + "] " + $key_combo
+  else
+    $key_combo
+  end) as $final_key_combo |
+
+  # Format output
+  ($final_key_combo | . + (" " * (35 - length))) + "→ " + $action
+' |
+  flock --nonblock /tmp/.wofi.lock -c "wofi -dmenu -i --width 60% --height 70% -p 'Hyprland Keybindings' -O alphabetical"
