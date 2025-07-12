@@ -7,7 +7,8 @@ function iso2usb -d dd
         echo -e "\nAvailable devices:\n"
         lsblk
     else
-        sudo dd bs=4M status=progress oflag=sync if="$src" of="$dst"
+        sudo dd bs=4M status=progress conv=fsync oflag=direct if="$src" of="$dst"
+        sudo sync
         sudo eject $dst
     end
 end
