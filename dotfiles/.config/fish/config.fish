@@ -106,6 +106,7 @@ set -gx STARSHIP_SESSION_KEY (string sub -s1 -l16 (random)(random)(random)(rando
 # =============================================================================
 
 fish_add_path --path -gm \
+    ~/.local/share/omarchy/bin \
     ~/.fzf/bin \
     ~/snap/bin \
     ~/.npm-packages/bin \

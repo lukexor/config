@@ -45,7 +45,7 @@
     "cpu": {
       "interval": 5,
       "format": "󰍛",
-      "on-click": "alacritty -e btop"
+      "on-click": "kitty -e btop"
     },
     "clock": {
       "format": "{:%A %H:%M}",
@@ -63,7 +63,7 @@
       "tooltip-format-disconnected": "Disconnected",
       "interval": 3,
       "nospacing": 1,
-      "on-click": "alacritty -e iwctl"
+      "on-click": "kitty -e impala"
     },
     "battery": {
       "format": "{capacity}% {icon}",
@@ -78,7 +78,7 @@
             "󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"
           ]
         },
-      "format-full": "Charged ",
+      "format-full": "󰂅",
       "tooltip-format-discharging": "{power:>1.0f}W↓ {capacity}%",
       "tooltip-format-charging": "{power:>1.0f}W↑ {capacity}%",
       "interval": 5,

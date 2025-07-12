@@ -50,4 +50,4 @@ def format_key(key; keycode):
   # Format output
   ($final_key_combo | . + (" " * (35 - length))) + "→ " + $action
 ' |
-  flock --nonblock /tmp/.wofi.lock -c "wofi -dmenu -i --width 60% --height 70% -p 'Hyprland Keybindings' -O alphabetical"
+  flock --nonblock /tmp/.wofi.lock -c "wofi -dmenu -i --width 60% --height 70% -p 'Hyprland Keybindings' -O alphabetical --style=\"$HOME/.local/share/omarchy/default/wofi/search.css\""
