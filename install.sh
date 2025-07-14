@@ -5,7 +5,6 @@ set -euo pipefail
 # set -x
 
 DEFAULT_SHELL=fish
-OS="$(uname -s)"
 sudo=
 [ "$EUID" -ne 0 ] && sudo=sudo
 
@@ -36,9 +35,10 @@ setup_git() {
 
     gum input --prompt "Press enter when done > "
 
+    eval "$(ssh-agent)"
     ssh-add
 
-    cd $HOME
+    cd "$HOME"
 
     git clone git@github.com:lukexor/config
 
@@ -51,60 +51,62 @@ install_packages() {
 
   LANG=${LANG:-C.UTF-8}
 
-  # TODO: document why packages are needed
+  # Clean up cruft
+  yay -Rns --noconfirm 1password-beta 1password-cli xournalpp typora spotify rust hyprshot fastfetch mariadb-libs tldr || true
+
+  if command -v rustup &>/dev/null; then
+    rustup update
+  else
+    curl --proto "=https" --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+  fi
+  yay -Syu --noconfirm --answerdiff None --answerclean None paru
+
   local packages
   packages=(
-    cmake           # Required to build many -sys crates
-    direnv          # Dynamically source .env files
-    firefox         # Alternative browser
-    fish            # Primary shell
-    flameshot-git   # Screenshot utility
-    gimp            # Paint program
-    lazysql         # SQL TUI
-    pass            # For storing passwords
-    paru            # Rust-replacement of `yay` - choose rustup
-    quickemu-get    # for VMs - choose qemu-desktop or qemu-full
-    rsync           # File syncing
-    stow            # To symlink dotfiles
-    udiskie         # To automount drives using udisks2
-    yazi            # File manager TUI
+    cmake         # Required to build many -sys crates
+    direnv        # Dynamically source .env files
+    firefox       # Alternative browser
+    fish          # Primary shell
+    flameshot-git # Screenshot utility
+    gimp          # Paint program
+    jq            # JSON parser
+    lazysql       # SQL TUI
+    pass          # For storing passwords
+    quickemu-get  # for VMs - choose qemu-desktop or qemu-full
+    rsync         # File syncing
+    stow          # To symlink dotfiles
+    udiskie       # To automount drives using udisks2
+    yazi          # File manager TUI
   )
-  yay -S --noconfirm --needed "${packages[@]}"
+  paru --noconfirm "${packages[@]}"
 
-  # Clean up cruft
-  yay -Rns 1password-beta 1password-cli xournalpp typora spotify rust hyprshot fastfetch mariadb-libs tldr || true
-
-  info "Installed packages successfully"
-}
-
-install_extra_packages() {
   local mode
   mode=$(gum choose home work --header="Install packages for:")
 
   local packages
   case "$mode" in
-    home)
-      packages=(
-        discord
-        libretro
-        libretro-fbneo
-        lutris
-        minecraft-launcher
-        retroarch
-        retroarch-assets
-        steam
-      )
-      ;;
-    work)
-      packages=(
-        teams-for-linux
-      )
-      ;;
+  home)
+    packages=(
+      discord
+      libretro
+      libretro-fbneo
+      lutris
+      minecraft-launcher
+      retroarch
+      retroarch-assets
+      steam
+    )
+    ;;
+  work)
+    packages=(
+      teams-for-linux
+    )
+    ;;
   esac
 
-  info "Installing packages for `$mode`"
+  info "Installing packages for $($mode)"
 
-  yay -S --noconfirm --needed "${packages[@]}"
+  paru --noconfirm "${packages[@]}"
 
   info "Installed packages successfully"
 }
@@ -112,51 +114,47 @@ install_extra_packages() {
 install_crates() {
   info "Installing crates..."
 
-  if command -v rustup &> /dev/null; then
-    rustup update
-  else
-    curl --proto "=https" --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-  fi
-
   curl -L -sSf \
-    https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.sh \
-    | bash
+    https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.sh |
+    bash
 
   # TODO: Handle github rate-limiting
   local crates
   crates=(
-    bat             # `cat` replacement
-    bottom          # `top` replacement
-    cargo-asm       # Print Rust assembly
-    cargo-audit     # Audit Rust crates
-    cargo-bloat     # Print package size by crate
-    cargo-deny      # Check Rust crate security/licences
-    cargo-expand    # Expand Rust macros
-    cargo-leptos    # Build Leptos projects
-    cargo-outdated  # Check outdated crates
-    cargo-tree      # List crate dependency hierachies
-    cargo-udeps     # List unused dependencies
-    dotacat         # `lolcat` replacement
-    du-dust         # `du` replacement
-    eza             # `ls` replacement
-    fd-find         # `find` replacement
-    flamegraph      # Performance profiling
-    irust           # Rust repl
-    just            # Command runner
-    mprocs          # tmux-like multiple process runner
-    nu              # Nushell
-    procs           # `ps` replacement
-    ripgrep         # `grep` replacement
-    sd              # `sed` replacement
-    starship        # Command prompt
-    stylua          # `lua` style linter
-    tealdeer        # TLDR help for commands
-    tokei           # Language line counter
-    typos-cli       # Typo checker
-    wasm-pack       # Build wasm binaries
-    xh              # `curl` replacement
+    bat            # `cat` replacement
+    bottom         # `top` replacement
+    cargo-asm      # Print Rust assembly
+    cargo-audit    # Audit Rust crates
+    cargo-bloat    # Print package size by crate
+    cargo-deny     # Check Rust crate security/licences
+    cargo-expand   # Expand Rust macros
+    cargo-leptos   # Build Leptos projects
+    cargo-outdated # Check outdated crates
+    cargo-tree     # List crate dependency hierachies
+    cargo-udeps    # List unused dependencies
+    dotacat        # `lolcat` replacement
+    du-dust        # `du` replacement
+    eza            # `ls` replacement
+    fd-find        # `find` replacement
+    flamegraph     # Performance profiling
+    irust          # Rust repl
+    just           # Command runner
+    mprocs         # tmux-like multiple process runner
+    nu             # Nushell
+    procs          # `ps` replacement
+    ripgrep        # `grep` replacement
+    sd             # `sed` replacement
+    starship       # Command prompt
+    stylua         # `lua` style linter
+    tealdeer       # TLDR help for commands
+    tokei          # Language line counter
+    typos-cli      # Typo checker
+    wasm-pack      # Build wasm binaries
+    xh             # `curl` replacement
   )
   cargo binstall --no-confirm --no-symlinks "${crates[@]}"
+
+  tldr --update
 
   info "Successfully installed crates"
 }
@@ -224,7 +222,8 @@ link_dotfiles() {
   info "Linking dotfiles..."
 
   set +o pipefail
-  local conflicts=$(stow -nv dotfiles 2>&1 | rg "existing target" | sed 's/.*existing target .*: //')
+  local conflicts
+  conflicts=$(stow -nv dotfiles 2>&1 | rg "existing target" | sed -E 's/.*existing target ([^ ]+) .*/\1/')
   set -o pipefail
 
   for file in $conflicts; do
@@ -252,8 +251,6 @@ change_shell() {
   shell=$(command which $DEFAULT_SHELL)
   $sudo grep -qxF "$shell" /etc/shells | wc -l || echo "$shell" | $sudo tee -a /etc/shells
   [ "$SHELL" == "$shell" ] || chsh -s "$shell"
-
-  exec "$shell"
 
   info "Successfully set default shell"
 }
@@ -319,7 +316,6 @@ install() {
 
   setup_git
   install_packages
-  install_extra_packages
   link_dotfiles
   install_crates
   install_npm
@@ -338,6 +334,8 @@ install() {
   # Sign into LastPass/Google/Outlook/Claude/ChatGPT
 
   info "Bootstrap Complete!"
+
+  exec "$shell"
 }
 
 install
