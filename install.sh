@@ -70,6 +70,7 @@ install_packages() {
     flameshot-git # Screenshot utility
     gimp          # Paint program
     grim          # Required for flameshot
+    hyprcwd       # Get cwd of active window
     jq            # JSON parser
     lazysql       # SQL TUI
     pass          # For storing passwords
