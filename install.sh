@@ -69,6 +69,7 @@ install_packages() {
     fish          # Primary shell
     flameshot-git # Screenshot utility
     gimp          # Paint program
+    grim          # Required for flameshot
     jq            # JSON parser
     lazysql       # SQL TUI
     pass          # For storing passwords
@@ -99,6 +100,7 @@ install_packages() {
     ;;
   work)
     packages=(
+      docker-buildx
       teams-for-linux
     )
     ;;

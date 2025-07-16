@@ -1,4 +1,4 @@
-# -r
+#
 #                                    i  t
 #                                   LE  ED.
 #                                  L#E  E#K:
@@ -158,6 +158,11 @@ end
 function fish_title
     set -q argv[1]; or set argv fish
     echo (fish_prompt_pwd_dir_length=1 prompt_pwd): $argv
+end
+
+function refresh-xcompose
+    pkill fcitx5
+    setsid fcitx5 &>/dev/null &
 end
 
 if test -e ~/.local/config.fish
