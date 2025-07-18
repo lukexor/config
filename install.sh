@@ -77,6 +77,7 @@ install_packages() {
     quickemu-get  # for VMs - choose qemu-desktop or qemu-full
     rsync         # File syncing
     stow          # To symlink dotfiles
+    tidy          # HTML formatter
     udiskie       # To automount drives using udisks2
     yazi          # File manager TUI
   )
@@ -142,6 +143,7 @@ install_crates() {
     flamegraph     # Performance profiling
     irust          # Rust repl
     just           # Command runner
+    leptosfmt      # Leptos formater
     mprocs         # tmux-like multiple process runner
     nu             # Nushell
     procs          # `ps` replacement
