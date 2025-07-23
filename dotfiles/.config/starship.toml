@@ -1,30 +1,69 @@
 # env STARSHIP_LOG=trace starship timings
-command_timeout = 200
+command_timeout = 5000
 
 format = """
-$directory\
-$git_branch\
-$rust\
+[ ](bg:#3B4252)\
 $python\
+$username\
+[](bg:#434C5E fg:#3B4252)\
+$directory\
+[](fg:#434C5E bg:#4C566A)\
+$git_branch\
+$git_status\
+[](fg:#4C566A bg:#86BBD8)\
+$c\
+$golang\
+$java\
+$lua\
 $nodejs\
-$status
-$battery\
+$rust\
+$zig\
+[](fg:#86BBD8 bg:#06969A)\
+$docker_context\
+[](fg:#06969A bg:#33658A)\
 $time\
-$character\
+[ ](fg:#33658A)\
+\n$character
 """
 
+[username]
+show_always = true
+style_user = "bg:#3B4252"
+style_root = "bg:#3B4252"
+format = '[$user ]($style)'
+
+[directory]
+style = "bg:#434C5E"
+format = "[ $path ]($style)"
+truncation_length = 3
+truncate_to_repo = false
+truncation_symbol = "…/"
+read_only = "  "
+
+[directory.substitutions]
+"Documents" = "󰈙 "
+"Downloads" = " "
+"Music" = " "
+"Pictures" = " "
+
+[git_branch]
+symbol = " "
+style = "bg:#4C566A"
+format = '[ $symbol $branch ]($style)'
+
+[git_status]
+style = "bg:#4C566A"
+format = '[$all_status$ahead_behind ]($style)'
+
 [character]
-success_symbol = "[❯](bold green)"
+success_symbol = "[❯](bold fg:#06969A)"
 error_symbol = "[❯](bold red)"
-vimcmd_symbol = "[:](bold green)"
-vimcmd_replace_one_symbol = "[❮](bold purple]"
-vimcmd_replace_symbol = "[❮](bold purple]"
-vimcmd_visual_symbol = "[❮](bold yellow]"
 
 [time]
 disabled = false
-format = '[\[$time\]]($style) '
-time_format = "%H:%M"
+time_format = "%R"           # Hour:Minute Format
+style = "bg:#33658A"
+format = '[ $time ]($style)'
 
 [battery]
 charging_symbol = "⚡️ "
@@ -40,96 +79,39 @@ style = "bold yellow"
 
 [c]
 symbol = " "
-format = 'via [$symbol]($style)'
+style = "bg:#86BBD8"
+format = '[ $symbol ($version) ]($style)'
 
-[directory]
-truncate_to_repo = false
-truncation_symbol = "../"
-read_only = "  "
-
-[git_branch]
-symbol = " "
+[docker_context]
+symbol = " "
+style = "bg:#06969A"
+format = '[ $symbol $context ]($style)$path'
 
 [golang]
 symbol = " "
-format = 'via [$symbol]($style)'
-
-[hostname]
-ssh_symbol = " "
+style = "bg:#86BBD8"
+format = '[ $symbol ($version) ]($style)'
 
 [lua]
 symbol = " "
-format = 'via [$symbol]($style)'
-
-[memory_usage]
-symbol = "󰍛 "
-
-
-[nix_shell]
-impure_msg = ""
-symbol = " "
-format = "[$symbol$state]($style)"
+style = "bg:#86BBD8"
+format = '[ $symbol $(version) ]($style)'
 
 [nodejs]
-symbol = " "
-format = 'via [$symbol]($style)'
-
-[os.symbols]
-Alpaquita = " "
-Alpine = " "
-AlmaLinux = " "
-Amazon = " "
-Android = " "
-Arch = " "
-Artix = " "
-CentOS = " "
-Debian = " "
-DragonFly = " "
-Emscripten = " "
-EndeavourOS = " "
-Fedora = " "
-FreeBSD = " "
-Garuda = "󰛓 "
-Gentoo = " "
-HardenedBSD = "󰞌 "
-Illumos = "󰈸 "
-Kali = " "
-Linux = " "
-Mabox = " "
-Macos = " "
-Manjaro = " "
-Mariner = " "
-MidnightBSD = " "
-Mint = " "
-NetBSD = " "
-NixOS = " "
-OpenBSD = "󰈺 "
-openSUSE = " "
-OracleLinux = "󰌷 "
-Pop = " "
-Raspbian = " "
-Redhat = " "
-RedHatEnterprise = " "
-RockyLinux = " "
-Redox = "󰀘 "
-Solus = "󰠳 "
-SUSE = " "
-Ubuntu = " "
-Unknown = " "
-Void = " "
-Windows = "󰍲 "
-
-[package]
-symbol = "󰏗 "
+symbol = ""
+style = "bg:#86BBD8"
+format = '[ $symbol ($version) ]($style)'
 
 [python]
-symbol = " "
-format = 'via [$symbol]($style)'
+style = "bg:#86BBD8"
+format = '[(\($virtualenv\) )]($style)'
 
 [rust]
-symbol = " "
-format = 'via [$symbol]($style)'
+symbol = ""
+style = "bg:#86BBD8"
+format = '[ $symbol ($version) ]($style)'
 
 [zig]
 symbol = " "
-format = 'via [$symbol]($style)'
+style = "bg:#86BBD8"
+format = '[ $symbol $(version) ]($style)'

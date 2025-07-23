@@ -330,7 +330,7 @@ alias lal="[ -r $activity_log ] && cat $activity_log | head || echo 'nothing log
 
 alias cp="cp -ia"
 alias mv="mv -i"
-alias rm="rm -i"
+abbr -a rm trash
 
 alias dirsize="fd -t d | xargs du -sh"
 function path
