@@ -23,6 +23,7 @@
   all: initial;
   padding: 0 6px;
   margin: 0 1.5px;
+  min-width: 9px;
 }
 
 #tray,
@@ -32,14 +33,13 @@
 #custom-dropbox,
 #bluetooth,
 #pulseaudio,
-#clock,
-#custom-power-menu {
+#clock {
   min-width: 12px;
   margin: 0 7.5px;
 }
 
 #custom-expand-icon {
-  margin-right: 8px;
+  margin-right: 12px;
 }
 
 tooltip {

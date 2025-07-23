@@ -12,13 +12,11 @@
   ],
   "modules-right": [
     "group/tray-expander",
-    "custom/dropbox",
     "bluetooth",
     "network",
     "pulseaudio",
     "cpu",
-    "battery",
-    "custom/power-menu"
+    "battery"
   ],
   "hyprland/workspaces": {
     "on-click": "activate",
@@ -65,21 +63,21 @@
     "tooltip-format-disconnected": "Disconnected",
     "interval": 3,
     "nospacing": 1,
-    "on-click": "kitty -e impala"
+    "on-click": "kitty --class=Imapala -e impala"
   },
   "battery": {
     "format": "{capacity}% {icon}",
     "format-discharging": "{icon}",
-    "format-charging":    "{icon}",
-    "format-plugged":     "",
-      "format-icons": {
-        "charging": [
-          "󰢜", "󰂆", "󰂇", "󰂈", "󰢝", "󰂉", "󰢞", "󰂊", "󰂋", "󰂅"
-        ],
-        "default": [
-          "󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"
-        ]
-      },
+    "format-charging": "{icon}",
+    "format-plugged": "",
+    "format-icons": {
+      "charging": [
+        "󰢜", "󰂆", "󰂇", "󰂈", "󰢝", "󰂉", "󰢞", "󰂊", "󰂋", "󰂅"
+      ],
+      "default": [
+        "󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"
+      ]
+    },
     "format-full": "󰂅",
     "tooltip-format-discharging": "{power:>1.0f}W↓ {capacity}%",
     "tooltip-format-charging": "{power:>1.0f}W↑ {capacity}%",
@@ -94,11 +92,11 @@
     "format-disabled": "󰂲",
     "format-connected": "",
     "tooltip-format": "Devices connected: {num_connections}",
-    "on-click": "GTK_THEME=Adwaita-dark blueberry"
+    "on-click": "blueberry"
   },
   "pulseaudio": {
     "format": "{icon}",
-    "on-click": "GTK_THEME=Adwaita-dark pavucontrol",
+    "on-click": "kitty --class=Wiremix -e wiremix",
     "on-click-right": "pamixer -t",
     "tooltip-format": "Playing at {volume}%",
     "scroll-step": 5,
@@ -106,20 +104,6 @@
     "format-icons": {
       "default": ["", "", ""]
     }
-  },
-  "custom/power-menu": {
-    "format": "󰐥",
-    "on-click": "~/.local/share/omarchy/bin/omarchy-power-menu",
-    "tooltip": false
-  },
-  "custom/dropbox": {
-    "format": "",
-    "on-click": "nautilus ~/Dropbox",
-    "exec": "dropbox-cli status",
-    "return-type": "text",
-    "interval": 5,
-    "tooltip": true,
-    "tooltip-format": "{}"
   },
   "group/tray-expander": {
     "orientation": "inherit",
@@ -129,11 +113,11 @@
     },
     "modules": [
       "custom/expand-icon",
-    "tray"
+      "tray"
     ]
   },
   "custom/expand-icon": {
-    "format": "",
+    "format": " ",
     "tooltip": false
   },
   "tray": {

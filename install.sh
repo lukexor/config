@@ -52,7 +52,7 @@ install_packages() {
   LANG=${LANG:-C.UTF-8}
 
   # Clean up cruft
-  yay -Rns --noconfirm 1password-beta 1password-cli xournalpp typora spotify rust hyprshot fastfetch mariadb-libs tldr || true
+  yay -Rns --noconfirm 1password-beta 1password-cli xournalpp typora spotify rust hyprshot mariadb-libs tldr || true
 
   if command -v rustup &>/dev/null; then
     rustup update
@@ -79,6 +79,7 @@ install_packages() {
     stow          # To symlink dotfiles
     tidy          # HTML formatter
     udiskie       # To automount drives using udisks2
+    vscode-json-languageserver
     yazi          # File manager TUI
   )
   paru --noconfirm "${packages[@]}"
