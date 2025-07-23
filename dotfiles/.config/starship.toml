@@ -2,10 +2,7 @@
 command_timeout = 5000
 
 format = """
-[ ](bg:#3B4252)\
 $python\
-$username\
-[](bg:#434C5E fg:#3B4252)\
 $directory\
 [](fg:#434C5E bg:#4C566A)\
 $git_branch\
@@ -18,19 +15,11 @@ $lua\
 $nodejs\
 $rust\
 $zig\
-[](fg:#86BBD8 bg:#06969A)\
-$docker_context\
-[](fg:#06969A bg:#33658A)\
+[](fg:#86BBD8 bg:#33658A)\
 $time\
-[ ](fg:#33658A)\
+[](fg:#33658A)\
 \n$character
 """
-
-[username]
-show_always = true
-style_user = "bg:#3B4252"
-style_root = "bg:#3B4252"
-format = '[$user ]($style)'
 
 [directory]
 style = "bg:#434C5E"
@@ -79,39 +68,35 @@ style = "bold yellow"
 
 [c]
 symbol = " "
-style = "bg:#86BBD8"
+style = "bg:#86BBD8 fg:#1d2021"
 format = '[ $symbol ($version) ]($style)'
-
-[docker_context]
-symbol = " "
-style = "bg:#06969A"
-format = '[ $symbol $context ]($style)$path'
 
 [golang]
 symbol = " "
-style = "bg:#86BBD8"
+style = "bg:#86BBD8 fg:#1d2021"
 format = '[ $symbol ($version) ]($style)'
 
 [lua]
 symbol = " "
-style = "bg:#86BBD8"
+style = "bg:#86BBD8 fg:#1d2021"
 format = '[ $symbol $(version) ]($style)'
 
 [nodejs]
 symbol = ""
-style = "bg:#86BBD8"
+style = "bg:#86BBD8 fg:#1d2021"
 format = '[ $symbol ($version) ]($style)'
 
 [python]
-style = "bg:#86BBD8"
-format = '[(\($virtualenv\) )]($style)'
+symbol = ""
+style = "bg:#86BBD8 fg:#1d2021"
+format = '[ $symbol \($virtualenv\) ]($style)[](bg:#434C5E fg:#86BBD8)'
 
 [rust]
 symbol = ""
-style = "bg:#86BBD8"
+style = "bg:#86BBD8 fg:#1d2021"
 format = '[ $symbol ($version) ]($style)'
 
 [zig]
 symbol = " "
-style = "bg:#86BBD8"
+style = "bg:#86BBD8 fg:#1d2021"
 format = '[ $symbol $(version) ]($style)'
