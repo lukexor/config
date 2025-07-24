@@ -286,7 +286,7 @@ abbr -a h "history | head -"
 abbr -a ir irust
 abbr -a la eza -a
 abbr -a lk eza -lrs size
-abbr -a ll eza -l
+abbr -a ll eza -al
 abbr -a ls eza
 abbr -a lt eza --tree
 abbr -a mkdir mkdir -p
@@ -330,7 +330,7 @@ alias lal="[ -r $activity_log ] && cat $activity_log | head || echo 'nothing log
 
 alias cp="cp -ia"
 alias mv="mv -i"
-abbr -a rm trash
+abbr -a rm "trash put"
 
 alias dirsize="fd -t d | xargs du -sh"
 function path

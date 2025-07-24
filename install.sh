@@ -63,24 +63,25 @@ install_packages() {
 
   local packages
   packages=(
-    cmake         # Required to build many -sys crates
-    direnv        # Dynamically source .env files
-    firefox       # Alternative browser
-    fish          # Primary shell
-    flameshot-git # Screenshot utility
-    gimp          # Paint program
-    grim          # Required for flameshot
-    hyprcwd       # Get cwd of active window
-    jq            # JSON parser
-    lazysql       # SQL TUI
-    pass          # For storing passwords
-    quickemu-get  # for VMs - choose qemu-desktop or qemu-full
-    rsync         # File syncing
-    stow          # To symlink dotfiles
-    tidy          # HTML formatter
-    udiskie       # To automount drives using udisks2
+    cmake                         # Required to build many -sys crates
+    direnv                        # Dynamically source .env files
+    firefox                       # Alternative browser
+    fish                          # Primary shell
+    flameshot-git                 # Screenshot utility
+    gimp                          # Paint program
+    grim                          # Required for flameshot
+    hyprcwd                       # Get cwd of active window
+    jq                            # JSON parser
+    lazysql                       # SQL TUI
+    pass                          # For storing passwords
+    phinger-cursors               # Cursors
+    quickemu-get                  # for VMs - choose qemu-desktop or qemu-full
+    rsync                         # File syncing
+    stow                          # To symlink dotfiles
+    tidy                          # HTML formatter
+    udiskie                       # To automount drives using udisks2
     vscode-json-languageserver
-    yazi          # File manager TUI
+    yazi                          # File manager TUI
   )
   paru --noconfirm "${packages[@]}"
 
@@ -214,16 +215,6 @@ install_terminal() {
   info "Installed terminal successfully"
 }
 
-install_fonts() {
-  info "Installing fonts..."
-
-  mkdir -p ~/.fonts
-  cp ./assets/*.ttf ~/.fonts/
-  fc-cache -f -v
-
-  info "Installed fonts successfully"
-}
-
 link_dotfiles() {
   info "Linking dotfiles..."
 
@@ -326,7 +317,6 @@ install() {
   install_crates
   install_npm
   install_terminal
-  install_fonts
   install_neovim
   change_shell
   install_webapps
