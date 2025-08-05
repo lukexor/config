@@ -52,7 +52,7 @@ install_packages() {
   LANG=${LANG:-C.UTF-8}
 
   # Clean up cruft
-  yay -Rns --noconfirm 1password-beta 1password-cli xournalpp typora spotify rust hyprshot mariadb-libs tldr || true
+  yay -Rns --noconfirm 1password-beta 1password-cli xournalpp typora rust mariadb-libs tldr || true
 
   if command -v rustup &>/dev/null; then
     rustup update
@@ -65,20 +65,22 @@ install_packages() {
   packages=(
     cmake                         # Required to build many -sys crates
     direnv                        # Dynamically source .env files
+    docker-buildx                 # Docker builds
     firefox                       # Alternative browser
     fish                          # Primary shell
-    flameshot-git                 # Screenshot utility
     gimp                          # Paint program
-    grim                          # Required for flameshot
     hyprcwd                       # Get cwd of active window
     jq                            # JSON parser
     lazysql                       # SQL TUI
+    nvidia-open-dkms              # Open Nvidia drivers
     pass                          # For storing passwords
     phinger-cursors               # Cursors
-    quickemu-get                  # for VMs - choose qemu-desktop or qemu-full
+    quickemu-git                  # for VMs - choose qemu-desktop or qemu-full
     rsync                         # File syncing
     stow                          # To symlink dotfiles
     tidy                          # HTML formatter
+    ttf-meslo-nerd                # Meslo font
+    trashy                        # Trash manager
     udiskie                       # To automount drives using udisks2
     vscode-json-languageserver
     yazi                          # File manager TUI
@@ -93,6 +95,8 @@ install_packages() {
   home)
     packages=(
       discord
+      dosbox
+      gamemode lib32-gamemode
       libretro
       libretro-fbneo
       lutris
@@ -104,7 +108,6 @@ install_packages() {
     ;;
   work)
     packages=(
-      docker-buildx
       teams-for-linux
     )
     ;;
