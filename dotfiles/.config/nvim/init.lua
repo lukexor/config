@@ -585,6 +585,24 @@ function NoLspClient()
   )
 end
 
+-- TODO: finish migrating to vim.lsp.config
+vim.lsp.config["luals"] = {
+  settings = {
+    Lua = {
+      diagnostics = {
+        globals = { "vim" },
+      },
+      runtime = {
+        version = "LuaJIT",
+      },
+      workspace = {
+        checkThirdParty = false,
+      },
+    },
+  },
+}
+vim.lsp.enable("luals")
+
 require("lazy").setup({
   -- -----------------------------------------------------------------------------
   -- Global Dependencies
@@ -1575,21 +1593,6 @@ require("lazy").setup({
             fallbackFlags = { "-std=c++17" },
           }
         end),
-        lua_ls = get_options(function(opts)
-          opts.settings = {
-            Lua = {
-              diagnostics = {
-                globals = { "vim" },
-              },
-              runtime = {
-                version = "LuaJIT",
-              },
-              workspace = {
-                checkThirdParty = false,
-              },
-            },
-          }
-        end),
         tailwindcss = get_options(function(opts)
           opts.filetypes = {
             "css",
@@ -1939,6 +1942,17 @@ require("lazy").setup({
           trim_scope = "inner",
           min_window_height = 30,
         },
+        build = function()
+          -- Resolves compatibility issue with rayliwell/tree-sitter-rstml
+          local context_queries = vim.fn.stdpath("data") .. "/lazy/nvim-treesitter-context/queries"
+          local rust_query = context_queries .. "/rust"
+          local rstml_query = context_queries .. "/rust_with_rstml"
+
+          -- Check if rust query exists and rstml symlink doesn't
+          if vim.fn.isdirectory(rust_query) == 1 and vim.fn.isdirectory(rstml_query) == 0 then
+            vim.fn.system("ln -s " .. rust_query .. " " .. rstml_query)
+          end
+        end,
       },
       "nvim-treesitter/nvim-treesitter-textobjects",
     },
@@ -2461,5 +2475,6 @@ vim.cmd([[
         \ echohl None
     au TextYankPost * silent! lua vim.highlight.on_yank { higroup="Search", timeout=300, on_visual=false }
     au VimEnter * if isdirectory(expand('%')) | bd | exe 'Telescope fd' | endif
+    au VimEnter * hi link TreesitterContext FloatFooter
   aug END
 ]])
