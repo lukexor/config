@@ -52,17 +52,17 @@
   "custom/update": {
     "format": "",
     "exec": "~/.local/share/omarchy/bin/omarchy-update-available",
-    "on-click": "kitty --class Omarchy --title Omarchy -e omarchy-update",
+    "on-click": "alacritty --class Omarchy --title Omarchy -e omarchy-update",
     "interval": 3600
   },
   "cpu": {
     "interval": 5,
     "format": "󰍛",
-    "on-click": "kitty -e btop"
+    "on-click": "alacritty -e btop"
   },
   "clock": {
     "format": "{:%A %H:%M}",
-    "format-alt": "{:%d %B W%V %Y}",
+    "format-alt": "{:%d-%m-%Y}",
     "tooltip": false,
     "on-click-right": "~/.local/share/omarchy/bin/omarchy-cmd-tzupdate"
   },
@@ -77,7 +77,7 @@
     "tooltip-format-disconnected": "Disconnected",
     "interval": 3,
     "nospacing": 1,
-    "on-click": "kitty --class=Impala -e impala"
+    "on-click": "alacritty --class=Impala -e impala"
   },
   "battery": {
     "format": "{capacity}% {icon}",
@@ -110,7 +110,7 @@
   },
   "pulseaudio": {
     "format": "{icon}",
-    "on-click": "kitty --class=Wiremix -e wiremix",
+    "on-click": "alacritty --class=Wiremix -e wiremix",
     "on-click-right": "pamixer -t",
     "tooltip-format": "Playing at {volume}%",
     "scroll-step": 5,

@@ -1,5 +1,4 @@
 app_launch_prefix = "uwsm app -- "
-terminal = "kitty"
 terminal_title_flag = ""
 locale = ""
 close_when_open = true                                             # Toggle on reopen
