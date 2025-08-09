@@ -3,8 +3,10 @@ function config -a config -d "edit a configuration file"
     switch $config
         case nvim
             nvim ~/.config/nvim/init.lua
-        case kitty
-            nvim ~/.config/kitty/kitty.conf
+        case hypr
+            nvim ~/.config/hypr/hyprland.conf
+        case alacritty
+            nvim ~/.config/alacritty/alacritty.toml
         case fish
             nvim ~/.config/fish/config.fish
         case fishl
@@ -22,4 +24,4 @@ function config -a config -d "edit a configuration file"
     end
 end
 
-complete -c config -fr -a "nvim kitty fish nu nu_env starship"
+complete -c config -fr -a "nvim hypr alacritty fish nu nu_env starship"

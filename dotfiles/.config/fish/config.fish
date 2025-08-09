@@ -118,7 +118,6 @@ fish_add_path --path -gm \
 
 if macos
     fish_add_path --path -ga \
-        /Applications/kitty.app/Contents/MacOS \
         (brew --prefix)/opt/llvm/bin
     set -gx LDFLAGS -L(brew --prefix)/lib
     set -gx CPPFLAGS -I(brew --prefix)/include
@@ -178,7 +177,7 @@ set -gx FZF_DEFAULT_OPTS "--height 50% --layout=reverse --border --inline-info"
 set -gx LESS -RFX
 set -gx MANPAGER "nvim +Man!"
 set -gx PAGER "nvim +Man!"
-set -gx TERMINAL kitty
+set -gx TERMINAL alacritty
 set -gx VISUAL nvim
 set -gx CM_LAUNCHER bemenu
 
@@ -341,14 +340,6 @@ alias gmd="git pull && git rebase origin/develop"
 alias gmm="git pull && git rebase origin/main"
 
 alias nrs="nixos-rebuild.sh"
-
-# Starts kitty with software rendering
-function start_kitty
-    set -gx LIBGL_ALWAYS_SOFTWARE 1
-    kitty &
-    disown
-    exit
-end
 
 # =============================================================================
 # Init   {{{1

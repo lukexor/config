@@ -79,7 +79,7 @@ format = '[ $symbol ($version) ]($style)'
 [lua]
 symbol = " "
 style = "bg:#86BBD8 fg:#1d2021"
-format = '[ $symbol $(version) ]($style)'
+format = '[ $symbol ]($style)'
 
 [nodejs]
 symbol = ""

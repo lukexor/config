@@ -195,29 +195,6 @@ install_npm() {
   info "Successfully installed npm..."
 }
 
-install_terminal() {
-  info "Installing terminal..."
-
-  mkdir -p ~/.local/bin
-  curl -L -sSf https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin launch=n
-
-  local executable
-  local keybinds
-  executable=~/.local/kitty.app/bin/kitty
-  keybinds=~/.config/kitty/linux-keybinds.conf
-
-  mkdir -p ~/.local/bin
-  symlink "$executable" ~/.local/bin/kitty
-
-  mkdir -p ~/.local/kitty
-  symlink "$keybinds" ~/.local/kitty/keybinds.conf
-
-  mkdir -p ~/.local/share/applications
-  symlink ~/.config/kitty/kitty.desktop ~/.local/share/applications/kitty.desktop
-
-  info "Installed terminal successfully"
-}
-
 link_dotfiles() {
   info "Linking dotfiles..."
 
@@ -319,7 +296,6 @@ install() {
   link_dotfiles
   install_crates
   install_npm
-  install_terminal
   install_neovim
   change_shell
   install_webapps

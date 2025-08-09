@@ -611,6 +611,15 @@ require("lazy").setup({
     -- Global Dependencies
     -- -----------------------------------------------------------------------------
     {
+      {
+        "LazyVim/LazyVim",
+        opts = {
+          news = {
+            lazyvim = false,
+            neovim = false,
+          },
+        },
+      },
       "rcarriga/nvim-notify", -- Prettier notifications
       keys = {
         {
@@ -2366,7 +2375,6 @@ require("lazy").setup({
       },
     },
   },
-  install = { colorscheme = { "tokyonight", "habamax" } },
   checker = {
     enabled = true,
     notify = false,
