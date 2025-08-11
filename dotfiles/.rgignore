@@ -2,6 +2,7 @@
 *.o
 *.so
 *.pyc
+*.lock
 /build
 /dist
 /target
