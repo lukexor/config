@@ -27,6 +27,13 @@ status is-interactive; or exit $status
 # OS Utils   {{{1
 # =============================================================================
 
+fish_add_path --path -ga \
+    /sbin \
+    /bin \
+    /usr/sbin \
+    /usr/bin \
+    /usr/local/bin
+
 set -U os (uname)
 function macos
     test $os = Darwin
@@ -106,7 +113,6 @@ set -gx STARSHIP_SESSION_KEY (string sub -s1 -l16 (random)(random)(random)(rando
 # =============================================================================
 
 fish_add_path --path -gm \
-    ~/.local/share/omarchy/bin \
     ~/.fzf/bin \
     ~/snap/bin \
     ~/.npm-packages/bin \
@@ -127,14 +133,6 @@ else if linux
         /usr/games
     set -gx LD_LIBRARY_PATH "$LD_LIBRARY_PATH:/usr/local/lib:/usr/lib"
 end
-
-fish_add_path --path -ga \
-    /sbin \
-    /bin \
-    /usr/sbin \
-    /usr/bin \
-    /usr/local/bin \
-    /usr/local/go/bin
 
 set -g activity_log ~/.activity_log
 

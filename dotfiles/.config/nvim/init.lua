@@ -2452,5 +2452,6 @@ vim.cmd([[
     au VimEnter * hi! link rustCommentLineDoc FloatTitle
     au VimEnter * hi! link SpecialComment FloatTitle
     au VimEnter * hi! link Comment Question
+    au VimEnter * hi! link WinSeparator CursorLineNr
   aug END
 ]])

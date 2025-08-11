@@ -1,6 +1,7 @@
 #!/usr/bin/env sh
 
 MONOCLE_MODE=$(hyprctl getoption misc:new_window_takes_over_fullscreen | awk 'NR==1{print $2}')
+hyprctl dispatch fullscreenstate 1 0
 if [ "$MONOCLE_MODE" = 0 ] ; then
     hyprctl --batch "\
         keyword misc:new_window_takes_over_fullscreen 1;\
