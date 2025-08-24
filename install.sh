@@ -64,6 +64,7 @@ install_packages() {
   local packages
   packages=(
     cmake                         # Required to build many -sys crates
+    cndrvcups-lt                  # Canon LBP6030w drivers
     direnv                        # Dynamically source .env files
     docker-buildx                 # Docker builds
     firefox                       # Alternative browser

@@ -611,15 +611,6 @@ require("lazy").setup({
     -- Global Dependencies
     -- -----------------------------------------------------------------------------
     {
-      {
-        "LazyVim/LazyVim",
-        opts = {
-          news = {
-            lazyvim = false,
-            neovim = false,
-          },
-        },
-      },
       "rcarriga/nvim-notify", -- Prettier notifications
       keys = {
         {
@@ -1000,11 +991,6 @@ require("lazy").setup({
       opts = {
         enable_tailwind = true,
       },
-    },
-    {
-      "folke/tokyonight.nvim",
-      lazy = true,
-      opts = { style = "moon" },
     },
     -- -----------------------------------------------------------------------------
     -- System Integration
@@ -2264,10 +2250,12 @@ require("lazy").setup({
                       "fd",
                       "--exclude",
                       "*.dylib",
+                      "--exclude",
+                      "*.so",
                       "--type",
                       "x",
                       "--max-depth",
-                      "2",
+                      "3",
                       ".",
                       vim.env.CARGO_TARGET_DIR,
                     }, {}),
