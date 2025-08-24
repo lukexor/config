@@ -86,9 +86,8 @@ local liblldb_path = codelldb_ext_path .. "/lldb/lib/liblldb"
 local os = vim.loop.os_uname().sysname
 -- The path is different on Windows
 if os:find("Windows") then
-  -- TODO: fix codelldb on windows
-  -- codelldb_path = codelldb_ext_path .. "/adapter/codelldb.exe"
-  -- liblldb_path = codelldb_ext_path .. "/lldb/bin/liblldb.dll"
+  codelldb_path = codelldb_ext_path .. "/adapter/codelldb.exe"
+  liblldb_path = codelldb_ext_path .. "/lldb/bin/liblldb.dll"
 else
   -- The liblldb extension is .so for Linux and .dylib for MacOS
   liblldb_path = liblldb_path .. (os == "Linux" and ".so" or ".dylib")
@@ -817,29 +816,31 @@ require("lazy").setup({
       "mfussenegger/nvim-lint",
       config = function()
         local lint = require("lint")
-        lint.linters.protolint = {
-          cmd = "protolint",
-        }
-        lint.linters.tidy = {
+        -- Copied from nvim-lint/lua/lint/linters/tidy.lua
+        lint.linters.tidyxml = {
           cmd = "tidy",
           stdin = true,
           stream = "stderr",
+          ignore_exitcode = true,
           args = {
             "-quiet",
             "-errors",
             "-language",
             "en",
+            "--gnu-emacs",
+            "yes",
             "-xml",
           },
+          parser = require("lint.parser").from_pattern(pattern, groups, severities, { ["source"] = "tidy" }),
         }
         lint.linters_by_ft = {
           bash = { "shellcheck" },
           css = { "stylelint" },
           -- So pedantic...
-          -- cpp = { "cpplint" },
+          cpp = { "clangtidy" },
           glslc = { "glslc" },
           html = { "tidy" },
-          xml = { "tidy" },
+          xml = { "tidyxml" },
           javascript = { "eslint_d" },
           javascriptreact = { "eslint_d" },
           json = { "jsonlint" },
@@ -851,7 +852,7 @@ require("lazy").setup({
         }
 
         local lint_augroup = vim.api.nvim_create_augroup("Lint", {})
-        vim.api.nvim_create_autocmd({ "InsertChange", "TextChanged", "TextChangedI" }, {
+        vim.api.nvim_create_autocmd({ "BufEnter", "TextChanged", "TextChangedI" }, {
           group = lint_augroup,
           desc = "Lint file",
           callback = function()
@@ -1304,6 +1305,7 @@ require("lazy").setup({
     {
       "mrcjkb/rustaceanvim",
       ft = { "rust" },
+      version = "^6",
       init = function()
         vim.g.rustaceanvim = function()
           local cfg = require("rustaceanvim.config")
