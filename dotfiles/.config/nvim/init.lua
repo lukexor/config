@@ -142,7 +142,9 @@ local del_map = function(lhs, options)
   local opts = vim.deepcopy(options or {})
   local mode = opts.mode or "n"
   opts.mode = nil
-  vim.keymap.del(mode, lhs, options)
+  if vim.fn.maparg(lhs, mode) ~= "" then
+    vim.keymap.del(mode, lhs, options)
+  end
 end
 
 local function system_open(path)
@@ -2163,7 +2165,7 @@ require("lazy").setup({
         vim.fn.sign_define("DapBreakpoint", { text = "🔴" })
         vim.fn.sign_define("DapBreakpointCondition", { text = "🟡" })
         vim.fn.sign_define("DapLogPoint", { text = "📕" })
-        vim.fn.sign_define("DapStopped", { text = "󰏤" })
+        vim.fn.sign_define("DapStopped", { text = "⏸️" })
         vim.fn.sign_define("DapBreakpointRejected", { text = "❌" })
         vim.api.nvim_create_autocmd("FileType", {
           pattern = "dap-repl",
@@ -2312,7 +2314,8 @@ require("lazy").setup({
         }
 
         local dapui = require("dapui")
-        dap.listeners.after.event_initialized.dapui_config = function()
+        dapui.setup()
+        dap.listeners.before.attach.dapui_config = function()
           dapui.open()
           map("<leader>dr", "<cmd>lua require('dap').run_to_cursor()<CR>", { desc = "Run until cursor", buffer = true })
           map("<leader>dR", "<cmd>lua require('dap').restart()<CR>", { desc = "Restart debugger", buffer = true })
@@ -2321,12 +2324,9 @@ require("lazy").setup({
           map("<c-'>", "<cmd>lua require('dap').step_over()<CR>", { desc = "Step over", buffer = true })
           map("<c-;>", "<cmd>lua require('dap').step_into()<CR>", { desc = "Step into", buffer = true })
           map("<c-:>", "<cmd>lua require('dap').step_out()<CR>", { desc = "Step out", buffer = true })
-          map(
-            "K",
-            "<cmd>lua require('dapui').eval()<CR>",
-            { mode = { "n", "v" }, desc = "Evaluate expression", buffer = true }
-          )
+          map("K", "<cmd>lua require('dapui').eval()<CR>", { desc = "Evaluate expression", buffer = true })
         end
+        dap.listeners.before.launch.dapui_config = dap.listeners.before.attach.dapui_config
         dap.listeners.after.event_terminated.dapui_config = function()
           dapui.close()
           del_map("<leader>dr", { buffer = true })
@@ -2336,8 +2336,9 @@ require("lazy").setup({
           del_map("<c-'>", { buffer = true })
           del_map("<c-;>", { buffer = true })
           del_map("<c-:>", { buffer = true })
-          del_map("K", { mode = { "n", "v" }, buffer = true })
+          del_map("K", { buffer = true })
         end
+        dap.listeners.after.event_exited.dapui_config = dap.listeners.after.event_terminated.dapui_config
       end,
     },
     {
