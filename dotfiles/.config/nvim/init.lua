@@ -1307,11 +1307,6 @@ require("lazy").setup({
           local cfg = require("rustaceanvim.config")
           local capabilities = lsp_capabilities()
           return {
-            tools = {
-              float_win_config = {
-                width = 0.8,
-              },
-            },
             -- LSP config
             server = {
               on_attach = function(client, bufnr)
@@ -2290,7 +2285,7 @@ require("lazy").setup({
           desc = "Step out",
         },
         {
-          "<c-k>",
+          "K",
           function()
             require("dapui").eval()
           end,

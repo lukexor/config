@@ -42,7 +42,18 @@ format = '[ $symbol $branch ]($style)'
 
 [git_status]
 style = "bg:#4C566A"
-format = '[$all_status$ahead_behind ]($style)'
+format = '[$all_status$ahead_behind]($style)'
+ahead = "⇡${count} "
+diverged = "⇕⇡${ahead_count}⇣${behind_count} "
+behind = "⇣${count} "
+conflicted = " "
+up_to_date = " "
+untracked = "? "
+modified = " "
+stashed = ""
+staged = ""
+renamed = ""
+deleted = ""
 
 [character]
 success_symbol = "[❯](bold fg:#06969A)"
