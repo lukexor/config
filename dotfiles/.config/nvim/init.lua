@@ -177,11 +177,11 @@ local lsp_on_attach = function(client, bufnr)
   vim.fn.sign_define("DiagnosticSignInformation", { text = "", texthl = "LspDiagnosticsSignInformation" })
 
   -- See `:help vim.lsp.*` for documentation on any of the below functions
-  map("gd", "m'<cmd>Telescope lsp_definitions<CR>", { desc = "Go To Definition", buffer = bufnr })
-  map("gD", "m'<cmd>Telescope lsp_type_definitions<CR>", { desc = "Go To Type Definition", buffer = bufnr })
+  map("gd", "m'<cmd>Telescope lsp_definitions<CR>", { desc = "Go to Definition", buffer = bufnr })
+  map("gD", "m'<cmd>Telescope lsp_type_definitions<CR>", { desc = "Go to Type Definition", buffer = bufnr })
   map("gh", vim.lsp.buf.hover, { desc = "Symbol Information", buffer = bufnr })
   map("gH", vim.lsp.buf.signature_help, { desc = "Signature Information", buffer = bufnr })
-  map("gi", "m'<cmd>Telescope lsp_implementations<CR>", { desc = "Go To Implementation", buffer = bufnr })
+  map("gi", "m'<cmd>Telescope lsp_implementations<CR>", { desc = "Go to Implementation", buffer = bufnr })
   map("gr", "m'<cmd>Telescope lsp_references<CR>", { desc = "References", buffer = bufnr })
   map("gR", vim.lsp.buf.rename, { desc = "Rename References", buffer = bufnr })
   map("ga", vim.lsp.buf.code_action, { desc = "Code Action", buffer = bufnr })
@@ -189,17 +189,6 @@ local lsp_on_attach = function(client, bufnr)
   map("<leader>S", "<cmd>Telescope lsp_document_symbols<CR>", { desc = "LSP Symbols", buffer = bufnr })
 
   client.server_capabilities.semanticTokensProvider = nil -- don't need treesitter semantic higlighting
-  -- See: https://github.com/neovim/neovim/issues/30985
-  -- TODO: Test if still an issue
-  -- for _, method in ipairs({ "textDocument/diagnostic", "workspace/diagnostic" }) do
-  --   local default_diagnostic_handler = vim.lsp.handlers[method]
-  --   vim.lsp.handlers[method] = function(err, result, context, config)
-  --     if err ~= nil and err.code == -32802 then
-  --       return
-  --     end
-  --     return default_diagnostic_handler(err, result, context, config)
-  --   end
-  -- end
 end
 
 local lsp_capabilities = function()
@@ -1087,7 +1076,12 @@ require("lazy").setup({
     {
       "stevearc/dressing.nvim", -- Window UI enhancements, popups, input, etc
       event = "VeryLazy",
-      opts = {},
+      opts = {
+        select = {
+          -- Fixes small width on vim.ui.select
+          telescope = {},
+        },
+      },
     },
     {
       "folke/noice.nvim", -- UI improvements
@@ -1313,14 +1307,26 @@ require("lazy").setup({
           local cfg = require("rustaceanvim.config")
           local capabilities = lsp_capabilities()
           return {
+            tools = {
+              float_win_config = {
+                width = 0.8,
+              },
+            },
             -- LSP config
             server = {
               on_attach = function(client, bufnr)
                 lsp_on_attach(client, bufnr)
                 vim.cmd("compiler cargo")
-                map("<leader>cr", "<cmd>Make run<CR>", { desc = "cargo run" })
-                map("<leader>cb", "<cmd>Make build<CR>", { desc = "cargo build" })
-                map("<leader>cc", "<cmd>Make clippy<CR>", { desc = "cargo clippy" })
+                -- TODO: Not a fan of the dialog not being centered like vim.lsp.buf.code_action
+                -- map("ga", function()
+                --   vim.cmd.RustLsp("codeAction")
+                -- end, { silent = true, desc = "Code Action", buffer = bufnr })
+                map("gh", function()
+                  vim.cmd.RustLsp({ "hover", "actions" })
+                end, { silent = true, desc = "Hover", buffer = bufnr })
+                map("<leader>cr", "<cmd>Make run<CR>", { desc = "cargo run", buffer = bufnr })
+                map("<leader>cb", "<cmd>Make build<CR>", { desc = "cargo build", buffer = bufnr })
+                map("<leader>cc", "<cmd>Make clippy<CR>", { desc = "cargo clippy", buffer = bufnr })
               end,
               capabilities = capabilities,
               default_settings = {
@@ -1342,6 +1348,9 @@ require("lazy").setup({
                     targetDir = true,
                     -- target triple override
                     -- target = "wasm32-unknown-unknown",
+                  },
+                  runnables = {
+                    extraTestBinaryArgs = { "--nocapture" },
                   },
                   check = {
                     -- Run `cargo clippy` instead of `cargo check`
@@ -1467,36 +1476,36 @@ require("lazy").setup({
         },
       },
       keys = {
-        { "<leader>Li", "<cmd>LspInfo<CR>", desc = "lsp info" },
-        { "<leader>LI", "<cmd>LspInfo<CR>", desc = "lsp install info" },
-        { "<leader>Ls", "<cmd>LspStart<CR>", desc = "start lsp server" },
-        { "<leader>LS", "<cmd>LspStop<CR>", desc = "stop lsp server" },
-        { "<leader>Lr", "<cmd>LspRestart<CR>", desc = "restart lsp server" },
-        { "gd", NoLspClient, desc = "go to definition" },
-        { "gD", NoLspClient, desc = "go to type definition" },
-        { "gh", NoLspClient, desc = "display symbol information" },
-        { "gH", NoLspClient, desc = "display signature information" },
-        { "gi", NoLspClient, desc = "go to implementation" },
-        { "gr", NoLspClient, desc = "list references" },
-        { "gR", NoLspClient, desc = "rename all references to symbol" },
-        { "ga", NoLspClient, desc = "select code action" },
-        { "ge", vim.diagnostic.open_float, desc = "show diagnostics" },
+        { "<leader>Li", "<cmd>LspInfo<CR>", desc = "LSP Info" },
+        { "<leader>LI", "<cmd>LspInfo<CR>", desc = "LSP Install Info" },
+        { "<leader>Ls", "<cmd>LspStart<CR>", desc = "Start LSP Server" },
+        { "<leader>LS", "<cmd>LspStop<CR>", desc = "Stop LSP Server" },
+        { "<leader>Lr", "<cmd>LspRestart<CR>", desc = "Restart LSP Server" },
+        { "gd", NoLspClient, desc = "Go to Definition" },
+        { "gD", NoLspClient, desc = "Go to Type Definition" },
+        { "gh", NoLspClient, desc = "Symbol Information" },
+        { "gH", NoLspClient, desc = "Signature Information" },
+        { "gi", NoLspClient, desc = "Go to Implementation" },
+        { "gr", NoLspClient, desc = "References" },
+        { "gR", NoLspClient, desc = "Rename References" },
+        { "ga", NoLspClient, desc = "Code Action" },
+        { "ge", vim.diagnostic.open_float, desc = "Diagnostics" },
         {
           "gp",
           function()
             vim.diagnostic.jump({ count = -1, float = true })
           end,
-          desc = "go to previous diagnostic",
+          desc = "Previous Diagnostic",
         },
         {
           "gn",
           function()
             vim.diagnostic.jump({ count = 1, float = true })
           end,
-          desc = "go to next diagnostic",
+          desc = "Next Diagnostic",
         },
         { "<leader>S", NoLspClient, desc = "LSP Symbols" },
-        { "<localleader>f", "gq", desc = "format buffer" },
+        { "<localleader>f", "gq", desc = "Format" },
       },
       config = function()
         local capabilities = lsp_capabilities()
@@ -2111,6 +2120,82 @@ require("lazy").setup({
       },
     },
     {
+      "nvim-neotest/neotest",
+      dependencies = {
+        "nvim-neotest/nvim-nio",
+        "nvim-lua/plenary.nvim",
+        "antoinemadec/FixCursorHold.nvim",
+        "nvim-treesitter/nvim-treesitter",
+      },
+      keys = {
+        {
+          "<leader>Tn",
+          function()
+            require("neotest").run.run()
+          end,
+          desc = "Run Nearest Test",
+        },
+        {
+          "<leader>Ts",
+          function()
+            require("neotest").run.stop()
+          end,
+          desc = "Stop Nearest Test",
+        },
+        {
+          "<leader>Td",
+          function()
+            require("neotest").run.run({ strategy = "dap" })
+          end,
+          desc = "Debug Nearest Test",
+        },
+        {
+          "<leader>Tf",
+          function()
+            require("neotest").run.run(vim.fn.expand("%"))
+          end,
+          desc = "Run Tests in File",
+        },
+        {
+          "<leader>TN",
+          function()
+            require("neotest").run.run_last()
+          end,
+          desc = "Run Last Test",
+        },
+        {
+          "<leader>TD",
+          function()
+            require("neotest").run.run_last({ strategy = "dap" })
+          end,
+          desc = "Debug Last Test",
+        },
+      },
+      config = function()
+        require("neotest").setup({
+          adapters = {
+            require("rustaceanvim.neotest"),
+          },
+        })
+      end,
+    },
+    {
+      "rcarriga/nvim-dap-ui",
+      dependencies = {
+        "mfussenegger/nvim-dap",
+        "nvim-neotest/nvim-nio",
+      },
+      keys = {
+        {
+          "<leader>du",
+          function()
+            require("dapui").toggle()
+          end,
+          desc = "Toggle Dap UI",
+        },
+      },
+    },
+    {
       "mfussenegger/nvim-dap",
       keys = {
         {
@@ -2154,6 +2239,62 @@ require("lazy").setup({
             require("dap").run_last()
           end,
           desc = "Run Last Debugger",
+        },
+        {
+          "<c-\\>",
+          function()
+            require("dap").pause()
+          end,
+          desc = "Pause Debugger",
+        },
+        {
+          "<leader>ds",
+          function()
+            require("dap").terminate()
+          end,
+          desc = "Stop debugger",
+        },
+        {
+          "<leader>dr",
+          function()
+            require("dap").run_to_cursor()
+          end,
+          desc = "Run until cursor",
+        },
+        {
+          "<leader>dR",
+          function()
+            require("dap").restart()
+          end,
+          desc = "Restart debugger",
+        },
+        {
+          "<c-'>",
+          function()
+            require("dap").step_over()
+          end,
+          desc = "Step over",
+        },
+        {
+          "<c-;>",
+          function()
+            require("dap").step_into()
+          end,
+          desc = "Step into",
+        },
+        {
+          "<c-:>",
+          function()
+            require("dap").step_out()
+          end,
+          desc = "Step out",
+        },
+        {
+          "<c-k>",
+          function()
+            require("dapui").eval()
+          end,
+          desc = "Evaluate expression",
         },
         {
           "<leader>dL",
@@ -2221,61 +2362,88 @@ require("lazy").setup({
 
           return commands
         end
+        local promptArgs = function()
+          DapArgs = vim.fn.expand(vim.fn.input({ prompt = "Arguments: ", default = DapArgs, completion = "file" }))
+          if DapArgs == "" then
+            return nil
+          end
+          return { DapArgs }
+        end
+        local findRustTarget = function(flags)
+          local pickers = require("telescope.pickers")
+          local finders = require("telescope.finders")
+          local conf = require("telescope.config").values
+          local actions = require("telescope.actions")
+          local action_state = require("telescope.actions.state")
+
+          vim.cmd.write()
+          local cmd = "cargo build " .. vim.fn.expand((flags or ""))
+          vim.notify("Building `" .. cmd .. "`...")
+          vim.fn.jobstart(cmd)
+          assert(vim.v.shell_error == 0, "Build failed...")
+
+          local profile = (flags:find("%-%-release") and "release") or flags:match("%-%-profile%s+(%S+)") or "debug"
+          local cargo_dir = (vim.env.CARGO_TARGET_DIR or vim.fn.getcwd()) .. "/" .. profile
+
+          return coroutine.create(function(co)
+            local opts = {}
+            pickers
+              .new(opts, {
+                prompt_title = "Executable",
+                finder = finders.new_oneshot_job({
+                  "fd",
+                  "-E",
+                  "*.dylib",
+                  "-E",
+                  "*.so",
+                  "-t",
+                  "x",
+                  "-d",
+                  "1",
+                  ".",
+                  cargo_dir,
+                }, {}),
+                sorter = conf.generic_sorter(opts),
+                attach_mappings = function(buffer_number)
+                  actions.select_default:replace(function()
+                    actions.close(buffer_number)
+                    coroutine.resume(co, action_state.get_selected_entry()[1])
+                  end)
+                  return true
+                end,
+              })
+              :find()
+          end)
+        end
         dap.configurations.rust = {
           {
             name = "Launch",
             type = "codelldb",
             request = "launch",
             cwd = "${workspaceFolder}",
-            args = function()
-              DapArgs = vim.fn.input({ prompt = "Arguments: ", default = DapArgs, completion = "file" })
-              if DapArgs == "" then
-                return nil
-              end
-              return { DapArgs }
-            end,
-            program = function()
-              local pickers = require("telescope.pickers")
-              local finders = require("telescope.finders")
-              local conf = require("telescope.config").values
-              local actions = require("telescope.actions")
-              local action_state = require("telescope.actions.state")
-              vim.cmd.write()
-              vim.notify("Building...")
-              return coroutine.create(function(co)
-                vim.fn.system("cargo build")
-                assert(vim.v.shell_error == 0, "Build failed...")
-
-                local opts = {}
-                pickers
-                  .new(opts, {
-                    prompt_title = "Path to executable",
-                    finder = finders.new_oneshot_job({
-                      "fd",
-                      "--exclude",
-                      "*.dylib",
-                      "--exclude",
-                      "*.so",
-                      "--type",
-                      "x",
-                      "--max-depth",
-                      "3",
-                      ".",
-                      vim.env.CARGO_TARGET_DIR,
-                    }, {}),
-                    sorter = conf.generic_sorter(opts),
-                    attach_mappings = function(buffer_number)
-                      actions.select_default:replace(function()
-                        actions.close(buffer_number)
-                        coroutine.resume(co, action_state.get_selected_entry()[1])
-                      end)
-                      return true
-                    end,
-                  })
-                  :find()
-              end)
-            end,
             initCommands = initCommands,
+            program = findRustTarget,
+          },
+          {
+            name = "Launch w/ Args",
+            type = "codelldb",
+            request = "launch",
+            cwd = "${workspaceFolder}",
+            initCommands = initCommands,
+            args = promptArgs,
+            program = findRustTarget,
+          },
+          {
+            name = "Launch w/ Args & Build Flags",
+            type = "codelldb",
+            request = "launch",
+            cwd = "${workspaceFolder}",
+            initCommands = initCommands,
+            args = promptArgs,
+            program = function()
+              DapFlags = vim.fn.input({ prompt = "Build Flags: ", default = DapFlags })
+              return findRustTarget(DapFlags)
+            end,
           },
           {
             name = "Attach",
@@ -2315,55 +2483,11 @@ require("lazy").setup({
 
         local dapui = require("dapui")
         dapui.setup()
-        dap.listeners.before.attach.dapui_config = function()
-          dapui.open()
-          map("<leader>dr", "<cmd>lua require('dap').run_to_cursor()<CR>", { desc = "Run until cursor", buffer = true })
-          map("<leader>dR", "<cmd>lua require('dap').restart()<CR>", { desc = "Restart debugger", buffer = true })
-          map("<leader>dS", "<cmd>lua require('dap').terminate()<CR>", { desc = "Stop debugger", buffer = true })
-          map("<c-\\>", "<cmd>lua require('dap').pause()", { desc = "Pause Debugger", buffer = true })
-          map("<c-'>", "<cmd>lua require('dap').step_over()<CR>", { desc = "Step over", buffer = true })
-          map("<c-;>", "<cmd>lua require('dap').step_into()<CR>", { desc = "Step into", buffer = true })
-          map("<c-:>", "<cmd>lua require('dap').step_out()<CR>", { desc = "Step out", buffer = true })
-          map("K", "<cmd>lua require('dapui').eval()<CR>", { desc = "Evaluate expression", buffer = true })
-        end
-        dap.listeners.before.launch.dapui_config = dap.listeners.before.attach.dapui_config
-        dap.listeners.after.event_terminated.dapui_config = function()
-          dapui.close()
-          del_map("<leader>dr", { buffer = true })
-          del_map("<leader>dR", { buffer = true })
-          del_map("<leader>dS", { buffer = true })
-          del_map("<c-\\>", { buffer = true })
-          del_map("<c-'>", { buffer = true })
-          del_map("<c-;>", { buffer = true })
-          del_map("<c-:>", { buffer = true })
-          del_map("K", { buffer = true })
-        end
-        dap.listeners.after.event_exited.dapui_config = dap.listeners.after.event_terminated.dapui_config
+        dap.listeners.before.attach.dapui_config = dapui.open
+        dap.listeners.before.launch.dapui_config = dapui.open
+        dap.listeners.after.event_terminated.dapui_config = dapui.close
+        dap.listeners.after.event_exited.dapui_config = dapui.close
       end,
-    },
-    {
-      "theHamsta/nvim-dap-virtual-text",
-      lazy = true,
-      dependencies = {
-        "mfussenegger/nvim-dap",
-      },
-    },
-    {
-      "rcarriga/nvim-dap-ui",
-      lazy = true,
-      dependencies = {
-        "mfussenegger/nvim-dap",
-        "nvim-neotest/nvim-nio",
-      },
-      keys = {
-        {
-          "<leader>du",
-          function()
-            require("dapui").toggle({})
-          end,
-          desc = "Dap UI",
-        },
-      },
     },
   },
   checker = {
