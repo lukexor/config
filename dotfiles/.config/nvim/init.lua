@@ -4,13 +4,13 @@
 --                                  L#E  E#K:
 --                                 G#W.  E##W;
 --                                D#K.   E#E##t
---                               E#K.    E#ti##f
---                             .E#E.     E#t ;##D.
+--                               E#K.    E#t ##f
+--                             .E#E.     E#t  ;#D.
 --                            .K#E       E#ELLE##K:
 --                           .K#D        E#L;;;;;;,
---                          .W#G         E#t
---                         :W##########WtE#t
---                         :,,,,,,,,,,,,,.
+--                          .W#G      .K E#t
+--                         :W##########W E#t
+--                         :,,,,,,,,,,,, .
 --
 --
 --     Personal vim configuration of Luke Petherbridge <me@lukeworks.tech>

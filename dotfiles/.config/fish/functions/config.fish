@@ -24,4 +24,4 @@ function config -a config -d "edit a configuration file"
     end
 end
 
-complete -c config -fr -a "nvim hypr alacritty fish nu nu_env starship"
+complete -c config -fr -a "nvim hypr alacritty fish starship"

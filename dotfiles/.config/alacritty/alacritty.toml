@@ -1,4 +1,21 @@
-general.import = [ "~/.config/omarchy/current/theme/alacritty.toml" ]
+#
+#                                    i  t
+#                                   LE  ED.
+#                                  L#E  E#K:
+#                                 G#W.  E##W;
+#                                D#K.   E#E##t
+#                               E#K.    E#t ##f
+#                             .E#E.     E#t  ;#D.
+#                            .K#E       E#ELLE##K:
+#                           .K#D        E#L;;;;;;,
+#                          .W#G      .K E#t
+#                         :W##########W E#t
+#                         :,,,,,,,,,,,, .
+#
+#
+#     Personal alacritty configuration of Luke Petherbridge <me@lukeworks.tech>
+
+general.import = ["~/.config/omarchy/current/theme/alacritty.toml"]
 
 [selection]
 save_to_clipboard = true
@@ -7,9 +24,9 @@ save_to_clipboard = true
 TERM = "xterm-256color"
 
 [font]
-normal = { family = "CaskaydiaMono Nerd Font", style = "Regular" }
-bold = { family = "CaskaydiaMono Nerd Font", style = "Bold" }
-italic = { family = "CaskaydiaMono Nerd Font", style = "Italic" }
+normal = { family = "monospace", style = "Regular" }
+bold = { family = "monospace", style = "Bold" }
+italic = { family = "monospace", style = "Italic" }
 size = 9
 
 [window]
