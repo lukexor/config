@@ -2371,8 +2371,9 @@ require("lazy").setup({
           local actions = require("telescope.actions")
           local action_state = require("telescope.actions.state")
 
+          local flags = flags or ""
           vim.cmd.write()
-          local cmd = "cargo build " .. vim.fn.expand((flags or ""))
+          local cmd = "cargo build " .. vim.fn.expand(flags)
           vim.notify("Building `" .. cmd .. "`...")
           vim.fn.jobstart(cmd)
           assert(vim.v.shell_error == 0, "Build failed...")
@@ -2533,7 +2534,7 @@ vim.cmd([[
     au BufRead,BufNewFile *.vert,*.frag set ft=glsl
     au BufRead,BufNewFile Makefile.toml set ft=cargo-make
     au Filetype help set nu rnu
-    au Filetype * set formatoptions=croqnjp
+    au Filetype * set formatoptions=rqncljp
     au Filetype markdown set comments=
     au FileType c,cpp setlocal commentstring=//\ %s
     " Don't use rustfmt for formatting, it's already handled on file save
