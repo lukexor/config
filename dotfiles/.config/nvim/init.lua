@@ -575,24 +575,6 @@ function NoLspClient()
   )
 end
 
--- TODO: finish migrating to vim.lsp.config
-vim.lsp.config["luals"] = {
-  settings = {
-    Lua = {
-      diagnostics = {
-        globals = { "vim" },
-      },
-      runtime = {
-        version = "LuaJIT",
-      },
-      workspace = {
-        checkThirdParty = false,
-      },
-    },
-  },
-}
-vim.lsp.enable("luals")
-
 vim.g.lazyvim_check_order = false
 require("lazy").setup({
   spec = {
@@ -1344,9 +1326,6 @@ require("lazy").setup({
                     -- target triple override
                     -- target = "wasm32-unknown-unknown",
                   },
-                  runnables = {
-                    extraTestBinaryArgs = { "--nocapture" },
-                  },
                   check = {
                     -- Run `cargo clippy` instead of `cargo check`
                     command = "clippy",
@@ -1356,6 +1335,7 @@ require("lazy").setup({
                     limit = 25,
                   },
                   diagnostics = {
+                    enable = false,
                     -- Additional style lints
                     styleLints = { enable = true },
                   },
@@ -1366,8 +1346,10 @@ require("lazy").setup({
                       "data",
                       "docs",
                       "dist",
+                      "build",
                       "node_modules",
                       ".git",
+                      ".direnv",
                     },
                   },
                   hover = {
@@ -1416,6 +1398,9 @@ require("lazy").setup({
                   lru = { capacity = 256 },
                   -- How many worker threads in the main loop.
                   numThreads = 8,
+                  runnables = {
+                    extraTestBinaryArgs = { "--nocapture" },
+                  },
                   procMacro = {
                     ignored = {
                       thiserror = {
@@ -1424,6 +1409,9 @@ require("lazy").setup({
                       serde = {
                         "Serialize",
                         "Deserialize",
+                      },
+                      leptos_macro = {
+                        "server",
                       },
                     },
                   },
@@ -1533,6 +1521,34 @@ require("lazy").setup({
           jsonls = get_options(function(opts)
             opts.cmd = { "vscode-json-languageserver", "--stdio" }
           end),
+          lua_ls = get_options(function(opts)
+            opts.on_init = function(client)
+              client.config.settings.Lua = vim.tbl_deep_extend("force", client.config.settings.Lua, {
+                runtime = {
+                  -- Tell the language server which version of Lua you're using (most
+                  -- likely LuaJIT in the case of Neovim)
+                  version = "LuaJIT",
+                  -- Tell the language server how to find Lua modules same way as Neovim
+                  -- (see `:h lua-module-load`)
+                  path = {
+                    "lua/?.lua",
+                    "lua/?/init.lua",
+                  },
+                },
+                workspace = {
+                  checkThirdParty = false,
+                  library = {
+                    vim.env.VIMRUNTIME,
+                  },
+                },
+              })
+            end
+            -- Fix workspace issue
+            opts.root_dir = ""
+            opts.settings = {
+              Lua = {},
+            }
+          end),
           pyright = get_options(function(opts)
             opts.settings = {
               python = {
@@ -1559,10 +1575,11 @@ require("lazy").setup({
               "typescript",
               "typescriptreact",
             }
-            opts.init_options = {
-              classAttributes = { "class", "className" },
-              userLanguages = {
-                rust = "html",
+            opts.settings = {
+              tailwindCSS = {
+                includeLanguages = {
+                  rust = "html",
+                },
               },
             }
           end),
@@ -1585,7 +1602,6 @@ require("lazy").setup({
           end),
         }
 
-        local lspconfig = require("lspconfig")
         for server, opts in pairs(servers) do
           local load_config = loadfile(vim.fn.getcwd() .. "/.lspconfig.lua")
           if load_config ~= nil then
@@ -1595,11 +1611,8 @@ require("lazy").setup({
             end
           end
 
-          if opts.setup ~= nil then
-            opts.setup(opts)
-          else
-            lspconfig[server].setup(opts)
-          end
+          vim.lsp.config(server, opts)
+          vim.lsp.enable(server)
         end
       end,
     },
