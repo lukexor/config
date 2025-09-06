@@ -1276,6 +1276,10 @@ require("lazy").setup({
     {
       "jay-babu/mason-nvim-dap.nvim",
       cmd = { "DapInstall" },
+      dependencies = {
+        -- Enable type prettification for Rust
+        "cmrschwarz/rust-prettifier-for-lldb",
+      },
       opts = {
         ensure_installed = { "codelldb", "debugpy", "node-debug2-adapter" },
       },
@@ -2350,26 +2354,6 @@ require("lazy").setup({
             })
           end
         end
-        -- Find Rust types
-        local initCommands = function()
-          -- Find out where to look for the pretty printer Python module
-          local rustc_sysroot = vim.fn.trim(vim.fn.system("rustc --print sysroot"))
-
-          local script_import = 'command script import "' .. rustc_sysroot .. '/lib/rustlib/etc/lldb_lookup.py"'
-          local commands_file = rustc_sysroot .. "/lib/rustlib/etc/lldb_commands"
-
-          local commands = {}
-          local file = io.open(commands_file, "r")
-          if file then
-            for line in file:lines() do
-              table.insert(commands, line)
-            end
-            file:close()
-          end
-          table.insert(commands, 1, script_import)
-
-          return commands
-        end
         local promptArgs = function()
           DapArgs = vim.fn.expand(vim.fn.input({ prompt = "Arguments: ", default = DapArgs, completion = "file" }))
           if DapArgs == "" then
@@ -2377,6 +2361,10 @@ require("lazy").setup({
           end
           return { DapArgs }
         end
+
+        local preRunCommands = {
+          "command script import ~/.local/share/nvim/lazy/rust-prettifier-for-lldb/rust_prettifier_for_lldb.py"
+        }
         local findRustTarget = function(flags)
           local pickers = require("telescope.pickers")
           local finders = require("telescope.finders")
@@ -2430,29 +2418,32 @@ require("lazy").setup({
             type = "codelldb",
             request = "launch",
             cwd = "${workspaceFolder}",
-            initCommands = initCommands,
             program = findRustTarget,
+            preRunCommands = preRunCommands,
+            sourceLanguages = { "rust" },
           },
           {
             name = "Launch w/ Args",
             type = "codelldb",
             request = "launch",
             cwd = "${workspaceFolder}",
-            initCommands = initCommands,
             args = promptArgs,
             program = findRustTarget,
+            preRunCommands = preRunCommands,
+            sourceLanguages = { "rust" },
           },
           {
             name = "Launch w/ Args & Build Flags",
             type = "codelldb",
             request = "launch",
             cwd = "${workspaceFolder}",
-            initCommands = initCommands,
             args = promptArgs,
             program = function()
               DapFlags = vim.fn.input({ prompt = "Build Flags: ", default = DapFlags })
               return findRustTarget(DapFlags)
             end,
+            preRunCommands = preRunCommands,
+            sourceLanguages = { "rust" },
           },
           {
             name = "Attach",
@@ -2460,7 +2451,8 @@ require("lazy").setup({
             request = "attach",
             cwd = "${workspaceFolder}",
             pid = "${command:pickProcess}",
-            initCommands = initCommands,
+            preRunCommands = preRunCommands,
+            sourceLanguages = { "rust" },
           },
         }
         dap.configurations.python = {
