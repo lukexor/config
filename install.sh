@@ -73,6 +73,7 @@ install_packages() {
     hyprcwd                       # Get cwd of active window
     jq                            # JSON parser
     lazysql                       # SQL TUI
+    nordvpn                       # VPN
     nvidia-open-dkms              # Open Nvidia drivers
     pass                          # For storing passwords
     phinger-cursors               # Cursors
@@ -97,7 +98,8 @@ install_packages() {
     packages=(
       discord
       dosbox
-      gamemode lib32-gamemode
+      gamemode
+      lib32-gamemode
       libretro
       libretro-fbneo
       lutris
