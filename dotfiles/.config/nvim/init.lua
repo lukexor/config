@@ -83,7 +83,7 @@ end
 local codelldb_ext_path = vim.env.HOME .. "/.local/share/nvim/mason/packages/codelldb/extension"
 local codelldb_path = codelldb_ext_path .. "/adapter/codelldb"
 local liblldb_path = codelldb_ext_path .. "/lldb/lib/liblldb"
-local os = vim.loop.os_uname().sysname
+local os = vim.uv.os_uname().sysname
 -- The path is different on Windows
 if os:find("Windows") then
   codelldb_path = codelldb_ext_path .. "/adapter/codelldb.exe"
@@ -137,14 +137,6 @@ local map = function(lhs, rhs, options)
   local mode = opts.mode or "n"
   opts.mode = nil
   vim.keymap.set(mode, lhs, rhs, opts)
-end
-local del_map = function(lhs, options)
-  local opts = vim.deepcopy(options or {})
-  local mode = opts.mode or "n"
-  opts.mode = nil
-  if vim.fn.maparg(lhs, mode) ~= "" then
-    vim.keymap.del(mode, lhs, options)
-  end
 end
 
 local function system_open(path)
@@ -553,7 +545,7 @@ for _, plugin in pairs(disabled_built_ins) do
 end
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if not vim.loop.fs_stat(lazypath) then
+if not vim.uv.fs_stat(lazypath) then
   vim.fn.system({
     "git",
     "clone",
@@ -789,23 +781,12 @@ require("lazy").setup({
       "mfussenegger/nvim-lint",
       config = function()
         local lint = require("lint")
-        -- Copied from nvim-lint/lua/lint/linters/tidy.lua
-        lint.linters.tidyxml = {
-          cmd = "tidy",
-          stdin = true,
-          stream = "stderr",
-          ignore_exitcode = true,
-          args = {
-            "-quiet",
-            "-errors",
-            "-language",
-            "en",
-            "--gnu-emacs",
-            "yes",
-            "-xml",
-          },
-          parser = require("lint.parser").from_pattern(pattern, groups, severities, { ["source"] = "tidy" }),
-        }
+
+        -- Add -xml flag to tidy for proper xml linting
+        local tidyxml = vim.deepcopy(lint.linters.tidy)
+        table.insert(tidyxml.args, "-xml")
+        lint.linters.tidyxml = tidyxml
+
         lint.linters_by_ft = {
           bash = { "shellcheck" },
           css = { "stylelint" },
@@ -1542,7 +1523,10 @@ require("lazy").setup({
                 workspace = {
                   checkThirdParty = false,
                   library = {
-                    vim.env.VIMRUNTIME,
+                    vim.env.VIMRUNTIME .. "/lua",
+                    vim.env.VIMRUNTIME .. "/lua/vim/lsp",
+                    vim.fn.stdpath("data") .. "/lazy/lazy.nvim/lua/lazy",
+                    "${3rd}/luv/library",
                   },
                 },
               })
@@ -2363,7 +2347,7 @@ require("lazy").setup({
         end
 
         local preRunCommands = {
-          "command script import ~/.local/share/nvim/lazy/rust-prettifier-for-lldb/rust_prettifier_for_lldb.py"
+          "command script import ~/.local/share/nvim/lazy/rust-prettifier-for-lldb/rust_prettifier_for_lldb.py",
         }
         local findRustTarget = function(flags)
           local pickers = require("telescope.pickers")
@@ -2372,7 +2356,7 @@ require("lazy").setup({
           local actions = require("telescope.actions")
           local action_state = require("telescope.actions.state")
 
-          local flags = flags or ""
+          flags = flags or ""
           vim.cmd.write()
           local cmd = "cargo build " .. vim.fn.expand(flags)
           vim.notify("Building `" .. cmd .. "`...")
