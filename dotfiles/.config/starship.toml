@@ -46,12 +46,6 @@ truncate_to_repo = false
 truncation_symbol = "…/"
 read_only = "  "
 
-[directory.substitutions]
-"Documents" = "󰈙 "
-"Downloads" = " "
-"Music" = " "
-"Pictures" = " "
-
 [git_branch]
 symbol = " "
 style = "bg:#4C566A"

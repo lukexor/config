@@ -1526,7 +1526,7 @@ require("lazy").setup({
                     vim.env.VIMRUNTIME .. "/lua",
                     vim.env.VIMRUNTIME .. "/lua/vim/lsp",
                     vim.fn.stdpath("data") .. "/lazy/lazy.nvim/lua/lazy",
-                    "${3rd}/luv/library",
+                    "${3rd}/luv/library", -- Types for vim.uv
                   },
                 },
               })
