@@ -232,7 +232,7 @@ abbr -a cre cargo run --example
 abbr -a crr cargo run --release
 abbr -a ct cargo test --no-fail-fast
 abbr -a ctw cargo test --workspace --no-fail-fast
-abbr -a cta cargo test --workspace --all-targets --no-fail-fast
+abbr -a cta cargo test --workspace --all-features --all-targets --no-fail-fast
 abbr -a curl xh
 abbr -a cw cargo watch
 abbr -a da "date +'%Y-%m-%d %H:%M:%S'"
@@ -329,6 +329,7 @@ alias lal="[ -r $activity_log ] && cat $activity_log | head || echo 'nothing log
 
 alias cp="cp -ia"
 alias mv="mv -i"
+alias less="less -R"
 abbr -a rm "trash put"
 
 alias dirsize="fd -t d | xargs du -sh"

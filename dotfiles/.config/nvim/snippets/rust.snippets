@@ -1,3 +1,12 @@
+snippet pf "pub field" b
+    pub $1
+
+snippet pcf "pub(crate) field" b
+    pub(crate) $1
+
+snippet psf "pub(super) field" b
+    pub(super) $1
+
 snippet fn "fn" b b
     fn $1($2)$3 {
         ${0:${VISUAL}}
@@ -70,7 +79,7 @@ snippet lgw "logging::warn!" b
 snippet lge "logging::error!" b
     leptos::logging::error!("$1"$0);
 
-snippet tr "tracing::debug!" b
+snippet trd "tracing::debug!" b
     tracing::debug!("$1"$0);
 
 snippet tri "tracing::info!" b
