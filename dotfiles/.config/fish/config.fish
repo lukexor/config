@@ -112,6 +112,7 @@ set -gx STARSHIP_SESSION_KEY (string sub -s1 -l16 (random)(random)(random)(rando
 # Environment   {{{1
 # =============================================================================
 
+set -gx OMARCHY_PATH ~/.local/share/omarchy
 fish_add_path --path -gm \
     ~/.fzf/bin \
     ~/snap/bin \
@@ -120,6 +121,7 @@ fish_add_path --path -gm \
     ~/.local/sbin \
     ~/.local/bin \
     /opt/docker-desktop/bin \
+    $OMARCHY_PATH/bin \
     ~/bin
 
 if macos

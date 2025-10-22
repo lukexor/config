@@ -6,7 +6,8 @@ export BASH_SILENCE_DEPRECATION_WARNING=1
 export CLICOLOR=1
 export EDITOR="nvim"
 export PAGER="nvim +Man!"
-export PATH="$HOME/.local/bin:$HOME/bin:$HOME/.cargo/bin:$HOME/.fzf/bin:$PATH"
+export OMARCHY_PATH=$HOME/.local/omarchy
+export PATH="$HOME/.local/bin:$HOME/bin:$HOME/.cargo/bin:$HOME/.fzf/bin:$OMARCHY_PATH/bin:$PATH"
 export LESS="-RFX"
 
 RESET=$(tput sgr0)
@@ -43,4 +44,5 @@ alias ll="ls -lh"
 alias la="ls -alh"
 alias vim="nvim"
 alias vimdiff="nvim -d"
+
 . "$HOME/.cargo/env"
