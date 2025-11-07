@@ -624,7 +624,8 @@ require("lazy").setup({
       "ggandor/leap.nvim", -- Better movement with s/S, x/X, and gS
       event = "InsertEnter",
       init = function()
-        require("leap").add_default_mappings()
+        vim.keymap.set({'n', 'x', 'o'}, 's', '<Plug>(leap)')
+        vim.keymap.set('n',             'S', '<Plug>(leap-from-window)')
       end,
     },
     "ypcrts/securemodelines", -- Safe modelines
