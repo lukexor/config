@@ -365,6 +365,7 @@ if type -q fzf
 end
 
 function fish_greeting
+    sa
     echo -n -s "$nix_shell_info"
     if test $SHLVL -gt 1
         return
@@ -385,7 +386,6 @@ function fish_greeting
 
    "(uptime)"
     " | dotacat
-    sa
 end
 
 # vim: foldmethod=marker foldlevel=0
