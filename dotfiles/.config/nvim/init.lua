@@ -297,7 +297,7 @@ map("<M-f>", "<S-Right>", { mode = "c", desc = "Go forward one word" })
 
 map("<C-bs>", "<C-w>", { mode = "i", desc = "delete previous word" })
 
-map("cd", function()
+map("lcd", function()
   local pathname = vim.fs.dirname(vim.api.nvim_buf_get_name(0))
   vim.cmd(("lcd %s"):format(pathname))
   vim.notify(("lcd %s"):format(pathname))
@@ -396,8 +396,11 @@ map("<C-r>", '"hy:%s/<C-r>h//g<left><left>', { mode = "v", desc = "Search and Re
 -- -----------------------------------------------------------------------------
 
 map("cy", '"+y', { mode = { "n", "v" }, desc = "Yank to clipboard" })
-map("cY", '"+Y', { desc = "Yank line to clipboard" })
+map("cY", '"+Y', { desc = "Yank to end of line to clipboard" })
 map("cyy", '"+yy', { desc = "Yank line to clipbard" })
+map("cd", '"+d', { mode = { "n", "v" }, desc = "Delete to clipboard" })
+map("cD", '"+D', { desc = "Delete to end of line to clipboard" })
+map("cdd", '"+dd', { desc = "Delete line to clipbard" })
 map("cp", '"+p', { mode = { "n", "v" }, desc = "Paste from clipboard after cursor" })
 map("cP", '"+P', { mode = { "n", "v" }, desc = "Paste from clipboard before cursor" })
 
@@ -624,8 +627,8 @@ require("lazy").setup({
       "ggandor/leap.nvim", -- Better movement with s/S, x/X, and gS
       event = "InsertEnter",
       init = function()
-        vim.keymap.set({'n', 'x', 'o'}, 's', '<Plug>(leap)')
-        vim.keymap.set('n',             'S', '<Plug>(leap-from-window)')
+        vim.keymap.set({ "n", "x", "o" }, "s", "<Plug>(leap)")
+        vim.keymap.set("n", "S", "<Plug>(leap-from-window)")
       end,
     },
     "ypcrts/securemodelines", -- Safe modelines
