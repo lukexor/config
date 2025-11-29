@@ -1897,7 +1897,6 @@ require("lazy").setup({
           "nvim-treesitter/nvim-treesitter-context",
           opts = {
             max_lines = 5,
-            multiline_threshold = 2,
             trim_scope = "inner",
             min_window_height = 30,
           },
@@ -2551,11 +2550,11 @@ vim.cmd([[
         \ echohl None
     au TextYankPost * silent! lua vim.highlight.on_yank { higroup="Search", timeout=300, on_visual=false }
     au VimEnter * if isdirectory(expand('%')) | bd | exe 'Telescope fd' | endif
-    au VimEnter * hi! link TreesitterContext FloatFooter
+    au VimEnter * hi! link TreesitterContext Search
     " Make comments stand out, they're important!
-    au VimEnter * hi! link rustCommentLineDoc FloatTitle
-    au VimEnter * hi! link SpecialComment FloatTitle
-    au VimEnter * hi! link Comment Question
+    au VimEnter * hi! link rustCommentLineDoc WarningMsg
+    au VimEnter * hi! link SpecialComment WarningMsg
+    au VimEnter * hi! link Comment WarningMsg
     au VimEnter * hi! link WinSeparator CursorLineNr
   aug END
 ]])
