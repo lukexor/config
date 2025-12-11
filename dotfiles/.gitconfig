@@ -44,8 +44,6 @@
   added = green
   changed = yellow
   untracked = cyan
-[pull]
-  rebase = false
 [mergetool "fugitive"]
   cmd = nvim -f -c \"Gvdiffsplit!\" \"$MERGED\"
 [blame]

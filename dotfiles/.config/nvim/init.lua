@@ -308,6 +308,7 @@ end, { desc = "cd to current file path" })
 -- -----------------------------------------------------------------------------
 
 map("<leader>Ef", "<cmd>edit <cfile><CR>", { desc = "Edit File" })
+map("<leader>En", "<cmd>edit ~/Documents/Obsidian Vault/2. TODO - Peerless.md<CR>", { desc = "Edit TODOs" })
 map("gx", system_open, { desc = "Open File Externally" })
 
 map("<leader>ve", "<cmd>edit $MYVIMRC<CR>", { desc = "Edit Nvim Config" })
@@ -990,7 +991,7 @@ require("lazy").setup({
         close_if_last_window = true,
         filesystem = {
           bind_to_cwd = false,
-          follow_current_file = true,
+          follow_current_file = { enabled = true },
         },
         window = {
           width = 30,
@@ -2096,8 +2097,8 @@ require("lazy").setup({
         { "<leader>dD", "<cmd>Telescope diagnostics<CR>", desc = "Diagnostics" },
         { "<leader>Th", "<cmd>Telescope help_tags<CR>", desc = "Help" },
         { "<leader>N", "<cmd>Telescope luasnip<CR>", desc = "Snippets" },
-        { "<c-u>", "<cmd>Telescope luasnip<CR>", mode = "i", desc = "Snippets" },
-        { "<c-s>", "<cmd>Telescope symbols<CR>", mode = { "n", "i" }, desc = "Symbols" },
+        { "<c-x><c-u>", "<cmd>Telescope luasnip<CR>", mode = "i", desc = "Snippets" },
+        { "<c-x><c-s>", "<cmd>Telescope symbols<CR>", mode = { "n", "i" }, desc = "Symbols" },
       },
       config = function()
         require("telescope").load_extension("notify")
@@ -2515,46 +2516,86 @@ vim.cmd("iabbrev waht what")
 -- Autocommands
 -- =============================================================================
 
-vim.cmd([[
-  aug FiletypeOverrides
-    au!
-    au TermOpen * setlocal nospell nonu nornu
-    au BufRead,BufNewFile *.nu set ft=nu
-    au BufRead,BufNewFile *.mdx set ft=markdown
-    au BufRead,BufNewFile *.wgsl set ft=wgsl
-    au BufRead,BufNewFile Vagrantfile set filetype=ruby
-    au BufRead,BufNewFile *.vert,*.frag set ft=glsl
-    au BufRead,BufNewFile Makefile.toml set ft=cargo-make
-    au Filetype help set nu rnu
-    au Filetype * set formatoptions=rqncljp
-    au Filetype markdown set comments=
-    au FileType c,cpp setlocal commentstring=//\ %s
-    " Don't use rustfmt for formatting, it's already handled on file save
-    " I just want the default gq behavior for line wrapping comments
-    au Filetype rust setlocal formatprg=
-  aug END
-]])
+local ft_override_aug = vim.api.nvim_create_augroup("FiletypeOverrides", { clear = true })
+local ft_overrides = {
+  ["*.nu"] = "nu",
+  ["*.mdx"] = "markdown",
+  ["Vagrantfile"] = "ruby",
+  ["*.wgsl"] = "wgsl",
+  ["*.vert,*.frag"] = "glsl",
+  ["Makefile.toml"] = "cargo-make",
+}
+for pattern, ft in pairs(ft_overrides) do
+  vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+    group = ft_override_aug,
+    pattern = pattern,
+    callback = function()
+      vim.bo.filetype = ft
+    end,
+  })
+end
+vim.api.nvim_create_autocmd("FileType", {
+  group = ft_override_aug,
+  pattern = "help",
+  callback = function()
+    vim.opt_local.number = true
+    vim.opt_local.relativenumber = true
+  end,
+})
+vim.api.nvim_create_autocmd("FileType", {
+  group = ft_override_aug,
+  -- Can use CTRL-U to quickly delete auto-inserted comment leader
+  callback = function()
+    vim.opt_local.formatoptions = "cro/qcnljp"
+  end,
+})
+vim.api.nvim_create_autocmd("FileType", {
+  group = ft_override_aug,
+  pattern = "markdown",
+  callback = function()
+    vim.opt_local.wrap = false
+    vim.opt_local.formatoptions = "tro/qnljp"
+  end,
+})
 
-vim.cmd([[
-  aug Init
-    au!
-    au DiagnosticChanged * lua vim.diagnostic.setqflist({ open = false })
-    " Jump to the last known cursor position. See |last-position-jump|.
-    au BufReadPost *
-      \ if &ft !~# 'commit\|rebase' && line("'\"") > 1 && line("'\"") <= line("$") |
-      \   exe 'normal! g`"' |
-      \ endif
-    au CmdwinEnter *
-        \ echohl Todo |
-        \ echo 'You discovered the command-line window! You can close it with ":q".' |
-        \ echohl None
-    au TextYankPost * silent! lua vim.highlight.on_yank { higroup="Search", timeout=300, on_visual=false }
-    au VimEnter * if isdirectory(expand('%')) | bd | exe 'Telescope fd' | endif
-    au VimEnter * hi! link TreesitterContext Search
-    " Make comments stand out, they're important!
-    au VimEnter * hi! link rustCommentLineDoc WarningMsg
-    au VimEnter * hi! link SpecialComment WarningMsg
-    au VimEnter * hi! link Comment WarningMsg
-    au VimEnter * hi! link WinSeparator CursorLineNr
-  aug END
-]])
+local aug = vim.api.nvim_create_augroup("Init", { clear = true })
+vim.api.nvim_create_autocmd("DiagnosticChanged", {
+  group = aug,
+  callback = function()
+    vim.diagnostic.setqflist({ open = false })
+  end,
+})
+vim.api.nvim_create_autocmd("BufReadPost", {
+  group = aug,
+  -- Jump to the last known cursor position. See |last-position-jump|.
+  command = [[if &ft !~# 'commit\|rebase' && line("'\"") > 1 && line("'\"") <= line("$") | exe 'normal! g`"' | endif]],
+})
+vim.api.nvim_create_autocmd("CmdwinEnter", {
+  group = aug,
+  command = [[echohl Todo | echo 'You discovered the command-line window! You can close it with ":q".' | echohl None]],
+})
+vim.api.nvim_create_autocmd("TextYankPost", {
+  group = aug,
+  callback = function()
+    vim.highlight.on_yank({ higroup = "Search", timeout = 300, on_visual = false })
+  end,
+})
+vim.api.nvim_create_autocmd("VimEnter", {
+  group = aug,
+  callback = function()
+    if vim.fn.isdirectory(vim.fn.expand("%")) == 1 then
+      vim.cmd("bd")
+      vim.cmd("Telescope fd")
+    end
+  end,
+})
+vim.api.nvim_create_autocmd("VimEnter", {
+  group = aug,
+  callback = function()
+    vim.cmd("hi! link TreesitterContext Search")
+    vim.cmd("hi! link rustCommentLineDoc WarningMsg")
+    vim.cmd("hi! link SpecialComment WarningMsg")
+    vim.cmd("hi! link Comment WarningMsg")
+    vim.cmd("hi! link WinSeparator CursorLineNr")
+  end,
+})
