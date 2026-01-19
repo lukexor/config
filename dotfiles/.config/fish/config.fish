@@ -302,7 +302,7 @@ abbr -a sed sd
 abbr -a s fd --type f --exec sd
 abbr -a sshl ssh-add -L
 abbr -a _ sudo
-abbr -a vimdiff nvim -d
+abbr -a vimdiff nvim -d --clean -R
 abbr -a vd nvim -d
 abbr -a vim nvim
 abbr -a vi nvim
