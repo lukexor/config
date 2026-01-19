@@ -586,6 +586,10 @@ require("lazy").setup({
           keymaps = false, -- lazyvim.config.keymaps
           options = true, -- lazyvim.config.options
         },
+        news = {
+          lazyvim = false,
+          neovim = false,
+        },
       },
     },
     {
@@ -876,18 +880,18 @@ require("lazy").setup({
         { "<localleader>sh", "ysiw}lysiw'", remap = true, desc = "surround text with {''}" },
 
         -- Same mappers for visual mode
-        { '<leader>"', 'gS"', remap = true, mode = "v", desc = 'surround text with ""' },
-        { "<leader>'", "gS'", remap = true, mode = "v", desc = "surround text with ''" },
-        { "<leader>(", "gS(", remap = true, mode = "v", desc = "surround text with ( )" },
-        { "<leader>)", "gS)", remap = true, mode = "v", desc = "surround text with ()" },
-        { "<leader><", "gS>", remap = true, mode = "v", desc = "surround text with <>" },
-        { "<leader>>", "gS>", remap = true, mode = "v", desc = "surround text with <>" },
-        { "<leader>[", "gS[", remap = true, mode = "v", desc = "surround text with [ ]" },
-        { "<leader>]", "gS]", remap = true, mode = "v", desc = "surround text with []" },
-        { "<leader>`", "gS`", remap = true, mode = "v", desc = "surround text with ``" },
-        { "<leader>{", "gS{", remap = true, mode = "v", desc = "surround text with { }" },
-        { "<leader>}", "gS}", remap = true, mode = "v", desc = "surround text with {}" },
-        { "<leader>|", "gS|", remap = true, mode = "v", desc = "surround text with |" },
+        { '<leader>"', 'gs"', remap = true, mode = "v", desc = 'surround text with ""' },
+        { "<leader>'", "gs'", remap = true, mode = "v", desc = "surround text with ''" },
+        { "<leader>(", "gs(", remap = true, mode = "v", desc = "surround text with ( )" },
+        { "<leader>)", "gs)", remap = true, mode = "v", desc = "surround text with ()" },
+        { "<leader><", "gs>", remap = true, mode = "v", desc = "surround text with <>" },
+        { "<leader>>", "gs>", remap = true, mode = "v", desc = "surround text with <>" },
+        { "<leader>[", "gs[", remap = true, mode = "v", desc = "surround text with [ ]" },
+        { "<leader>]", "gs]", remap = true, mode = "v", desc = "surround text with []" },
+        { "<leader>`", "gs`", remap = true, mode = "v", desc = "surround text with ``" },
+        { "<leader>{", "gs{", remap = true, mode = "v", desc = "surround text with { }" },
+        { "<leader>}", "gs}", remap = true, mode = "v", desc = "surround text with {}" },
+        { "<leader>|", "gs|", remap = true, mode = "v", desc = "surround text with |" },
 
         -- Surround paragraphs
         { "<localleader>[", "ysip[", remap = true, desc = "surround paragraph with []" },

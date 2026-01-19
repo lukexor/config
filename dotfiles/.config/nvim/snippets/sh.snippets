@@ -1,9 +1,9 @@
 snippet #! "shebang" b
-    #!/bin/sh
-    set -eu
+    #!/usr/bin/env sh
+    set -euxo pipefail
 
 snippet safe "safe flags" b
-    set -eu
+    set -euo pipefail
 
 snippet if "if" b
     if [ $1 ]; then
