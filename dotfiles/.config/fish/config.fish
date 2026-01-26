@@ -46,31 +46,36 @@ end
 # Settings   {{{1
 # =============================================================================
 
-set -U fish_color_normal B3B1AD
-set -U fish_color_command 39BAE6
-set -U fish_color_quote C2D94C
-set -U fish_color_redirection FFEE99
-set -U fish_color_end F29668
-set -U fish_color_error FF3333
-set -U fish_color_param B3B1AD
-set -U fish_color_comment 626A73
-set -U fish_color_match F07178
-set -U fish_color_selection --background=E6B450
-set -U fish_color_search_match --background=E6B450
-set -U fish_color_history_current --bold
-set -U fish_color_operator E6B450
-set -U fish_color_escape 95E6CB
-set -U fish_color_cwd 59C2FF
-set -U fish_color_cwd_root red
-set -U fish_color_valid_path --underline
-set -U fish_color_autosuggestion 4D5566
-set -U fish_color_user brgreen
-set -U fish_color_host normal
-set -U fish_color_cancel -r
-set -U fish_pager_color_completion normal
-set -U fish_pager_color_description B3A06D yellow
-set -U fish_pager_color_prefix normal --bold --underline
-set -U fish_pager_color_progress brwhite --background=cyan
+set --global fish_color_autosuggestion 4D5566
+set --global fish_color_cancel -r
+set --global fish_color_command 39BAE6
+set --global fish_color_comment 626A73
+set --global fish_color_cwd 59C2FF
+set --global fish_color_cwd_root red
+set --global fish_color_end F29668
+set --global fish_color_error FF3333
+set --global fish_color_escape 95E6CB
+set --global fish_color_history_current --bold
+set --global fish_color_host normal
+set --global fish_color_host_remote yellow
+set --global fish_color_match F07178
+set --global fish_color_normal B3B1AD
+set --global fish_color_operator E6B450
+set --global fish_color_operator E6B450
+set --global fish_color_param B3B1AD
+set --global fish_color_quote C2D94C
+set --global fish_color_redirection FFEE99
+set --global fish_color_search_match --background=E6B450
+set --global fish_color_search_match --background=E6B450
+set --global fish_color_selection --background=E6B450
+set --global fish_color_status red
+set --global fish_color_user brgreen
+set --global fish_color_valid_path --underline
+set --global fish_pager_color_completion normal
+set --global fish_pager_color_description B3A06D yellow
+set --global fish_pager_color_prefix normal --bold --underline
+set --global fish_pager_color_progress brwhite --background=cyan
+set --global fish_pager_color_selected_background -r
 set fish_color_valid_path
 set fish_pager_color_prefix normal --bold
 
@@ -186,6 +191,7 @@ set -gx CM_LAUNCHER bemenu
 # =============================================================================
 
 function fish_user_key_bindings
+    set --global fish_key_bindings fish_default_key_bindings
     fish_default_key_bindings -M insert
     fish_vi_key_bindings --no-erase insert
 
