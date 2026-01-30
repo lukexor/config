@@ -214,7 +214,7 @@ snippet idrop "impl Drop" b
     }
 
 snippet ideref "impl Deref" b
-    impl Deref for ${1:Name} {
+    impl std::ops::Deref for ${1:Name} {
         type Target = ${2:Type};
         fn deref(&self) -> &Self::Target {
             &self.$0
@@ -222,7 +222,7 @@ snippet ideref "impl Deref" b
     }
 
 snippet iderefm "impl DerefMut" b
-    impl DerefMut for ${1:Name} {
+    impl std::ops::DerefMut for ${1:Name} {
         fn deref_mut(&mut self) -> &mut Self::Target {
             &mut self.$0
         }
