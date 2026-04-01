@@ -34,3 +34,6 @@ padding.x = 14
 padding.y = 14
 decorations = "None"
 opacity = 0.70
+
+[terminal]
+osc52 = "CopyPaste"

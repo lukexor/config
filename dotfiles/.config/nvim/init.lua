@@ -639,7 +639,7 @@ require("lazy").setup({
     },
     "tpope/vim-sleuth", -- Smart buffer options based on contents
     {
-      "ggandor/leap.nvim", -- Better movement with s/S, x/X, and gS
+      url = "https://codeberg.org/andyg/leap.nvim", -- Better movement with s/S, x/X, and gS
       event = "InsertEnter",
       init = function()
         vim.keymap.set({ "n", "x", "o" }, "s", "<Plug>(leap)")
@@ -1333,6 +1333,7 @@ require("lazy").setup({
                   check = {
                     -- Run `cargo clippy` instead of `cargo check`
                     command = "clippy",
+                    extraArgs = { "-j", "8" },
                   },
                   completion = {
                     -- Limit completions returned

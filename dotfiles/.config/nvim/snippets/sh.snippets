@@ -1,10 +1,8 @@
 snippet #! "shebang" b
-    #!/usr/bin/env sh
+    #!/usr/bin/env bash
 
-    set -euxo pipefail
-
-snippet safe "safe flags" b
     set -euo pipefail
+    IFS=$'\n\t'
 
 snippet if "if" b
     if [ $1 ]; then

@@ -169,10 +169,6 @@ function refresh-xcompose
     setsid fcitx5 &>/dev/null &
 end
 
-if test -e ~/.local/config.fish
-    source ~/.local/config.fish
-end
-
 set -gx CARGO_TARGET_DIR ~/.cargo-target
 set -gx EDITOR nvim
 set -gx SYSTEMD_EDITOR nvim
@@ -339,6 +335,7 @@ alias cp="cp -ia"
 alias mv="mv -i"
 alias less="less -R"
 abbr -a rm "trash put"
+alias rmm "rm -i"
 
 alias dirsize="fd -t d | xargs du -sh"
 function path
@@ -368,6 +365,10 @@ if type -q fzf
     if test -f /usr/share/fish/completions/fzf.fish
         source /usr/share/fish/completions/fzf.fish
     end
+end
+
+if test -e ~/.local/config.fish
+    source ~/.local/config.fish
 end
 
 function fish_greeting
