@@ -1146,13 +1146,6 @@ require("lazy").setup({
             return hl and hl.fg and { fg = string.format("#%06x", hl.fg) }
           end
         end
-        local function macro_recording()
-          local mode = require("noice").api.statusline.mode.get()
-          if mode then
-            return string.match(mode, "^recording @.*") or ""
-          end
-          return ""
-        end
 
         return {
           options = {
@@ -1174,7 +1167,6 @@ require("lazy").setup({
               { "filename", path = 4 },
             },
             lualine_c = {
-              { macro_recording, color = fg("Special") },
               {
                 "diagnostics",
                 sources = { "vim_lsp" },
@@ -1937,7 +1929,7 @@ require("lazy").setup({
         -- Luckily, the only things that those plugins need are the custom queries, which we make available
         -- during startup.
         require("lazy.core.loader").add_to_rtp(plugin)
-        require("nvim-treesitter.query_predicates")
+        -- require("nvim-treesitter.query_predicates")
       end,
       keys = {
         { "<c-space>", desc = "Increment Selection" },
@@ -2033,7 +2025,7 @@ require("lazy").setup({
       config = function(_, opts)
         -- Defer configs setup to improve initial startup time
         vim.defer_fn(function()
-          require("nvim-treesitter.configs").setup(opts)
+          -- require("nvim-treesitter.configs").setup(opts)
 
           -- Disable treesitter indentexpr for Python since it's wonky atm
           if vim.bo.filetype == "python" then

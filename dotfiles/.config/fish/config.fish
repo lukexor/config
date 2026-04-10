@@ -217,7 +217,6 @@ end
 # =============================================================================
 
 abbr -a ! sudo
-abbr -a cat bat -P
 abbr -a bat bat -P
 abbr -a cb cargo build --keep-going
 abbr -a cbr cargo build --release --keep-going
@@ -328,14 +327,15 @@ end
 # Aliases   {{{1
 # =============================================================================
 
+alias cat="bat -P"
 alias cal="echo -n "" > $activity_log"
 alias lal="[ -r $activity_log ] && cat $activity_log | head || echo 'nothing logged'"
 
 alias cp="cp -ia"
 alias mv="mv -i"
 alias less="less -R"
-abbr -a rm "trash put"
-alias rmm "rm -i"
+alias rm="rm -i"
+alias trash="trash put"
 
 alias dirsize="fd -t d | xargs du -sh"
 function path
