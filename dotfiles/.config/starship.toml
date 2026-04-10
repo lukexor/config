@@ -21,6 +21,7 @@ command_timeout = 5000
 format = """
 $python\
 $directory\
+${custom.disk}\
 [](fg:#434C5E bg:#4C566A)\
 $git_branch\
 $git_status\
@@ -45,6 +46,13 @@ truncation_length = 3
 truncate_to_repo = false
 truncation_symbol = "…/"
 read_only = "  "
+
+[custom.disk]
+command = "df -h / | awk 'NR==2{print $4}'"
+when = true
+symbol = " "
+style = "bg:#434C5E fg:#CCCCCC"
+format = "[\\[$symbol$output\\]]($style)"
 
 [git_branch]
 symbol = " "
