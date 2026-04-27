@@ -835,12 +835,6 @@ require("lazy").setup({
       end,
     },
     {
-      "windwp/nvim-ts-autotag", -- Auto-close HTML/JSX tags
-      event = "InsertEnter",
-      -- opts required otherwise it doesn't load correctly
-      opts = {},
-    },
-    {
       -- Can't be lazy or it won't load correctly
       "tpope/vim-endwise", -- Auto-add endings for control structures: if, for, etc
     },

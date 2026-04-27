@@ -284,7 +284,7 @@ abbr -a gsl git stash list
 abbr -a gst git status -sb
 abbr -a gt git tag
 abbr -a gun git reset HEAD --
-abbr -a h "history | head -"
+abbr -a h history
 abbr -a ir irust
 abbr -a la eza -a
 abbr -a lk eza -lrs size
@@ -308,6 +308,10 @@ abbr -a vd nvim -d
 abbr -a vim nvim
 abbr -a vi nvim
 abbr -a v nvim
+abbr -a nv nvim
+abbr -a svim sudo HOME=$HOME nvim -u ~/.config/nvim/init.lua
+abbr -a svi sudo HOME=$HOME nvim -u ~/.config/nvim/init.lua
+abbr -a sv sudo HOME=$HOME nvim -u ~/.config/nvim/init.lua
 
 function pg
     procs | rg "PID|$argv"
