@@ -158,16 +158,14 @@ local function bool2str(bool)
   return bool and "on" or "off"
 end
 
+vim.fn.sign_define("DiagnosticSignError", { text = "", texthl = "LspDiagnosticsSignError" })
+vim.fn.sign_define("DiagnosticSignWarn", { text = "", texthl = "LspDiagnosticsSignWarning" })
+vim.fn.sign_define("DiagnosticSignHint", { text = "󰌵", texthl = "LspDiagnosticsSignHint" })
+vim.fn.sign_define("DiagnosticSignInformation", { text = "", texthl = "LspDiagnosticsSignInformation" })
+
 -- Use an on_attach function to only map the following keys
 -- after the language server attaches to the current buffer
 local lsp_on_attach = function(client, bufnr)
-  require("lsp-status").on_attach(client, bufnr)
-
-  vim.fn.sign_define("DiagnosticSignError", { text = "", texthl = "LspDiagnosticsSignError" })
-  vim.fn.sign_define("DiagnosticSignWarn", { text = "", texthl = "LspDiagnosticsSignWarning" })
-  vim.fn.sign_define("DiagnosticSignHint", { text = "󰌵", texthl = "LspDiagnosticsSignHint" })
-  vim.fn.sign_define("DiagnosticSignInformation", { text = "", texthl = "LspDiagnosticsSignInformation" })
-
   -- See `:help vim.lsp.*` for documentation on any of the below functions
   map("gd", "m'<cmd>Telescope lsp_definitions<CR>", { desc = "Go to Definition", buffer = bufnr })
   map("gD", "m'<cmd>Telescope lsp_type_definitions<CR>", { desc = "Go to Type Definition", buffer = bufnr })
@@ -179,14 +177,13 @@ local lsp_on_attach = function(client, bufnr)
   map("ga", vim.lsp.buf.code_action, { desc = "Code Action", buffer = bufnr })
   map("ge", vim.diagnostic.open_float, { desc = "Diagnostics", buffer = bufnr })
   map("<leader>S", "<cmd>Telescope lsp_document_symbols<CR>", { desc = "LSP Symbols", buffer = bufnr })
-
   client.server_capabilities.semanticTokensProvider = nil -- don't need treesitter semantic higlighting
 end
 
 local lsp_capabilities = function()
   local client_capabilities = vim.lsp.protocol.make_client_capabilities()
   local capabilities = require("cmp_nvim_lsp").default_capabilities(client_capabilities)
-  return vim.tbl_extend("keep", capabilities, require("lsp-status").capabilities)
+  return capabilities
 end
 
 -- -----------------------------------------------------------------------------
@@ -580,9 +577,12 @@ require("lazy").setup({
     -- -----------------------------------------------------------------------------
     {
       "LazyVim/LazyVim",
+      dependencies = {
+        { "folke/snacks.nvim", enabled = false },
+      },
       opts = {
         defaults = {
-          autocmds = true, -- lazyvim.config.autocmds
+          autocmds = false, -- lazyvim.config.autocmds
           keymaps = false, -- lazyvim.config.keymaps
           options = true, -- lazyvim.config.options
         },
@@ -640,7 +640,7 @@ require("lazy").setup({
     "tpope/vim-sleuth", -- Smart buffer options based on contents
     {
       url = "https://codeberg.org/andyg/leap.nvim", -- Better movement with s/S, x/X, and gS
-      event = "InsertEnter",
+      event = "VeryLazy",
       init = function()
         vim.keymap.set({ "n", "x", "o" }, "s", "<Plug>(leap)")
         vim.keymap.set("n", "S", "<Plug>(leap-from-window)")
@@ -798,6 +798,7 @@ require("lazy").setup({
     -- -----------------------------------------------------------------------------
     {
       "mfussenegger/nvim-lint",
+      event = "BufReadPre",
       config = function()
         local lint = require("lint")
 
@@ -956,6 +957,7 @@ require("lazy").setup({
     },
     {
       "brenoprata10/nvim-highlight-colors",
+      event = "VeryLazy",
       opts = {
         enable_tailwind = true,
       },
@@ -1163,11 +1165,11 @@ require("lazy").setup({
             lualine_c = {
               {
                 "diagnostics",
-                sources = { "vim_lsp" },
+                sources = { "nvim_lsp" },
               },
               {
                 function()
-                  return require("lsp-status").status()
+                  return vim.lsp.status()
                 end,
               },
             },
@@ -1176,14 +1178,6 @@ require("lazy").setup({
               { "SleuthIndicator", color = fg("Comment") },
             },
             lualine_y = { "progress", "location", "selectioncount" },
-            lualine_z = {
-              {
-                "os.date('%Y-%m-%d %R')",
-                fmt = function(date)
-                  return " " .. date
-                end,
-              },
-            },
           },
           extensions = { "aerial", "fugitive", "lazy", "neo-tree", "quickfix", "trouble" },
         }
@@ -1192,31 +1186,13 @@ require("lazy").setup({
     -- -----------------------------------------------------------------------------
     -- LSP
     -- -----------------------------------------------------------------------------
-    -- Disabled for now, trying to rely less on AI
-    -- {
-    --   "Exafunction/codeium.nvim",
-    --   dependencies = {
-    --     "nvim-lua/plenary.nvim",
-    --     "hrsh7th/nvim-cmp",
-    --   },
-    --   config = function()
-    --     local opts = {}
-    --     local handle = io.popen("grep -c ID=nixos /etc/os-release")
-    --     if handle ~= nil then
-    --       local is_nix = handle:read("*a")
-    --       handle:close()
-    --       if is_nix:match("1") == "1" then
-    --         opts.wrapper = "steam-run"
-    --       end
-    --     end
-    --     require("codeium").setup(opts)
-    --   end,
-    -- },
     {
       "WhoIsSethDaniel/mason-tool-installer.nvim",
+      cmd = { "MasonToolsInstall", "MasonToolsUpdate", "MasonToolsClean" },
       dependencies = {
         {
           "williamboman/mason.nvim",
+          lazy = false,
           cmd = { "Mason", "MasonUpdate" },
           build = ":MasonUpdate",
           keys = {
@@ -1236,6 +1212,7 @@ require("lazy").setup({
           "clangd",
           "cpplint",
           "css-lsp",
+          "darker",
           "eslint_d",
           "html-lsp",
           "json-lsp",
@@ -1245,7 +1222,8 @@ require("lazy").setup({
           "prettierd",
           "protolint",
           "pyright",
-          "rust_analyzer",
+          "rustywind",
+          "rust-analyzer",
           "shellcheck",
           "stylelint",
           "stylelint-lsp",
@@ -1254,6 +1232,8 @@ require("lazy").setup({
           "taplo",
           "typescript-language-server",
           "vim-language-server",
+          "wgsl-analyzer",
+          "xmlformatter",
           "yamllint",
           "yaml-language-server",
         },
@@ -1273,7 +1253,7 @@ require("lazy").setup({
     {
       "mrcjkb/rustaceanvim",
       ft = { "rust" },
-      version = "^6",
+      version = "^9",
       init = function()
         vim.g.rustaceanvim = function()
           local cfg = require("rustaceanvim.config")
@@ -1284,10 +1264,6 @@ require("lazy").setup({
               on_attach = function(client, bufnr)
                 lsp_on_attach(client, bufnr)
                 vim.cmd("compiler cargo")
-                -- TODO: Not a fan of the dialog not being centered like vim.lsp.buf.code_action
-                -- map("ga", function()
-                --   vim.cmd.RustLsp("codeAction")
-                -- end, { silent = true, desc = "Code Action", buffer = bufnr })
                 map("gh", function()
                   vim.cmd.RustLsp({ "hover", "actions" })
                 end, { silent = true, desc = "Hover", buffer = bufnr })
@@ -1326,7 +1302,6 @@ require("lazy").setup({
                     limit = 25,
                   },
                   diagnostics = {
-                    enable = false,
                     -- Additional style lints
                     styleLints = { enable = true },
                   },
@@ -1358,7 +1333,9 @@ require("lazy").setup({
                   },
                   imports = {
                     -- Whether to enforce the import granularity setting for all files.
-                    granularity = { enforce = true },
+                    -- Unfortunately, not yet stable for rustfmt
+                    -- See: https://rust-lang.github.io/rustfmt/?version=v1.9.0&search=#imports_granularity
+                    -- granularity = { enforce = true },
                     -- Don't group imports
                     group = { enable = false },
                   },
@@ -1428,7 +1405,6 @@ require("lazy").setup({
       event = { "BufReadPre", "BufNewFile" },
       dependencies = {
         "hrsh7th/cmp-nvim-lsp",
-        "williamboman/mason-lspconfig.nvim",
         {
           "kosayoda/nvim-lightbulb", -- Lightbulb next to code actions
           opts = {
@@ -1438,23 +1414,13 @@ require("lazy").setup({
             },
           },
         },
-        {
-          "nvim-lua/lsp-status.nvim",
-          config = function()
-            local lsp_status = require("lsp-status")
-            lsp_status.register_progress()
-            lsp_status.config({
-              status_symbol = "",
-            })
-          end,
-        },
       },
       keys = {
-        { "<leader>Li", "<cmd>LspInfo<CR>", desc = "LSP Info" },
-        { "<leader>LI", "<cmd>LspInfo<CR>", desc = "LSP Install Info" },
-        { "<leader>Ls", "<cmd>LspStart<CR>", desc = "Start LSP Server" },
-        { "<leader>LS", "<cmd>LspStop<CR>", desc = "Stop LSP Server" },
-        { "<leader>Lr", "<cmd>LspRestart<CR>", desc = "Restart LSP Server" },
+        { "<leader>Li", "<cmd>checkhealth vim.lsp<CR>", desc = "LSP Info" },
+        { "<leader>LI", "<cmd>Mason<CR>", desc = "LSP Install Info" },
+        { "<leader>Ls", "<cmd>lsp enable<CR>", desc = "Start LSP Server" },
+        { "<leader>LS", "<cmd>lsp disable<CR>", desc = "Stop LSP Server" },
+        { "<leader>Lr", "<cmd>lsp restart<CR>", desc = "Restart LSP Server" },
         { "gd", NoLspClient, desc = "Go to Definition" },
         { "gD", NoLspClient, desc = "Go to Type Definition" },
         { "gh", NoLspClient, desc = "Symbol Information" },
@@ -1537,8 +1503,12 @@ require("lazy").setup({
                 },
               })
             end
-            -- Fix workspace issue
-            opts.root_dir = ""
+            local fname = vim.fn.expand("%")
+            local root = vim.fs.root(fname, { ".git", ".luarc.json", ".luarc.jsonc", "init.lua" })
+            if root == vim.env.HOME then
+              root = nil
+            end
+            opts.root_dir = root or vim.fn.fnamemodify(fname, ":p:h")
             opts.settings = {
               Lua = {},
             }
@@ -1597,7 +1567,7 @@ require("lazy").setup({
         }
 
         for server, opts in pairs(servers) do
-          local load_config = loadfile(vim.fn.getcwd() .. "/.lspconfig.lua")
+          local load_config = loadfile(vim.uv.cwd() .. "/.lspconfig.lua")
           if load_config ~= nil then
             local enhance_opts = load_config()
             if enhance_opts ~= nil and enhance_opts[server] then
@@ -1650,8 +1620,8 @@ require("lazy").setup({
           json = { "prettierd" },
           jsonc = { "prettierd" },
           lua = { "stylua" },
-          -- FIXME: file truncaction
-          -- markdown = { "prettierd" },
+          -- TODO: test if file truncaction is resolved
+          markdown = { "prettierd" },
           rust = { "leptosfmt", "rustfmt" },
           toml = { "taplo" },
           typescript = { "eslint_d", "rustywind", "prettierd" },
@@ -1680,7 +1650,6 @@ require("lazy").setup({
       cmd = "CmpStatus",
       event = "InsertEnter",
       dependencies = {
-        "chrisgrieser/cmp-nerdfont",
         "dmitmel/cmp-digraphs",
         "f3fora/cmp-spell",
         "FelipeLema/cmp-async-path",
@@ -1707,8 +1676,10 @@ require("lazy").setup({
             vim.g.snips_author = vim.fn.system("git config --get user.name | tr -d '\n'")
             vim.g.snips_email = vim.fn.system("git config --get user.email | tr -d '\n'")
             vim.g.snips_github = "https://github.com/lukexor"
-            require("luasnip.loaders.from_snipmate").lazy_load({ paths = "./snippets" })
-            require("luasnip.loaders.from_lua").lazy_load({ paths = "./snippets" })
+            vim.schedule(function()
+              require("luasnip.loaders.from_snipmate").lazy_load({ paths = "./snippets" })
+              require("luasnip.loaders.from_lua").lazy_load({ paths = "./snippets" })
+            end)
           end,
         },
       },
@@ -1801,7 +1772,6 @@ require("lazy").setup({
                 nvim_lsp = "[LSP]",
                 buffer = "[Buffer]",
                 digraphs = "[Digraphs]",
-                nerdfont = "[NerdFont]",
                 greek = "[Greek]",
                 async_path = "[Path]",
               },
@@ -1839,12 +1809,10 @@ require("lazy").setup({
           sources = cmp.config.sources({
             { name = "luasnip" },
             { name = "nvim_lsp", keyword_length = 3 },
-            { name = "codeium", keyword_length = 4 },
             { name = "buffer", keyword_length = 4 },
             { name = "spell", keyword_length = 3, keyword_pattern = [[\w\+]] },
             { name = "dictionary", keyword_length = 3, keyword_pattern = [[\w\+]] },
             { name = "digraphs" },
-            { name = "nerdfont" },
             { name = "greek" },
             { name = "async_path" },
           }),
@@ -1923,7 +1891,7 @@ require("lazy").setup({
         -- Luckily, the only things that those plugins need are the custom queries, which we make available
         -- during startup.
         require("lazy.core.loader").add_to_rtp(plugin)
-        -- require("nvim-treesitter.query_predicates")
+        vim.cmd.runtime({ "plugin/query_predicates.lua", bang = true })
       end,
       keys = {
         { "<c-space>", desc = "Increment Selection" },
@@ -2016,10 +1984,10 @@ require("lazy").setup({
           },
         },
       },
-      config = function(_, opts)
+      config = function()
         -- Defer configs setup to improve initial startup time
         vim.defer_fn(function()
-          -- require("nvim-treesitter.configs").setup(opts)
+          vim.cmd.runtime({ "plugin/configs.lua", bang = true })
 
           -- Disable treesitter indentexpr for Python since it's wonky atm
           if vim.bo.filetype == "python" then
@@ -2031,6 +1999,7 @@ require("lazy").setup({
     {
       "rayliwell/tree-sitter-rstml",
       dependencies = { "nvim-treesitter/nvim-treesitter" },
+      ft = { "rust" },
       build = ":TSInstall rust_with_rstml",
       config = function()
         require("tree-sitter-rstml").setup()
@@ -2369,7 +2338,7 @@ require("lazy").setup({
           assert(vim.v.shell_error == 0, "Build failed...")
 
           local profile = (flags:find("%-%-release") and "release") or flags:match("%-%-profile%s+(%S+)") or "debug"
-          local cargo_dir = (vim.env.CARGO_TARGET_DIR or vim.fn.getcwd()) .. "/" .. profile
+          local cargo_dir = (vim.env.CARGO_TARGET_DIR or vim.uv.cwd()) .. "/" .. profile
 
           return coroutine.create(function(co)
             local opts = {}
@@ -2452,7 +2421,7 @@ require("lazy").setup({
             cwd = "${workspaceFolder}",
             program = "${file}",
             pythonPath = function()
-              local cwd = vim.fn.getcwd()
+              local cwd = vim.uv.cwd()
               if vim.fn.executable(cwd .. "/venv/bin/python") == 1 then
                 return cwd .. "/venv/bin/python"
               elseif vim.fn.executable(cwd .. "/.venv/bin/python") == 1 then
@@ -2598,5 +2567,24 @@ vim.api.nvim_create_autocmd("VimEnter", {
     vim.cmd("hi! link SpecialComment WarningMsg")
     vim.cmd("hi! link Comment WarningMsg")
     vim.cmd("hi! link WinSeparator CursorLineNr")
+  end,
+})
+-- Restart any dead LSP clients on resume
+vim.api.nvim_create_autocmd("VimResume", {
+  callback = function()
+    local clients = vim.lsp.get_clients()
+    for _, client in ipairs(clients) do
+      vim.lsp.client.stop(client)
+    end
+    vim.schedule(function()
+      for _, client in ipairs(clients) do
+        if client.name == "rust-analyzer" then
+          -- rustaceanvim manages its own server lifecycle
+          vim.cmd("RustAnalyzer restart")
+        else
+          vim.lsp.enable(client.name)
+        end
+      end
+    end)
   end,
 })

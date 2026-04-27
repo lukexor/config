@@ -309,9 +309,9 @@ abbr -a vim nvim
 abbr -a vi nvim
 abbr -a v nvim
 abbr -a nv nvim
-abbr -a svim sudo HOME=$HOME nvim -u ~/.config/nvim/init.lua
-abbr -a svi sudo HOME=$HOME nvim -u ~/.config/nvim/init.lua
-abbr -a sv sudo HOME=$HOME nvim -u ~/.config/nvim/init.lua
+abbr -a svim sudo -E nvim
+abbr -a svi sudo -E nvim
+abbr -a sv sudo -E nvim
 
 function pg
     procs | rg "PID|$argv"
