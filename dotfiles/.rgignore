@@ -32,3 +32,5 @@ ctags
 .settings
 *.patch
 .git
+
+*.cdx.xml

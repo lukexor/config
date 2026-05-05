@@ -1863,6 +1863,7 @@ require("lazy").setup({
       event = { "VeryLazy" },
       cmd = { "TSUpdateSync", "TSUpdate", "TSInstall" },
       dependencies = {
+        "neovim-treesitter/treesitter-parser-registry",
         {
           "nvim-treesitter/nvim-treesitter-context",
           opts = {

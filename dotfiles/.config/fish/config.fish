@@ -220,8 +220,8 @@ abbr -a ! sudo
 abbr -a bat bat -P
 abbr -a cb cargo build --keep-going
 abbr -a cbr cargo build --release --keep-going
-abbr -a cc cargo clippy --all-features --keep-going
-abbr -a ccw cargo clippy --keep-going --all-features --target wasm32-unknown-unknown
+abbr -a cc cargo clippy --all-targets --keep-going
+abbr -a ccw cargo clippy --keep-going --target wasm32-unknown-unknown
 abbr -a cca cargo clippy --all-targets --all-features --keep-going
 abbr -a cdoc cargo doc --keep-going
 abbr -a cdoco cargo doc --keep-going --open
