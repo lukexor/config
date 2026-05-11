@@ -169,7 +169,9 @@ local lsp_on_attach = function(client, bufnr)
   -- See `:help vim.lsp.*` for documentation on any of the below functions
   map("gd", "m'<cmd>Telescope lsp_definitions<CR>", { desc = "Go to Definition", buffer = bufnr })
   map("gD", "m'<cmd>Telescope lsp_type_definitions<CR>", { desc = "Go to Type Definition", buffer = bufnr })
-  map("gh", vim.lsp.buf.hover, { desc = "Symbol Information", buffer = bufnr })
+  map("gh", function()
+    vim.lsp.buf.hover({ max_width = 100, max_height = 80, border = "rounded" })
+  end, { desc = "Symbol Information", buffer = bufnr })
   map("gH", vim.lsp.buf.signature_help, { desc = "Signature Information", buffer = bufnr })
   map("gi", "m'<cmd>Telescope lsp_implementations<CR>", { desc = "Go to Implementation", buffer = bufnr })
   map("gr", "m'<cmd>Telescope lsp_references<CR>", { desc = "References", buffer = bufnr })
@@ -1927,6 +1929,8 @@ require("lazy").setup({
           "vimdoc",
           "yaml",
         },
+        auto_install = true,
+        sync_install = false,
         highlight = {
           enable = false,
         },

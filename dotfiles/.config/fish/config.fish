@@ -351,6 +351,11 @@ alias gmm="git pull && git rebase origin/main"
 
 alias nrs="nixos-rebuild.sh"
 
+function hyprlock-restore
+    hyprlock --instance 0 'keyword misc:allow_session_lock_restore 1'
+    hyprlock --instance 0 'dispatch exec hyprlock'
+end
+
 # =============================================================================
 # Init   {{{1
 # =============================================================================
