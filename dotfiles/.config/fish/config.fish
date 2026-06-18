@@ -303,7 +303,7 @@ abbr -a sed sd
 abbr -a s fd --type f --exec sd
 abbr -a sshl ssh-add -L
 abbr -a _ sudo
-abbr -a vimdiff nvim -d --clean -R
+abbr -a vimdiff nvim -d -R
 abbr -a vd nvim -d
 abbr -a vim nvim
 abbr -a vi nvim
@@ -361,6 +361,7 @@ end
 # =============================================================================
 
 direnv hook fish | source
+pyenv init - fish | source
 
 if type -q mise
     mise activate fish | source

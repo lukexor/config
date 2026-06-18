@@ -19,6 +19,8 @@
   tool = fugitive
 [diff]
   tool = nvimdiff
+[difftool "nvimdiff"]
+  cmd = nvim -c \"packadd nvim.difftool\" -c \"DiffTool $LOCAL $REMOTE\"
 [core]
   excludesfile = ~/.gitignore
   editor = nvim -i NONE

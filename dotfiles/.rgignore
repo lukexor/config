@@ -1,6 +1,24 @@
-*.exe*
+*.exe
 *.o
 *.so
+*.iso
+*.tar*
+*.tgz
+*.zip
+*.unrar
+*.7z
+*.p7b
+*.img
+*.bin
+*.sub
+*.jpg
+*.jpeg
+*.png
+*.mkv
+*.mp4
+*.qcow2
+*.sfc
+*.fd
 *.pyc
 *-lock*
 *.lock*
@@ -34,3 +52,6 @@ ctags
 .git
 
 *.cdx.xml
+*.cdx.json
+*.epub
+*.pdf

@@ -46,3 +46,35 @@ alias vim="nvim"
 alias vimdiff="nvim -d"
 
 . "$HOME/.cargo/env"
+
+# Load acme-bisf CLI completions
+test -r /home/luke/.bash_completion.d/bisf-cli.bash && . /home/luke/.bash_completion.d/bisf-cli.bash
+alias k="kubectl"
+alias ka="kubectl -n acme-bisf"
+alias ks="kubectl -n kube-system"
+alias k9sa="k9s -n acme-bisf"
+alias less="less -R"
+alias rm="rm -i"
+alias mv="mv -i"
+alias cp="cp -ia"
+export RUST_LOG=off
+export TERM=xterm
+export KUBECONFIG="/etc/rancher/rke2/rke2.yaml"
+export CONTAINERD_ADDRESS="/run/k3s/containerd/containerd.sock"
+export CONTAINER_RUNTIME_ENDPOINT="/run/k3s/containerd/containerd.sock"
+
+# Load acme-bisf CLI completions
+test -r /home/luke/.bash_completion.d/bisf-cli.bash && . /home/luke/.bash_completion.d/bisf-cli.bash
+alias k="kubectl" 
+alias ka="kubectl -n acme-bisf" 
+alias ks="kubectl -n kube-system" 
+alias k9sa="k9s -n acme-bisf" 
+alias less="less -R" 
+alias rm="rm -i" 
+alias mv="mv -i" 
+alias cp="cp -ia" 
+export RUST_LOG=off 
+export TERM=xterm 
+export KUBECONFIG="/etc/rancher/rke2/rke2.yaml" 
+export CONTAINERD_ADDRESS="/run/k3s/containerd/containerd.sock" 
+export CONTAINER_RUNTIME_ENDPOINT="/run/k3s/containerd/containerd.sock"

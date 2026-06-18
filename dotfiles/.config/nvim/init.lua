@@ -41,7 +41,6 @@ vim.opt.diffopt:append("iwhite,algorithm:patience,indent-heuristic")
 vim.o.expandtab = true
 vim.o.incsearch = true
 vim.o.jumpoptions = "stack,view"
-vim.o.laststatus = 3
 vim.o.list = true
 vim.o.listchars = "tab:│ ,trail:+,extends:,precedes:,nbsp:‗"
 vim.opt.matchpairs:append("<:>")
@@ -201,7 +200,7 @@ map(
 vim.g.gutter_enabled = true
 map("<leader>ug", function()
   vim.g.gutter_enabled = not vim.g.gutter_enabled
-  vim.notify(string.format("gutter %s", bool2str(vim.g.cmp_enabled)))
+  vim.notify(string.format("gutter %s", bool2str(vim.g.gutter_enabled)))
   if vim.g.gutter_enabled then
     vim.cmd("set rnu nu list signcolumn=yes:2 foldcolumn=1")
   else
@@ -1212,6 +1211,7 @@ require("lazy").setup({
           "bash-language-server",
           "clang-format",
           "clangd",
+          "codepsell",
           "cpplint",
           "css-lsp",
           "darker",
@@ -1380,9 +1380,9 @@ require("lazy").setup({
                         "Serialize",
                         "Deserialize",
                       },
-                      leptos_macro = {
-                        "server",
-                      },
+                      -- leptos_macro = {
+                      --   "server",
+                      -- },
                     },
                   },
                   workspace = {
@@ -1511,9 +1511,6 @@ require("lazy").setup({
               root = nil
             end
             opts.root_dir = root or vim.fn.fnamemodify(fname, ":p:h")
-            opts.settings = {
-              Lua = {},
-            }
           end),
           pyright = get_options(function(opts)
             opts.settings = {
@@ -1598,6 +1595,7 @@ require("lazy").setup({
       opts = {
         format_on_save = {
           lsp_format = "fallback",
+          timeout_ms = 500,
         },
         formatters = {
           leptosfmt = {
@@ -1624,13 +1622,17 @@ require("lazy").setup({
           lua = { "stylua" },
           -- TODO: test if file truncaction is resolved
           markdown = { "prettierd" },
-          rust = { "leptosfmt", "rustfmt" },
+          rust = { "leptosfmt", "rustfmt", lsp_format = "fallback" },
           toml = { "taplo" },
           typescript = { "eslint_d", "rustywind", "prettierd" },
           typescriptreact = { "eslint_d", "rustywind", "prettierd" },
           xml = { "xmlformat" },
           yaml = { "prettierd" },
-          ["*"] = { "trim_whitespace" },
+          ["*"] = {
+            -- I want this but it changes things unexpectedly
+            -- "codespell",
+            "trim_whitespace",
+          },
         },
       },
     },
@@ -2564,16 +2566,16 @@ vim.api.nvim_create_autocmd("VimEnter", {
     end
   end,
 })
-vim.api.nvim_create_autocmd("VimEnter", {
-  group = aug,
-  callback = function()
-    vim.cmd("hi! link TreesitterContext Search")
-    vim.cmd("hi! link rustCommentLineDoc WarningMsg")
-    vim.cmd("hi! link SpecialComment WarningMsg")
-    vim.cmd("hi! link Comment WarningMsg")
-    vim.cmd("hi! link WinSeparator CursorLineNr")
-  end,
-})
+-- vim.api.nvim_create_autocmd("VimEnter", {
+--   group = aug,
+--   callback = function()
+--     vim.cmd("hi! link TreesitterContext Search")
+--     vim.cmd("hi! link rustCommentLineDoc WarningMsg")
+--     vim.cmd("hi! link SpecialComment WarningMsg")
+--     vim.cmd("hi! link Comment WarningMsg")
+--     vim.cmd("hi! link WinSeparator CursorLineNr")
+--   end,
+-- })
 -- Restart any dead LSP clients on resume
 vim.api.nvim_create_autocmd("VimResume", {
   callback = function()
