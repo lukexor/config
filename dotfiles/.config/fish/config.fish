@@ -288,6 +288,7 @@ abbr -a h history
 abbr -a ir irust
 abbr -a la eza -a
 abbr -a lk eza -lrs size
+abbr -a lk eza -lrs modified
 abbr -a ll eza -al
 abbr -a ls eza
 abbr -a lt eza --tree
