@@ -1830,7 +1830,7 @@ vim.g.rustaceanvim = function()
           end
         end
 
-        map("n", "ga", rls({ "hover", "actions" }), { silent = true, buffer = bufnr, desc = "Hover Actions" })
+        map("n", "gA", rls({ "hover", "actions" }), { silent = true, buffer = bufnr, desc = "Hover Actions" })
         map("n", "<leader>ra", rls("codeAction"), { buffer = bufnr, desc = "Rust Code Action" })
         map("n", "<leader>rr", rls("runnables"), { buffer = bufnr, desc = "Runnables" })
         map("n", "<leader>rR", rls({ "runnables", bang = true }), { buffer = bufnr, desc = "Rerun Last" })
