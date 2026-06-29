@@ -13,14 +13,12 @@
   helper = store
 [gpg]
   program = /usr/bin/gpg
+[pull]
+  rebase = true
 [fetch]
   prune = true
 [merge]
   tool = fugitive
-[diff]
-  tool = nvimdiff
-[difftool "nvimdiff"]
-  cmd = nvim -c \"packadd nvim.difftool\" -c \"DiffTool $LOCAL $REMOTE\"
 [core]
   excludesfile = ~/.gitignore
   editor = nvim -i NONE
@@ -46,7 +44,10 @@
   added = green
   changed = yellow
   untracked = cyan
-[mergetool "fugitive"]
-  cmd = nvim -f -c \"Gvdiffsplit!\" \"$MERGED\"
 [blame]
   ignoreRevsFile = .git-blame-ignore-revs
+[alias]
+  c = checkout
+  b = branch
+  c = commit
+  s = status

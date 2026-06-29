@@ -305,7 +305,7 @@ abbr -a s fd --type f --exec sd
 abbr -a sshl ssh-add -L
 abbr -a _ sudo
 abbr -a vimdiff nvim -d -R
-abbr -a vd nvim -d
+abbr -a vd nvim -d -R
 abbr -a vim nvim
 abbr -a vi nvim
 abbr -a v nvim
