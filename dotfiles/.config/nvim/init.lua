@@ -97,6 +97,7 @@ vim.o.conceallevel = 0 -- Show listchars
 -- File handling
 vim.g.loaded_netrw = 1                                                    -- disable netrw
 vim.g.loaded_netrwPlugin = 1                                              -- disable netrw
+vim.o.grepprg = "rg --no-heading --vimgrep" -- ripgrep
 vim.o.title = true                                                        -- Update window title
 vim.o.undofile = true                                                     -- Persistent undo
 vim.o.updatecount = 50                                                    -- Save every 50 characters typed
@@ -1102,25 +1103,6 @@ require("leap").opts.preview = function(ch0, ch1, ch2)
   return not (ch1:match("%s") or (ch0:match("%a") and ch1:match("%a") and ch2:match("%a")))
 end
 
--- Enable the traversal keys to repeat the previous search without
--- explicitly invoking Leap (`<cr><cr>...` instead of `s<cr><cr>...`):
-do
-  local clever = require("leap.user").with_traversal_keys
-  map({ "n", "x", "o" }, "<cr>", function()
-    require("leap").leap({
-      ["repeat"] = true,
-      opts = clever("<cr>", "<bs>"),
-    })
-  end)
-  map({ "n", "x", "o" }, "<bs>", function()
-    require("leap").leap({
-      ["repeat"] = true,
-      opts = clever("<bs>", "<cr>"),
-      backward = true,
-    })
-  end)
-end
-
 -- LuaSnip
 map("n", "<leader>cs", function()
   require("luasnip.loaders").edit_snippet_files()
@@ -1675,7 +1657,7 @@ do
         toml = { taplo },
         typescript = { eslint_d, prettier_d },
         typescriptreact = { eslint_d, prettier_d },
-        yaml = { yamllint },
+        yaml = { yamllint, prettier_d },
       },
     },
   })
