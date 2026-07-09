@@ -15,11 +15,6 @@
 #
 #    Personal nushell env configuration of Luke Petherbridge <me@lukeworks.tech>
 
-# Boot into hyprland, if available
-if type -q Hyprland; and test -z "$DISPLAY"; and test (tty) = /dev/tty1
-    exec Hyprland
-end
-
 # Bail out if not interactive
 status is-interactive; or exit $status
 
