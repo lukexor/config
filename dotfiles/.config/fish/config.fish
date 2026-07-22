@@ -164,7 +164,7 @@ function refresh-xcompose
     setsid fcitx5 &>/dev/null &
 end
 
-set -gx CARGO_TARGET_DIR ~/.cargo-target
+set -gx CARGO_TARGET_DIR ~/.cache/cargo-target
 set -gx EDITOR nvim
 set -gx SYSTEMD_EDITOR nvim
 set -gx FZF_CTRL_T_COMMAND "rg --files --hidden"

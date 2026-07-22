@@ -115,8 +115,9 @@ vim.o.mouse = "" -- Disable mouse
 vim.o.jumpoptions = "stack,view,clean" -- Better jump list tracking
 
 -- Folding
-vim.o.foldmethod = "expr" -- Use expression for folding
-vim.o.foldexpr = "v:lua.vim.treesitter.foldexpr()" -- Use treesitter for folding
+vim.o.foldmethod = "indent"
+-- vim.o.foldmethod = "expr" -- Use expression for folding
+-- vim.o.foldexpr = "v:lua.vim.treesitter.foldexpr()" -- Use treesitter for folding
 vim.o.foldlevel = 99 -- Start with all folds open
 
 -- Split
@@ -1669,43 +1670,28 @@ do
       if vim.bo[ev.buf].buftype ~= "" or not vim.bo[ev.buf].modifiable or vim.api.nvim_buf_get_name(ev.buf) == "" then
         return
       end
-      -- Rust leptos override
-      if vim.bo[ev.buf].filetype == "rust" then
-        local lines = vim.api.nvim_buf_get_lines(ev.buf, 0, -1, false)
-        local result = vim.system({ "sh", "-c", "leptosfmt --stdin -e -r" }, { text = true, stdin = lines }):wait()
-        if result.code ~= 0 then
-          vim.notify("Format failed:\n" .. (result.stderr or ""), vim.log.levels.ERROR)
-        else
-          local formatted = vim.split(result.stdout, "\n", { plain = true })
-          if formatted[#formatted] == "" then
-            table.remove(formatted)
-          end
-          vim.api.nvim_buf_set_lines(ev.buf, 0, -1, false, formatted)
+      local clients = vim.lsp.get_clients({ bufnr = ev.buf })
+      local has_efm = false
+      local can_format = false
+      for _, c in ipairs(clients) do
+        if c.name == "efm" then
+          has_efm = true
         end
-      else
-        local clients = vim.lsp.get_clients({ bufnr = ev.buf })
-        local has_efm = false
-        local can_format = false
-        for _, c in ipairs(clients) do
-          if c.name == "efm" then
-            has_efm = true
-          end
-          if c:supports_method("textDocument/formatting", ev.buf) then
-            can_format = true
-          end
-          if has_efm and can_format then
-            break
-          end
+        if c:supports_method("textDocument/formatting", ev.buf) then
+          can_format = true
         end
-        if can_format then
-          vim.lsp.buf.format({
-            bufnr = ev.buf,
-            timeout_ms = 2000,
-            filter = has_efm and function(c)
-              return c.name == "efm"
-            end or nil,
-          })
+        if has_efm and can_format then
+          break
         end
+      end
+      if can_format then
+        vim.lsp.buf.format({
+          bufnr = ev.buf,
+          timeout_ms = 2000,
+          filter = has_efm and function(c)
+            return c.name == "efm"
+          end or nil,
+        })
       end
     end,
   })
@@ -1824,9 +1810,9 @@ vim.g.rustaceanvim = function()
         map("n", "<leader>rD", rls({ "renderDiagnostic", "current" }), { buffer = bufnr, desc = "Render Diagnostic" })
         map("n", "<leader>rm", rls("expandMacro"), { buffer = bufnr, desc = "Expand Macro" })
         map("n", "<leader>rp", rls("parentModule"), { buffer = bufnr, desc = "Parent Module" })
-        map("n", "J", rls("joinLines"), { desc = "Join lines" })
-        map("n", "<C-A-j>", rls({ "moveItem", "down" }), { desc = "Move line down" })
-        map("n", "<C-A-k>", rls({ "moveItem", "up" }), { desc = "Move line up" })
+        map("n", "J", rls("joinLines"), { buffer = bufnr, desc = "Join lines" })
+        map("n", "<C-A-j>", rls({ "moveItem", "down" }), { buffer = bufnr, desc = "Move line down" })
+        map("n", "<C-A-k>", rls({ "moveItem", "up" }), { buffer = bufnr, desc = "Move line up" })
         map("n", "<leader>rw", rls("reloadWorkspace"), { buffer = bufnr, desc = "Reload Workspace" })
         map("n", "<leader>rs", rls("workspaceSymbol"), { buffer = bufnr, desc = "Workspace Symbol" })
         map(
@@ -2017,7 +2003,15 @@ map("n", "gp", function()
   vim.diagnostic.jump({ count = -1, float = true })
 end, { desc = "Previous diagnostic" })
 map("n", "ge", vim.diagnostic.open_float, { desc = "Show diagnostics" })
-map("n", "<leader>te", vim.diagnostic.setloclist, { desc = "Toggle diagnostics list" })
+local quickfix_open = false
+map("n", "<leader>te", function()
+  quickfix_open = not quickfix_open
+  if quickfix_open then
+    vim.diagnostic.setqflist()
+  else
+    vim.cmd("cclose")
+  end
+end, { desc = "Show diagnostics list" })
 
 -- =============================================================================
 -- Terminal
