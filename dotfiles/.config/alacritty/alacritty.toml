@@ -1,39 +1,32 @@
-#
-#                                    i  t
-#                                   LE  ED.
-#                                  L#E  E#K:
-#                                 G#W.  E##W;
-#                                D#K.   E#E##t
-#                               E#K.    E#t ##f
-#                             .E#E.     E#t  ;#D.
-#                            .K#E       E#ELLE##K:
-#                           .K#D        E#L;;;;;;,
-#                          .W#G      .K E#t
-#                         :W##########W E#t
-#                         :,,,,,,,,,,,, .
-#
-#
-#     Personal alacritty configuration of Luke Petherbridge <me@lukeworks.tech>
-
 general.import = ["~/.config/omarchy/current/theme/alacritty.toml"]
-
-[selection]
-save_to_clipboard = true
 
 [env]
 TERM = "xterm-256color"
 
+[terminal]
+osc52 = "CopyPaste"
+
+[selection]
+save_to_clipboard = true
+
 [font]
-normal = { family = "CaskaydiaMono Nerd Font" }
-bold = { family = "CaskaydiaMono Nerd Font" }
-italic = { family = "CaskaydiaMono Nerd Font" }
+normal = { family = "DejaVuSansM Nerd Font Mono" }
+bold = { family = "DejaVuSansM Nerd Font Mono" }
+italic = { family = "DejaVuSansM Nerd Font Mono" }
 size = 9
 
 [window]
 padding.x = 14
 padding.y = 14
 decorations = "None"
-opacity = 0.70
+opacity = 0.80
 
-[terminal]
-osc52 = "CopyPaste"
+[keyboard]
+bindings = [
+  { key = "Insert", mods = "Shift", action = "Paste" },
+  { key = "Insert", mods = "Control", action = "Copy" },
+  # Send Shift+Return as CSI-u so TUIs can distinguish it from Return without treating it as Alt+Return.
+  { key = "Return", mods = "Shift", chars = "\u001B[13;2u" },
+  # Legacy encoding sends Alt+Shift+Return the same as Alt+Return; send CSI-u so tmux can match M-S-Enter.
+  { key = "Return", mods = "Alt|Shift", chars = "\u001B[13;4u" },
+]

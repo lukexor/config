@@ -9,6 +9,10 @@
       "src": "https://github.com/saghen/blink.cmp",
       "version": "1.0.0 - 2.0.0"
     },
+    "droast.nvim": {
+      "rev": "06fafb1e81a52f8f56b82025873c9d907a9b98c5",
+      "src": "https://github.com/immanuwell/droast.nvim"
+    },
     "efmls-configs-nvim": {
       "rev": "2f5dc31042cc76fc3d5a859842a8416085c4d41f",
       "src": "https://github.com/creativenull/efmls-configs-nvim"

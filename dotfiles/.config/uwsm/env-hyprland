@@ -1,0 +1,58 @@
+# Per-host GPU selection, from the hardware actually present. uwsm sources this
+# once at session start, so changes need a full logout/login.
+
+# Probed off the PCI bus, not /sys/class/drm. nvidia_drm takes ~3s to initialize
+# the dGPU and register its node, which can land *after* uwsm reads this file
+# (Initialized at 09:23:53.90 vs uwsm at 09:23:53.11 on this host). A card* scan
+# then silently misses the dGPU, falls through to the iGPU-only branch, and
+# leaves AQ_DRM_DEVICES unset - so Hyprland opens the dGPU after all. PCI
+# vendor/class are filled in at bus enumeration, before any driver binds, so
+# they cannot race; the same signal acme-bisf-gpu's gpu.rs discrete_nvidia() uses.
+for _dev in /sys/bus/pci/devices/*; do
+    # Base class 0x03 is a display controller: VGA (0x0300) or the 3D controller
+    # (0x0302) that a laptop's second GPU often presents as.
+    case "$(cat "$_dev/class" 2>/dev/null)" in
+        0x03*) ;;
+        *) continue ;;
+    esac
+
+    case "$(cat "$_dev/vendor" 2>/dev/null)" in
+        0x8086) _igpu=${_dev##*/} ;;
+        0x10de) _dgpu=1 ;;
+    esac
+done
+
+if [ -n "$_igpu" ] && [ -n "$_dgpu" ]; then
+    # Hybrid: drive the session entirely from the iGPU, leaving the dGPU free for
+    # `cargo xtask dev gpu attach` to bind vfio-pci without a logout. by-path is
+    # PCI-address-derived; cardN numbering is not stable across boots.
+    #
+    # Cost: any output wired to the dGPU (HDMI on this laptop) is dead. For a dGPU
+    # session, comment out this branch and log back in.
+    #
+    # Only exported once the node is confirmed present: pointing Aquamarine at a
+    # path that does not exist yet costs the whole session, where falling back to
+    # opening every card only costs the passthrough. Warn rather than fail so a
+    # login is always possible.
+    if [ -e "/dev/dri/by-path/pci-$_igpu-card" ]; then
+        export AQ_DRM_DEVICES="/dev/dri/by-path/pci-$_igpu-card"
+    else
+        echo "env-hyprland: no DRM node for iGPU $_igpu yet; leaving AQ_DRM_DEVICES unset" >&2
+    fi
+    # glvnd otherwise loads libEGL_nvidia while enumerating EGL vendors, and GLX
+    # clients load libGLX_nvidia - either opens /dev/nvidiactl and pins the driver.
+    export __EGL_VENDOR_LIBRARY_FILENAMES=/usr/share/glvnd/egl_vendor.d/50_mesa.json
+    export __GLX_VENDOR_LIBRARY_NAME=mesa
+    # Naming a driver that cannot open the session's card breaks VAAPI outright
+    # rather than degrading, so only claim iHD when it is installed.
+    [ -e /usr/lib/dri/iHD_drv_video.so ] && export LIBVA_DRIVER_NAME=iHD
+elif [ -n "$_dgpu" ]; then
+    # NVIDIA only - the dGPU is the whole session. See https://wiki.hypr.land/Nvidia/
+    export __GLX_VENDOR_LIBRARY_NAME=nvidia
+    export NVD_BACKEND=direct # Requires libva-nvidia-driver installed
+    [ -e /usr/lib/dri/nvidia_drv_video.so ] && export LIBVA_DRIVER_NAME=nvidia
+elif [ -n "$_igpu" ]; then
+    [ -e /usr/lib/dri/iHD_drv_video.so ] && export LIBVA_DRIVER_NAME=iHD
+fi
+
+unset _dev _igpu _dgpu

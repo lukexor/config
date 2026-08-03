@@ -414,6 +414,10 @@ map("n", "<leader>as", "<cmd>.!figlet -w 200 -f standard<CR>", { desc = "ASCII S
 -- Windows
 map("n", "|", ":vsplit<CR>", { desc = "Split window vertically" })
 map("n", "\\", ":split<CR>", { desc = "Split window horizontally" })
+map("n", "<leader>h", "<C-w><S-H>", { desc = "Move window to left vertical splt" })
+map("n", "<leader>l", "<C-w><S-L>", { desc = "Move window to right vertical splt" })
+map("n", "<leader>k", "<C-w><S-K>", { desc = "Move window to top horizontal splt" })
+map("n", "<leader>j", "<C-w><S-J>", { desc = "Move window to bottom horizontal splt" })
 map("n", "<leader>-", "<C-w>_<C-w>|", { desc = "Maximize window" })
 map("n", "<leader>=", "<C-w>=", { desc = "Equal Window Sizes" })
 map({ "n", "i" }, "<C-Down>", "<cmd>resize -5<CR>", { desc = "Reduce Height" })
@@ -470,10 +474,10 @@ map("n", "<leader>cn", "<cmd>edit $MYVIMRC<CR>", { desc = "Edit Nvim Config" })
 map("n", "<leader>cr", "<cmd>source $MYVIMRC<CR>:edit<CR>", { desc = "Reload Nvim Config" })
 map("n", "<leader>cR", "<cmd>restart<CR>", { desc = "Restart Nvim" })
 
-map("n", "<leader>cd", function()
+map("n", "cd", function()
   vim.fn.chdir(vim.fn.expand("%:p:h"))
 end, { desc = "Change to current file's directory" })
-map("n", "<leader>lcd", function()
+map("n", "lcd", function()
   vim.fn.chdir(vim.fn.expand("%:p:h"), "window")
 end, { desc = "Change to current file's directory (local" })
 map("n", "<leader>cx", function()
@@ -831,6 +835,7 @@ vim.pack.add({
     -- V2 is under active development with many breaking changes.
     version = vim.version.range("1.*"),
   },
+  gh("immanuwell/droast.nvim"),
   gh("creativenull/efmls-configs-nvim"),
   gh("ibhagwan/fzf-lua"),
   cb("andyg/leap.nvim"),
@@ -974,6 +979,9 @@ vim.api.nvim_create_autocmd("InsertEnter", {
     })
   end,
 })
+
+-- droast
+require("droast").setup({ args = { "--preset", "production" } })
 
 -- fzf-lua
 local ensure_fzf = once(function()
@@ -1160,7 +1168,7 @@ require("mini.notify").setup({
     enable = false, -- LSP status is in the statusline
   },
 })
-map("n", "<leader>h", function()
+map("n", "<leader>H", function()
   require("mini.notify").show_history()
 end, { desc = "Show notification history" })
 
