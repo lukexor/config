@@ -30,12 +30,20 @@ if [ -n "$_igpu" ] && [ -n "$_dgpu" ]; then
     # Cost: any output wired to the dGPU (HDMI on this laptop) is dead. For a dGPU
     # session, comment out this branch and log back in.
     #
-    # Only exported once the node is confirmed present: pointing Aquamarine at a
-    # path that does not exist yet costs the whole session, where falling back to
+    # Resolved to the real node, not left as the by-path symlink: Aquamarine
+    # string-matches this list against the paths udev enumerated and does not
+    # resolve symlinks, so a by-path value logs "Explicit device not found",
+    # then "No gpus in scanGPUs", and CBackend::create() aborts - an SDDM login
+    # loop with no desktop. by-path is still how the card is *found*, which is
+    # what survives renumbering; only the exported value has to be the node.
+    #
+    # Exported only once the node is confirmed present: pointing Aquamarine at a
+    # path that does not exist costs the whole session, where falling back to
     # opening every card only costs the passthrough. Warn rather than fail so a
     # login is always possible.
-    if [ -e "/dev/dri/by-path/pci-$_igpu-card" ]; then
-        export AQ_DRM_DEVICES="/dev/dri/by-path/pci-$_igpu-card"
+    _card=$(readlink -f "/dev/dri/by-path/pci-$_igpu-card" 2>/dev/null || true)
+    if [ -n "$_card" ] && [ -e "$_card" ]; then
+        export AQ_DRM_DEVICES="$_card"
     else
         echo "env-hyprland: no DRM node for iGPU $_igpu yet; leaving AQ_DRM_DEVICES unset" >&2
     fi
@@ -55,4 +63,4 @@ elif [ -n "$_igpu" ]; then
     [ -e /usr/lib/dri/iHD_drv_video.so ] && export LIBVA_DRIVER_NAME=iHD
 fi
 
-unset _dev _igpu _dgpu
+unset _dev _igpu _dgpu _card
