@@ -52,27 +52,27 @@ vim.api.nvim_set_hl(0, "Visual", { bg = "#423a3b" })
 vim.env.PAGER = "bat" -- Don"t use nvim as a pager within itself
 
 -- Basic
-vim.modeline = false -- Disable modelines, as it's a security risk
-vim.o.number = true -- Line numbers
+vim.modeline = false        -- Disable modelines, as it's a security risk
+vim.o.number = true         -- Line numbers
 vim.o.relativenumber = true -- Relative line numbers
-vim.o.numberwidth = 2 -- Width of the line number column
-vim.o.cursorline = true -- Highlight current line
-vim.o.wrap = false -- Don"t wrap lines
-vim.o.scrolloff = 8 -- Keep 8 lines above/below cursor
-vim.o.sidescrolloff = 8 -- Keep 8 columns left/right of cursor
+vim.o.numberwidth = 2       -- Width of the line number column
+vim.o.cursorline = true     -- Highlight current line
+vim.o.wrap = false          -- Don"t wrap lines
+vim.o.scrolloff = 8         -- Keep 8 lines above/below cursor
+vim.o.sidescrolloff = 8     -- Keep 8 columns left/right of cursor
 
 -- Indentation
-vim.o.tabstop = 2 -- Tab width
-vim.o.shiftwidth = 2 -- Indent width
-vim.o.softtabstop = 2 -- Soft tab stop
-vim.o.shiftround = true -- Round indent to multiple of shiftwidth
-vim.o.expandtab = true -- Use spaces instead of tabs
+vim.o.tabstop = 2        -- Tab width
+vim.o.shiftwidth = 2     -- Indent width
+vim.o.softtabstop = 2    -- Soft tab stop
+vim.o.shiftround = true  -- Round indent to multiple of shiftwidth
+vim.o.expandtab = true   -- Use spaces instead of tabs
 vim.o.smartindent = true -- Smart auto-indenting, for when indentexpr is unset
 vim.o.breakindent = true -- Visually indent wrapped lines
 
 -- Search
 vim.o.ignorecase = true -- Case insensitive search
-vim.o.smartcase = true -- Case sensitive if uppercase in search
+vim.o.smartcase = true  -- Case sensitive if uppercase in search
 
 -- Visual
 vim.g.c_comment_strings = 1 -- Highlight strings and numbers inside
@@ -95,23 +95,23 @@ vim.o.listchars = "tab:| ,trail:+,extends:,precedes:,nbsp:‗" -- Hidden c
 vim.o.conceallevel = 0 -- Show listchars
 
 -- File handling
-vim.g.loaded_netrw = 1 -- disable netrw
-vim.g.loaded_netrwPlugin = 1 -- disable netrw
-vim.o.grepprg = "rg --no-heading --vimgrep" -- ripgrep
-vim.o.title = true -- Update window title
-vim.o.undofile = true -- Persistent undo
-vim.o.updatecount = 50 -- Save every 50 characters typed
-vim.o.updatetime = 300 -- Save swap after not typing for 300ms
-vim.o.timeoutlen = 700 -- Key timeout duration
+vim.g.loaded_netrw = 1                                                    -- disable netrw
+vim.g.loaded_netrwPlugin = 1                                              -- disable netrw
+vim.o.grepprg = "rg --no-heading --vimgrep"                               -- ripgrep
+vim.o.title = true                                                        -- Update window title
+vim.o.undofile = true                                                     -- Persistent undo
+vim.o.updatecount = 50                                                    -- Save every 50 characters typed
+vim.o.updatetime = 300                                                    -- Save swap after not typing for 300ms
+vim.o.timeoutlen = 700                                                    -- Key timeout duration
 vim.opt.spellfile:append(vim.fn.expand("~/.config/nvim/spell.utf-8.add")) -- Custom spell definitions
-vim.opt.diffopt:append("iwhite,algorithm:patience") -- Better diffs: https://vimways.org/2018/the-power-of-diff/
-vim.opt.diffopt:append("linematch:60") -- Wider line diff margin
+vim.opt.diffopt:append("iwhite,algorithm:patience")                       -- Better diffs: https://vimways.org/2018/the-power-of-diff/
+vim.opt.diffopt:append("linematch:60")                                    -- Wider line diff margin
 
 -- Behavior
-vim.o.confirm = true -- Confirm actions instead of failing
-vim.opt.iskeyword:append("-") -- Treat dash as part of word
-vim.opt.path:append("**") -- include subdirectories in search
-vim.o.mouse = "" -- Disable mouse
+vim.o.confirm = true                   -- Confirm actions instead of failing
+vim.opt.iskeyword:append("-")          -- Treat dash as part of word
+vim.opt.path:append("**")              -- include subdirectories in search
+vim.o.mouse = ""                       -- Disable mouse
 vim.o.jumpoptions = "stack,view,clean" -- Better jump list tracking
 
 -- Folding
@@ -152,43 +152,43 @@ do
     end
 
     local icons = {
-      lua = "\u{e620} ", -- nf-dev-lua
-      python = "\u{e73c} ", -- nf-dev-python
-      javascript = "\u{e74e} ", -- nf-dev-javascript
-      typescript = "\u{e628} ", -- nf-dev-typescript
-      javascriptreact = "\u{e7ba} ", -- nf-dev-react
-      typescriptreact = "\u{e7ba} ", -- nf-dev-react
-      html = "\u{e736} ", -- nf-dev-html5
-      css = "\u{e749} ", -- nf-dev-css3
-      scss = "\u{e749} ", -- nf-dev-css3
-      json = "\u{e60b} ", -- nf-dev-json
-      markdown = "\u{e73e} ", -- nf-dev-markdown
-      vim = "\u{e62b} ", -- nf-dev-vim
-      sh = "\u{f489} ", -- nf-oct-terminal
-      bash = "\u{f489} ", -- nf-oct-terminal
-      zsh = "\u{f489} ", -- nf-oct-terminal
-      rust = "\u{e7a8} ", -- nf-dev-rust
-      go = "\u{e724} ", -- nf-dev-go
-      c = "\u{e61e} ", -- nf-dev-c
-      cpp = "\u{e61d} ", -- nf-dev-cplusplus
-      java = "\u{e738} ", -- nf-dev-java
-      php = "\u{e73d} ", -- nf-dev-php
-      ruby = "\u{e739} ", -- nf-dev-ruby
-      swift = "\u{e755} ", -- nf-dev-swift
-      kotlin = "\u{e634} ", -- nf-custom-kotlin
-      dart = "\u{e798} ", -- nf-dev-dart
-      elixir = "\u{e62d} ", -- nf-custom-elixir
-      haskell = "\u{e777} ", -- nf-dev-haskell
-      sql = "\u{e706} ", -- nf-dev-database
-      yaml = "\u{f481} ", -- nf-oct-file_symlink_file
-      toml = "\u{e615} ", -- nf-seti-config
-      xml = "\u{f05c} ", -- nf-fa-circle_xmark
-      dockerfile = "\u{f308} ", -- nf-linux-docker
-      gitcommit = "\u{f418} ", -- nf-oct-git_commit
-      gitconfig = "\u{f1d3} ", -- nf-fa-git
-      vue = "\u{fd42} ", -- nf-md-vuejs
-      svelte = "\u{e697} ", -- nf-seti-svelte
-      astro = "\u{e628} ", -- nf-seti-typescript
+      lua = "\u{e620} ",                              -- nf-dev-lua
+      python = "\u{e73c} ",                           -- nf-dev-python
+      javascript = "\u{e74e} ",                       -- nf-dev-javascript
+      typescript = "\u{e628} ",                       -- nf-dev-typescript
+      javascriptreact = "\u{e7ba} ",                  -- nf-dev-react
+      typescriptreact = "\u{e7ba} ",                  -- nf-dev-react
+      html = "\u{e736} ",                             -- nf-dev-html5
+      css = "\u{e749} ",                              -- nf-dev-css3
+      scss = "\u{e749} ",                             -- nf-dev-css3
+      json = "\u{e60b} ",                             -- nf-dev-json
+      markdown = "\u{e73e} ",                         -- nf-dev-markdown
+      vim = "\u{e62b} ",                              -- nf-dev-vim
+      sh = "\u{f489} ",                               -- nf-oct-terminal
+      bash = "\u{f489} ",                             -- nf-oct-terminal
+      zsh = "\u{f489} ",                              -- nf-oct-terminal
+      rust = "\u{e7a8} ",                             -- nf-dev-rust
+      go = "\u{e724} ",                               -- nf-dev-go
+      c = "\u{e61e} ",                                -- nf-dev-c
+      cpp = "\u{e61d} ",                              -- nf-dev-cplusplus
+      java = "\u{e738} ",                             -- nf-dev-java
+      php = "\u{e73d} ",                              -- nf-dev-php
+      ruby = "\u{e739} ",                             -- nf-dev-ruby
+      swift = "\u{e755} ",                            -- nf-dev-swift
+      kotlin = "\u{e634} ",                           -- nf-custom-kotlin
+      dart = "\u{e798} ",                             -- nf-dev-dart
+      elixir = "\u{e62d} ",                           -- nf-custom-elixir
+      haskell = "\u{e777} ",                          -- nf-dev-haskell
+      sql = "\u{e706} ",                              -- nf-dev-database
+      yaml = "\u{f481} ",                             -- nf-oct-file_symlink_file
+      toml = "\u{e615} ",                             -- nf-seti-config
+      xml = "\u{f05c} ",                              -- nf-fa-circle_xmark
+      dockerfile = "\u{f308} ",                       -- nf-linux-docker
+      gitcommit = "\u{f418} ",                        -- nf-oct-git_commit
+      gitconfig = "\u{f1d3} ",                        -- nf-fa-git
+      vue = "\u{fd42} ",                              -- nf-md-vuejs
+      svelte = "\u{e697} ",                           -- nf-seti-svelte
+      astro = "\u{e628} ",                            -- nf-seti-typescript
     }
     return ((icons[ft] or " \u{f15b} ") .. ft .. " ") -- nf-fa-file
   end
@@ -215,19 +215,19 @@ do
   _G.mode_icon = function()
     local mode = vim.fn.mode()
     local modes = {
-      n = " \u{f121}  NORMAL", -- nf-fa-code
-      i = " \u{f11c}  INSERT", -- nf-fa-keyboard
-      v = " \u{f0168} VISUAL", -- nf-md-code_array
-      V = " \u{f0168} V-LINE", -- nf-md-code_array
-      ["\22"] = " \u{f0168} V-BLOCK", -- nf-md-code_array
-      c = " \u{f120} COMMAND", -- nf-fa-terminal
-      s = " \u{f0c5} SELECT", -- nf-fa-copy
-      S = " \u{f0c5} S-LINE", -- nf-fa-copy
-      ["\19"] = " \u{f0c5} S-BLOCK", -- nf-fa-copy
-      R = " \u{f044} REPLACE", -- nf-fa-edit
-      r = " \u{f044} REPLACE", -- nf-fa-edit
-      ["!"] = " \u{f489} SHELL", -- nf-oct-terminal
-      t = " \u{f120} TERMINAL", -- nf-fa-terminal
+      n = " \u{f121}  NORMAL",                   -- nf-fa-code
+      i = " \u{f11c}  INSERT",                   -- nf-fa-keyboard
+      v = " \u{f0168} VISUAL",                   -- nf-md-code_array
+      V = " \u{f0168} V-LINE",                   -- nf-md-code_array
+      ["\22"] = " \u{f0168} V-BLOCK",            -- nf-md-code_array
+      c = " \u{f120} COMMAND",                   -- nf-fa-terminal
+      s = " \u{f0c5} SELECT",                    -- nf-fa-copy
+      S = " \u{f0c5} S-LINE",                    -- nf-fa-copy
+      ["\19"] = " \u{f0c5} S-BLOCK",             -- nf-fa-copy
+      R = " \u{f044} REPLACE",                   -- nf-fa-edit
+      r = " \u{f044} REPLACE",                   -- nf-fa-edit
+      ["!"] = " \u{f489} SHELL",                 -- nf-oct-terminal
+      t = " \u{f120} TERMINAL",                  -- nf-fa-terminal
     }
     return modes[mode] or (" \u{f059} " .. mode) -- nf-fa-circle_question
   end
@@ -282,7 +282,7 @@ do
         "%{v:lua.git_branch()}",
         "\u{e0b1} ", -- nf-pl-left_hard_divider
         "%{v:lua.file_type()}",
-        "\u{e0b1}", -- nf-pl-left_hard_divider
+        "\u{e0b1}",  -- nf-pl-left_hard_divider
         "%{v:lua.file_size()}",
         "%{v:lua.lsp_status()}",
         "%=", -- Right-align everything after this
@@ -303,7 +303,7 @@ do
       if vim.bo.filetype == "" then
         return
       end
-      vim.wo.cursorline = false -- no cursorline on inactive window
+      vim.wo.cursorline = false                                                       -- no cursorline on inactive window
       vim.wo.statusline = "  %f %h%m%r \u{e0b1} %{v:lua.file_type()} %=  %l:%c   %P " -- nf-pl-left_soft_divider
     end,
   })
@@ -424,9 +424,6 @@ map({ "n", "i" }, "<C-Down>", "<cmd>resize -5<CR>", { desc = "Reduce Height" })
 map({ "n", "i" }, "<C-Up>", "<cmd>resize +5<CR>", { desc = "Increase Height" })
 map({ "n", "i" }, "<C-Right>", "<cmd>vertical resize +10<CR>", { desc = "Reduce Width" })
 map({ "n", "i" }, "<C-Left>", "<cmd>vertical resize -10<CR>", { desc = "Increase Width" })
-map("n", "gx", function()
-  vim.fn.jobstart({ "xdg-open", vim.fn.expand("<cfile>") }, { detach = true })
-end, { desc = "Open File Externally" })
 
 -- Tabs
 map("n", "<leader>tn", ":tabnew<CR>", { desc = "New tab" })
@@ -934,7 +931,7 @@ vim.api.nvim_create_autocmd("InsertEnter", {
                   local icon = ctx.kind_icon
                   if ctx.item.source_name == "LSP" then
                     local color_item =
-                      require("nvim-highlight-colors").format(ctx.item.documentation, { kind = ctx.kind })
+                        require("nvim-highlight-colors").format(ctx.item.documentation, { kind = ctx.kind })
                     if color_item and color_item.abbr ~= "" then
                       icon = color_item.abbr
                     end
@@ -945,7 +942,7 @@ vim.api.nvim_create_autocmd("InsertEnter", {
                   local highlight = "BlinkCmpKind" .. ctx.kind
                   if ctx.item.source_name == "LSP" then
                     local color_item =
-                      require("nvim-highlight-colors").format(ctx.item.documentation, { kind = ctx.kind })
+                        require("nvim-highlight-colors").format(ctx.item.documentation, { kind = ctx.kind })
                     if color_item and color_item.abbr_hl_group then
                       highlight = color_item.abbr_hl_group
                     end
@@ -1255,7 +1252,7 @@ do
         {
           elements = {
             { id = "breakpoints", size = 0.4 },
-            { id = "stacks", size = 0.6 },
+            { id = "stacks",      size = 0.6 },
           },
           size = 50,
           position = "right",
@@ -1263,7 +1260,7 @@ do
         -- Watches + Repl on the right
         {
           elements = {
-            { id = "repl", size = 0.8 },
+            { id = "repl",    size = 0.8 },
             { id = "watches", size = 0.2 },
           },
           size = 10,
@@ -1556,11 +1553,11 @@ do
     desc = "Highlight references under cursor",
     callback = function(ev)
       if
-        highlight_enabled
-        and highlight_capable_bufs[ev.buf]
-        and vim.fn.mode() ~= "i"
-        and vim.bo.buftype == ""
-        and vim.bo.filetype ~= "NvimTree"
+          highlight_enabled
+          and highlight_capable_bufs[ev.buf]
+          and vim.fn.mode() ~= "i"
+          and vim.bo.buftype == ""
+          and vim.bo.filetype ~= "NvimTree"
       then
         vim.lsp.buf.clear_references()
         vim.lsp.buf.document_highlight()
@@ -1920,9 +1917,9 @@ vim.lsp.enable({
 do
   local diagnostic_signs = {
     Error = "\u{f057} ", -- nf-fa-remove_sign
-    Warn = "\u{f071} ", -- nf-fa-exclamation_triangle
-    Hint = "\u{ea61}", -- nf-cod-lightbulb
-    Info = "\u{f05a}", -- nf-fa-circle_info
+    Warn = "\u{f071} ",  -- nf-fa-exclamation_triangle
+    Hint = "\u{ea61}",   -- nf-cod-lightbulb
+    Info = "\u{f05a}",   -- nf-fa-circle_info
   }
   vim.diagnostic.config({
     virtual_text = {
