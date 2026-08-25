@@ -173,9 +173,8 @@ set -gx FZF_DEFAULT_OPTS "--height 50% --layout=reverse --border --inline-info"
 set -gx LESS -RFX
 set -gx MANPAGER "nvim +Man!"
 set -gx PAGER "nvim +Man!"
-set -gx TERMINAL alacritty
+set -gx TERMINAL foot
 set -gx VISUAL nvim
-set -gx CM_LAUNCHER bemenu
 
 # =============================================================================
 # Keybindings   {{{1

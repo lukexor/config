@@ -4,7 +4,9 @@ function config -a config -d "edit a configuration file"
         case nvim
             nvim ~/.config/nvim/init.lua
         case hypr
-            nvim ~/.config/hypr/hyprland.conf
+            nvim ~/.config/hypr/hyprland.lua
+        case foot
+            nvim ~/.config/foot/foot.ini
         case alacritty
             nvim ~/.config/alacritty/alacritty.toml
         case fish
@@ -24,4 +26,4 @@ function config -a config -d "edit a configuration file"
     end
 end
 
-complete -c config -fr -a "nvim hypr alacritty fish starship"
+complete -c config -fr -a "nvim hypr foot alacritty fish starship"

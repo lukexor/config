@@ -71,6 +71,7 @@ install_packages() {
     fish                          # Primary shell
     gimp                          # Paint program
     hyprcwd                       # Get cwd of active window
+    hypridle                      # Idle daemon, for the hibernate timer
     jq                            # JSON parser
     lazysql                       # SQL TUI
     nordvpn                       # VPN
@@ -247,6 +248,19 @@ install_webapps() {
   web2app-remove WhatsApp
 }
 
+setup_omarchy() {
+  info "Applying omarchy settings..."
+
+  omarchy default terminal foot
+
+  # A user shell.json replaces omarchy's defaults outright rather than merging
+  # into them, so the bar is edited in place. Tracking the whole file would
+  # freeze the layout at whatever today's defaults are.
+  omarchy bar put omarchy.dropbox --after omarchy.tray
+
+  info "Applied omarchy settings"
+}
+
 # Install with
 # curl -sSf https://raw.githubusercontent.com/lukexor/config/refs/heads/main/install.sh | sh -s
 install() {
@@ -302,6 +316,7 @@ install() {
   install_neovim
   change_shell
   install_webapps
+  setup_omarchy
 
   # TODO
   # Apply config changes, e.g. mimetypes, custom themes

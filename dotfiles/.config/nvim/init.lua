@@ -2043,7 +2043,7 @@ end
 
 -- Parse omarchy's current theme alacritty.toml and sync terminal palette
 local function load_omarchy_terminal_colors()
-  local path = vim.fn.expand("~/.config/omarchy/current/theme/alacritty.toml")
+  local path = vim.fn.expand("~/.local/state/omarchy/current/theme/alacritty.toml")
   local f = io.open(path, "r")
   if not f then
     return
