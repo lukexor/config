@@ -78,3 +78,6 @@ export TERM=xterm
 export KUBECONFIG="/etc/rancher/rke2/rke2.yaml" 
 export CONTAINERD_ADDRESS="/run/k3s/containerd/containerd.sock" 
 export CONTAINER_RUNTIME_ENDPOINT="/run/k3s/containerd/containerd.sock"
+# Added by flyctl installer
+export FLYCTL_INSTALL="/home/luke/.fly"
+export PATH="$FLYCTL_INSTALL/bin:$PATH"

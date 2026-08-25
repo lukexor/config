@@ -368,6 +368,9 @@ if type -q zoxide
     zoxide init fish | source
 end
 
+set -gx FLYCTL_INSTALL ~/.fly
+fish_add_path --path -gm $FLYCTL_INSTALL/bin
+
 if type -q fzf
     if test -f /usr/share/fish/completions/fzf.fish
         source /usr/share/fish/completions/fzf.fish
