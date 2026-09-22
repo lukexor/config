@@ -28,7 +28,24 @@ if [ -n "$_igpu" ] && [ -n "$_dgpu" ]; then
     # PCI-address-derived; cardN numbering is not stable across boots.
     #
     # Cost: any output wired to the dGPU (HDMI on this laptop) is dead. For a dGPU
-    # session, comment out this branch and log back in.
+    # session, comment out this branch, drop the modeset=0 from
+    # /etc/modprobe.d/zz-nvidia-dgpu-passthrough.conf, and reboot - a logout is no
+    # longer enough now that the dGPU registers no DRM device at all.
+    #
+    # AQ_DRM_DEVICES alone does not hold the line: it filters Aquamarine's initial
+    # scanGPUs and nothing else. nvidia is deliberately kept out of the initramfs
+    # (/etc/mkinitcpio.conf.d/zz-no-nvidia.conf - in the resume kernel it fails
+    # dpm_suspend(PMSG_FREEZE) and a good hibernate image gets discarded), so
+    # nvidia_drm now registers card0 *after* the session has already scanned, and
+    # the udev add path never re-applies the explicit list:
+    #
+    #   drm: Explicit device list /dev/dri/card1
+    #   drm: Found 1 GPUs
+    #   udev: new udev add event for card0
+    #   drm: Starting backend for /dev/dri/card0, with driver nvidia-drm
+    #
+    # /etc/modprobe.d/zz-nvidia-dgpu-passthrough.conf closes that by keeping
+    # nvidia_drm from registering a DRM device for the dGPU in the first place.
     #
     # Resolved to the real node, not left as the by-path symlink: Aquamarine
     # string-matches this list against the paths udev enumerated and does not
@@ -51,6 +68,13 @@ if [ -n "$_igpu" ] && [ -n "$_dgpu" ]; then
     # clients load libGLX_nvidia - either opens /dev/nvidiactl and pins the driver.
     export __EGL_VENDOR_LIBRARY_FILENAMES=/usr/share/glvnd/egl_vendor.d/50_mesa.json
     export __GLX_VENDOR_LIBRARY_NAME=mesa
+    # Same argument one layer over, for Vulkan: GTK4 >= 4.14 renders through
+    # Vulkan by default and the loader enumerates every manifest in
+    # /usr/share/vulkan/icd.d, preferring the discrete device. That put walker on
+    # the dGPU holding /dev/nvidia0, /dev/nvidiactl and /dev/nvidia-modeset, which
+    # is on its own enough to stop vfio-pci taking the card. The glob matches ICD
+    # manifest filenames (nvidia_icd.json); needs vulkan-icd-loader >= 1.3.234.
+    export VK_LOADER_DRIVERS_DISABLE='*nvidia*'
     # Naming a driver that cannot open the session's card breaks VAAPI outright
     # rather than degrading, so only claim iHD when it is installed.
     [ -e /usr/lib/dri/iHD_drv_video.so ] && export LIBVA_DRIVER_NAME=iHD

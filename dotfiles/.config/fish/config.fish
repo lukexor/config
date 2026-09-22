@@ -266,6 +266,7 @@ abbr -a gf git fetch origin
 # %b - body
 # %N - commit notes
 abbr -a glg git log --graph --decorate --oneline --pretty=format:\"%C\(yellow\)%h \(%p\) %Cgreen[%as] %Cblue[%ae]%Creset %s%Cred%d%Creset. %b %N\"
+abbr -a gw git worktree
 abbr -a gm git rebase
 abbr -a gpl git pull
 abbr -a gps git push
