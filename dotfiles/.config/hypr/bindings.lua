@@ -53,7 +53,7 @@ o.bind("SUPER + SHIFT + period", "Move workspace to previous monitor", hl.dsp.wo
 -- Reloading twice clears an Nvidia hang after suspend.
 o.bind("SUPER + SHIFT + R", "Reload Hyprland", "hyprctl reload && hyprctl reload")
 o.bind("SUPER + SHIFT + I", "Reload networking", "pkexec systemctl restart systemd-networkd systemd-resolved")
-o.bind("SUPER + SHIFT + ESCAPE", "Suspend", "systemctl suspend")
+o.bind("SUPER + SHIFT + ESCAPE", "Suspend", "systemctl suspend-then-hibernate")
 o.bind("SUPER + CTRL + ESCAPE", "Reboot", "systemctl reboot")
 o.bind("SUPER + SHIFT + CTRL + ESCAPE", "Power off", "systemctl poweroff")
 
@@ -100,7 +100,11 @@ o.bind("SUPER + SHIFT + SLASH", "Passwords", { webapp = "https://lastpass.com/va
 
 o.bind("SUPER + SHIFT + T", "Teams", { webapp = "https://gov.teams.microsoft.us/v2/" })
 o.bind("SUPER + SHIFT + V", "VPN", { launch = "forticlient.desktop" })
-o.bind("SUPER + SHIFT + CTRL + M", "Google Messages", { webapp = "https://messages.google.com/web/conversations", focus = true })
+o.bind(
+  "SUPER + SHIFT + CTRL + M",
+  "Google Messages",
+  { webapp = "https://messages.google.com/web/conversations", focus = true }
+)
 
 -- Same apps as the Omarchy defaults, on the chords already in the fingers.
 o.bind("SUPER + SHIFT + CTRL + F", "File manager (cwd)", { omarchy = "nautilus-cwd" })

@@ -56,7 +56,6 @@ vim.modeline = false -- Disable modelines, as it's a security risk
 vim.o.number = true -- Line numbers
 vim.o.relativenumber = true -- Relative line numbers
 vim.o.numberwidth = 2 -- Width of the line number column
-vim.o.cursorline = true -- Highlight current line
 vim.o.wrap = false -- Don"t wrap lines
 vim.o.scrolloff = 8 -- Keep 8 lines above/below cursor
 vim.o.sidescrolloff = 8 -- Keep 8 columns left/right of cursor
@@ -271,7 +270,6 @@ do
       if vim.bo.filetype == "" then
         return
       end
-      vim.wo.cursorline = true -- cursorline on active window
       vim.opt_local.statusline = table.concat({
         "  ",
         "%#SpecialChar#",
@@ -303,7 +301,6 @@ do
       if vim.bo.filetype == "" then
         return
       end
-      vim.wo.cursorline = false -- no cursorline on inactive window
       vim.wo.statusline = "  %f %h%m%r \u{e0b1} %{v:lua.file_type()} %=  %l:%c   %P " -- nf-pl-left_soft_divider
     end,
   })
