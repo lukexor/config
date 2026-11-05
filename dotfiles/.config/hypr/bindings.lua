@@ -34,11 +34,6 @@ end)
 -- SUPER + J is focus, so the split toggle takes a modifier.
 o.bind("SUPER + CTRL + J", "Toggle window split", hl.dsp.layout("togglesplit"))
 
--- Monocle keeps the fullscreen window fullscreen as new windows arrive, which
--- Omarchy's tiled-fullscreen toggle does not.
-hl.unbind("SUPER + CTRL + F")
-o.bind("SUPER + CTRL + F", "Toggle monocle", os.getenv("HOME") .. "/bin/toggle-monocle")
-
 -- Keybindings cheat sheet, on the chord SUPER + K used to answer.
 hl.unbind("SUPER + CTRL + K")
 o.bind("SUPER + CTRL + K", "Show key bindings", "omarchy-menu-keybindings")
@@ -50,8 +45,7 @@ o.bind("SUPER + SHIFT + comma", "Move workspace to next monitor", hl.dsp.workspa
 o.bind("SUPER + SHIFT + period", "Move workspace to previous monitor", hl.dsp.workspace.move({ monitor = "-1" }))
 
 -- System
--- Reloading twice clears an Nvidia hang after suspend.
-o.bind("SUPER + SHIFT + R", "Reload Hyprland", "hyprctl reload && hyprctl reload")
+hl.unbind("SUPER + SHIFT + I")
 o.bind("SUPER + SHIFT + I", "Reload networking", "pkexec systemctl restart systemd-networkd systemd-resolved")
 o.bind("SUPER + SHIFT + ESCAPE", "Suspend", "systemctl suspend-then-hibernate")
 o.bind("SUPER + CTRL + ESCAPE", "Reboot", "systemctl reboot")
@@ -61,13 +55,10 @@ o.bind("SUPER + SHIFT + CTRL + ESCAPE", "Power off", "systemctl poweroff")
 -- left alone.
 hl.unbind("SUPER + SHIFT + P")
 o.bind("SUPER + SHIFT + P", "Screenshot of region", "omarchy-capture-screenshot region")
-hl.unbind("SUPER + CTRL + P")
-o.bind("SUPER + CTRL + P", "Screenshot of window", "omarchy-capture-screenshot windows")
 o.bind("SUPER + SHIFT + CTRL + P", "Screenshot (smart)", "omarchy-capture-screenshot smart")
 o.bind("SUPER + ALT + P", "Color picker", "pkill hyprpicker || hyprpicker -a")
-o.bind("SUPER + ALT + R", "Screen record a region", "omarchy-capture-screenrecording")
-hl.unbind("SUPER + CTRL + R")
-o.bind("SUPER + CTRL + R", "Screen record display", "omarchy-capture-screenrecording --fullscreen")
+o.bind("SUPER + SHIFT + R", "Screen record a region", "omarchy-capture-screenrecording")
+o.bind("SUPER + ALT + R", "Screen record display", "omarchy-capture-screenrecording --fullscreen")
 
 -- Second chord for Omarchy's clipboard history, which also answers on
 -- SUPER + CTRL + V.
@@ -98,6 +89,7 @@ o.bind("SUPER + SHIFT + CTRL + G", "Lutris", { launch = "lutris" })
 hl.unbind("SUPER + SHIFT + SLASH")
 o.bind("SUPER + SHIFT + SLASH", "Passwords", { webapp = "https://lastpass.com/vault/" })
 
+hl.unbind("SUPER + SHIFT + T")
 o.bind("SUPER + SHIFT + T", "Teams", { webapp = "https://gov.teams.microsoft.us/v2/" })
 o.bind("SUPER + SHIFT + V", "VPN", { launch = "forticlient.desktop" })
 o.bind(

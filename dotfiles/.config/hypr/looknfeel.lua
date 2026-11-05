@@ -35,4 +35,15 @@ hl.config({
     -- recent window active.
     new_on_top = true,
   },
+
+  misc = {
+    -- Monocle on SUPER + ALT + F (Full width): closing the maximized window
+    -- maximizes the next one. Omarchy already has new windows take it over.
+    exit_window_retains_fullscreen = true,
+  },
 })
+
+-- Opt another application in to Omarchy's standard transparency.
+-- Find its class with: hyprctl clients
+-- o.transparent_window("my-app")
+-- o.transparent_window("my-app", "0.9 0.85") -- Custom active/inactive opacity.
