@@ -18,7 +18,7 @@ hl.monitor({ output = "DP-1", mode = "preferred", position = "auto", scale = 1 }
 hl.monitor({ output = "HDMI-A-1", mode = "preferred", position = "auto", scale = 1 })
 
 -- Desktop
-hl.monitor({ output = "HDMI-A-2", mode = "preferred", position = "auto", scale = 1 })
+hl.monitor({ output = "HDMI-A-2", mode = "2560x1440@144", position = "auto", scale = 1 })
 
 hl.workspace_rule({ workspace = "1", on_created_empty = "omarchy-launch-terminal" })
 

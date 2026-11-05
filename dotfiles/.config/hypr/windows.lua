@@ -8,3 +8,6 @@ o.window({ title = "PlayOnline.*" }, { float = true, center = true })
 
 -- Final Fantasy XI
 o.window({ title = "Final Fantasy.*" }, { fullscreen = true })
+
+-- World of Warcraft
+o.window({ title = "World of Warcraft*" }, { fullscreen = true })

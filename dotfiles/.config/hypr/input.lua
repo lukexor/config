@@ -12,7 +12,7 @@ hl.config({
     kb_options = "compose:caps,shift:both_capslock_cancel,grp:alts_toggle",
 
     -- Increase sensitivity for mouse/trackpad (default: 0).
-    sensitivity = 0.50,
+    sensitivity = 0.90,
 
     -- Turn off mouse acceleration (default: adaptive).
     accel_profile = "flat",
