@@ -5,8 +5,8 @@
 hl.config({
   input = {
     -- Second layout is Colemak-DH ortho. Left Alt + Right Alt switches between
-    -- the two. Omarchy's kb_options come from /etc/vconsole.conf, so they are
-    -- repeated here alongside the group toggle.
+    -- the two. Setting kb_options here replaces Omarchy's, so the compose and
+    -- caps lock options are repeated alongside the group toggle.
     kb_layout = "us,us",
     kb_variant = ",colemak_dh_ortho",
     kb_options = "compose:caps,shift:both_capslock_cancel,grp:alts_toggle",
