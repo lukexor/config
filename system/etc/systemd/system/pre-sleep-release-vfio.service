@@ -1,0 +1,27 @@
+[Unit]
+Description=Release PCI passthrough devices before sleep
+Documentation=man:systemd.special(7)
+
+# sleep.target itself has DefaultDependencies=no; inheriting the normal
+# shutdown ordering here would deadlock against the sleep transaction.
+DefaultDependencies=no
+Before=sleep.target
+
+# virsh needs libvirt reachable, and userspace is still live at this point.
+After=virtqemud.socket
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/pre-sleep-release-vfio
+
+# Bounds the whole run: one 30s graceful shutdown per passthrough domain plus
+# the rebind waits. Hitting this fails the unit, which aborts the sleep - the
+# safe direction, since sleeping with a device on vfio-pci hangs the machine.
+TimeoutStartSec=90
+
+[Install]
+# RequiredBy, not WantedBy: systemd-suspend.service has Requires=sleep.target,
+# so a failure here propagates and cancels the suspend instead of letting it
+# proceed into a freeze. Covers suspend, hibernate, hybrid-sleep and
+# suspend-then-hibernate, which all pull in sleep.target.
+RequiredBy=sleep.target

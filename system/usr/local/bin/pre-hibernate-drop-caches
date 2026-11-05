@@ -1,0 +1,59 @@
+#!/bin/bash
+#
+# Drop the page cache before the system hibernates.
+#
+# Why: the kernel fills the hibernation image with page cache up to
+# /sys/power/image_size, which defaults to 2/5 of RAM - ~37 GiB on this 93 GiB
+# machine. After a day of builds there is always more cache than that, so every
+# image hit the cap (~41 GB) even though only ~15-20 GiB of it was process
+# memory. Worse, the kernel has to reclaim the excess *after* userspace is
+# frozen, in hibernate_preallocate_memory(). That step grew from ~15s to
+# 100-195s with page allocation failures, and the intermittent hangs (hyprlock
+# on screen, mouse frozen, for hours; no image written) sit in that same
+# window - before device freeze turns the display off.
+#
+# Dropping clean cache here, while userspace and every kernel worker are still
+# running, makes that reclaim cheap and safe, and shrinks the image to roughly
+# anon + shmem. The only cost is a cold page cache after resume.
+#
+# This is WantedBy the hibernating targets, not RequiredBy: it is an
+# optimisation, and a failure here should not cancel the hibernate.
+
+set -uo pipefail
+
+log() {
+    logger --tag pre-hibernate-drop-caches -- "$*"
+}
+
+# Print "<label>=<n>GiB" for a /proc/meminfo field.
+meminfo_gib() {
+    awk -v key="$1:" '$1 == key { printf "%s=%.1fGiB", substr($1, 1, length($1) - 1), $2 / 1048576 }' \
+        /proc/meminfo
+}
+
+mem_summary() {
+    local field out=""
+    for field in MemFree Cached Shmem AnonPages SReclaimable Dirty; do
+        out+="$(meminfo_gib "$field") "
+    done
+    printf '%s' "${out% }"
+}
+
+main() {
+    [ "$(id -u)" -eq 0 ] || { log "ERROR: must run as root"; exit 1; }
+
+    log "before: $(mem_summary)"
+
+    # drop_caches only frees clean pages, so write dirty ones back first.
+    sync || log "sync reported an error; dropping what is clean anyway"
+
+    # 3 = page cache plus reclaimable slab (dentries and inodes).
+    if ! echo 3 >/proc/sys/vm/drop_caches; then
+        log "ERROR: writing /proc/sys/vm/drop_caches failed"
+        exit 1
+    fi
+
+    log "after:  $(mem_summary)"
+}
+
+main "$@"

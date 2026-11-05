@@ -1,0 +1,25 @@
+[Unit]
+Description=Drop page cache before hibernating
+Documentation=man:systemd.special(7)
+
+# sleep.target itself has DefaultDependencies=no; inheriting the normal
+# shutdown ordering here would deadlock against the sleep transaction.
+DefaultDependencies=no
+Before=sleep.target
+
+# Release passthrough devices (and shut their VMs down) first, so their guest
+# memory is gone before we measure and drop.
+After=pre-sleep-release-vfio.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/pre-hibernate-drop-caches
+
+# sync is the only step that can block, and only on a wedged filesystem.
+# Timing out fails the unit, which does not cancel the hibernate (WantedBy).
+TimeoutStartSec=60
+
+[Install]
+# Only the sleep modes that write an image. Plain suspend keeps its cache.
+# WantedBy, not RequiredBy: this is an optimisation, not a safety check.
+WantedBy=hibernate.target suspend-then-hibernate.target hybrid-sleep.target

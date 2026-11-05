@@ -1,0 +1,175 @@
+#!/bin/bash
+#
+# Release PCI passthrough devices before the system sleeps.
+#
+# Why: a device left bound to vfio-pci has no driver taking part in PCI power
+# management. Entering S3 in that state wedges the kernel's device-suspend
+# phase - on 2026-08-03 the journal ended at "PM: suspend entry (deep)" with
+# 0000:02:00.0 last seen on vfio-pci, and the machine needed a forced power
+# off. Shutting the passthrough domains down lets libvirt's managed='yes'
+# reattach hand each device back to its host driver while userspace still runs.
+#
+# This is ordered into sleep.target, so a non-zero exit aborts the sleep:
+# refusing to suspend is recoverable, freezing mid-suspend is not.
+#
+# No `set -e`: every failure below is either recoverable (log and carry on) or
+# fatal (die), and the distinction matters more than terse code.
+
+set -uo pipefail
+
+readonly GRACE_SECS=30   # per-domain wait for an ACPI shutdown before destroy
+readonly REBIND_SECS=10  # wait for a released device to land on a host driver
+readonly POLL_SECS=1
+readonly VIRSH=(virsh --quiet --connect qemu:///system)
+
+log() {
+    logger --tag pre-sleep-release-vfio --stderr -- "$*"
+}
+
+die() {
+    log "ERROR: $*"
+    exit 1
+}
+
+# Print the driver bound to a PCI address, or nothing when the device is
+# unbound. An unbound device is not an error here - only vfio-pci is.
+pci_driver() {
+    local addr=$1 link
+    link=$(readlink "/sys/bus/pci/devices/$addr/driver" 2>/dev/null) || return 0
+    basename "$link"
+}
+
+# Print every PCI address currently bound to vfio-pci, one per line. Prints
+# nothing when the module is not loaded, which is the common case.
+vfio_bound_devices() {
+    local path
+    for path in /sys/bus/pci/drivers/vfio-pci/[0-9a-f]*:*.[0-9]; do
+        [ -e "$path" ] || continue
+        basename "$path"
+    done
+}
+
+domain_is_running() {
+    local state
+    state=$("${VIRSH[@]}" domstate "$1" 2>/dev/null) || return 1
+    [ "$state" != "shut off" ]
+}
+
+domain_has_pci_hostdev() {
+    local xml
+    xml=$("${VIRSH[@]}" dumpxml "$1" 2>/dev/null) || return 1
+    grep -qE "<hostdev[^>]+type='pci'" <<<"$xml"
+}
+
+shutdown_domain() {
+    local domain=$1 i
+
+    log "shutting down passthrough domain: $domain"
+    "${VIRSH[@]}" shutdown "$domain" >/dev/null 2>&1 \
+        || log "graceful shutdown request failed for $domain"
+
+    for ((i = 0; i < GRACE_SECS; i += POLL_SECS)); do
+        domain_is_running "$domain" || return 0
+        sleep "$POLL_SECS"
+    done
+
+    log "$domain still up after ${GRACE_SECS}s; destroying"
+    "${VIRSH[@]}" destroy "$domain" >/dev/null 2>&1 \
+        || log "destroy failed for $domain"
+}
+
+shutdown_passthrough_domains() {
+    local domains domain
+
+    # Querying virsh would socket-activate libvirt even with nothing running,
+    # so skip out early when no guest exists to shut down.
+    pgrep -f 'qemu-system-' >/dev/null 2>&1 || return 0
+
+    domains=$("${VIRSH[@]}" list --name --state-running 2>/dev/null) \
+        || { log "virsh list failed; leaving domains alone"; return 0; }
+
+    while IFS= read -r domain; do
+        [ -n "$domain" ] || continue
+        domain_has_pci_hostdev "$domain" || continue
+        shutdown_domain "$domain"
+    done <<<"$domains"
+}
+
+# Wait for $addr to land on any driver that is not vfio-pci.
+wait_for_host_driver() {
+    local addr=$1 i drv
+    for ((i = 0; i < REBIND_SECS; i += POLL_SECS)); do
+        drv=$(pci_driver "$addr")
+        if [ -n "$drv" ] && [ "$drv" != "vfio-pci" ]; then
+            log "$addr now bound to $drv"
+            return 0
+        fi
+        sleep "$POLL_SECS"
+    done
+    return 1
+}
+
+# The nvidia modules unload themselves when every GPU is bound to vfio-pci
+# ("No NVIDIA devices probed"), so drivers_probe would find no driver to match.
+# Load them back before probing an NVIDIA device.
+load_host_driver_for() {
+    local addr=$1 vendor
+    vendor=$(<"/sys/bus/pci/devices/$addr/vendor") || return 0
+    [ "$vendor" = "0x10de" ] || return 0
+    modprobe -q nvidia_drm || log "modprobe nvidia_drm failed for $addr"
+}
+
+release_device() {
+    local addr=$1 nodedev
+
+    nodedev="pci_${addr//[.:]/_}"
+    log "releasing $addr ($nodedev) from vfio-pci"
+    load_host_driver_for "$addr"
+
+    "${VIRSH[@]}" nodedev-reattach "$nodedev" >/dev/null 2>&1 \
+        || log "nodedev-reattach failed for $addr; falling back to sysfs"
+    wait_for_host_driver "$addr" && return 0
+
+    # libvirt pins the device with driver_override; without clearing it,
+    # drivers_probe just picks vfio-pci straight back up.
+    if [ -w "/sys/bus/pci/devices/$addr/driver_override" ]; then
+        echo "" >"/sys/bus/pci/devices/$addr/driver_override" \
+            || log "could not clear driver_override for $addr"
+    fi
+    if [ "$(pci_driver "$addr")" = "vfio-pci" ]; then
+        echo "$addr" >/sys/bus/pci/drivers/vfio-pci/unbind 2>/dev/null \
+            || log "could not unbind $addr from vfio-pci"
+    fi
+    echo "$addr" >/sys/bus/pci/drivers_probe 2>/dev/null \
+        || log "drivers_probe failed for $addr"
+
+    wait_for_host_driver "$addr"
+}
+
+main() {
+    local addr held=0
+
+    [ "$(id -u)" -eq 0 ] || die "must run as root"
+
+    shutdown_passthrough_domains
+
+    for addr in $(vfio_bound_devices); do
+        release_device "$addr" || true
+    done
+
+    # Re-read rather than trusting the loop above: the point of the check is
+    # the state the kernel is about to suspend, not what we think we did.
+    for addr in $(vfio_bound_devices); do
+        log "still bound to vfio-pci: $addr"
+        held=$((held + 1))
+    done
+
+    if [ "$held" -gt 0 ]; then
+        die "$held PCI device(s) still held by vfio-pci; refusing to sleep" \
+            "(suspending in this state hangs the kernel's device-suspend phase)"
+    fi
+
+    log "no vfio-pci devices held; safe to sleep"
+}
+
+main "$@"
